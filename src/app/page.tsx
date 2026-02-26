@@ -7,6 +7,7 @@ import type { LeaderboardModel, Sample } from '@/lib/types';
 import { formatScore, formatLatency } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import TracePreview from './TracePreview';
+import CodeScanAnimation from '@/components/hero/CodeScanAnimation';
 
 const lb = leaderboardData as { models: LeaderboardModel[]; averages: any };
 const samples = samplesData as Sample[];
@@ -25,34 +26,42 @@ export default function Home() {
         {/* Accent glow */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--accent)] opacity-[0.03] blur-[120px] rounded-full pointer-events-none" />
 
-        <div className="relative">
-          {/* Headline */}
-          <h1 className="animate-fade-up text-5xl sm:text-7xl lg:text-[5.5rem] font-display tracking-tight text-[var(--foreground)] leading-[1.05] mb-8 max-w-4xl" style={{ animationDelay: '0ms' }}>
-            AI Code Review<br />Benchmark.
-          </h1>
+        <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-12 lg:gap-16 items-center">
+          {/* Left: text */}
+          <div>
+            {/* Headline */}
+            <h1 className="animate-fade-up text-5xl sm:text-7xl lg:text-[5.5rem] font-display tracking-tight text-[var(--foreground)] leading-[1.05] mb-8" style={{ animationDelay: '0ms' }}>
+              AI Code Review<br />Benchmark.
+            </h1>
 
-          {/* Subheading */}
-          <p className="animate-fade-up text-lg sm:text-xl text-[var(--muted)] max-w-2xl leading-relaxed mb-16" style={{ animationDelay: '80ms' }}>
-            We generate realistic bugs based on real-world patterns and see which LLMs can actually find them. Not linting issues. Regressions that break logic and cross-file contracts.
-          </p>
+            {/* Subheading */}
+            <p className="animate-fade-up text-lg sm:text-xl text-[var(--muted)] max-w-2xl leading-relaxed mb-16" style={{ animationDelay: '80ms' }}>
+              We generate realistic bugs based on real-world patterns and see which LLMs can actually find them. Not linting issues. Regressions that break logic and cross-file contracts.
+            </p>
 
-          {/* Stats row */}
-          <div className="animate-fade-up flex flex-wrap gap-12 sm:gap-16" style={{ animationDelay: '160ms' }}>
-            {[
-              { value: meta.totalResults.toLocaleString(), label: 'eval traces' },
-              { value: meta.languages.length.toString().padStart(2, '0'), label: 'languages' },
-              { value: meta.totalModels.toString().padStart(2, '0'), label: 'models' },
-              { value: meta.totalTestCases.toString(), label: 'test cases' },
-            ].map((stat) => (
-              <div key={stat.label} className="flex flex-col">
-                <span className="text-3xl sm:text-4xl font-mono font-bold tabular-nums text-[var(--foreground)]">
-                  {stat.value}
-                </span>
-                <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-widest mt-1">
-                  {stat.label}
-                </span>
-              </div>
-            ))}
+            {/* Stats row */}
+            <div className="animate-fade-up flex flex-wrap gap-12 sm:gap-16" style={{ animationDelay: '160ms' }}>
+              {[
+                { value: meta.totalResults.toLocaleString(), label: 'eval traces' },
+                { value: meta.languages.length.toString().padStart(2, '0'), label: 'languages' },
+                { value: meta.totalModels.toString().padStart(2, '0'), label: 'models' },
+                { value: meta.totalTestCases.toString(), label: 'test cases' },
+              ].map((stat) => (
+                <div key={stat.label} className="flex flex-col">
+                  <span className="text-3xl sm:text-4xl font-mono font-bold tabular-nums text-[var(--foreground)]">
+                    {stat.value}
+                  </span>
+                  <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-widest mt-1">
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: code scan animation (desktop only) */}
+          <div className="hidden lg:block h-[520px] animate-fade-up" style={{ animationDelay: '200ms' }}>
+            <CodeScanAnimation />
           </div>
         </div>
       </header>
