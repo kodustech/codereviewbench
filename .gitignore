@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# raw evaluation datasets (too large for git)
+/datasets
+
+# claude code
+.claude/

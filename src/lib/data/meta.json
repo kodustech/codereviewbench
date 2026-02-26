@@ -1,0 +1,21 @@
+{
+  "totalResults": 216,
+  "totalModels": 8,
+  "totalTestCases": 75,
+  "languages": [
+    "java",
+    "python",
+    "ruby",
+    "typescript/node",
+    "typescript/react"
+  ],
+  "categories": [
+    "cross-file",
+    "local"
+  ],
+  "judges": [
+    "sonnet",
+    "gpt"
+  ],
+  "generatedAt": "2026-02-26T18:16:51.513Z"
+}

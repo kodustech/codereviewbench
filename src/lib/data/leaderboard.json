@@ -1,0 +1,1083 @@
+{
+  "models": [
+    {
+      "slug": "claude-sonnet-4-5",
+      "displayName": "Claude Sonnet 4.5",
+      "provider": "Anthropic",
+      "rank": 1,
+      "score": 87.12,
+      "coverage": 85.05,
+      "validity": 89.19,
+      "localScore": 84.3,
+      "crossFileScore": 90.69,
+      "byLanguage": {
+        "typescript/node": {
+          "score": 90.8,
+          "coverage": 88.89,
+          "validity": 92.71,
+          "count": 12
+        },
+        "typescript/react": {
+          "score": 87.26,
+          "coverage": 88.1,
+          "validity": 86.43,
+          "count": 7
+        },
+        "python": {
+          "score": 82.83,
+          "coverage": 81.67,
+          "validity": 84,
+          "count": 5
+        },
+        "java": {
+          "score": 87.29,
+          "coverage": 81.67,
+          "validity": 92.92,
+          "count": 6
+        },
+        "ruby": {
+          "score": 80.94,
+          "coverage": 77.5,
+          "validity": 84.38,
+          "count": 4
+        }
+      },
+      "byCategory": {
+        "local": {
+          "score": 84.3,
+          "coverage": 84.21,
+          "validity": 84.39,
+          "count": 19
+        },
+        "cross-file": {
+          "score": 90.69,
+          "coverage": 86.11,
+          "validity": 95.28,
+          "count": 15
+        }
+      },
+      "judges": {
+        "sonnet": {
+          "coverage": 85.05,
+          "validity": 97.45
+        },
+        "gpt": {
+          "coverage": 85.05,
+          "validity": 80.93
+        }
+      },
+      "histogram": [
+        {
+          "min": 0,
+          "max": 10,
+          "count": 0
+        },
+        {
+          "min": 10,
+          "max": 20,
+          "count": 0
+        },
+        {
+          "min": 20,
+          "max": 30,
+          "count": 0
+        },
+        {
+          "min": 30,
+          "max": 40,
+          "count": 0
+        },
+        {
+          "min": 40,
+          "max": 50,
+          "count": 0
+        },
+        {
+          "min": 50,
+          "max": 60,
+          "count": 0
+        },
+        {
+          "min": 60,
+          "max": 70,
+          "count": 0
+        },
+        {
+          "min": 70,
+          "max": 80,
+          "count": 8
+        },
+        {
+          "min": 80,
+          "max": 90,
+          "count": 12
+        },
+        {
+          "min": 90,
+          "max": 100,
+          "count": 14
+        }
+      ],
+      "latency": {
+        "p50": 10,
+        "p90": 41310,
+        "p99": 51173
+      },
+      "parseRate": 45.33,
+      "lineMetrics": {
+        "lineAccuracy": 0.68,
+        "avgIou": 0.79,
+        "exactMatch": 0.55,
+        "within3": 0.68
+      },
+      "tests": 75,
+      "errors": 41,
+      "passRate": 45.33
+    },
+    {
+      "slug": "gemini-2-5-pro",
+      "displayName": "Gemini 2.5 Pro",
+      "provider": "Google",
+      "rank": 2,
+      "score": 86.83,
+      "coverage": 78.01,
+      "validity": 95.67,
+      "localScore": 86.52,
+      "crossFileScore": 87.5,
+      "byLanguage": {
+        "typescript/node": {
+          "score": 90.62,
+          "coverage": 85.42,
+          "validity": 95.83,
+          "count": 4
+        },
+        "typescript/react": {
+          "score": 85.42,
+          "coverage": 77.5,
+          "validity": 93.33,
+          "count": 5
+        },
+        "python": {
+          "score": 88.2,
+          "coverage": 78.48,
+          "validity": 97.92,
+          "count": 6
+        },
+        "java": {
+          "score": 83.6,
+          "coverage": 72.92,
+          "validity": 94.27,
+          "count": 8
+        },
+        "ruby": {
+          "score": 91.67,
+          "coverage": 83.34,
+          "validity": 100,
+          "count": 2
+        }
+      },
+      "byCategory": {
+        "local": {
+          "score": 86.52,
+          "coverage": 79.42,
+          "validity": 93.63,
+          "count": 17
+        },
+        "cross-file": {
+          "score": 87.5,
+          "coverage": 75.01,
+          "validity": 100,
+          "count": 8
+        }
+      },
+      "judges": {
+        "sonnet": {
+          "coverage": 77.34,
+          "validity": 100
+        },
+        "gpt": {
+          "coverage": 78.67,
+          "validity": 91.33
+        }
+      },
+      "histogram": [
+        {
+          "min": 0,
+          "max": 10,
+          "count": 0
+        },
+        {
+          "min": 10,
+          "max": 20,
+          "count": 0
+        },
+        {
+          "min": 20,
+          "max": 30,
+          "count": 0
+        },
+        {
+          "min": 30,
+          "max": 40,
+          "count": 0
+        },
+        {
+          "min": 40,
+          "max": 50,
+          "count": 0
+        },
+        {
+          "min": 50,
+          "max": 60,
+          "count": 0
+        },
+        {
+          "min": 60,
+          "max": 70,
+          "count": 0
+        },
+        {
+          "min": 70,
+          "max": 80,
+          "count": 7
+        },
+        {
+          "min": 80,
+          "max": 90,
+          "count": 9
+        },
+        {
+          "min": 90,
+          "max": 100,
+          "count": 9
+        }
+      ],
+      "latency": {
+        "p50": 8,
+        "p90": 57673,
+        "p99": 73287
+      },
+      "parseRate": 33.33,
+      "lineMetrics": {
+        "lineAccuracy": 0.6,
+        "avgIou": 0.83,
+        "exactMatch": 0.45,
+        "within3": 0.64
+      },
+      "tests": 75,
+      "errors": 50,
+      "passRate": 33.33
+    },
+    {
+      "slug": "kimi-k2-5",
+      "displayName": "Kimi K2.5",
+      "provider": "Moonshot AI",
+      "rank": 3,
+      "score": 85.64,
+      "coverage": 78.57,
+      "validity": 92.71,
+      "localScore": 86.1,
+      "crossFileScore": 85.05,
+      "byLanguage": {
+        "typescript/node": {
+          "score": 93.61,
+          "coverage": 94.44,
+          "validity": 92.78,
+          "count": 9
+        },
+        "typescript/react": {
+          "score": 83.54,
+          "coverage": 79.17,
+          "validity": 87.92,
+          "count": 8
+        },
+        "python": {
+          "score": 85.21,
+          "coverage": 77.26,
+          "validity": 93.17,
+          "count": 10
+        },
+        "java": {
+          "score": 79.94,
+          "coverage": 61.67,
+          "validity": 98.21,
+          "count": 7
+        },
+        "ruby": {
+          "score": 83.5,
+          "coverage": 75.34,
+          "validity": 91.67,
+          "count": 5
+        }
+      },
+      "byCategory": {
+        "local": {
+          "score": 86.1,
+          "coverage": 82.01,
+          "validity": 90.19,
+          "count": 22
+        },
+        "cross-file": {
+          "score": 85.05,
+          "coverage": 74.12,
+          "validity": 95.98,
+          "count": 17
+        }
+      },
+      "judges": {
+        "sonnet": {
+          "coverage": 79.32,
+          "validity": 99.49
+        },
+        "gpt": {
+          "coverage": 77.82,
+          "validity": 85.94
+        }
+      },
+      "histogram": [
+        {
+          "min": 0,
+          "max": 10,
+          "count": 0
+        },
+        {
+          "min": 10,
+          "max": 20,
+          "count": 0
+        },
+        {
+          "min": 20,
+          "max": 30,
+          "count": 0
+        },
+        {
+          "min": 30,
+          "max": 40,
+          "count": 0
+        },
+        {
+          "min": 40,
+          "max": 50,
+          "count": 0
+        },
+        {
+          "min": 50,
+          "max": 60,
+          "count": 0
+        },
+        {
+          "min": 60,
+          "max": 70,
+          "count": 0
+        },
+        {
+          "min": 70,
+          "max": 80,
+          "count": 11
+        },
+        {
+          "min": 80,
+          "max": 90,
+          "count": 14
+        },
+        {
+          "min": 90,
+          "max": 100,
+          "count": 14
+        }
+      ],
+      "latency": {
+        "p50": 8,
+        "p90": 304795,
+        "p99": 699683
+      },
+      "parseRate": 52,
+      "lineMetrics": {
+        "lineAccuracy": 0.65,
+        "avgIou": 0.82,
+        "exactMatch": 0.5,
+        "within3": 0.66
+      },
+      "tests": 75,
+      "errors": 36,
+      "passRate": 52
+    },
+    {
+      "slug": "claude-haiku-4-5",
+      "displayName": "Claude Haiku 4.5",
+      "provider": "Anthropic",
+      "rank": 4,
+      "score": 84.99,
+      "coverage": 88.75,
+      "validity": 81.24,
+      "localScore": 81.67,
+      "crossFileScore": 89.06,
+      "byLanguage": {
+        "typescript/node": {
+          "score": 88.69,
+          "coverage": 91.67,
+          "validity": 85.72,
+          "count": 7
+        },
+        "typescript/react": {
+          "score": 81.93,
+          "coverage": 80.56,
+          "validity": 83.34,
+          "count": 3
+        },
+        "python": {
+          "score": 85.53,
+          "coverage": 90.63,
+          "validity": 80.41,
+          "count": 4
+        },
+        "java": {
+          "score": 84.45,
+          "coverage": 88.55,
+          "validity": 80.36,
+          "count": 4
+        },
+        "ruby": {
+          "score": 76.68,
+          "coverage": 87.5,
+          "validity": 65.83,
+          "count": 2
+        }
+      },
+      "byCategory": {
+        "local": {
+          "score": 81.67,
+          "coverage": 85.23,
+          "validity": 78.1,
+          "count": 11
+        },
+        "cross-file": {
+          "score": 89.06,
+          "coverage": 93.06,
+          "validity": 85.07,
+          "count": 9
+        }
+      },
+      "judges": {
+        "sonnet": {
+          "coverage": 88.75,
+          "validity": 91.25
+        },
+        "gpt": {
+          "coverage": 88.75,
+          "validity": 71.23
+        }
+      },
+      "histogram": [
+        {
+          "min": 0,
+          "max": 10,
+          "count": 0
+        },
+        {
+          "min": 10,
+          "max": 20,
+          "count": 0
+        },
+        {
+          "min": 20,
+          "max": 30,
+          "count": 0
+        },
+        {
+          "min": 30,
+          "max": 40,
+          "count": 0
+        },
+        {
+          "min": 40,
+          "max": 50,
+          "count": 0
+        },
+        {
+          "min": 50,
+          "max": 60,
+          "count": 0
+        },
+        {
+          "min": 60,
+          "max": 70,
+          "count": 0
+        },
+        {
+          "min": 70,
+          "max": 80,
+          "count": 7
+        },
+        {
+          "min": 80,
+          "max": 90,
+          "count": 7
+        },
+        {
+          "min": 90,
+          "max": 100,
+          "count": 6
+        }
+      ],
+      "latency": {
+        "p50": 8,
+        "p90": 16652,
+        "p99": 18933
+      },
+      "parseRate": 26.67,
+      "lineMetrics": {
+        "lineAccuracy": 0.7,
+        "avgIou": 0.78,
+        "exactMatch": 0.57,
+        "within3": 0.7
+      },
+      "tests": 75,
+      "errors": 55,
+      "passRate": 26.67
+    },
+    {
+      "slug": "gemini-3-1-pro",
+      "displayName": "Gemini 3.1 Pro",
+      "provider": "Google",
+      "rank": 5,
+      "score": 84.19,
+      "coverage": 77.07,
+      "validity": 91.31,
+      "localScore": 87.5,
+      "crossFileScore": 80.54,
+      "byLanguage": {
+        "typescript/react": {
+          "score": 100,
+          "coverage": 100,
+          "validity": 100,
+          "count": 1
+        },
+        "python": {
+          "score": 80.36,
+          "coverage": 71.05,
+          "validity": 89.69,
+          "count": 8
+        },
+        "java": {
+          "score": 86.98,
+          "coverage": 83.33,
+          "validity": 90.63,
+          "count": 4
+        },
+        "ruby": {
+          "score": 80.56,
+          "coverage": 69.45,
+          "validity": 91.67,
+          "count": 6
+        },
+        "typescript/node": {
+          "score": 96.88,
+          "coverage": 100,
+          "validity": 93.75,
+          "count": 2
+        }
+      },
+      "byCategory": {
+        "local": {
+          "score": 87.5,
+          "coverage": 83.34,
+          "validity": 91.67,
+          "count": 11
+        },
+        "cross-file": {
+          "score": 80.54,
+          "coverage": 70.17,
+          "validity": 90.92,
+          "count": 10
+        }
+      },
+      "judges": {
+        "sonnet": {
+          "coverage": 80.24,
+          "validity": 100
+        },
+        "gpt": {
+          "coverage": 73.89,
+          "validity": 82.62
+        }
+      },
+      "histogram": [
+        {
+          "min": 0,
+          "max": 10,
+          "count": 0
+        },
+        {
+          "min": 10,
+          "max": 20,
+          "count": 0
+        },
+        {
+          "min": 20,
+          "max": 30,
+          "count": 0
+        },
+        {
+          "min": 30,
+          "max": 40,
+          "count": 0
+        },
+        {
+          "min": 40,
+          "max": 50,
+          "count": 0
+        },
+        {
+          "min": 50,
+          "max": 60,
+          "count": 0
+        },
+        {
+          "min": 60,
+          "max": 70,
+          "count": 0
+        },
+        {
+          "min": 70,
+          "max": 80,
+          "count": 12
+        },
+        {
+          "min": 80,
+          "max": 90,
+          "count": 1
+        },
+        {
+          "min": 90,
+          "max": 100,
+          "count": 8
+        }
+      ],
+      "latency": {
+        "p50": 21,
+        "p90": 287802,
+        "p99": 546031
+      },
+      "parseRate": 28,
+      "lineMetrics": {
+        "lineAccuracy": 0.56,
+        "avgIou": 0.73,
+        "exactMatch": 0.39,
+        "within3": 0.54
+      },
+      "tests": 75,
+      "errors": 54,
+      "passRate": 28
+    },
+    {
+      "slug": "gemini-3-flash",
+      "displayName": "Gemini 3 Flash",
+      "provider": "Google",
+      "rank": 6,
+      "score": 83.89,
+      "coverage": 77.56,
+      "validity": 90.23,
+      "localScore": 83.16,
+      "crossFileScore": 86.09,
+      "byLanguage": {
+        "typescript/node": {
+          "score": 86.45,
+          "coverage": 82.3,
+          "validity": 90.63,
+          "count": 8
+        },
+        "typescript/react": {
+          "score": 85.41,
+          "coverage": 80.56,
+          "validity": 90.28,
+          "count": 6
+        },
+        "python": {
+          "score": 83.43,
+          "coverage": 74.26,
+          "validity": 92.59,
+          "count": 9
+        },
+        "java": {
+          "score": 75.7,
+          "coverage": 69.45,
+          "validity": 81.95,
+          "count": 3
+        },
+        "ruby": {
+          "score": 83.75,
+          "coverage": 77.23,
+          "validity": 90.28,
+          "count": 6
+        }
+      },
+      "byCategory": {
+        "local": {
+          "score": 83.16,
+          "coverage": 76.39,
+          "validity": 89.93,
+          "count": 24
+        },
+        "cross-file": {
+          "score": 86.09,
+          "coverage": 81.05,
+          "validity": 91.15,
+          "count": 8
+        }
+      },
+      "judges": {
+        "sonnet": {
+          "coverage": 78.6,
+          "validity": 98.44
+        },
+        "gpt": {
+          "coverage": 76.51,
+          "validity": 82.03
+        }
+      },
+      "histogram": [
+        {
+          "min": 0,
+          "max": 10,
+          "count": 0
+        },
+        {
+          "min": 10,
+          "max": 20,
+          "count": 0
+        },
+        {
+          "min": 20,
+          "max": 30,
+          "count": 0
+        },
+        {
+          "min": 30,
+          "max": 40,
+          "count": 0
+        },
+        {
+          "min": 40,
+          "max": 50,
+          "count": 0
+        },
+        {
+          "min": 50,
+          "max": 60,
+          "count": 0
+        },
+        {
+          "min": 60,
+          "max": 70,
+          "count": 0
+        },
+        {
+          "min": 70,
+          "max": 80,
+          "count": 14
+        },
+        {
+          "min": 80,
+          "max": 90,
+          "count": 10
+        },
+        {
+          "min": 90,
+          "max": 100,
+          "count": 8
+        }
+      ],
+      "latency": {
+        "p50": 8,
+        "p90": 64230,
+        "p99": 286444
+      },
+      "parseRate": 42.67,
+      "lineMetrics": {
+        "lineAccuracy": 0.55,
+        "avgIou": 0.76,
+        "exactMatch": 0.42,
+        "within3": 0.56
+      },
+      "tests": 75,
+      "errors": 43,
+      "passRate": 42.67
+    },
+    {
+      "slug": "glm-5",
+      "displayName": "GLM-5",
+      "provider": "Zhipu AI",
+      "rank": 7,
+      "score": 83.77,
+      "coverage": 71.53,
+      "validity": 96.01,
+      "localScore": 84.64,
+      "crossFileScore": 82.03,
+      "byLanguage": {
+        "typescript/node": {
+          "score": 87.93,
+          "coverage": 78.33,
+          "validity": 97.5,
+          "count": 5
+        },
+        "typescript/react": {
+          "score": 86.66,
+          "coverage": 76.67,
+          "validity": 96.67,
+          "count": 5
+        },
+        "python": {
+          "score": 79.17,
+          "coverage": 62.51,
+          "validity": 95.83,
+          "count": 6
+        },
+        "java": {
+          "score": 81.67,
+          "coverage": 66.67,
+          "validity": 96.67,
+          "count": 5
+        },
+        "ruby": {
+          "score": 84.72,
+          "coverage": 77.79,
+          "validity": 91.67,
+          "count": 3
+        }
+      },
+      "byCategory": {
+        "local": {
+          "score": 84.64,
+          "coverage": 71.1,
+          "validity": 98.18,
+          "count": 16
+        },
+        "cross-file": {
+          "score": 82.03,
+          "coverage": 72.4,
+          "validity": 91.67,
+          "count": 8
+        }
+      },
+      "judges": {
+        "sonnet": {
+          "coverage": 71.54,
+          "validity": 98.96
+        },
+        "gpt": {
+          "coverage": 71.53,
+          "validity": 93.06
+        }
+      },
+      "histogram": [
+        {
+          "min": 0,
+          "max": 10,
+          "count": 0
+        },
+        {
+          "min": 10,
+          "max": 20,
+          "count": 0
+        },
+        {
+          "min": 20,
+          "max": 30,
+          "count": 0
+        },
+        {
+          "min": 30,
+          "max": 40,
+          "count": 0
+        },
+        {
+          "min": 40,
+          "max": 50,
+          "count": 0
+        },
+        {
+          "min": 50,
+          "max": 60,
+          "count": 0
+        },
+        {
+          "min": 60,
+          "max": 70,
+          "count": 0
+        },
+        {
+          "min": 70,
+          "max": 80,
+          "count": 10
+        },
+        {
+          "min": 80,
+          "max": 90,
+          "count": 8
+        },
+        {
+          "min": 90,
+          "max": 100,
+          "count": 6
+        }
+      ],
+      "latency": {
+        "p50": 6,
+        "p90": 110643,
+        "p99": 157196
+      },
+      "parseRate": 32,
+      "lineMetrics": {
+        "lineAccuracy": 0.53,
+        "avgIou": 0.77,
+        "exactMatch": 0.42,
+        "within3": 0.55
+      },
+      "tests": 75,
+      "errors": 51,
+      "passRate": 32
+    },
+    {
+      "slug": "gpt-5-2",
+      "displayName": "GPT-5.2",
+      "provider": "OpenAI",
+      "rank": 8,
+      "score": 83.19,
+      "coverage": 74.61,
+      "validity": 91.79,
+      "localScore": 82.58,
+      "crossFileScore": 84.72,
+      "byLanguage": {
+        "typescript/react": {
+          "score": 86.11,
+          "coverage": 75.01,
+          "validity": 97.22,
+          "count": 6
+        },
+        "python": {
+          "score": 80.07,
+          "coverage": 70.84,
+          "validity": 89.31,
+          "count": 6
+        },
+        "java": {
+          "score": 79.16,
+          "coverage": 68.34,
+          "validity": 90,
+          "count": 5
+        },
+        "ruby": {
+          "score": 77.09,
+          "coverage": 75.01,
+          "validity": 79.17,
+          "count": 2
+        },
+        "typescript/node": {
+          "score": 100,
+          "coverage": 100,
+          "validity": 100,
+          "count": 2
+        }
+      },
+      "byCategory": {
+        "local": {
+          "score": 82.58,
+          "coverage": 75.01,
+          "validity": 90.17,
+          "count": 15
+        },
+        "cross-file": {
+          "score": 84.72,
+          "coverage": 73.61,
+          "validity": 95.83,
+          "count": 6
+        }
+      },
+      "judges": {
+        "sonnet": {
+          "coverage": 75.41,
+          "validity": 98.41
+        },
+        "gpt": {
+          "coverage": 73.81,
+          "validity": 85.16
+        }
+      },
+      "histogram": [
+        {
+          "min": 0,
+          "max": 10,
+          "count": 0
+        },
+        {
+          "min": 10,
+          "max": 20,
+          "count": 0
+        },
+        {
+          "min": 20,
+          "max": 30,
+          "count": 0
+        },
+        {
+          "min": 30,
+          "max": 40,
+          "count": 0
+        },
+        {
+          "min": 40,
+          "max": 50,
+          "count": 0
+        },
+        {
+          "min": 50,
+          "max": 60,
+          "count": 0
+        },
+        {
+          "min": 60,
+          "max": 70,
+          "count": 0
+        },
+        {
+          "min": 70,
+          "max": 80,
+          "count": 8
+        },
+        {
+          "min": 80,
+          "max": 90,
+          "count": 9
+        },
+        {
+          "min": 90,
+          "max": 100,
+          "count": 4
+        }
+      ],
+      "latency": {
+        "p50": 19274,
+        "p90": 28561,
+        "p99": 33989
+      },
+      "parseRate": 28,
+      "lineMetrics": {
+        "lineAccuracy": 0.53,
+        "avgIou": 0.68,
+        "exactMatch": 0.29,
+        "within3": 0.49
+      },
+      "tests": 75,
+      "errors": 54,
+      "passRate": 28
+    }
+  ],
+  "averages": {
+    "score": 84.95,
+    "coverage": 78.89,
+    "validity": 91.02,
+    "localScore": 84.56,
+    "crossFileScore": 85.71
+  }
+}
