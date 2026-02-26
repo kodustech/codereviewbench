@@ -40,7 +40,7 @@ export default function Home() {
             </p>
 
             {/* Stats row */}
-            <div className="animate-fade-up flex flex-wrap gap-12 sm:gap-16" style={{ animationDelay: '160ms' }}>
+            <div className="animate-fade-up flex flex-wrap gap-12 sm:gap-16 mb-12" style={{ animationDelay: '160ms' }}>
               {[
                 { value: meta.totalResults.toLocaleString(), label: 'eval traces' },
                 { value: meta.languages.length.toString().padStart(2, '0'), label: 'languages' },
@@ -56,6 +56,26 @@ export default function Home() {
                   </span>
                 </div>
               ))}
+            </div>
+
+            {/* CTAs */}
+            <div className="animate-fade-up flex flex-wrap items-center gap-4" style={{ animationDelay: '240ms' }}>
+              <Link
+                href="/leaderboard"
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 transition-opacity"
+              >
+                View Rankings
+                <ArrowRight className="size-4" />
+              </Link>
+              <a
+                href="https://github.com/kodustech/kodus-ai/blob/main/evals/promptfoo/README.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-bright)] transition-all"
+              >
+                <GitPullRequest className="size-4" />
+                Add test cases
+              </a>
             </div>
           </div>
 

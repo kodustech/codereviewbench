@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, GitPullRequest } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
@@ -51,6 +51,16 @@ export default function Navbar() {
               </Link>
             );
           })}
+          <div className="w-px h-4 bg-[var(--border)] mx-1.5" />
+          <a
+            href="https://github.com/kodustech/kodus-ai/blob/main/evals/promptfoo/README.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-md bg-[var(--accent)] text-white hover:brightness-110 transition-all"
+          >
+            <GitPullRequest className="size-3.5" />
+            Contribute
+          </a>
         </div>
 
         {/* Mobile Toggle */}
@@ -83,6 +93,15 @@ export default function Navbar() {
               </Link>
             );
           })}
+          <a
+            href="https://github.com/kodustech/kodus-ai/blob/main/evals/promptfoo/README.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-base font-medium py-2 px-3 rounded-md text-[var(--accent)] hover:bg-[var(--surface)]"
+          >
+            <GitPullRequest className="size-4" />
+            Contribute
+          </a>
         </div>
       )}
     </nav>
