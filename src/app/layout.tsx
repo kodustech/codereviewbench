@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import Script from "next/script";
 
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans", weight: ["400", "500", "600", "700"] });
 const instrumentSerif = Instrument_Serif({ subsets: ["latin"], variable: "--font-display", weight: "400" });
@@ -18,6 +19,9 @@ export const metadata: Metadata = {
     description: "Open benchmark for AI code review. We test how well LLMs find realistic bugs across 5 languages.",
     type: "website",
   },
+  verification: {
+    google: "CoUvZZvMnZ5EXhHagUpNrsK-ARNNT3Lshr0uW_YN_8A",
+  },
 };
 
 export default function RootLayout({
@@ -27,6 +31,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark antialiased">
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-XWCNNFQE8E"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XWCNNFQE8E');
+          `}
+        </Script>
+      </head>
       <body className={cn(
         dmSans.variable,
         instrumentSerif.variable,
