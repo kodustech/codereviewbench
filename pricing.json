@@ -1,0 +1,122 @@
+{
+  "_meta": {
+    "collectedAt": "2026-08-04",
+    "currency": "USD",
+    "unit": "per 1M tokens",
+    "source": "docs/pricing-benchmark-models.md (páginas oficiais dos fornecedores, com links e datas)",
+    "note": "Preços mudam com frequência. `cacheRead` é null quando o fornecedor não publica. Modelos rodados por assinatura (accessPath=subscription) não têm custo por token — o site rotula em vez de calcular."
+  },
+  "models": {
+    "deepseek-v4-flash": {
+      "input": 0.14,
+      "output": 0.28,
+      "cacheRead": 0.0028,
+      "provider": "deepseek"
+    },
+    "deepseek-v4-pro": {
+      "input": 0.435,
+      "output": 0.87,
+      "cacheRead": 0.0036,
+      "provider": "deepseek"
+    },
+    "gpt-5.6-luna": {
+      "input": 0.2,
+      "output": 1.2,
+      "cacheRead": null,
+      "provider": "openai"
+    },
+    "gpt-5.6-terra": {
+      "input": 2,
+      "output": 12,
+      "cacheRead": null,
+      "provider": "openai"
+    },
+    "gpt-5.6-sol": {
+      "input": 5,
+      "output": 30,
+      "cacheRead": null,
+      "provider": "openai"
+    },
+    "gemini-3.1-pro-preview": {
+      "input": 2,
+      "output": 12,
+      "cacheRead": 0.2,
+      "provider": "google",
+      "note": "degrau de preço acima de 200k tokens de prompt"
+    },
+    "gemini-3.6-flash": {
+      "input": 1.5,
+      "output": 7.5,
+      "cacheRead": 0.15,
+      "provider": "google"
+    },
+    "kimi-k2.7-code": {
+      "input": 0.95,
+      "output": 4,
+      "cacheRead": 0.19,
+      "provider": "moonshot"
+    },
+    "kimi-k3": {
+      "input": 3,
+      "output": 15,
+      "cacheRead": null,
+      "provider": "moonshot"
+    },
+    "glm-5.2": {
+      "input": 1.4,
+      "output": 4.4,
+      "cacheRead": null,
+      "provider": "zhipu"
+    },
+    "grok-4.5": {
+      "input": 2,
+      "output": 6,
+      "cacheRead": null,
+      "provider": "xai",
+      "note": "DOBRA acima de 200k tokens de prompt"
+    },
+    "qwen3.8-max": {
+      "input": 2,
+      "output": 6,
+      "cacheRead": null,
+      "provider": "alibaba"
+    },
+    "minimax-m3": {
+      "input": 0.3,
+      "output": 1.2,
+      "cacheRead": null,
+      "provider": "minimax",
+      "note": "promoção declarada de 50%"
+    },
+    "mimo-v2.5-pro": {
+      "input": 0.435,
+      "output": 0.87,
+      "cacheRead": 0.0036,
+      "provider": "xiaomi"
+    },
+    "claude-opus-4-7": {
+      "input": 5,
+      "output": 25,
+      "cacheRead": 0.5,
+      "provider": "anthropic"
+    },
+    "claude-sonnet-4-6": {
+      "input": 3,
+      "output": 15,
+      "cacheRead": 0.3,
+      "provider": "anthropic"
+    },
+    "claude-haiku-4-5": {
+      "input": 1,
+      "output": 5,
+      "cacheRead": 0.1,
+      "provider": "anthropic"
+    },
+    "muse-spark-1.2": {
+      "input": 1.25,
+      "output": 4.25,
+      "cacheRead": 0.15,
+      "provider": "meta"
+    }
+  }
+}

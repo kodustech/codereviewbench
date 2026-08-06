@@ -1,0 +1,824 @@
+{
+  "benchmarkVersion": "light-v1",
+  "run": {
+    "harness": {
+      "name": "kodus",
+      "version": "dev"
+    },
+    "model": {
+      "id": "gpt-5.6-luna",
+      "provider": "codex_subscription",
+      "accessPath": "subscription"
+    },
+    "executionMode": "replay",
+    "runAt": "2026-08-04T19:56:24.224Z",
+    "reasoning": {
+      "config": "vendor-default",
+      "effortRequested": null,
+      "_backfilledAt": "2026-08-04T20:12:23.617Z",
+      "_evidence": "log da passada: buildProviderOptions -> reasoningPayload {} / hasOverride false"
+    }
+  },
+  "results": [
+    {
+      "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 287690,
+        "outputTokens": 4694
+      },
+      "trace": {
+        "replayCalls": 26,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+      "findings": [
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+          "startLine": 214,
+          "endLine": 214,
+          "severity": "high",
+          "category": "bug",
+          "description": "Client-specific V2 permission resources are looked up with the wrong owner identifier. — WHAT: the per-client resource lookup passes `server.getId()` as the resource owner even though client resources are created with `resourceServer.getClientId()` as their owner. WHY: client-specific ClientsPermissionsV2 grants are not found, so users granted permissions only on an individual client are denied (or evaluation falls through to the unrelated all-clients resource). HOW: pass the same owner used by `AdminPermissionsSchema.getOrCreateResource`, namely `server.getClientId()`, or use the owner-independent lookup overload."
+        }
+      ],
+      "usage": {
+        "inputTokens": 337669,
+        "outputTokens": 6044
+      },
+      "trace": {
+        "replayCalls": 44,
+        "unexpectedToolCalls": 4
+      }
+    },
+    {
+      "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 46,
+          "endLine": 48,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Team admins are incorrectly denied unless they are also owners. — WHAT: `isTeamAdminOrOwner` requires `isTeamAdmin(...)` and `isTeamOwner(...)` to both be true. WHY: a team administrator who is not the team owner fails the permission check at line 54 and cannot add guests, despite the variable and intended role check indicating either role should be sufficient. HOW: combine the role checks with OR, preferably short-circuiting the owner check when the admin check succeeds."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 74,
+          "endLine": 78,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Repeated new guest emails are not deduplicated server-side. — WHAT: `uniqueGuests` only removes addresses already present in `booking.attendees` and does not remove duplicate addresses within the submitted `guests` array. WHY: an API caller can submit the same new email multiple times, causing duplicate attendee records or a database uniqueness failure, and the mutation can partially diverge from its stated unique-email validation contract. HOW: normalize and deduplicate the submitted addresses before filtering against existing attendees, then persist and email only that deduplicated list."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 208,
+          "endLine": 210,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Email only the guests that the handler actually adds. — WHAT: `sendAddGuestsEmails` is called with the original `guests` input instead of the filtered `uniqueGuests` that were actually inserted. WHY: emails can be sent to addresses that were already attendees or were removed by the blacklist, falsely notifying recipients that guests were added when no corresponding attendee row was created. HOW: pass `uniqueGuests` to the email sender."
+        }
+      ],
+      "usage": {
+        "inputTokens": 276202,
+        "outputTokens": 5718
+      },
+      "trace": {
+        "replayCalls": 61,
+        "unexpectedToolCalls": 10
+      }
+    },
+    {
+      "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+      "findings": [
+        {
+          "path": "misc/theme-verifier/src/main/java/org/keycloak/themeverifier/VerifyMessageProperties.java",
+          "startLine": 130,
+          "endLine": 131,
+          "severity": "high",
+          "category": "bug",
+          "description": "Unescaping the sanitizer output makes disallowed HTML pass validation. — WHAT: the unconditional `unescapeHtml4` after sanitization restores disallowed HTML that the policy encoded, so the verifier can treat unsafe markup as unchanged. WHY: for a value such as `<script>alert(1)</script>` under `POLICY_NO_HTML`, `sanitize` returns escaped text and line 131 turns it back into the original value, making `Objects.equals(sanitized, value)` true and allowing the illegal translation through. HOW: do not unescape the sanitizer result before comparing it with the normalized input; compare against a consistently normalized representation, or otherwise preserve the sanitizer's escaping while detecting removed/encoded markup."
+        }
+      ],
+      "usage": {
+        "inputTokens": 484716,
+        "outputTokens": 13976
+      },
+      "trace": {
+        "replayCalls": 39,
+        "unexpectedToolCalls": 12
+      }
+    },
+    {
+      "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
+          "startLine": 109,
+          "endLine": 130,
+          "severity": "medium",
+          "category": "bug",
+          "description": "The count-then-write limit enforcement is racy and can exceed the configured device limit. — WHAT: the device-limit check performs CountDevices and then inserts or updates in separate database operations. WHY: concurrent requests can both observe a count below the limit and both insert different device IDs, allowing the configured limit to be exceeded. HOW: make the capacity check and write atomic, for example by using a transaction/locking strategy or a database-enforced capacity mechanism."
+        },
+        {
+          "path": "pkg/services/anonymous/anonimpl/client.go",
+          "startLine": 44,
+          "endLine": 47,
+          "severity": "high",
+          "category": "bug",
+          "description": "Propagating the limit error exposes a cache state that lets later requests bypass the limit. — WHAT: a device-limit error is now returned from Authenticate after TagDevice has already populated the local cache before the database write. WHY: the first over-limit request returns an error, but the same device key remains cached for 29 minutes, so subsequent authentication calls skip CreateOrUpdateDevice and succeed without rechecking the limit. HOW: only populate the cache after a successful write, or remove the cache entry when CreateOrUpdateDevice returns an error such as ErrDeviceLimitReached."
+        }
+      ],
+      "usage": {
+        "inputTokens": 192901,
+        "outputTokens": 4617
+      },
+      "trace": {
+        "replayCalls": 25,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "dual-storage-architecture-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 50,
+          "endLine": 56,
+          "severity": "high",
+          "category": "bug",
+          "description": "Background legacy writes inherit the request cancellation and may never execute after the response returns. — WHAT: the asynchronous legacy write derives its timeout context directly from the incoming request context. WHY: the server cancels that context when the request handler returns, so after the unified-store write succeeds the legacy Create can be canceled immediately and mode 3 silently fails to propagate writes. HOW: derive the background timeout from a context that is not canceled when the request ends (for example, context.WithoutCancel(ctx)), while preserving the 10-second deadline and cancellation."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 76,
+          "endLine": 80,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Unified-store failures are incorrectly emitted as legacy-store failures. — WHAT: Create and Update record a unified-storage failure with recordLegacyDuration even though the asynchronous legacy write is never started. WHY: every unified-store failure is falsely counted as a legacy-store failure, corrupting backend error metrics and masking the actual failing storage. HOW: call recordStorageDuration(true, mode3Str, options.Kind, method, startStorage) in both error branches."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 133,
+          "endLine": 140,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Successful mode-3 deletes use the object name instead of kind in storage metrics. — WHAT: Delete records the successful unified-storage duration using name as the metric kind label. WHY: delete latency is written under the object name rather than its resource kind, producing incorrect and potentially high-cardinality metric labels and making delete metrics unusable. HOW: pass options.Kind, matching the other delete metric calls."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 195,
+          "endLine": 200,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Asynchronous legacy collection deletions are attributed to storage metrics. — WHAT: DeleteCollection records the asynchronous Legacy.DeleteCollection result with recordStorageDuration. WHY: legacy delete-collection successes and failures are attributed to unified-storage metrics, so backend-specific monitoring reports the wrong component and cannot detect legacy drift. HOW: call recordLegacyDuration(err != nil, mode3Str, options.Kind, method, startLegacy)."
+        }
+      ],
+      "usage": {
+        "inputTokens": 511662,
+        "outputTokens": 7401
+      },
+      "trace": {
+        "replayCalls": 44,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 22,
+          "endLine": 22,
+          "severity": "high",
+          "category": "bug",
+          "description": "The importer passes an unsupported cook_method attribute, preventing embed post creation. — WHAT: TopicEmbed.import passes a new `cook_method` attribute to PostCreator even though the Post model has no `cook_method` attribute or database column in this change set. WHY: PostCreator's post construction will reject the option as an unknown attribute (or otherwise fail to persist it), causing every RSS/remote embed import to fail before the TopicEmbed record is created. HOW: add and migrate a persisted `cook_method` field (and ensure PostCreator permits it), or remove the option and implement the raw-HTML behavior through an existing supported post-creation contract."
+        },
+        {
+          "path": "app/models/post.rb",
+          "startLine": 130,
+          "endLine": 133,
+          "severity": "high",
+          "category": "bug",
+          "description": "The raw-HTML mode exposes feed-controlled markup by skipping post sanitization. — WHAT: Post#cook returns imported `raw` HTML directly when `cook_method` is raw_html, bypassing the normal PostAnalyzer and Plugin::Filter sanitization/rendering pipeline. WHY: RSS content supplied by the configured feed can contain executable markup or unsafe attributes, and that content is then served as `cooked` HTML to readers without the filtering applied to ordinary posts. HOW: sanitize imported HTML with the same allowlist/filtering pipeline before storing or returning it, rather than returning raw feed content directly."
+        },
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 61,
+          "endLine": 73,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Ordinary relative RSS links are not converted to the source origin. — WHAT: absolutize_urls leaves ordinary relative href/src values unchanged because it only rewrites values that start with '/'. WHY: RSS content containing a link such as 'comments/1' is rendered under the Discourse embed URL instead of the source article's origin, producing broken or incorrect links. HOW: resolve all non-absolute URLs against the source URL (for example with URI.join), while preserving absolute and protocol-relative URLs."
+        },
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 44,
+          "endLine": 50,
+          "severity": "high",
+          "category": "security",
+          "description": "Redirects can bypass the pre-fetch embed-host check and turn retrieval into SSRF. — WHAT: import_remote fetches the user-supplied embed URL with open-uri after only the initial URL host has been checked by TopicRetriever. WHY: open-uri follows HTTP redirects, so an URL on the configured embeddable host can redirect the background worker to an arbitrary external or internal host, creating an SSRF path. HOW: disable redirects or validate every redirect target against the allowed host before following it."
+        }
+      ],
+      "usage": {
+        "inputTokens": 212135,
+        "outputTokens": 8743
+      },
+      "trace": {
+        "replayCalls": 55,
+        "unexpectedToolCalls": 16
+      }
+    },
+    {
+      "caseId": "feat-2fa-backup-codes-cal-com",
+      "findings": [
+        {
+          "path": "packages/features/auth/lib/next-auth-options.ts",
+          "startLine": 131,
+          "endLine": 131,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Third-party users cannot use the newly added backup-code login path. — WHAT: backup-code authentication is blocked for users whose identityProvider is not CAL because the new branch is reached only after `!credentials.totpCode` throws ThirdPartyIdentityProviderEnabled. WHY: an SSO/third-party user with 2FA who enters a valid backup code without a TOTP code can never authenticate with that backup code, even though the new flow is intended to provide recovery access. HOW: allow `credentials.backupCode` in the third-party preconditions, or validate the backup-code branch before the checks that require `credentials.totpCode`."
+        },
+        {
+          "path": "packages/features/auth/lib/next-auth-options.ts",
+          "startLine": 148,
+          "endLine": 155,
+          "severity": "high",
+          "category": "bug",
+          "description": "Concurrent logins can redeem the same backup code more than once. — WHAT: backup-code redemption uses a read/check/update sequence without an atomic conditional update or transaction. WHY: concurrent login requests can both read the same unused code before either update commits, both pass `indexOf`, and both receive authenticated sessions using one supposedly single-use backup code. HOW: redeem the code with an atomic compare-and-set/transaction that re-reads and conditionally updates the stored codes, retrying or rejecting when the expected value has changed."
+        }
+      ],
+      "usage": {
+        "inputTokens": 443215,
+        "outputTokens": 5710
+      },
+      "trace": {
+        "replayCalls": 38,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+      "findings": [],
+      "usage": {
+        "inputTokens": 201972,
+        "outputTokens": 4971
+      },
+      "trace": {
+        "replayCalls": 23,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/integrations/tasks/sync_assignee_outbound.py",
+          "startLine": 59,
+          "endLine": 61,
+          "severity": "high",
+          "category": "bug",
+          "description": "The task introduces a keyword argument that concrete Jira/VSTS assignee-sync implementations may reject at runtime. — WHAT: the outbound task passes `assignment_source` to every concrete `sync_assignee_outbound` implementation. WHY: Jira and VSTS provide their own overrides, and unlike the Example implementation they are not verified to accept this new keyword, so an inbound assignment can fail with `TypeError: unexpected keyword argument 'assignment_source'` instead of syncing. HOW: update each concrete override to accept and intentionally handle `assignment_source` (or `**kwargs`) and keep the abstract contract consistent."
+        }
+      ],
+      "usage": {
+        "inputTokens": 437782,
+        "outputTokens": 7039
+      },
+      "trace": {
+        "replayCalls": 60,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/incidents/grouptype.py",
+          "startLine": 11,
+          "endLine": 12,
+          "severity": "high",
+          "category": "bug",
+          "description": "The newly registered metric-alert handler is abstract and cannot be instantiated. — WHAT: MetricAlertDetectorHandler is registered as a StatefulDetectorHandler without implementing any of its abstract methods. WHY: Detector.detector_handler instantiates this class for the registered metric_alert_fire type, and Python raises TypeError for the abstract class instead of evaluating the detector. HOW: Implement the required stateful-detector methods (including evaluate/build_occurrence_and_event_data) before registering this handler, or keep the group type handler unset until a concrete implementation exists."
+        }
+      ],
+      "usage": {
+        "inputTokens": 206595,
+        "outputTokens": 4424
+      },
+      "trace": {
+        "replayCalls": 38,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/optimized_image.rb",
+          "startLine": 149,
+          "endLine": 151,
+          "severity": "high",
+          "category": "bug",
+          "description": "The duplicate downsize definition breaks existing five-argument callers such as emoji resizing. — WHAT: the newly added `downsize(from, to, dimensions, opts={})` definition replaces the existing four-dimension `downsize(from, to, max_width, max_height, opts={})` method in Ruby. WHY: callers such as `Jobs::ResizeEmoji#execute` still pass five arguments (`path, path, 100, 100, opts`), so emoji resizing now raises `ArgumentError: wrong number of arguments` at runtime. HOW: retain one method that accepts both forms (or update every existing caller), converting width and height to a dimensions string before calling `optimize`."
+        },
+        {
+          "path": "app/assets/javascripts/discourse/lib/utilities.js",
+          "startLine": 181,
+          "endLine": 185,
+          "severity": "medium",
+          "category": "bug",
+          "description": "The fixed browser limit breaks larger configured attachments and prevents large images from being automatically downsized. — WHAT: `validateUploadedFile` now applies a hard-coded 10 MB limit to every upload type instead of the configured per-type limit. WHY: attachments configured above 10 MB are rejected in the browser, and images larger than 10 MB never reach the server's new automatic downsizing path, defeating the feature for those uploads. HOW: use the relevant site setting (`max_image_size_kb` for images and `max_attachment_size_kb` for attachments), while ensuring the image client limit matches the server's intended pre-downsize transport limit."
+        },
+        {
+          "path": "app/controllers/uploads_controller.rb",
+          "startLine": 67,
+          "endLine": 67,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Automatic downsizing can flatten animated GIF uploads because animation detection uses the tempfile path suffix. — WHAT: the automatic downsizing call passes `tempfile.path` to `OptimizedImage.downsize`, but animated-image dispatch tests that path for a `.GIF` suffix instead of using the uploaded filename. WHY: multipart temporary paths commonly have no `.GIF` extension, so large animated GIFs take `downsize_instructions`, which reads only `from[0]`, and are stored with animation discarded despite `allow_animated_thumbnails` being enabled. HOW: preserve the original extension for the temporary path or pass an explicit animation option/format to `OptimizedImage` and select the animated instructions from `filename`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 212237,
+        "outputTokens": 7335
+      },
+      "trace": {
+        "replayCalls": 47,
+        "unexpectedToolCalls": 6
+      }
+    },
+    {
+      "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/embeddable_host.rb",
+          "startLine": 5,
+          "endLine": 8,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Missing host input crashes validation instead of producing a normal validation error. — WHAT: the before_validation callback calls sub! on self.host without guarding a missing host value. WHY: an admin create/update request with no embeddable_host[host] raises NoMethodError before the format validator can run, returning a server error instead of a validation response. HOW: guard the normalization with `if host.present?` (or use safe navigation) and let the presence/format validation reject blank input."
+        },
+        {
+          "path": "app/controllers/admin/embeddable_hosts_controller.rb",
+          "startLine": 9,
+          "endLine": 17,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Invalid host IDs cause nil dereferences in both admin mutation actions. — WHAT: update and destroy pass the result of a potentially empty lookup directly to save_host and destroy. WHY: requests for a nonexistent embeddable-host ID call save_host(nil) or nil.destroy and raise NoMethodError, turning ordinary stale/invalid admin requests into 500 responses. HOW: handle a missing record with the controller's not-found/error response before invoking either operation."
+        },
+        {
+          "path": "app/models/embeddable_host.rb",
+          "startLine": 14,
+          "endLine": 17,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Valid configured ports are discarded during host lookup and therefore cannot authorize or categorize embeds. — WHAT: record_for_host compares the normalized stored host against URI.host, which drops the port, even though the model validation explicitly accepts host:port values and the normalization callback preserves the port. WHY: a configured host such as `example.com:8080` is saved successfully but never matches a referer from that host, so embedding is denied and imported topics do not receive the host category. HOW: compare against the URI authority/port consistently, or normalize both stored values and incoming values to the same host-plus-port representation."
+        },
+        {
+          "path": "app/controllers/admin/embedding_controller.rb",
+          "startLine": 9,
+          "endLine": 11,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Embedding update accepts requests but silently persists nothing. — WHAT: `update` never applies any submitted relationship changes and only serializes the unchanged `@embedding` object. WHY: PUT/PATCH requests to the embedding update endpoint report success while discarding the requested edits, leaving the embedding configuration unchanged. HOW: parse the submitted host/category relationship changes and persist them (or remove the update route if this endpoint is intentionally read-only)."
+        }
+      ],
+      "usage": {
+        "inputTokens": 159380,
+        "outputTokens": 7048
+      },
+      "trace": {
+        "replayCalls": 48,
+        "unexpectedToolCalls": 11
+      }
+    },
+    {
+      "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
+      "findings": [],
+      "usage": {
+        "inputTokens": 115612,
+        "outputTokens": 3857
+      },
+      "trace": {
+        "replayCalls": 34,
+        "unexpectedToolCalls": 9
+      }
+    },
+    {
+      "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 245347,
+        "outputTokens": 3174
+      },
+      "trace": {
+        "replayCalls": 33,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/confirm.handler.ts",
+          "startLine": 175,
+          "endLine": 179,
+          "severity": "high",
+          "category": "bug",
+          "description": "Empty destination-calendar fallback crashes the Google Meet confirmation path. — WHAT: the new fallback assigns an empty destinationCalendar array when neither the booking nor user has a calendar. WHY: EventManager.create dereferences the first entry as `mainHostDestinationCalendar.integration` for Google Meet events, so confirming such a booking reaches a TypeError instead of applying the normal fallback behavior. HOW: preserve an optional/undefined value and guard the EventManager dereference (or make the EventManager condition handle an empty array) before reading `integration`."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/organizations/create.handler.ts",
+          "startLine": 151,
+          "endLine": 153,
+          "severity": "high",
+          "category": "bug",
+          "description": "Organization creation reverses billing-dependent slug provisioning behavior. — WHAT: the organization create payload reverses the feature-flag conditions for both `slug` and `metadata.requestedSlug`. WHY: with team billing enabled, a requested organization slug is stored as the live slug instead of as a pending request, while with billing disabled the organization is created without its slug, breaking the billing/provisioning state contract used by the organization flow. HOW: restore the original asymmetric conditions: assign `slug` when `IS_TEAM_BILLING_ENABLED` is false and write `requestedSlug` when it is true."
+        }
+      ],
+      "usage": {
+        "inputTokens": 282668,
+        "outputTokens": 6150
+      },
+      "trace": {
+        "replayCalls": 48,
+        "unexpectedToolCalls": 4
+      }
+    },
+    {
+      "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/controllers/admin/groups_controller.rb",
+          "startLine": 84,
+          "endLine": 90,
+          "severity": "high",
+          "category": "bug",
+          "description": "Pass a User record rather than a raw ID to the group association deletion API. — WHAT: remove_member passes the integer user_id directly to the has_many-through association's delete method. WHY: ActiveRecord association deletion expects a User record here, so removing a member can raise or leave the membership unchanged and prevent the success response. HOW: load the user and delete that record (or call the model's existing remove(User.find(user_id)) helper) before saving."
+        },
+        {
+          "path": "app/assets/javascripts/admin/controllers/admin-group.js.es6",
+          "startLine": 11,
+          "endLine": 14,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Avoid exposing an extra empty page when membership count is an exact multiple of the page size. — WHAT: totalPages adds one after flooring user_count/limit even when user_count is exactly divisible by limit. WHY: a group with 100 members and a 50-member page size is displayed as 3 pages; navigating from page 2 requests offset 100 and shows an empty page instead of disabling next. HOW: calculate the ceiling page count, for example Math.ceil(user_count / limit), while retaining the zero-member special case."
+        },
+        {
+          "path": "app/assets/javascripts/admin/controllers/admin-group.js.es6",
+          "startLine": 11,
+          "endLine": 14,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Exact page-size groups incorrectly expose an empty extra page. — WHAT: totalPages adds one after flooring user_count/limit even when user_count is exactly divisible by limit. WHY: a group with exactly one full page (for example, 50 members with limit 50) is shown as having a second page, so Next issues an offset equal to the member count and displays an empty page. HOW: use Math.ceil(this.get(\"user_count\") / this.get(\"limit\")) (with the existing zero-member guard)."
+        },
+        {
+          "path": "app/controllers/admin/groups_controller.rb",
+          "startLine": 84,
+          "endLine": 90,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Member removal uses an integer where the association expects a user record. — WHAT: remove_member passes the integer user_id directly to the has-many-through association's delete method. WHY: the association delete contract expects a User record, so deleting by this raw integer can fail or fail to remove the intended membership instead of returning a successful removal. HOW: resolve the user first and pass the User instance to the association, or use the association's supported delete-by-id relation operation."
+        }
+      ],
+      "usage": {
+        "inputTokens": 277366,
+        "outputTokens": 7709
+      },
+      "trace": {
+        "replayCalls": 51,
+        "unexpectedToolCalls": 10
+      }
+    },
+    {
+      "caseId": "fixing-re-authentication-with-passkeys-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 207366,
+        "outputTokens": 3659
+      },
+      "trace": {
+        "replayCalls": 36,
+        "unexpectedToolCalls": 6
+      }
+    },
+    {
+      "caseId": "frontend-asset-optimization-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/api/webassets/webassets.go",
+          "startLine": 48,
+          "endLine": 52,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Recheck the cache after locking to prevent serialized duplicate asset loads. — WHAT: GetWebAssets acquires the exclusive cache lock without rechecking entryPointAssetsCache after waiting for it. WHY: when multiple non-development requests arrive with an empty cache, every waiter rebuilds and rereads assets sequentially instead of returning the result produced by the first request, causing repeated manifest I/O/CDN work and defeating the cache during initialization. HOW: after acquiring the lock, recheck cfg.Env != setting.Dev && entryPointAssetsCache != nil and return the cached value before loading assets."
+        }
+      ],
+      "usage": {
+        "inputTokens": 68329,
+        "outputTokens": 2254
+      },
+      "trace": {
+        "replayCalls": 9,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "github-oauth-security-enhancement-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/integrations/github/integration.py",
+          "startLine": 423,
+          "endLine": 434,
+          "severity": "medium",
+          "category": "bug",
+          "description": "OAuth provider failures escape the new installation pipeline instead of rendering its failure response. — WHAT: the new OAuth callback performs `safe_urlopen` and `get_user_info` without catching their exceptions. WHY: GitHub token/user-info network failures or an OAuth denial can raise out of the pipeline and produce an unhandled 500 instead of the intended installation-failed response. HOW: wrap the token exchange and user-info lookup in the same failure handling path and return `error(request, self.active_organization)` for exceptions or missing/invalid responses."
+        }
+      ],
+      "usage": {
+        "inputTokens": 212282,
+        "outputTokens": 5334
+      },
+      "trace": {
+        "replayCalls": 38,
+        "unexpectedToolCalls": 14
+      }
+    },
+    {
+      "caseId": "implement-access-token-context-encoding-framework-keycloak",
+      "findings": [
+        {
+          "path": "services/src/main/java/org/keycloak/protocol/oidc/encode/AccessTokenContext.java",
+          "startLine": 69,
+          "endLine": 77,
+          "severity": "low",
+          "category": "bug",
+          "description": "rawTokenId is not null-checked because the constructor repeats the grantType check. — WHAT: the constructor validates grantType twice and never validates rawTokenId. WHY: callers can create a context with a null raw token ID, after which encodeTokenId concatenates it as the string \"null\" and produces an ID that no longer represents the supplied raw token ID. HOW: change the second requireNonNull call to validate rawTokenId."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/protocol/oidc/encode/DefaultTokenContextEncoderProvider.java",
+          "startLine": 57,
+          "endLine": 60,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Grant type is captured but not propagated, causing most newly issued access tokens to carry `na`. — WHAT: token context encoding reads the grant type from ClientSessionContext, but normal grant processing never populates that attribute. WHY: access tokens issued through authorization-code, client-credentials, device and other non-refresh flows are encoded with the fallback `na` instead of their actual grant type, so consumers cannot use the advertised grant-type context. HOW: propagate the grant type captured by `OAuth2GrantType.Context` into the ClientSessionContext before token creation, or otherwise set `Constants.GRANT_TYPE` on every issuance path."
+        }
+      ],
+      "usage": {
+        "inputTokens": 286904,
+        "outputTokens": 6470
+      },
+      "trace": {
+        "replayCalls": 43,
+        "unexpectedToolCalls": 8
+      }
+    },
+    {
+      "caseId": "notification-rule-processing-engine-grafana-codex",
+      "findings": [
+        {
+          "path": "public/app/features/alerting/unified/components/rule-viewer/AlertRuleMenu.tsx",
+          "startLine": 90,
+          "endLine": 105,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Grafana-only list rules advertise abilities that the ruler-only menu rendering and handlers cannot execute. — WHAT: the new Grafana-rule ability result is used to set canPause/canDelete/canSilence, but the menu still gates pause and delete on rulerRule and the silence flow still depends on a ruler rule. WHY: GrafanaRuleListItem supplies only promRule, so users can have the corresponding Grafana permissions while Pause/Delete are missing and Silence appears without opening a drawer or performing an action. HOW: branch the action rendering and handlers on the Grafana Prometheus rule as well, using the Grafana pause/delete/silence operations and identifier when rulerRule is absent, or do not advertise those Grafana abilities in this component."
+        },
+        {
+          "path": "public/app/features/alerting/unified/rule-list/components/RuleActionsButtons.V2.tsx",
+          "startLine": 173,
+          "endLine": 175,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Silence is advertised for Grafana list rules but clicking it cannot open the drawer. — WHAT: the Grafana list path can show a Silence menu item but never renders the drawer that the click handler opens. WHY: with only `promRule` supplied, `rule` is undefined, so `rulerRuleType.grafana.alertingRule(rule)` is false; clicking Silence only sets `showSilenceDrawer` and leaves the user with no silence UI. HOW: render `SilenceGrafanaRuleDrawer` from the Grafana Prom rule path, passing the corresponding Grafana rule representation, or gate the menu's silence ability/item until a supported drawer path exists."
+        }
+      ],
+      "usage": {
+        "inputTokens": 415008,
+        "outputTokens": 7817
+      },
+      "trace": {
+        "replayCalls": 44,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
+      "findings": [
+        {
+          "path": "packages/app-store/salesforce/lib/CalendarService.ts",
+          "startLine": 96,
+          "endLine": 107,
+          "severity": "high",
+          "category": "bug",
+          "description": "Salesforce refresh persists a new token but connects with the stale token. — WHAT: the refreshed Salesforce token is written to the credential but the newly created jsforce connection still receives credentialKey.access_token and credentialKey.instance_url instead of the refreshed response values. WHY: after this new refresh flow runs, Salesforce API calls use the expired access token and fail even though the database contains a valid replacement token. HOW: construct the connection with accessToken: accessTokenParsed.data.access_token and instanceUrl: accessTokenParsed.data.instance_url (while retaining the old refresh token when Salesforce omits one)."
+        },
+        {
+          "path": "apps/web/pages/api/webhook/app-credential.ts",
+          "startLine": 61,
+          "endLine": 83,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Credential webhook synchronization has a check-then-create race that can duplicate credentials. — WHAT: the webhook checks for an existing credential and then performs a separate create when none is found, without an atomic uniqueness guarantee or transaction. WHY: concurrent credential-sync deliveries for the same user and app can both observe no row and create duplicate credentials, leaving nondeterministic credentials for later findFirst-based consumers. HOW: enforce a unique constraint on the user/app pair and use an atomic upsert (or serialize the operation in a transaction); the current schema has only separate indexes, not this uniqueness constraint."
+        },
+        {
+          "path": "apps/web/pages/api/webhook/app-credential.ts",
+          "startLine": 24,
+          "endLine": 28,
+          "severity": "high",
+          "category": "bug",
+          "description": "Unset webhook secret disables authentication on the new credential-sync endpoint. — WHAT: the webhook authentication check treats an unset CALCOM_WEBHOOK_SECRET as a valid secret because it compares two undefined values. WHY: with credential sharing enabled and the secret omitted, any caller can send a request without the header and create or overwrite users' stored third-party credentials. HOW: reject configuration with a 403/500 whenever the configured secret or header value is missing before comparing them."
+        },
+        {
+          "path": "packages/app-store/salesforce/lib/CalendarService.ts",
+          "startLine": 96,
+          "endLine": 108,
+          "severity": "high",
+          "category": "bug",
+          "description": "Salesforce refresh succeeds in storage but the active connection uses the expired token. — WHAT: the refreshed Salesforce access token is persisted but the returned jsforce connection is still initialized with the old credentialKey.access_token. WHY: the first API operation using this connection continues with the expired token and fails even though refresh succeeded. HOW: initialize the connection with accessTokenParsed.data.access_token (and the refreshed token response fields) instead of credentialKey."
+        },
+        {
+          "path": "apps/web/pages/api/webhook/app-credential.ts",
+          "startLine": 62,
+          "endLine": 83,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Credential synchronization has a check-then-insert race under concurrent webhook requests. — WHAT: the handler performs a separate findFirst and create when no credential exists. WHY: concurrent sync requests for the same user and app can both observe no row and race into duplicate credential inserts or an unhandled unique-constraint error, making credential synchronization nondeterministic. HOW: use a transaction with an atomic upsert keyed by a unique userId/appId constraint, or catch the unique-conflict and update/retry."
+        }
+      ],
+      "usage": {
+        "inputTokens": 272511,
+        "outputTokens": 8479
+      },
+      "trace": {
+        "replayCalls": 50,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/assets/stylesheets/common/base/topic-post.scss",
+          "startLine": 264,
+          "endLine": 265,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Flexifying `.small-action` disables the button's existing float-based right alignment. — WHAT: `.small-action` is changed to a flex container while its button still uses `float: right` for positioning. WHY: floats are ignored on flex items, so the action button is laid out as a normal flex item after the description instead of remaining right-aligned as before. HOW: give the button an appropriate flex rule such as `margin-left: auto` (and remove the ineffective float) or otherwise explicitly position it within the flex layout."
+        }
+      ],
+      "usage": {
+        "inputTokens": 144832,
+        "outputTokens": 4064
+      },
+      "trace": {
+        "replayCalls": 30,
+        "unexpectedToolCalls": 5
+      }
+    },
+    {
+      "caseId": "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/services/pluginsintegration/clientmiddleware/contextual_logger_middleware.go",
+          "startLine": 39,
+          "endLine": 41,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Contextual logging panics on nil plugin requests instead of forwarding them. — WHAT: the contextual logger middleware dereferences req.PluginContext without a nil-request guard in each of its four instrumented methods. WHY: calls such as QueryData(ctx, nil) now panic before reaching the wrapped client, whereas LoggerMiddleware explicitly forwards nil requests and the middleware contract permits that path. HOW: return the wrapped client directly when req is nil, matching LoggerMiddleware, before calling instrumentContext."
+        },
+        {
+          "path": "pkg/services/pluginsintegration/clientmiddleware/logger_middleware.go",
+          "startLine": 49,
+          "endLine": 58,
+          "severity": "medium",
+          "category": "bug",
+          "description": "LoggerMiddleware silently loses request metadata unless a separate middleware is wired before it. — WHAT: LoggerMiddleware now logs only context-derived fields, removing the previous direct plugin and request metadata enrichment. WHY: when NewLoggerMiddleware is used without the separately-installed ContextualLoggerMiddleware, completed request logs lose pluginId, endpoint, datasource, user, and trace context even though the old middleware always emitted them. HOW: either keep adding these fields in logRequest from the request context passed by each method, or guarantee and enforce that ContextualLoggerMiddleware is composed before LoggerMiddleware at every construction site."
+        }
+      ],
+      "usage": {
+        "inputTokens": 306500,
+        "outputTokens": 6492
+      },
+      "trace": {
+        "replayCalls": 39,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "replays-self-serve-bulk-delete-system-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/issues/endpoints/browser_reporting_collector.py",
+          "startLine": 47,
+          "endLine": 59,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Browser reports with missing or zero-valued age/timestamp fields bypass the intended schema validation. — WHAT: the new report serializer does not enforce that exactly one of age or timestamp is supplied, and its mutual-exclusion checks treat zero as absent because they use truthiness. WHY: reports violating the browser-report schema (neither field, or both fields when age=0 or timestamp=0) pass validation and are counted as valid. HOW: add an object-level validation requiring exactly one key, or use explicit key/presence checks such as `\"age\" in self.initial_data` and `\"timestamp\" in self.initial_data` instead of `.get(...)`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 134697,
+        "outputTokens": 4868
+      },
+      "trace": {
+        "replayCalls": 33,
+        "unexpectedToolCalls": 12
+      }
+    },
+    {
+      "caseId": "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry",
+      "findings": [],
+      "usage": {
+        "inputTokens": 108314,
+        "outputTokens": 2419
+      },
+      "trace": {
+        "replayCalls": 21,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "sms-workflow-reminder-retry-count-tracking-cal-com",
+      "findings": [
+        {
+          "path": "packages/features/ee/workflows/api/scheduleSMSReminders.ts",
+          "startLine": 31,
+          "endLine": 43,
+          "severity": "high",
+          "category": "bug",
+          "description": "SMS cleanup now removes non-SMS workflow reminders. — WHAT: the new deleteMany predicate deletes every WorkflowReminder whose retryCount is greater than 1, and the overdue-date branch also no longer restricts rows to method SMS. WHY: the SMS cron job can delete overdue email/WhatsApp/other workflow reminders and any non-SMS reminder that happens to have retryCount > 1, whereas the previous behavior removed only overdue SMS reminders. HOW: keep the SMS method condition on every deletion branch, for example use an AND around method: WorkflowMethods.SMS with an OR for overdue date or retryCount > 1."
+        },
+        {
+          "path": "packages/features/ee/workflows/api/scheduleSMSReminders.ts",
+          "startLine": 184,
+          "endLine": 185,
+          "severity": "high",
+          "category": "bug",
+          "description": "Concurrent cron runs can duplicate SMS scheduling and lose retry increments. — WHAT: retryCount is updated with the value captured by findMany rather than atomically incremented, while concurrent cron requests can process the same unscheduled reminder. WHY: two invocations can both schedule the same SMS (duplicate delivery), and concurrent failures can both write the same next count so the reminder is retried indefinitely beyond the intended limit. HOW: use an atomic database increment (for example, `retryCount: { increment: 1 }`) and guard/claim the reminder before calling Twilio so only one scheduler processes it."
+        }
+      ],
+      "usage": {
+        "inputTokens": 166306,
+        "outputTokens": 4682
+      },
+      "trace": {
+        "replayCalls": 29,
+        "unexpectedToolCalls": 4
+      }
+    },
+    {
+      "caseId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/spans/consumers/process/flusher.py",
+          "startLine": 44,
+          "endLine": 66,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Negative `--flusher-processes` values crash SpanFlusher during shard assignment. — WHAT: `max_processes` is not validated before it is used to construct the shard-process map. WHY: the exposed `--flusher-processes` option accepts `-1`, which makes `num_processes` negative and causes the subsequent distribution loop to access missing key `0` and crash consumer startup; `0` is also unexpectedly treated as the default because of `max_processes or ...`. HOW: reject values below 1 at the CLI/config boundary (or raise a clear `ValueError` in `SpanFlusher`) before computing `num_processes`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 413043,
+        "outputTokens": 7011
+      },
+      "trace": {
+        "replayCalls": 30,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "unified-storage-performance-optimizations-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/storage/unified/search/bleve.go",
+          "startLine": 85,
+          "endLine": 90,
+          "severity": "high",
+          "category": "bug",
+          "description": "Per-key index construction must remain serialized after removing the global BuildIndex lock. — WHAT: BuildIndex no longer serializes concurrent builds for the same cache key before creating and publishing the index. WHY: concurrent getOrCreateIndex callers can both miss the cache, call bleve.New on the same file directory, and race to replace b.cache[key], producing build errors or an index/cache state that does not correspond to the latest build. HOW: keep a per-key build lock (or atomically singleflight construction) while allowing different keys to build concurrently."
+        },
+        {
+          "path": "pkg/storage/unified/resource/search.go",
+          "startLine": 213,
+          "endLine": 219,
+          "severity": "high",
+          "category": "bug",
+          "description": "The newly added TotalDocs call races with watch-triggered cache writes. — WHAT: the new initialization log calls TotalDocs immediately after starting the watch goroutine, while event handling can concurrently build indexes. WHY: bleveBackend.TotalDocs iterates b.cache without cacheMu while BuildIndex writes b.cache under cacheMu, so a watch event arriving during this window can cause a fatal concurrent map iteration and map write panic. HOW: protect the cache iteration in TotalDocs with cacheMu.RLock/RUnlock, and avoid starting event processing before this accounting is complete if required."
+        }
+      ],
+      "usage": {
+        "inputTokens": 526344,
+        "outputTokens": 5828
+      },
+      "trace": {
+        "replayCalls": 44,
+        "unexpectedToolCalls": 0
+      }
+    }
+  ]
+}
