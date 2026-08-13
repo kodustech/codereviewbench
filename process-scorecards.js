@@ -153,9 +153,22 @@ const allSamples = [];
 const scorecardCases = new Map(); // entryKey -> cases[] (insumo do bootstrap)
 let sampleId = 0;
 
+// Modelos medidos mas ainda NAO publicados. Ficam de fora do site sem sair do
+// repo — o scorecard continua versionado, entao republicar e so tirar daqui.
+// gpt-5.6-luna/terra: rodaram por assinatura, sem custo por token, entao nao
+// entram na fronteira custo x qualidade e a comparacao com os demais mistura
+// dois regimes de cota. Voltam quando rodarem por API.
+const NAO_PUBLICADOS = (args.include === 'todos'
+    ? []
+    : ['gpt-5.6-luna', 'gpt-5.6-terra']);
+
 for (const { data: sc } of scorecards) {
     const run = sc.run || {};
     const key = entryKeyOf(run);
+    if (NAO_PUBLICADOS.includes(run?.model?.id)) {
+        console.log(`   (fora do site: ${run.model.id} — use --include=todos para incluir)`);
+        continue;
+    }
     const scored = (sc.cases || []).filter((c) => c.status === 'scored');
     if (!scored.length) continue;
     scorecardCases.set(key, scored);

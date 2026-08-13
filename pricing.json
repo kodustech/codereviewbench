@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "collectedAt": "2026-08-04",
+    "collectedAt": "2026-08-12",
     "currency": "USD",
     "unit": "per 1M tokens",
     "source": "docs/pricing-benchmark-models.md (páginas oficiais dos fornecedores, com links e datas)",
@@ -73,7 +73,7 @@
       "output": 6,
       "cacheRead": null,
       "provider": "xai",
-      "note": "DOBRA acima de 200k tokens de prompt"
+      "note": "DOBRA para $4/$12 acima de 200k tokens de prompt POR REQUISICAO — o custo calculado aqui usa a faixa base e pode subestimar"
     },
     "qwen3.8-max": {
       "input": 2,
@@ -117,6 +117,13 @@
       "output": 4.25,
       "cacheRead": 0.15,
       "provider": "meta"
+    },
+    "grok-4.6": {
+      "input": 2,
+      "output": 6,
+      "cacheRead": null,
+      "provider": "xai",
+      "note": "DOBRA para $4/$12 acima de 200k tokens de prompt POR REQUISICAO — o custo calculado aqui usa a faixa base e pode subestimar"
     }
   }
 }
