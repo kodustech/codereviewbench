@@ -18,21 +18,23 @@
     },
     "runAt": "2026-08-12T18:57:42.291Z"
   },
-  "scoredAt": "2026-08-12T18:59:45.050Z",
+  "scoredAt": "2026-08-13T23:13:33.901Z",
   "judge": {
     "model": "claude-haiku-4-5"
   },
   "aggregate": {
     "cases": 30,
     "casesScored": 30,
-    "recallMicro": 0.43157894736842106,
-    "recallMacro": 0.4377777777777778,
-    "precisionMacro": 0.4583333333333333,
-    "f1Macro": 0.42377104377104374,
-    "fairRecallMacro": 0.4377777777777778,
+    "recallMicro": 0.4421052631578947,
+    "recallMacro": 0.4500000000000001,
+    "precisionMicro": 0.43564356435643564,
+    "precisionMacro": 0.485632183908046,
+    "f1Micro": 0.43885062930420327,
+    "f1Macro": 0.5993342516069788,
+    "fairRecallMacro": 0.4500000000000001,
     "loopFidelityMacro": 0.8297041999096688,
     "goldensTotal": 95,
-    "goldensMatched": 41,
+    "goldensMatched": 42,
     "usage": {
       "inputTokens": 17302878,
       "outputTokens": 1679590
@@ -45,7 +47,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.967741935483871,
         "totalCalls": 62,
@@ -161,7 +163,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.6046511627906976,
         "totalCalls": 43,
@@ -208,8 +210,8 @@
       "status": "scored",
       "metrics": {
         "recall": 0.6,
-        "precision": 1,
-        "f1": 0.7499999999999999,
+        "precision": 0.75,
+        "f1": 0.6666666666666665,
         "fairRecall": 0.6,
         "hitRate": 0.8461538461538461,
         "totalCalls": 52,
@@ -217,8 +219,8 @@
         "matched": 3,
         "goldens": 5,
         "findings": 4,
-        "tpFindings": 4,
-        "fpFindings": 0,
+        "tpFindings": 3,
+        "fpFindings": 1,
         "realMiss": 2,
         "artifact": 0,
         "untestable": 0,
@@ -248,8 +250,8 @@
       "status": "scored",
       "metrics": {
         "recall": 1,
-        "precision": 0.5,
-        "f1": 0.6666666666666666,
+        "precision": 0.6666666666666666,
+        "f1": 0.8,
         "fairRecall": 1,
         "hitRate": 0.9411764705882353,
         "totalCalls": 51,
@@ -257,8 +259,8 @@
         "matched": 3,
         "goldens": 3,
         "findings": 6,
-        "tpFindings": 3,
-        "fpFindings": 3,
+        "tpFindings": 4,
+        "fpFindings": 2,
         "realMiss": 0,
         "artifact": 0,
         "untestable": 0,
@@ -280,7 +282,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.6962025316455697,
         "totalCalls": 79,
@@ -336,7 +338,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.7666666666666667,
         "totalCalls": 60,
@@ -384,7 +386,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8918918918918919,
         "totalCalls": 37,
@@ -607,8 +609,8 @@
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8333333333333334,
         "totalCalls": 36,
@@ -692,7 +694,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8918918918918919,
         "totalCalls": 37,
@@ -736,7 +738,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.7808219178082192,
         "totalCalls": 73,
@@ -806,8 +808,8 @@
       "status": "scored",
       "metrics": {
         "recall": 0.6666666666666666,
-        "precision": 0.3333333333333333,
-        "f1": 0.4444444444444444,
+        "precision": 0.6666666666666666,
+        "f1": 0.6666666666666666,
         "fairRecall": 0.6666666666666666,
         "hitRate": 0.6538461538461539,
         "totalCalls": 52,
@@ -815,8 +817,8 @@
         "matched": 2,
         "goldens": 3,
         "findings": 3,
-        "tpFindings": 1,
-        "fpFindings": 2,
+        "tpFindings": 2,
+        "fpFindings": 1,
         "realMiss": 1,
         "artifact": 0,
         "untestable": 0,
@@ -921,28 +923,24 @@
       "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
       "status": "scored",
       "metrics": {
-        "recall": 0.6,
+        "recall": 0.8,
         "precision": 0.6,
-        "f1": 0.6,
-        "fairRecall": 0.6,
+        "f1": 0.6857142857142857,
+        "fairRecall": 0.8,
         "hitRate": 0.9824561403508771,
         "totalCalls": 57,
         "unserved": 1,
-        "matched": 3,
+        "matched": 4,
         "goldens": 5,
         "findings": 5,
         "tpFindings": 3,
         "fpFindings": 2,
-        "realMiss": 2,
+        "realMiss": 1,
         "artifact": 0,
         "untestable": 0,
         "missedGoldens": [
           {
             "text": "parseRefreshTokenResponse returns a Zod safeParse result ({ success, data, error }), not the credential key object. Persisting that as key stores the wrapper instead of the token payload; we should st",
-            "classification": "real-miss"
-          },
-          {
-            "text": "When APP_CREDENTIAL_SHARING_ENABLED and CALCOM_CREDENTIAL_SYNC_ENDPOINT are set, the refreshFunction helper returns the fetch Response, but several callers (for example GoogleCalendarService.refreshAc",
             "classification": "real-miss"
           }
         ]
@@ -961,26 +959,22 @@
       "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
       "status": "scored",
       "metrics": {
-        "recall": 0,
-        "precision": 0,
-        "f1": 0,
-        "fairRecall": 0,
+        "recall": 0.5,
+        "precision": 0.3333333333333333,
+        "f1": 0.4,
+        "fairRecall": 0.5,
         "hitRate": 0.9411764705882353,
         "totalCalls": 34,
         "unserved": 2,
-        "matched": 0,
+        "matched": 1,
         "goldens": 2,
         "findings": 3,
-        "tpFindings": 0,
-        "fpFindings": 3,
-        "realMiss": 1,
+        "tpFindings": 1,
+        "fpFindings": 2,
+        "realMiss": 0,
         "artifact": 0,
         "untestable": 1,
         "missedGoldens": [
-          {
-            "text": "Mixing float: left with flexbox causes layout issues. Further this PR removes the float-based right alignment for .d-header .panel, which may cause the login panel in the non-Ember/noscript header (wh",
-            "classification": "real-miss"
-          },
           {
             "text": "-ms-align-items never existed in any version of IE/Edge; the correct legacy property is -ms-flex-align.",
             "classification": "untestable"
@@ -1037,22 +1031,26 @@
       "caseId": "replays-self-serve-bulk-delete-system-sentry",
       "status": "scored",
       "metrics": {
-        "recall": 0.6666666666666666,
-        "precision": 0.5,
-        "f1": 0.5714285714285715,
-        "fairRecall": 0.6666666666666666,
+        "recall": 0.3333333333333333,
+        "precision": 0.25,
+        "f1": 0.28571428571428575,
+        "fairRecall": 0.3333333333333333,
         "hitRate": 0.46938775510204084,
         "totalCalls": 49,
         "unserved": 26,
-        "matched": 2,
+        "matched": 1,
         "goldens": 3,
         "findings": 4,
-        "tpFindings": 2,
-        "fpFindings": 2,
+        "tpFindings": 1,
+        "fpFindings": 3,
         "realMiss": 1,
         "artifact": 0,
-        "untestable": 0,
+        "untestable": 1,
         "missedGoldens": [
+          {
+            "text": "Breaking changes in error response format",
+            "classification": "untestable"
+          },
           {
             "text": "Using zip(error_ids, events.values()) assumes the get_multi result preserves the input order; dict value order is not guaranteed to match error_ids, so event data can be paired with the wrong ID (miss",
             "classification": "real-miss"

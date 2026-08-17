@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "collectedAt": "2026-08-12",
+    "collectedAt": "2026-08-13",
     "currency": "USD",
     "unit": "per 1M tokens",
     "source": "docs/pricing-benchmark-models.md (páginas oficiais dos fornecedores, com links e datas)",
@@ -124,6 +124,20 @@
       "cacheRead": null,
       "provider": "xai",
       "note": "DOBRA para $4/$12 acima de 200k tokens de prompt POR REQUISICAO — o custo calculado aqui usa a faixa base e pode subestimar"
+    },
+    "gemini-3.7-flash": {
+      "input": 0.75,
+      "output": 3.75,
+      "cacheRead": null,
+      "provider": "google",
+      "note": "preco promocional de lancamento (metade do cheio), expira 2026-12-31"
+    },
+    "qwen3.8-27b": {
+      "input": 0.45,
+      "output": 3.2,
+      "cacheRead": 0.05,
+      "provider": "alibaba",
+      "note": "rodado via Akash Chat API (gateway), nao API direta da Alibaba — preco do catalogo Akash, pode divergir do preco oficial do fornecedor"
     }
   }
 }

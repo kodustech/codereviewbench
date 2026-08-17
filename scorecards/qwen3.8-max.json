@@ -18,21 +18,23 @@
     },
     "runAt": "2026-08-06T20:57:10.581Z"
   },
-  "scoredAt": "2026-08-07T00:25:22.639Z",
+  "scoredAt": "2026-08-13T23:26:58.719Z",
   "judge": {
     "model": "claude-haiku-4-5"
   },
   "aggregate": {
     "cases": 30,
     "casesScored": 30,
-    "recallMicro": 0.43157894736842106,
-    "recallMacro": 0.43666666666666665,
-    "precisionMacro": 0.5043650793650793,
-    "f1Macro": 0.432053582488365,
-    "fairRecallMacro": 0.43666666666666665,
+    "recallMicro": 0.4105263157894737,
+    "recallMacro": 0.4072222222222222,
+    "precisionMicro": 0.4392523364485981,
+    "precisionMacro": 0.47048440065681446,
+    "f1Micro": 0.4244037971752721,
+    "f1Macro": 0.5658098237045605,
+    "fairRecallMacro": 0.4072222222222222,
     "loopFidelityMacro": 0.8006008176562162,
     "goldensTotal": 95,
-    "goldensMatched": 41,
+    "goldensMatched": 39,
     "usage": {
       "inputTokens": 14600182,
       "outputTokens": 1177820
@@ -45,7 +47,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.9454545454545454,
         "totalCalls": 55,
@@ -85,7 +87,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.86,
         "totalCalls": 50,
@@ -169,7 +171,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.59375,
         "totalCalls": 32,
@@ -215,26 +217,22 @@
       "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
       "status": "scored",
       "metrics": {
-        "recall": 0.4,
+        "recall": 0.6,
         "precision": 0.6666666666666666,
-        "f1": 0.5,
-        "fairRecall": 0.4,
+        "f1": 0.631578947368421,
+        "fairRecall": 0.6,
         "hitRate": 0.9512195121951219,
         "totalCalls": 41,
         "unserved": 2,
-        "matched": 2,
+        "matched": 3,
         "goldens": 5,
         "findings": 3,
         "tpFindings": 2,
         "fpFindings": 1,
-        "realMiss": 3,
+        "realMiss": 2,
         "artifact": 0,
         "untestable": 0,
         "missedGoldens": [
-          {
-            "text": "Anonymous authentication now fails entirely if anonDeviceService.TagDevice returns ErrDeviceLimitReached. Previously, device tagging was asynchronous and non-blocking. This change prevents anonymous u",
-            "classification": "real-miss"
-          },
           {
             "text": "This call won’t compile: dbSession.Exec(args...) is given a []interface{} where the first element is the query, but Exec’s signature requires a first parameter of type string (not an interface{} splat",
             "classification": "real-miss"
@@ -260,8 +258,8 @@
       "status": "scored",
       "metrics": {
         "recall": 1,
-        "precision": 0.6428571428571429,
-        "f1": 0.782608695652174,
+        "precision": 0.7142857142857143,
+        "f1": 0.8333333333333333,
         "fairRecall": 1,
         "hitRate": 0.84375,
         "totalCalls": 64,
@@ -269,8 +267,8 @@
         "matched": 3,
         "goldens": 3,
         "findings": 14,
-        "tpFindings": 9,
-        "fpFindings": 5,
+        "tpFindings": 10,
+        "fpFindings": 4,
         "realMiss": 0,
         "artifact": 0,
         "untestable": 0,
@@ -292,7 +290,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.7291666666666666,
         "totalCalls": 48,
@@ -392,7 +390,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8095238095238095,
         "totalCalls": 42,
@@ -430,19 +428,19 @@
       "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
       "status": "scored",
       "metrics": {
-        "recall": 0.5,
-        "precision": 0.375,
-        "f1": 0.42857142857142855,
-        "fairRecall": 0.5,
+        "recall": 0.25,
+        "precision": 0.25,
+        "f1": 0.25,
+        "fairRecall": 0.25,
         "hitRate": 0.9210526315789473,
         "totalCalls": 76,
         "unserved": 6,
-        "matched": 2,
+        "matched": 1,
         "goldens": 4,
         "findings": 8,
-        "tpFindings": 3,
-        "fpFindings": 5,
-        "realMiss": 2,
+        "tpFindings": 2,
+        "fpFindings": 6,
+        "realMiss": 3,
         "artifact": 0,
         "untestable": 0,
         "missedGoldens": [
@@ -452,6 +450,10 @@
           },
           {
             "text": "Method name says 'empty_array' but tests empty dict - consider renaming to 'test_from_dict_empty_dict' for clarity.",
+            "classification": "real-miss"
+          },
+          {
+            "text": "to_dict() returns a datetime for queued; if this dict is passed in task kwargs (e.g., via apply_async), JSON serialization may fail depending on the serializer, which can cause enqueue errors.",
             "classification": "real-miss"
           }
         ]
@@ -471,8 +473,8 @@
       "status": "scored",
       "metrics": {
         "recall": 1,
-        "precision": 0.6,
-        "f1": 0.7499999999999999,
+        "precision": 0.5,
+        "f1": 0.6666666666666666,
         "fairRecall": 1,
         "hitRate": 0.6666666666666666,
         "totalCalls": 60,
@@ -480,8 +482,8 @@
         "matched": 4,
         "goldens": 4,
         "findings": 10,
-        "tpFindings": 6,
-        "fpFindings": 4,
+        "tpFindings": 5,
+        "fpFindings": 5,
         "realMiss": 0,
         "artifact": 0,
         "untestable": 0,
@@ -579,7 +581,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.75,
         "totalCalls": 36,
@@ -694,8 +696,8 @@
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.75,
         "totalCalls": 20,
@@ -938,7 +940,7 @@
         "untestable": 0,
         "missedGoldens": [
           {
-            "text": "When APP_CREDENTIAL_SHARING_ENABLED and CALCOM_CREDENTIAL_SYNC_ENDPOINT are set, the refreshFunction helper returns the fetch Response, but several callers (for example GoogleCalendarService.refreshAc",
+            "text": "When the sync endpoint path is used, res is a fetch Response and has no .data; res?.data will be undefined and token.access_token will throw at runtime. This relies on a consistent return shape from r",
             "classification": "real-miss"
           }
         ]
@@ -957,22 +959,26 @@
       "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
       "status": "scored",
       "metrics": {
-        "recall": 0.5,
-        "precision": 1,
-        "f1": 0.6666666666666666,
-        "fairRecall": 0.5,
+        "recall": 0,
+        "precision": 0,
+        "f1": null,
+        "fairRecall": 0,
         "hitRate": 0.92,
         "totalCalls": 25,
         "unserved": 2,
-        "matched": 1,
+        "matched": 0,
         "goldens": 2,
         "findings": 1,
-        "tpFindings": 1,
-        "fpFindings": 0,
-        "realMiss": 0,
+        "tpFindings": 0,
+        "fpFindings": 1,
+        "realMiss": 1,
         "artifact": 0,
         "untestable": 1,
         "missedGoldens": [
+          {
+            "text": "Mixing float: left with flexbox causes layout issues. Further this PR removes the float-based right alignment for .d-header .panel, which may cause the login panel in the non-Ember/noscript header (wh",
+            "classification": "real-miss"
+          },
           {
             "text": "-ms-align-items never existed in any version of IE/Edge; the correct legacy property is -ms-flex-align.",
             "classification": "untestable"
@@ -1029,22 +1035,26 @@
       "caseId": "replays-self-serve-bulk-delete-system-sentry",
       "status": "scored",
       "metrics": {
-        "recall": 0.3333333333333333,
-        "precision": 0.3333333333333333,
-        "f1": 0.3333333333333333,
-        "fairRecall": 0.3333333333333333,
+        "recall": 0,
+        "precision": 0,
+        "f1": null,
+        "fairRecall": 0,
         "hitRate": 0.4166666666666667,
         "totalCalls": 24,
         "unserved": 14,
-        "matched": 1,
+        "matched": 0,
         "goldens": 3,
         "findings": 3,
-        "tpFindings": 1,
-        "fpFindings": 2,
+        "tpFindings": 0,
+        "fpFindings": 3,
         "realMiss": 1,
         "artifact": 0,
-        "untestable": 1,
+        "untestable": 2,
         "missedGoldens": [
+          {
+            "text": "Breaking changes in error response format",
+            "classification": "untestable"
+          },
           {
             "text": "Detector validator uses wrong key when updating type",
             "classification": "untestable"

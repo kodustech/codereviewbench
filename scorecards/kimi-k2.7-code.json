@@ -17,7 +17,7 @@
     },
     "runAt": "2026-08-04T22:02:19.313Z"
   },
-  "scoredAt": "2026-08-04T22:06:47.747Z",
+  "scoredAt": "2026-08-13T23:19:14.659Z",
   "judge": {
     "model": "claude-haiku-4-5"
   },
@@ -25,10 +25,12 @@
     "cases": 30,
     "casesScored": 30,
     "recallMicro": 0.37894736842105264,
-    "recallMacro": 0.38055555555555554,
-    "precisionMacro": 0.4663924963924965,
-    "f1Macro": 0.38331323904853304,
-    "fairRecallMacro": 0.3827777777777778,
+    "recallMacro": 0.3988888888888889,
+    "precisionMicro": 0.5,
+    "precisionMacro": 0.5247062461348176,
+    "f1Micro": 0.43113772455089816,
+    "f1Macro": 0.5279282647569091,
+    "fairRecallMacro": 0.4,
     "loopFidelityMacro": 0.8678003535694373,
     "goldensTotal": 95,
     "goldensMatched": 36,
@@ -44,7 +46,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 1,
         "totalCalls": 25,
@@ -75,7 +77,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
@@ -110,7 +114,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
@@ -149,7 +155,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
@@ -157,7 +165,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.7894736842105263,
         "totalCalls": 38,
@@ -196,7 +204,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
@@ -239,7 +249,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "dual-storage-architecture-grafana-codex",
@@ -269,25 +281,27 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
       "status": "scored",
       "metrics": {
-        "recall": 0.3333333333333333,
-        "precision": 0.2857142857142857,
-        "f1": 0.30769230769230765,
-        "fairRecall": 0.4,
+        "recall": 0.16666666666666666,
+        "precision": 0.14285714285714285,
+        "f1": 0.15384615384615383,
+        "fairRecall": 0.2,
         "hitRate": 0.7636363636363637,
         "totalCalls": 55,
         "unserved": 13,
-        "matched": 2,
+        "matched": 1,
         "goldens": 6,
         "findings": 7,
-        "tpFindings": 2,
-        "fpFindings": 5,
-        "realMiss": 2,
+        "tpFindings": 1,
+        "fpFindings": 6,
+        "realMiss": 3,
         "artifact": 1,
         "untestable": 1,
         "missedGoldens": [
@@ -304,6 +318,10 @@
             "classification": "not-in-corpus"
           },
           {
+            "text": "The TopicEmbed.import method is susceptible to a NoMethodError if the contents parameter is nil when attempting to append a string, and an XSS vulnerability due to unescaped url interpolation in the g",
+            "classification": "real-miss"
+          },
+          {
             "text": "The ERB block closes with end if, which is invalid Ruby/ERB and will raise at render; it should just be end to close the if block.",
             "classification": "untestable"
           }
@@ -316,7 +334,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-2fa-backup-codes-cal-com",
@@ -359,7 +379,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
@@ -367,7 +389,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.9565217391304348,
         "totalCalls": 23,
@@ -398,7 +420,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
@@ -441,7 +465,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
@@ -476,7 +502,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
@@ -506,32 +534,30 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
       "status": "scored",
       "metrics": {
-        "recall": 0.5,
-        "precision": 0.4,
-        "f1": 0.4444444444444445,
-        "fairRecall": 0.5,
+        "recall": 0.75,
+        "precision": 0.6,
+        "f1": 0.6666666666666665,
+        "fairRecall": 0.75,
         "hitRate": 0.7884615384615384,
         "totalCalls": 52,
         "unserved": 11,
-        "matched": 2,
+        "matched": 3,
         "goldens": 4,
         "findings": 5,
-        "tpFindings": 2,
-        "fpFindings": 3,
-        "realMiss": 2,
+        "tpFindings": 3,
+        "fpFindings": 2,
+        "realMiss": 1,
         "artifact": 0,
         "untestable": 0,
         "missedGoldens": [
-          {
-            "text": "NoMethodError before_validation in EmbeddableHost",
-            "classification": "real-miss"
-          },
           {
             "text": "Because this migration inserts embeddable_hosts rows with raw SQL, any existing embeddable_hosts values that include http:// or /https:// or path segments won’t go through the EmbeddableHost model’s n",
             "classification": "real-miss"
@@ -545,32 +571,30 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
       "status": "scored",
       "metrics": {
-        "recall": 0,
-        "precision": 0,
-        "f1": 0,
-        "fairRecall": 0,
+        "recall": 0.5,
+        "precision": 0.5,
+        "f1": 0.5,
+        "fairRecall": 0.5,
         "hitRate": 0.7758620689655172,
         "totalCalls": 58,
         "unserved": 13,
-        "matched": 0,
+        "matched": 1,
         "goldens": 2,
         "findings": 2,
-        "tpFindings": 0,
-        "fpFindings": 2,
-        "realMiss": 2,
+        "tpFindings": 1,
+        "fpFindings": 1,
+        "realMiss": 1,
         "artifact": 0,
         "untestable": 0,
         "missedGoldens": [
-          {
-            "text": "Thread-safety issue with lazy @loaded_locales",
-            "classification": "real-miss"
-          },
           {
             "text": "Consider normalizing the input locale (e.g., to a symbol) when checking/loading here to avoid double-loading if the same locale is passed as a String vs Symbol (also applies to other locations in the ",
             "classification": "real-miss"
@@ -584,15 +608,17 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 1,
         "totalCalls": 14,
@@ -623,7 +649,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com",
@@ -670,7 +698,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
@@ -678,7 +708,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.9545454545454546,
         "totalCalls": 44,
@@ -713,15 +743,17 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fixing-re-authentication-with-passkeys-keycloak",
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.88,
         "totalCalls": 25,
@@ -752,7 +784,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "frontend-asset-optimization-grafana-codex",
@@ -782,28 +816,34 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "github-oauth-security-enhancement-sentry",
       "status": "scored",
       "metrics": {
-        "recall": 0.6666666666666666,
+        "recall": 0.3333333333333333,
         "precision": 0.3333333333333333,
-        "f1": 0.4444444444444444,
-        "fairRecall": 0.6666666666666666,
+        "f1": 0.3333333333333333,
+        "fairRecall": 0.3333333333333333,
         "hitRate": 0.5531914893617021,
         "totalCalls": 47,
         "unserved": 21,
-        "matched": 2,
+        "matched": 1,
         "goldens": 3,
         "findings": 3,
         "tpFindings": 1,
         "fpFindings": 2,
-        "realMiss": 1,
+        "realMiss": 2,
         "artifact": 0,
         "untestable": 0,
         "missedGoldens": [
+          {
+            "text": "Null reference if github_authenticated_user state is missing",
+            "classification": "real-miss"
+          },
           {
             "text": "OAuth state uses pipeline.signature (static) instead of a per-request random value",
             "classification": "real-miss"
@@ -817,7 +857,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "implement-access-token-context-encoding-framework-keycloak",
@@ -860,7 +902,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "notification-rule-processing-engine-grafana-codex",
@@ -895,30 +939,36 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
       "status": "scored",
       "metrics": {
-        "recall": 0.6,
+        "recall": 0.4,
         "precision": 0.2727272727272727,
-        "f1": 0.37499999999999994,
-        "fairRecall": 0.6,
+        "f1": 0.3243243243243243,
+        "fairRecall": 0.4,
         "hitRate": 0.9166666666666666,
         "totalCalls": 72,
         "unserved": 6,
-        "matched": 3,
+        "matched": 2,
         "goldens": 5,
         "findings": 11,
         "tpFindings": 3,
         "fpFindings": 8,
-        "realMiss": 2,
+        "realMiss": 3,
         "artifact": 0,
         "untestable": 0,
         "missedGoldens": [
           {
             "text": "Invalid Zod schema syntax. Computed property keys like [z.string().toString()] are not valid in Zod object schemas and will cause runtime errors. ",
+            "classification": "real-miss"
+          },
+          {
+            "text": "parseRefreshTokenResponse returns a Zod safeParse result ({ success, data, error }), not the credential key object. Persisting that as key stores the wrapper instead of the token payload; we should st",
             "classification": "real-miss"
           },
           {
@@ -934,33 +984,30 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
       "status": "scored",
       "metrics": {
-        "recall": 0.5,
-        "precision": 0.2857142857142857,
-        "f1": 0.36363636363636365,
-        "fairRecall": 0.5,
+        "recall": 1,
+        "precision": 0.42857142857142855,
+        "f1": 0.6,
+        "fairRecall": 1,
         "hitRate": 0.7777777777777778,
         "totalCalls": 63,
         "unserved": 14,
-        "matched": 1,
+        "matched": 2,
         "goldens": 2,
         "findings": 7,
-        "tpFindings": 2,
-        "fpFindings": 5,
-        "realMiss": 1,
+        "tpFindings": 3,
+        "fpFindings": 4,
+        "realMiss": 0,
         "artifact": 0,
         "untestable": 0,
-        "missedGoldens": [
-          {
-            "text": "Mixing float: left with flexbox causes layout issues. Further this PR removes the float-based right alignment for .d-header .panel, which may cause the login panel in the non-Ember/noscript header (wh",
-            "classification": "real-miss"
-          }
-        ]
+        "missedGoldens": []
       },
       "usage": {
         "inputTokens": 407024,
@@ -969,7 +1016,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex",
@@ -1004,7 +1053,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "replays-self-serve-bulk-delete-system-sentry",
@@ -1012,7 +1063,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.6551724137931034,
         "totalCalls": 29,
@@ -1047,7 +1098,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry",
@@ -1082,7 +1135,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "sms-workflow-reminder-retry-count-tracking-cal-com",
@@ -1117,7 +1172,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry",
@@ -1164,7 +1221,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "unified-storage-performance-optimizations-grafana-codex",
@@ -1199,7 +1258,9 @@
         "cacheReadTokens": 0,
         "cacheWriteTokens": 0
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     }
   ]
 }

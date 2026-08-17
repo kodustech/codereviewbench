@@ -19,7 +19,7 @@
       "_evidence": "log da passada: buildProviderOptions -> reasoningPayload {} / hasOverride false"
     }
   },
-  "scoredAt": "2026-08-04T19:58:38.496Z",
+  "scoredAt": "2026-08-13T23:28:51.169Z",
   "judge": {
     "model": "claude-haiku-4-5"
   },
@@ -28,8 +28,10 @@
     "casesScored": 30,
     "recallMicro": 0.29473684210526313,
     "recallMacro": 0.3088888888888889,
-    "precisionMacro": 0.44388888888888894,
-    "f1Macro": 0.35039682539682543,
+    "precisionMicro": 0.5769230769230769,
+    "precisionMacro": 0.5548611111111111,
+    "f1Micro": 0.39015327450069665,
+    "f1Macro": 0.5839947089947091,
     "fairRecallMacro": 0.31,
     "loopFidelityMacro": 0.8742424843604678,
     "goldensTotal": 95,
@@ -45,8 +47,8 @@
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 1,
         "totalCalls": 26,
@@ -74,7 +76,9 @@
         "inputTokens": 287690,
         "outputTokens": 4694
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
@@ -110,7 +114,9 @@
         "inputTokens": 337669,
         "outputTokens": 6044
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
@@ -146,7 +152,9 @@
         "inputTokens": 276202,
         "outputTokens": 5718
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
@@ -154,7 +162,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.6923076923076923,
         "totalCalls": 39,
@@ -190,7 +198,9 @@
         "inputTokens": 484716,
         "outputTokens": 13976
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
@@ -234,7 +244,9 @@
         "inputTokens": 192901,
         "outputTokens": 4617
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "dual-storage-architecture-grafana-codex",
@@ -266,7 +278,9 @@
         "inputTokens": 511662,
         "outputTokens": 7401
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
@@ -314,7 +328,9 @@
         "inputTokens": 212135,
         "outputTokens": 8743
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-2fa-backup-codes-cal-com",
@@ -354,15 +370,17 @@
         "inputTokens": 443215,
         "outputTokens": 5710
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.9130434782608695,
         "totalCalls": 23,
@@ -390,7 +408,9 @@
         "inputTokens": 201972,
         "outputTokens": 4971
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
@@ -398,7 +418,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.9666666666666667,
         "totalCalls": 60,
@@ -434,7 +454,9 @@
         "inputTokens": 437782,
         "outputTokens": 7039
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
@@ -466,7 +488,9 @@
         "inputTokens": 206595,
         "outputTokens": 4424
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
@@ -498,7 +522,9 @@
         "inputTokens": 212237,
         "outputTokens": 7335
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
@@ -534,15 +560,17 @@
         "inputTokens": 159380,
         "outputTokens": 7048
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.7352941176470589,
         "totalCalls": 34,
@@ -570,15 +598,17 @@
         "inputTokens": 115612,
         "outputTokens": 3857
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.9393939393939394,
         "totalCalls": 33,
@@ -606,7 +636,9 @@
         "inputTokens": 245347,
         "outputTokens": 3174
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com",
@@ -646,7 +678,9 @@
         "inputTokens": 282668,
         "outputTokens": 6150
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
@@ -682,15 +716,17 @@
         "inputTokens": 277366,
         "outputTokens": 7709
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fixing-re-authentication-with-passkeys-keycloak",
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8333333333333334,
         "totalCalls": 36,
@@ -718,7 +754,9 @@
         "inputTokens": 207366,
         "outputTokens": 3659
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "frontend-asset-optimization-grafana-codex",
@@ -750,7 +788,9 @@
         "inputTokens": 68329,
         "outputTokens": 2254
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "github-oauth-security-enhancement-sentry",
@@ -758,7 +798,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.631578947368421,
         "totalCalls": 38,
@@ -790,7 +830,9 @@
         "inputTokens": 212282,
         "outputTokens": 5334
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "implement-access-token-context-encoding-framework-keycloak",
@@ -830,7 +872,9 @@
         "inputTokens": 286904,
         "outputTokens": 6470
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "notification-rule-processing-engine-grafana-codex",
@@ -862,7 +906,9 @@
         "inputTokens": 415008,
         "outputTokens": 7817
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
@@ -902,7 +948,9 @@
         "inputTokens": 272511,
         "outputTokens": 8479
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
@@ -910,7 +958,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8333333333333334,
         "totalCalls": 30,
@@ -938,7 +986,9 @@
         "inputTokens": 144832,
         "outputTokens": 4064
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex",
@@ -965,7 +1015,9 @@
         "inputTokens": 306500,
         "outputTokens": 6492
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "replays-self-serve-bulk-delete-system-sentry",
@@ -973,7 +1025,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.6363636363636364,
         "totalCalls": 33,
@@ -1005,15 +1057,17 @@
         "inputTokens": 134697,
         "outputTokens": 4868
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry",
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8571428571428571,
         "totalCalls": 21,
@@ -1041,7 +1095,9 @@
         "inputTokens": 108314,
         "outputTokens": 2419
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "sms-workflow-reminder-retry-count-tracking-cal-com",
@@ -1068,7 +1124,9 @@
         "inputTokens": 166306,
         "outputTokens": 4682
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry",
@@ -1076,7 +1134,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 1,
         "totalCalls": 30,
@@ -1116,7 +1174,9 @@
         "inputTokens": 413043,
         "outputTokens": 7011
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "unified-storage-performance-optimizations-grafana-codex",
@@ -1143,7 +1203,9 @@
         "inputTokens": 526344,
         "outputTokens": 5828
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     }
   ]
 }

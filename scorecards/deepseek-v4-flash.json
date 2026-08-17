@@ -19,21 +19,23 @@
       "_evidence": "log da passada: buildProviderOptions -> reasoningPayload {} / hasOverride false"
     }
   },
-  "scoredAt": "2026-08-04T18:59:06.458Z",
+  "scoredAt": "2026-08-13T23:16:11.052Z",
   "judge": {
     "model": "claude-haiku-4-5"
   },
   "aggregate": {
     "cases": 30,
     "casesScored": 30,
-    "recallMicro": 0.3473684210526316,
-    "recallMacro": 0.3472222222222222,
-    "precisionMacro": 0.3977513227513228,
-    "f1Macro": 0.3501626420821467,
-    "fairRecallMacro": 0.365,
+    "recallMicro": 0.3684210526315789,
+    "recallMacro": 0.36500000000000005,
+    "precisionMicro": 0.42105263157894735,
+    "precisionMacro": 0.46787184009406235,
+    "f1Micro": 0.3929824561403508,
+    "f1Macro": 0.5047672392029273,
+    "fairRecallMacro": 0.38277777777777783,
     "loopFidelityMacro": 0.8220111843841995,
     "goldensTotal": 95,
-    "goldensMatched": 33,
+    "goldensMatched": 35,
     "usage": {
       "inputTokens": 18180399,
       "outputTokens": 1470196
@@ -46,7 +48,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.9821428571428571,
         "totalCalls": 56,
@@ -74,7 +76,9 @@
         "inputTokens": 913921,
         "outputTokens": 80938
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
@@ -110,7 +114,9 @@
         "inputTokens": 937951,
         "outputTokens": 54513
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
@@ -142,7 +148,9 @@
         "inputTokens": 560390,
         "outputTokens": 38745
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
@@ -150,7 +158,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.6153846153846154,
         "totalCalls": 52,
@@ -186,32 +194,30 @@
         "inputTokens": 855234,
         "outputTokens": 74677
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
       "status": "scored",
       "metrics": {
-        "recall": 0.4,
-        "precision": 0.4,
-        "f1": 0.4000000000000001,
-        "fairRecall": 0.4,
+        "recall": 0.6,
+        "precision": 0.6,
+        "f1": 0.6,
+        "fairRecall": 0.6,
         "hitRate": 0.6349206349206349,
         "totalCalls": 63,
         "unserved": 23,
-        "matched": 2,
+        "matched": 3,
         "goldens": 5,
         "findings": 5,
-        "tpFindings": 2,
-        "fpFindings": 3,
-        "realMiss": 3,
+        "tpFindings": 3,
+        "fpFindings": 2,
+        "realMiss": 2,
         "artifact": 0,
         "untestable": 0,
         "missedGoldens": [
-          {
-            "text": "Anonymous authentication now fails entirely if anonDeviceService.TagDevice returns ErrDeviceLimitReached. Previously, device tagging was asynchronous and non-blocking. This change prevents anonymous u",
-            "classification": "real-miss"
-          },
           {
             "text": "This call won’t compile: dbSession.Exec(args...) is given a []interface{} where the first element is the query, but Exec’s signature requires a first parameter of type string (not an interface{} splat",
             "classification": "real-miss"
@@ -226,7 +232,9 @@
         "inputTokens": 761931,
         "outputTokens": 44683
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "dual-storage-architecture-grafana-codex",
@@ -253,7 +261,9 @@
         "inputTokens": 802809,
         "outputTokens": 43938
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
@@ -301,7 +311,9 @@
         "inputTokens": 353802,
         "outputTokens": 61235
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-2fa-backup-codes-cal-com",
@@ -309,7 +321,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8208955223880597,
         "totalCalls": 67,
@@ -345,7 +357,9 @@
         "inputTokens": 741689,
         "outputTokens": 58926
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
@@ -353,7 +367,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8809523809523809,
         "totalCalls": 42,
@@ -381,7 +395,9 @@
         "inputTokens": 447289,
         "outputTokens": 45202
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
@@ -421,7 +437,9 @@
         "inputTokens": 761830,
         "outputTokens": 70293
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
@@ -453,7 +471,9 @@
         "inputTokens": 453344,
         "outputTokens": 38462
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
@@ -485,7 +505,9 @@
         "inputTokens": 331793,
         "outputTokens": 38016
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
@@ -517,7 +539,9 @@
         "inputTokens": 310250,
         "outputTokens": 34878
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
@@ -525,7 +549,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.6666666666666666,
         "totalCalls": 48,
@@ -553,7 +577,9 @@
         "inputTokens": 360136,
         "outputTokens": 59854
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
@@ -585,7 +611,9 @@
         "inputTokens": 435110,
         "outputTokens": 33717
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com",
@@ -629,7 +657,9 @@
         "inputTokens": 401855,
         "outputTokens": 27914
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
@@ -661,15 +691,17 @@
         "inputTokens": 750302,
         "outputTokens": 47260
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "fixing-re-authentication-with-passkeys-keycloak",
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8333333333333334,
         "totalCalls": 30,
@@ -697,15 +729,17 @@
         "inputTokens": 628748,
         "outputTokens": 46207
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "frontend-asset-optimization-grafana-codex",
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.9333333333333333,
         "totalCalls": 15,
@@ -733,7 +767,9 @@
         "inputTokens": 135504,
         "outputTokens": 20879
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "github-oauth-security-enhancement-sentry",
@@ -769,7 +805,9 @@
         "inputTokens": 697880,
         "outputTokens": 47382
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "implement-access-token-context-encoding-framework-keycloak",
@@ -809,7 +847,9 @@
         "inputTokens": 738180,
         "outputTokens": 48343
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "notification-rule-processing-engine-grafana-codex",
@@ -841,7 +881,9 @@
         "inputTokens": 794481,
         "outputTokens": 37800
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
@@ -868,7 +910,7 @@
             "classification": "real-miss"
           },
           {
-            "text": "When APP_CREDENTIAL_SHARING_ENABLED and CALCOM_CREDENTIAL_SYNC_ENDPOINT are set, the refreshFunction helper returns the fetch Response, but several callers (for example GoogleCalendarService.refreshAc",
+            "text": "parseRefreshTokenResponse returns a Zod safeParse result ({ success, data, error }), not the credential key object. Persisting that as key stores the wrapper instead of the token payload; we should st",
             "classification": "real-miss"
           },
           {
@@ -881,7 +923,9 @@
         "inputTokens": 1030578,
         "outputTokens": 88021
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
@@ -913,7 +957,9 @@
         "inputTokens": 393133,
         "outputTokens": 46391
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex",
@@ -945,32 +991,30 @@
         "inputTokens": 616282,
         "outputTokens": 35910
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "replays-self-serve-bulk-delete-system-sentry",
       "status": "scored",
       "metrics": {
-        "recall": 0,
-        "precision": 0,
-        "f1": 0,
-        "fairRecall": 0,
+        "recall": 0.3333333333333333,
+        "precision": 0.5,
+        "f1": 0.4,
+        "fairRecall": 0.3333333333333333,
         "hitRate": 0.5,
         "totalCalls": 26,
         "unserved": 13,
-        "matched": 0,
+        "matched": 1,
         "goldens": 3,
         "findings": 2,
-        "tpFindings": 0,
-        "fpFindings": 2,
+        "tpFindings": 1,
+        "fpFindings": 1,
         "realMiss": 1,
         "artifact": 0,
-        "untestable": 2,
+        "untestable": 1,
         "missedGoldens": [
-          {
-            "text": "Breaking changes in error response format",
-            "classification": "untestable"
-          },
           {
             "text": "Detector validator uses wrong key when updating type",
             "classification": "untestable"
@@ -985,15 +1029,17 @@
         "inputTokens": 355920,
         "outputTokens": 48534
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry",
       "status": "scored",
       "metrics": {
         "recall": 0,
-        "precision": 0,
-        "f1": 0,
+        "precision": null,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.7575757575757576,
         "totalCalls": 33,
@@ -1021,7 +1067,9 @@
         "inputTokens": 451345,
         "outputTokens": 29599
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "sms-workflow-reminder-retry-count-tracking-cal-com",
@@ -1053,7 +1101,9 @@
         "inputTokens": 529737,
         "outputTokens": 58836
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry",
@@ -1097,7 +1147,9 @@
         "inputTokens": 933041,
         "outputTokens": 71882
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     },
     {
       "caseId": "unified-storage-performance-optimizations-grafana-codex",
@@ -1124,7 +1176,9 @@
         "inputTokens": 695934,
         "outputTokens": 37161
       },
-      "latencyMs": null
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
     }
   ]
 }

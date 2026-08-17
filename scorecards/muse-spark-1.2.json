@@ -18,21 +18,23 @@
     },
     "runAt": "2026-08-06T13:13:32.659Z"
   },
-  "scoredAt": "2026-08-06T13:17:02.505Z",
+  "scoredAt": "2026-08-13T23:24:25.748Z",
   "judge": {
     "model": "claude-haiku-4-5"
   },
   "aggregate": {
     "cases": 30,
     "casesScored": 30,
-    "recallMicro": 0.4421052631578947,
-    "recallMacro": 0.4561111111111112,
-    "precisionMacro": 0.42066239316239307,
-    "f1Macro": 0.40707771760403344,
-    "fairRecallMacro": 0.47388888888888897,
+    "recallMicro": 0.4105263157894737,
+    "recallMacro": 0.4361111111111111,
+    "precisionMicro": 0.3504273504273504,
+    "precisionMacro": 0.40698717948717944,
+    "f1Micro": 0.3781035705840624,
+    "f1Macro": 0.48761423761423767,
+    "fairRecallMacro": 0.45388888888888895,
     "loopFidelityMacro": 0.8937520794877313,
     "goldensTotal": 95,
-    "goldensMatched": 42,
+    "goldensMatched": 39,
     "usage": {
       "inputTokens": 8025659,
       "outputTokens": 1081681
@@ -45,7 +47,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 1,
         "totalCalls": 40,
@@ -85,7 +87,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8181818181818182,
         "totalCalls": 33,
@@ -127,22 +129,26 @@
       "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
       "status": "scored",
       "metrics": {
-        "recall": 0.8,
+        "recall": 0.6,
         "precision": 0.5,
-        "f1": 0.6153846153846154,
-        "fairRecall": 0.8,
+        "f1": 0.5454545454545454,
+        "fairRecall": 0.6,
         "hitRate": 0.9117647058823529,
         "totalCalls": 34,
         "unserved": 3,
-        "matched": 4,
+        "matched": 3,
         "goldens": 5,
         "findings": 6,
         "tpFindings": 3,
         "fpFindings": 3,
-        "realMiss": 1,
+        "realMiss": 2,
         "artifact": 0,
         "untestable": 0,
         "missedGoldens": [
+          {
+            "text": "uniqueGuests filters out existing attendees and blacklisted emails but does not deduplicate duplicates within the input; createMany can insert duplicate attendee rows if the client submits repeated em",
+            "classification": "real-miss"
+          },
           {
             "text": "Starting with an array containing an empty string may cause validation issues. Consider starting with an empty array [] and handling the empty state in the MultiEmail component instead.",
             "classification": "real-miss"
@@ -165,7 +171,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8125,
         "totalCalls": 16,
@@ -256,8 +262,8 @@
       "status": "scored",
       "metrics": {
         "recall": 1,
-        "precision": 0.46153846153846156,
-        "f1": 0.631578947368421,
+        "precision": 0.38461538461538464,
+        "f1": 0.5555555555555556,
         "fairRecall": 1,
         "hitRate": 0.9473684210526315,
         "totalCalls": 38,
@@ -265,8 +271,8 @@
         "matched": 3,
         "goldens": 3,
         "findings": 13,
-        "tpFindings": 6,
-        "fpFindings": 7,
+        "tpFindings": 5,
+        "fpFindings": 8,
         "realMiss": 0,
         "artifact": 0,
         "untestable": 0,
@@ -384,7 +390,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.8333333333333334,
         "totalCalls": 12,
@@ -727,7 +733,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.88,
         "totalCalls": 25,
@@ -916,22 +922,30 @@
       "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
       "status": "scored",
       "metrics": {
-        "recall": 0.8,
-        "precision": 0.6666666666666666,
-        "f1": 0.7272727272727272,
-        "fairRecall": 0.8,
+        "recall": 0.4,
+        "precision": 0.3333333333333333,
+        "f1": 0.3636363636363636,
+        "fairRecall": 0.4,
         "hitRate": 0.9285714285714286,
         "totalCalls": 28,
         "unserved": 2,
-        "matched": 4,
+        "matched": 2,
         "goldens": 5,
         "findings": 6,
-        "tpFindings": 4,
-        "fpFindings": 2,
-        "realMiss": 1,
+        "tpFindings": 2,
+        "fpFindings": 4,
+        "realMiss": 3,
         "artifact": 0,
         "untestable": 0,
         "missedGoldens": [
+          {
+            "text": "parseRefreshTokenResponse returns a Zod safeParse result ({ success, data, error }), not the credential key object. Persisting that as key stores the wrapper instead of the token payload; we should st",
+            "classification": "real-miss"
+          },
+          {
+            "text": "When APP_CREDENTIAL_SHARING_ENABLED and CALCOM_CREDENTIAL_SYNC_ENDPOINT are set, the refreshFunction helper returns the fetch Response, but several callers (for example GoogleCalendarService.refreshAc",
+            "classification": "real-miss"
+          },
           {
             "text": "When the sync endpoint path is used, res is a fetch Response and has no .data; res?.data will be undefined and token.access_token will throw at runtime. This relies on a consistent return shape from r",
             "classification": "real-miss"
@@ -1021,7 +1035,7 @@
       "metrics": {
         "recall": 0,
         "precision": 0,
-        "f1": 0,
+        "f1": null,
         "fairRecall": 0,
         "hitRate": 0.7333333333333333,
         "totalCalls": 15,
