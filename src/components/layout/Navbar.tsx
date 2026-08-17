@@ -9,7 +9,6 @@ import { useState } from 'react';
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
   { href: '/leaderboard', label: 'Leaderboard' },
-  { href: '/traces', label: 'Traces' },
 ];
 
 export default function Navbar() {
@@ -53,7 +52,7 @@ export default function Navbar() {
           })}
           <div className="w-px h-4 bg-[var(--border)] mx-1.5" />
           <a
-            href="https://github.com/kodustech/kodus-ai/blob/main/evals/promptfoo/README.md"
+            href="https://github.com/kodustech/kodus-ai/blob/main/evals/scorer/README.md"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-md bg-[var(--accent)] text-white hover:brightness-110 transition-all"
@@ -94,7 +93,7 @@ export default function Navbar() {
             );
           })}
           <a
-            href="https://github.com/kodustech/kodus-ai/blob/main/evals/promptfoo/README.md"
+            href="https://github.com/kodustech/kodus-ai/blob/main/evals/scorer/README.md"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-base font-medium py-2 px-3 rounded-md text-[var(--accent)] hover:bg-[var(--surface)]"

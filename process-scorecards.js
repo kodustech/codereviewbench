@@ -54,6 +54,21 @@ const PRICING = (() => {
     }
 })();
 
+// caseId → tamanho real do diff (arquivos/linhas), extraído uma vez de
+// evals/investigation/datasets/*.json no kodus-ai-bench (patchWithLinesStr já
+// frozen no fixture — não precisa clonar repo nem checkout de SHA). Ver
+// scripts/extract-pr-size.js. Faltando um caseId aqui não derruba o pipeline —
+// só cai fora dos filtros/bucket de tamanho, igual custo sem preço publicado.
+const PR_SIZE = (() => {
+    try {
+        return JSON.parse(fs.readFileSync(path.join(__dirname, 'pr-size.json'), 'utf8'));
+    } catch {
+        console.warn('  ⚠ pr-size.json não encontrado — filtro de tamanho de PR ficará vazio');
+        return {};
+    }
+})();
+const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL'];
+
 /**
  * Custo por PR e por bug encontrado.
  *
@@ -132,12 +147,19 @@ if (!scorecards.length) {
     process.exit(1);
 }
 
-// findings por (entryKey, caseId), para as páginas de trace
+// findings por (entryKey, runAt, caseId), para as páginas de trace. runAt entra
+// na chave de propósito: submissions/ acumula reruns e experimentos de ablação
+// (RECALL_* flags) do MESMO modelo — sem o runAt, um arquivo solto processado
+// depois na ordem do readdir sobrescreve silenciosamente os findings do run
+// canônico pra qualquer caseId que os dois tenham em comum. Descoberto porque
+// gemini37-nostrict15.submission.json (experimento) estava apagando 15/30
+// findings de gemini37-light30.submission.json (o run publicado).
 const findingsIndex = new Map();
 for (const { data } of readJsonDir(SUB_DIR)) {
     const key = entryKeyOf(data.run);
+    const runAt = data.run?.runAt || 'unknown';
     for (const r of data.results || []) {
-        findingsIndex.set(`${key}::${r.caseId}`, r.findings || []);
+        findingsIndex.set(`${key}::${runAt}::${r.caseId}`, r.findings || []);
     }
 }
 
@@ -151,6 +173,11 @@ function entryKeyOf(run) {
 const entries = [];
 const allSamples = [];
 const scorecardCases = new Map(); // entryKey -> cases[] (insumo do bootstrap)
+// Índice leve (sem findings/texto) pra filtro combinado (linguagem + repo +
+// tamanho) no client sem embarcar samples.json inteiro (~870KB) no bundle da
+// leaderboard. tp/fpFindings vêm do scorer — dá pra recompor precisão micro
+// (TP/(TP+FP)) de qualquer subconjunto sem reabrir o scorecard.
+const caseIndex = [];
 let sampleId = 0;
 
 // Modelos medidos mas ainda NAO publicados. Ficam de fora do site sem sair do
@@ -173,14 +200,17 @@ for (const { data: sc } of scorecards) {
     if (!scored.length) continue;
     scorecardCases.set(key, scored);
 
-    // agregados por linguagem, a partir dos casos
+    // agregados por linguagem, repo e tamanho de PR, a partir dos casos
     const byLanguage = {};
     const byRepo = {};
+    const bySize = {};
     for (const c of scored) {
         const { repo, language } = classify(c.caseId);
+        const size = PR_SIZE[c.caseId] || null;
         for (const [bucket, name] of [
             [byLanguage, language],
             [byRepo, repo],
+            ...(size ? [[bySize, size.sizeBucket]] : []),
         ]) {
             bucket[name] = bucket[name] || { matched: 0, goldens: 0, recalls: [], precisions: [], count: 0 };
             bucket[name].matched += c.metrics.matched;
@@ -198,15 +228,30 @@ for (const { data: sc } of scorecards) {
             caseId: c.caseId,
             repo,
             language,
+            filesChanged: size?.filesChanged ?? null,
+            linesChanged: size?.linesChanged ?? null,
+            sizeBucket: size?.sizeBucket ?? null,
             recall: c.metrics.recall,
             precision: c.metrics.precision,
             f1: c.metrics.f1,
             goldens: c.metrics.goldens,
             matched: c.metrics.matched,
-            findings: findingsIndex.get(`${key}::${c.caseId}`) || [],
+            findings: findingsIndex.get(`${key}::${run.runAt}::${c.caseId}`) || [],
             missedGoldens: c.metrics.missedGoldens || [],
             usage: c.usage || null,
             latencyMs: c.latencyMs ?? null,
+        });
+
+        caseIndex.push({
+            entryKey: key,
+            caseId: c.caseId,
+            repo,
+            language,
+            sizeBucket: size?.sizeBucket ?? null,
+            goldens: c.metrics.goldens,
+            matched: c.metrics.matched,
+            tpFindings: c.metrics.tpFindings ?? 0,
+            fpFindings: c.metrics.fpFindings ?? 0,
         });
     }
 
@@ -258,11 +303,22 @@ for (const { data: sc } of scorecards) {
         judge: sc.judge?.model || null,
         runAt: run.runAt || null,
 
-        // headline = recall micro (pondera por bug, não por PR)
+        // headline = recall micro (pondera por bug, não por PR). precision e f1
+        // também em micro — mesma convenção (TP/(TP+FP) agregado no bench
+        // inteiro), consistente com o que Martian e Alibaba publicam. macro
+        // fica ao lado só por continuidade histórica.
         score: (a.recallMicro ?? 0) * 100,
         recallMacro: (a.recallMacro ?? 0) * 100,
-        precision: (a.precisionMacro ?? 0) * 100,
-        f1: (a.f1Macro ?? 0) * 100,
+        precision: (a.precisionMicro ?? a.precisionMacro ?? 0) * 100,
+        precisionMacro: (a.precisionMacro ?? 0) * 100,
+        f1:
+            a.f1Micro != null
+                ? a.f1Micro * 100
+                : (() => {
+                      const p = a.precisionMicro ?? a.precisionMacro ?? 0;
+                      const r = a.recallMicro ?? 0;
+                      return p + r ? (200 * p * r) / (p + r) : 0;
+                  })(),
         fairRecall: (a.fairRecallMacro ?? 0) * 100,
         loopFidelity: a.loopFidelityMacro == null ? null : a.loopFidelityMacro * 100,
 
@@ -273,6 +329,7 @@ for (const { data: sc } of scorecards) {
 
         byLanguage: finalize(byLanguage),
         byRepo: finalize(byRepo),
+        bySize: finalize(bySize),
 
         ...costOf(run, a),
     });
@@ -359,6 +416,8 @@ const meta = {
     models: [...new Set(entries.map((e) => e.modelId).filter(Boolean))].sort(),
     languages: [...new Set(allSamples.map((s) => s.language))].sort(),
     repos: [...new Set(allSamples.map((s) => s.repo))].sort(),
+    // ordem por tamanho (XS→XL), não alfabética — alfabética dá L,M,S,XL,XS.
+    sizes: SIZE_ORDER.filter((s) => allSamples.some((sample) => sample.sizeBucket === s)),
     executionModes: [...new Set(entries.map((e) => e.executionMode))].sort(),
     accessPaths: [...new Set(entries.map((e) => e.accessPath))].sort(),
     judges: [...new Set(entries.map((e) => e.judge).filter(Boolean))].sort(),
@@ -379,6 +438,7 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
 fs.writeFileSync(path.join(OUT_DIR, 'meta.json'), JSON.stringify(meta, null, 2));
 fs.writeFileSync(path.join(OUT_DIR, 'leaderboard.json'), JSON.stringify(leaderboard, null, 2));
 fs.writeFileSync(path.join(OUT_DIR, 'samples.json'), JSON.stringify(round2(allSamples)));
+fs.writeFileSync(path.join(OUT_DIR, 'case-index.json'), JSON.stringify(caseIndex));
 
 console.log(`✅ ${entries.length} entrada(s) · ${allSamples.length} amostras · ${tier} faixa(s)`);
 for (const e of entries) {

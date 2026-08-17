@@ -1,38 +1,37 @@
 import leaderboardData from '@/lib/data/leaderboard.json';
 import samplesData from '@/lib/data/samples.json';
-import type { LeaderboardModel, Sample } from '@/lib/types';
+import { displayNameOf } from '@/lib/constants';
+import type { LeaderboardData, CaseSample } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import ModelDetailClient from './ModelDetailClient';
 
-const lb = leaderboardData as { models: LeaderboardModel[]; averages: { score: number; coverage: number; validity: number; localScore: number; crossFileScore: number } };
-const allSamples = samplesData as Sample[];
+const lb = leaderboardData as unknown as LeaderboardData;
+const allCases = samplesData as unknown as CaseSample[];
 
 export function generateStaticParams() {
-  return lb.models.map((m) => ({ id: m.slug }));
+  return lb.entries.map((e) => ({ id: e.modelId }));
 }
 
-export function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
-  // Can't await in generateMetadata easily, so return a generic one
-  return {
-    title: `Model Detail | CodeReviewBench`,
-  };
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return { title: `${displayNameOf(id)} | CodeReviewBench` };
 }
 
 export default async function ModelDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const model = lb.models.find((m) => m.slug === id);
-  if (!model) notFound();
+  const entry = lb.entries.find((e) => e.modelId === id);
+  if (!entry) notFound();
 
-  const modelSamples = allSamples
-    .filter((s) => s.modelSlug === id)
-    .sort((a, b) => b.score - a.score);
+  const cases = allCases
+    .filter((c) => c.entryKey === entry.key)
+    .sort((a, b) => a.caseId.localeCompare(b.caseId));
 
   return (
     <ModelDetailClient
-      model={model}
+      entry={entry}
       averages={lb.averages}
-      allModels={lb.models}
-      samples={modelSamples}
+      allEntries={lb.entries}
+      cases={cases}
     />
   );
 }

@@ -1,0 +1,242 @@
+{
+  "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak": {
+    "filesChanged": 3,
+    "additions": 98,
+    "deletions": 3,
+    "linesChanged": 101,
+    "hunks": 8,
+    "sizeBucket": "M"
+  },
+  "add-client-resource-type-and-scopes-to-authorization-schema-keycloak": {
+    "filesChanged": 5,
+    "additions": 441,
+    "deletions": 17,
+    "linesChanged": 458,
+    "hunks": 9,
+    "sizeBucket": "L"
+  },
+  "add-guest-management-functionality-to-existing-bookings-cal-com": {
+    "filesChanged": 6,
+    "additions": 224,
+    "deletions": 0,
+    "linesChanged": 224,
+    "hunks": 8,
+    "sizeBucket": "M"
+  },
+  "add-html-sanitizer-for-translated-message-resources-keycloak": {
+    "filesChanged": 6,
+    "additions": 138,
+    "deletions": 14,
+    "linesChanged": 152,
+    "hunks": 10,
+    "sizeBucket": "M"
+  },
+  "anonymous-add-configurable-device-limit-grafana-codex": {
+    "filesChanged": 6,
+    "additions": 99,
+    "deletions": 33,
+    "linesChanged": 132,
+    "hunks": 15,
+    "sizeBucket": "M"
+  },
+  "dual-storage-architecture-grafana-codex": {
+    "filesChanged": 4,
+    "additions": 468,
+    "deletions": 131,
+    "linesChanged": 599,
+    "hunks": 7,
+    "sizeBucket": "L"
+  },
+  "enhance-embed-url-handling-and-validation-system-discourse-cursor": {
+    "filesChanged": 6,
+    "additions": 245,
+    "deletions": 0,
+    "linesChanged": 245,
+    "hunks": 7,
+    "sizeBucket": "M"
+  },
+  "feat-2fa-backup-codes-cal-com": {
+    "filesChanged": 6,
+    "additions": 203,
+    "deletions": 30,
+    "linesChanged": 233,
+    "hunks": 26,
+    "sizeBucket": "M"
+  },
+  "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com": {
+    "filesChanged": 1,
+    "additions": 73,
+    "deletions": 82,
+    "linesChanged": 155,
+    "hunks": 6,
+    "sizeBucket": "M"
+  },
+  "feat-ecosystem-implement-cross-system-issue-synchronization-sentry": {
+    "filesChanged": 5,
+    "additions": 103,
+    "deletions": 12,
+    "linesChanged": 115,
+    "hunks": 17,
+    "sizeBucket": "M"
+  },
+  "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry": {
+    "filesChanged": 3,
+    "additions": 32,
+    "deletions": 32,
+    "linesChanged": 64,
+    "hunks": 13,
+    "sizeBucket": "S"
+  },
+  "feature-automatically-downsize-large-images-discourse-cursor": {
+    "filesChanged": 3,
+    "additions": 20,
+    "deletions": 12,
+    "linesChanged": 32,
+    "hunks": 4,
+    "sizeBucket": "S"
+  },
+  "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor": {
+    "filesChanged": 6,
+    "additions": 83,
+    "deletions": 17,
+    "linesChanged": 100,
+    "hunks": 6,
+    "sizeBucket": "M"
+  },
+  "feature-localization-fallbacks-server-side-discourse-cursor": {
+    "filesChanged": 6,
+    "additions": 26,
+    "deletions": 13,
+    "linesChanged": 39,
+    "hunks": 5,
+    "sizeBucket": "S"
+  },
+  "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak": {
+    "filesChanged": 3,
+    "additions": 3,
+    "deletions": 11,
+    "linesChanged": 14,
+    "hunks": 3,
+    "sizeBucket": "XS"
+  },
+  "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com": {
+    "filesChanged": 6,
+    "additions": 23,
+    "deletions": 8,
+    "linesChanged": 31,
+    "hunks": 6,
+    "sizeBucket": "S"
+  },
+  "fix-proper-handling-of-group-memberships-discourse-cursor": {
+    "filesChanged": 6,
+    "additions": 195,
+    "deletions": 125,
+    "linesChanged": 320,
+    "hunks": 8,
+    "sizeBucket": "L"
+  },
+  "fixing-re-authentication-with-passkeys-keycloak": {
+    "filesChanged": 6,
+    "additions": 47,
+    "deletions": 12,
+    "linesChanged": 59,
+    "hunks": 12,
+    "sizeBucket": "S"
+  },
+  "frontend-asset-optimization-grafana-codex": {
+    "filesChanged": 1,
+    "additions": 13,
+    "deletions": 3,
+    "linesChanged": 16,
+    "hunks": 2,
+    "sizeBucket": "XS"
+  },
+  "github-oauth-security-enhancement-sentry": {
+    "filesChanged": 2,
+    "additions": 122,
+    "deletions": 48,
+    "linesChanged": 170,
+    "hunks": 9,
+    "sizeBucket": "M"
+  },
+  "implement-access-token-context-encoding-framework-keycloak": {
+    "filesChanged": 6,
+    "additions": 413,
+    "deletions": 20,
+    "linesChanged": 433,
+    "hunks": 12,
+    "sizeBucket": "L"
+  },
+  "notification-rule-processing-engine-grafana-codex": {
+    "filesChanged": 6,
+    "additions": 322,
+    "deletions": 170,
+    "linesChanged": 492,
+    "hunks": 15,
+    "sizeBucket": "L"
+  },
+  "oauth-credential-sync-and-app-integration-enhancements-cal-com": {
+    "filesChanged": 6,
+    "additions": 201,
+    "deletions": 45,
+    "linesChanged": 246,
+    "hunks": 14,
+    "sizeBucket": "M"
+  },
+  "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor": {
+    "filesChanged": 5,
+    "additions": 54,
+    "deletions": 13,
+    "linesChanged": 67,
+    "hunks": 9,
+    "sizeBucket": "S"
+  },
+  "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex": {
+    "filesChanged": 6,
+    "additions": 129,
+    "deletions": 77,
+    "linesChanged": 206,
+    "hunks": 22,
+    "sizeBucket": "M"
+  },
+  "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry": {
+    "filesChanged": 4,
+    "additions": 289,
+    "deletions": 264,
+    "linesChanged": 553,
+    "hunks": 5,
+    "sizeBucket": "L"
+  },
+  "replays-self-serve-bulk-delete-system-sentry": {
+    "filesChanged": 3,
+    "additions": 100,
+    "deletions": 34,
+    "linesChanged": 134,
+    "hunks": 10,
+    "sizeBucket": "M"
+  },
+  "sms-workflow-reminder-retry-count-tracking-cal-com": {
+    "filesChanged": 3,
+    "additions": 38,
+    "deletions": 6,
+    "linesChanged": 44,
+    "hunks": 5,
+    "sizeBucket": "S"
+  },
+  "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry": {
+    "filesChanged": 4,
+    "additions": 150,
+    "deletions": 48,
+    "linesChanged": 198,
+    "hunks": 13,
+    "sizeBucket": "M"
+  },
+  "unified-storage-performance-optimizations-grafana-codex": {
+    "filesChanged": 5,
+    "additions": 25,
+    "deletions": 57,
+    "linesChanged": 82,
+    "hunks": 22,
+    "sizeBucket": "S"
+  }
+}

@@ -1,125 +1,158 @@
 // ── Meta ──
+export interface VarianceCaveat {
+  measured: string;
+  notMeasured: string;
+  runsPerEntry: number;
+}
+
 export interface Meta {
-  totalResults: number;
-  totalModels: number;
-  totalTestCases: number;
+  totalEntries: number;
+  harnesses: string[];
+  models: string[];
   languages: string[];
-  categories: string[];
+  repos: string[];
+  /** Ordem por tamanho (XS→XL), não alfabética. */
+  sizes: string[];
+  executionModes: string[];
+  accessPaths: string[];
   judges: string[];
+  totalCases: number;
+  totalGoldens: number;
+  tiers: number;
+  varianceCaveat: VarianceCaveat;
   generatedAt: string;
 }
 
 // ── Leaderboard ──
-export interface JudgeBreakdown {
-  coverage: number;
-  validity: number;
-}
-
-export interface HistogramBucket {
-  min: number;
-  max: number;
+export interface BucketStat {
+  recall: number;
+  precision: number;
+  goldens: number;
   count: number;
 }
 
-export interface LatencyStats {
-  p50: number;
-  p90: number;
-  p99: number;
+export interface Usage {
+  inputTokens: number;
+  outputTokens: number;
 }
 
-export interface LeaderboardModel {
-  slug: string;
-  displayName: string;
+export type AccessPath = 'api' | 'subscription' | 'local' | 'unknown';
+export type ExecutionMode = 'replay' | 'live' | 'unknown';
+
+export interface LeaderboardEntry {
+  key: string;
+  harness: string;
+  harnessVersion: string | null;
+  modelId: string;
+  /** Tipo de transporte (openai_compatible/anthropic/google/...), NÃO o
+   *  fornecedor comercial — usar DISPLAY_NAMES em constants.ts para exibição. */
   provider: string;
-  rank: number;
+  accessPath: AccessPath;
+  executionMode: ExecutionMode;
+  reasoningConfig: string;
+  reasoningEffort: string | null;
+  reasoningTokens: number | null;
+  finishReasons: Record<string, number>;
+  maxFindingsInCase: number;
+  judge: string | null;
+  runAt: string | null;
+
+  /** Recall micro (headline, usado para ranking e tier). */
   score: number;
-  coverage: number;
-  validity: number;
-  localScore: number;
-  crossFileScore: number;
-  byLanguage: Record<string, { score: number; coverage: number; validity: number; count: number }>;
-  byCategory: Record<string, { score: number; coverage: number; validity: number; count: number }>;
-  judges: {
-    sonnet: JudgeBreakdown;
-    gpt: JudgeBreakdown;
-  };
-  histogram: HistogramBucket[];
-  latency: LatencyStats;
-  parseRate: number;
-  lineMetrics: {
-    lineAccuracy: number;
-    avgIou: number;
-    exactMatch: number;
-    within3: number;
-  };
-  tests: number;
-  errors: number;
-  passRate: number;
+  recallMacro: number;
+  /** Precisão micro — TP/(TP+FP) agregado no bench inteiro. */
+  precision: number;
+  precisionMacro: number;
+  /** F1 micro. */
+  f1: number;
+  fairRecall: number;
+  loopFidelity: number | null;
+
+  goldensTotal: number;
+  goldensMatched: number;
+  cases: number;
+  usage: Usage;
+
+  byLanguage: Record<string, BucketStat>;
+  byRepo: Record<string, BucketStat>;
+  bySize: Record<string, BucketStat>;
+
+  costTotal: number | null;
+  costPerPR: number | null;
+  costPerBugFound: number | null;
+  costBasis: string;
+
+  ciHalfWidth: number;
+  ciLow: number | null;
+  ciHigh: number | null;
+  ciHalfWidthBootstrap: number;
+
+  rank: number;
+  tier: number;
+}
+
+export interface LeaderboardAverages {
+  score: number | null;
+  precision: number | null;
+  f1: number | null;
 }
 
 export interface LeaderboardData {
-  models: LeaderboardModel[];
-  averages: {
-    score: number;
-    coverage: number;
-    validity: number;
-    localScore: number;
-    crossFileScore: number;
-  };
+  entries: LeaderboardEntry[];
+  averages: LeaderboardAverages;
 }
 
-// ── Samples ──
-export interface ReferenceBug {
-  relevantFile: string;
-  relevantLinesStart: number;
-  relevantLinesEnd: number;
+// ── Case samples (per model × PR) ──
+export interface Finding {
+  path: string | null;
+  startLine: number | null;
+  endLine: number | null;
+  severity: string | null;
+  category: string | null;
+  description: string;
 }
 
-export interface CodeSuggestion {
-  relevantFile: string;
-  language?: string;
-  suggestionContent: string;
-  existingCode: string;
-  improvedCode: string;
+export interface MissedGolden {
+  text: string;
+  /** 'realMiss' = código estava disponível, modelo não achou.
+   *  'artifact' = golden aponta pra código fora do corpus de replay.
+   *  'untestable' = não dá pra verificar se o código estava disponível. */
+  classification: 'realMiss' | 'artifact' | 'untestable';
 }
 
-export interface JudgeResult {
-  score: number;
-  coverage: number;
-  validity: number;
-  reasoning: string;
+/** Índice leve por caso — sem findings/texto — pra filtro combinado
+ *  (linguagem + repo + tamanho) client-side sem embarcar o samples.json
+ *  inteiro (que carrega descrições de finding) no bundle. */
+export interface CaseIndexRow {
+  entryKey: string;
+  caseId: string;
+  repo: string;
+  language: string;
+  sizeBucket: string | null;
+  goldens: number;
+  matched: number;
+  tpFindings: number;
+  fpFindings: number;
 }
 
-export interface LineMetrics {
-  lineAccuracy: number;
-  avgIou: number;
-  exactMatch: number;
-  within3: number;
-  matched: string;
-}
-
-export interface Sample {
+export interface CaseSample {
   id: string;
-  modelSlug: string;
-  modelDisplayName: string;
-  provider: string;
-  testDescription: string;
-  lang: string;
-  category: string;
-  pass: boolean;
-  score: number;
-  latencyMs: number;
-  parseOk: boolean;
-  prSummary: string;
-  fileContent: string;
-  patch: string;
-  referenceBugs: ReferenceBug[];
-  response: CodeSuggestion[];
-  responseRaw: string;
-  judges: {
-    sonnet: JudgeResult;
-    gpt: JudgeResult;
-  };
-  lineMetrics: LineMetrics | null;
-  crossFileContext: string | null;
+  entryKey: string;
+  harness: string;
+  modelId: string | null;
+  caseId: string;
+  repo: string;
+  language: string;
+  filesChanged: number | null;
+  linesChanged: number | null;
+  sizeBucket: string | null;
+  recall: number;
+  precision: number;
+  f1: number | null;
+  goldens: number;
+  matched: number;
+  findings: Finding[];
+  missedGoldens: MissedGolden[];
+  usage: Usage | null;
+  latencyMs: number | null;
 }

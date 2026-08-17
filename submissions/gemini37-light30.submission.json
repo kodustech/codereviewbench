@@ -1,0 +1,701 @@
+{
+  "benchmarkVersion": "light-v1",
+  "run": {
+    "harness": {
+      "name": "kodus",
+      "version": "dev"
+    },
+    "model": {
+      "id": "gemini-3.7-flash",
+      "provider": "google",
+      "accessPath": "api"
+    },
+    "executionMode": "replay",
+    "heavy": false,
+    "reasoning": {
+      "config": "vendor-default",
+      "effortRequested": null
+    },
+    "runAt": "2026-08-13T18:33:01.568Z"
+  },
+  "results": [
+    {
+      "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 360625,
+        "outputTokens": 3508,
+        "reasoningTokens": 2481,
+        "cacheReadTokens": 215810
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 16,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 542297,
+        "outputTokens": 4744,
+        "reasoningTokens": 3522,
+        "cacheReadTokens": 358626
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 20,
+        "unexpectedToolCalls": 4
+      }
+    },
+    {
+      "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 46,
+          "endLine": 49,
+          "severity": "high",
+          "category": "bug",
+          "description": "Logical AND (`&&`) used instead of logical OR (`||`) in `isTeamAdminOrOwner` authorization check. — WHAT: `isTeamAdminOrOwner` checks `isTeamAdmin(...) && isTeamOwner(...)` with logical AND instead of logical OR.\nWHY: Team owners or team admins will fail the permission check if they do not satisfy both conditions simultaneously, causing an unauthorized `FORBIDDEN` error when attempting to add guests.\nHOW: Replace `&&` with `||` so that either a team admin or team owner is granted access."
+        }
+      ],
+      "usage": {
+        "inputTokens": 302598,
+        "outputTokens": 2957,
+        "reasoningTokens": 1835,
+        "cacheReadTokens": 81330
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 7,
+        "replayCalls": 20,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+      "findings": [
+        {
+          "path": "misc/theme-verifier/src/main/java/org/keycloak/themeverifier/VerifyMessageProperties.java",
+          "startLine": 146,
+          "endLine": 156,
+          "severity": "medium",
+          "category": "bug",
+          "description": "StringIndexOutOfBoundsException when common prefix and suffix overlap in message difference calculation — WHAT: The loop calculating trailing matching characters `end` does not account for `start`, allowing `start + end` to exceed `sanitized.length()` or `value.length()`.\nWHY: When common prefix and suffix characters overlap (e.g. `value = \"<b><script></b>\"` and `sanitized = \"<b></b>\"`), calling `sanitized.substring(start, sanitized.length() - end)` fails with `StringIndexOutOfBoundsException: begin > end` and crashes the verifier.\nHOW: Bound the `end` loop condition by `start + end < sanitized.length() && start + end < value.length()`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 416202,
+        "outputTokens": 10094,
+        "reasoningTokens": 8126,
+        "cacheReadTokens": 293654
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 13,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/services/anonymous/anonimpl/impl.go",
+          "startLine": 144,
+          "endLine": 149,
+          "severity": "high",
+          "category": "bug",
+          "description": "Premature localCache insertion in tagDeviceUI allows rejected devices exceeding the device limit to authenticate on subsequent requests. — WHAT: `tagDeviceUI` caches the device ID in `localCache` before `CreateOrUpdateDevice` succeeds, without evicting it on error.\n\nWHY: When a new device reaches `TagDevice` after the device limit is reached, `CreateOrUpdateDevice` returns `ErrDeviceLimitReached` and authentication is rejected. However, because `localCache` already recorded the key, the device's next request results in a cache hit in `tagDeviceUI`, which returns `nil` without calling `CreateOrUpdateDevice`, bypassing the device limit and allowing unauthorized anonymous access.\n\nHOW: In `tagDeviceUI`, only store the key in `localCache` after `a.anonStore.CreateOrUpdateDevice(ctx, device)` succeeds, or delete the key from `localCache` if `CreateOrUpdateDevice` returns an error."
+        },
+        {
+          "path": "pkg/services/anonymous/anonimpl/impl.go",
+          "startLine": 144,
+          "endLine": 148,
+          "severity": "high",
+          "category": "bug",
+          "description": "Cached device key on tagDeviceUI failure allows subsequent requests to bypass AnonymousDeviceLimit — WHAT: `tagDeviceUI` stores the device key in `localCache` before `CreateOrUpdateDevice` succeeds, but does not evict it when `CreateOrUpdateDevice` fails with `ErrDeviceLimitReached`.\nWHY: When a new device is rejected after reaching `AnonymousDeviceLimit`, its device ID remains in `localCache` (29-minute TTL); any subsequent request with the same device ID hits the cache, returns `nil`, and successfully authenticates, completely bypassing the device limit.\nHOW: Evict the device cache key on error (e.g. `a.localCache.Delete(taggedDevice.CacheKey())` when `err != nil`) or only store the key in `localCache` after `CreateOrUpdateDevice` succeeds."
+        }
+      ],
+      "usage": {
+        "inputTokens": 399554,
+        "outputTokens": 10601,
+        "reasoningTokens": 8223,
+        "cacheReadTokens": 183511
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 18,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "dual-storage-architecture-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 42,
+          "endLine": 47,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Storage.Create failure records legacy duration metrics instead of storage duration metrics. — WHAT: d.recordLegacyDuration is called when d.Storage.Create returns an error.\nWHY: Storage failure latency and error counts are recorded against the legacy storage histogram metric instead of the storage histogram metric, corrupting dual-writer observability.\nHOW: Change d.recordLegacyDuration to d.recordStorageDuration."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 100,
+          "endLine": 107,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Delete passes object name instead of resource kind to recordStorageDuration. — WHAT: recordStorageDuration is passed the object instance name instead of options.Kind on successful Storage.Delete.\nWHY: Using instance names instead of resource kinds creates high-cardinality Prometheus labels and mismatches the kind label recorded across all other dual writer methods and error branches.\nHOW: Pass options.Kind instead of name to d.recordStorageDuration."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 125,
+          "endLine": 131,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Storage.Update failure records legacy duration metrics instead of storage duration metrics. — WHAT: d.recordLegacyDuration is called when d.Storage.Update fails.\nWHY: Storage update failures and latencies are recorded against the legacy storage histogram metric instead of the storage histogram metric, distorting telemetry and alerting.\nHOW: Change d.recordLegacyDuration to d.recordStorageDuration."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 161,
+          "endLine": 168,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Async Legacy.DeleteCollection records storage duration metric instead of legacy duration metric. — WHAT: d.recordStorageDuration is called inside the async Legacy.DeleteCollection goroutine.\nWHY: Asynchronous legacy delete-collection execution time and errors are recorded under the storage duration histogram rather than the legacy duration histogram.\nHOW: Change d.recordStorageDuration to d.recordLegacyDuration."
+        }
+      ],
+      "usage": {
+        "inputTokens": 581075,
+        "outputTokens": 8123,
+        "reasoningTokens": 4908,
+        "cacheReadTokens": 379758
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 19,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 44,
+          "endLine": 49,
+          "severity": "high",
+          "category": "bug",
+          "description": "Missing `require 'open-uri'` in `TopicEmbed.import_remote` causes `open(url)` to fail when opening HTTP/HTTPS URLs. — WHAT: `TopicEmbed.import_remote` calls `open(url)` without ensuring `open-uri` is required.\nWHY: Without `open-uri` loaded, `Kernel#open` attempts to open `url` as a local filesystem path and raises `Errno::ENOENT` when fetching remote URLs.\nHOW: Add `require 'open-uri'` before calling `open(url)` in `import_remote` (or require it at the top of the file)."
+        },
+        {
+          "path": "app/jobs/scheduled/poll_feed.rb",
+          "startLine": 35,
+          "endLine": 36,
+          "severity": "high",
+          "category": "bug",
+          "description": "Unchecked `i.content.scrub` raises `NoMethodError` on RSS feeds where items only define `description`. — WHAT: `i.content.scrub` is called without guarding against `nil` or falling back to `i.description`.\nWHY: SimpleRSS items in RSS 2.0 feeds without `<content:encoded>` elements leave `i.content` as `nil`, causing a runtime `NoMethodError: undefined method 'scrub' for nil:NilClass` and aborting feed processing.\nHOW: Fall back to `i.description` and ensure content is present before calling `.scrub`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 241427,
+        "outputTokens": 5937,
+        "reasoningTokens": 4246,
+        "cacheReadTokens": 12179
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 7,
+        "replayCalls": 21,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "feat-2fa-backup-codes-cal-com",
+      "findings": [],
+      "usage": {
+        "inputTokens": 509983,
+        "outputTokens": 2797,
+        "reasoningTokens": 1991,
+        "cacheReadTokens": 354702
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 10,
+        "replayCalls": 19,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+      "findings": [],
+      "usage": {
+        "inputTokens": 219944,
+        "outputTokens": 6287,
+        "reasoningTokens": 5434,
+        "cacheReadTokens": 93702
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 9,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/integrations/services/assignment_source.py",
+          "startLine": 15,
+          "endLine": 19,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Dataclass field default `timezone.now()` is evaluated at module import time instead of instance creation time. — WHAT: `queued` is initialized with a static default expression `timezone.now()`, which evaluates once at class definition / module import time.\nWHY: Every `AssignmentSource` created without specifying `queued` will have an identical, stale timestamp recorded at server startup rather than the timestamp when the assignment occurred.\nHOW: Use `field(default_factory=timezone.now)` from `dataclasses` to evaluate the timestamp dynamically upon instantiation."
+        }
+      ],
+      "usage": {
+        "inputTokens": 413876,
+        "outputTokens": 4209,
+        "reasoningTokens": 2770,
+        "cacheReadTokens": 183177
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 17,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
+      "findings": [],
+      "usage": {
+        "inputTokens": 246503,
+        "outputTokens": 3231,
+        "reasoningTokens": 2492,
+        "cacheReadTokens": 77313
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 6,
+        "replayCalls": 14,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/optimized_image.rb",
+          "startLine": 145,
+          "endLine": 151,
+          "severity": "high",
+          "category": "bug",
+          "description": "Duplicate `self.downsize` definition overwrites the 4/5-argument method signature, causing ArgumentError when invoked with separate width and height. — WHAT: Defining `self.downsize` twice in `OptimizedImage` overwrites the `(from, to, max_width, max_height, opts={})` definition.\nWHY: Ruby does not support method overloading by parameter count or type; the second definition clobbers the first, causing callers like `ResizeEmoji` (`OptimizedImage.downsize(path, path, 100, 100, opts)`) to raise an `ArgumentError (wrong number of arguments)`.\nHOW: Unify `self.downsize` into a single method that supports both dimension strings (`\"80%\"`, `\"100x100\"`) and separate `max_width`/`max_height` arguments."
+        }
+      ],
+      "usage": {
+        "inputTokens": 157853,
+        "outputTokens": 6042,
+        "reasoningTokens": 4778,
+        "cacheReadTokens": 4065
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 5,
+        "replayCalls": 10,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/embeddable_host.rb",
+          "startLine": 5,
+          "endLine": 8,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Calling sub! on nil host in before_validation callback causes NoMethodError when validating records with nil host — WHAT: `self.host.sub!` is called without checking if `self.host` is present in the `before_validation` callback.\nWHY: When `self.host` is `nil` (e.g. when creating or updating a record without a host value), validation will crash with `NoMethodError: undefined method 'sub!' for nil:NilClass` instead of failing validation gracefully.\nHOW: Wrap the normalization in `if self.host.present?` before calling `sub!`."
+        },
+        {
+          "path": "app/models/embeddable_host.rb",
+          "startLine": 5,
+          "endLine": 8,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Prevent `NoMethodError` in `before_validation` when `host` is nil. — WHAT: `self.host.sub!` is called without checking if `self.host` is present in the `before_validation` callback.\nWHY: When an `EmbeddableHost` is validated or saved without a `host` attribute, `self.host` is nil and calling `sub!` raises `NoMethodError: undefined method 'sub!' for nil:NilClass` instead of allowing ActiveRecord validations to return an error response.\nHOW: Guard the mutation with `if self.host.present?` before modifying `self.host`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 278380,
+        "outputTokens": 10280,
+        "reasoningTokens": 8277,
+        "cacheReadTokens": 52757
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 15,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
+      "findings": [],
+      "usage": {
+        "inputTokens": 198628,
+        "outputTokens": 2933,
+        "reasoningTokens": 2255,
+        "cacheReadTokens": 44644
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 10,
+        "replayCalls": 12,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 168063,
+        "outputTokens": 1675,
+        "reasoningTokens": 865,
+        "cacheReadTokens": 40705
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 5,
+        "replayCalls": 9,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/organizations/create.handler.ts",
+          "startLine": 148,
+          "endLine": 156,
+          "severity": "high",
+          "category": "bug",
+          "description": "Inverted boolean check causes organization creation to omit the slug when team billing is disabled and assign it prematurely when billing is enabled. — WHAT: The condition for assigning `slug` directly to the new organization was changed from `!IS_TEAM_BILLING_ENABLED` to `IS_TEAM_BILLING_ENABLED`.\nWHY: When team billing is disabled, the created organization is left with no `slug` (and no `requestedSlug`), while if team billing is enabled, the `slug` is assigned immediately upon creation instead of being held in `metadata.requestedSlug` until billing is completed.\nHOW: Restore the negation `!IS_TEAM_BILLING_ENABLED` for the direct `slug` property so that organizations created without billing receive their slug immediately."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/organizations/create.handler.ts",
+          "startLine": 151,
+          "endLine": 153,
+          "severity": "high",
+          "category": "bug",
+          "description": "Inverted condition sets organization slug when team billing is enabled instead of when it is disabled. — WHAT: The condition for assigning `slug` directly to the new organization was changed from `!IS_TEAM_BILLING_ENABLED` to `IS_TEAM_BILLING_ENABLED`.\n\nWHY: When team billing is disabled, the organization is created without a `slug`, and when team billing is enabled, both `slug` and `metadata.requestedSlug` are set immediately instead of waiting for billing completion.\n\nHOW: Change `IS_TEAM_BILLING_ENABLED ? { slug } : {}` back to checking `!IS_TEAM_BILLING_ENABLED`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 376686,
+        "outputTokens": 7087,
+        "reasoningTokens": 4856,
+        "cacheReadTokens": 122030
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 17,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/assets/javascripts/admin/controllers/admin-group.js.es6",
+          "startLine": 11,
+          "endLine": 14,
+          "severity": "medium",
+          "category": "bug",
+          "description": "`totalPages` incorrectly adds an extra page when `user_count` is an exact multiple of `limit`. — WHAT: `totalPages` uses `Math.floor(this.get(\"user_count\") / this.get(\"limit\")) + 1` instead of `Math.ceil(...)`.\nWHY: When `user_count` is an exact multiple of `limit` (e.g. 50 users with `limit = 50`), `totalPages` evaluates to 2 instead of 1, causing an extra phantom page to be displayed and allowing navigation to an empty page.\nHOW: Use `Math.ceil(this.get(\"user_count\") / this.get(\"limit\"))`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 371890,
+        "outputTokens": 3161,
+        "reasoningTokens": 1893,
+        "cacheReadTokens": 191387
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 7,
+        "replayCalls": 20,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "fixing-re-authentication-with-passkeys-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 241470,
+        "outputTokens": 3031,
+        "reasoningTokens": 2228,
+        "cacheReadTokens": 69183
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 7,
+        "replayCalls": 14,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "frontend-asset-optimization-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/api/webassets/webassets.go",
+          "startLine": 48,
+          "endLine": 52,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Missing re-check of entryPointAssetsCache under write lock causes broken double-checked locking. — WHAT: Missing check for `entryPointAssetsCache != nil` after acquiring `entryPointAssetsCacheMu.Lock()`.\nWHY: When multiple concurrent requests call `GetWebAssets` on cold start, all waiting goroutines bypass the initial check and redundantly re-read from disk and re-parse the manifest sequentially instead of returning the already cached assets.\nHOW: Re-check `if cfg.Env != setting.Dev && entryPointAssetsCache != nil` immediately after acquiring the write lock before executing the manifest loading logic."
+        },
+        {
+          "path": "pkg/api/webassets/webassets.go",
+          "startLine": 48,
+          "endLine": 50,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Re-check entryPointAssetsCache under write lock to complete double-checked locking pattern — WHAT: Missing check for `entryPointAssetsCache != nil` after acquiring `entryPointAssetsCacheMu.Lock()`.\nWHY: Multiple concurrent goroutines requesting assets on cold start will pass the initial RLock check and sequentially re-read and parse the manifest, doing redundant I/O and potentially overwriting a valid cache with nil if a later load fails.\nHOW: Re-check `entryPointAssetsCache != nil` (when not in dev mode) immediately after acquiring `entryPointAssetsCacheMu.Lock()` and return the cached value."
+        }
+      ],
+      "usage": {
+        "inputTokens": 162481,
+        "outputTokens": 6593,
+        "reasoningTokens": 4922,
+        "cacheReadTokens": 8140
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 7,
+        "replayCalls": 13,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "github-oauth-security-enhancement-sentry",
+      "findings": [],
+      "usage": {
+        "inputTokens": 363556,
+        "outputTokens": 7644,
+        "reasoningTokens": 6683,
+        "cacheReadTokens": 162692
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 19,
+        "unexpectedToolCalls": 4
+      }
+    },
+    {
+      "caseId": "implement-access-token-context-encoding-framework-keycloak",
+      "findings": [
+        {
+          "path": "services/src/main/java/org/keycloak/protocol/oidc/encode/AccessTokenContext.java",
+          "startLine": 69,
+          "endLine": 78,
+          "severity": "medium",
+          "category": "bug",
+          "description": "AccessTokenContext constructor checks grantType for null twice instead of checking rawTokenId. — WHAT: The constructor validates `grantType` twice with `Objects.requireNonNull` instead of validating `rawTokenId` on the fourth check.\nWHY: Passing a null `rawTokenId` will not be caught during construction and can result in `NullPointerException` or malformed encoded token IDs later in the lifecycle.\nHOW: Change `Objects.requireNonNull(grantType, \"Null rawTokenId not allowed\");` to `Objects.requireNonNull(rawTokenId, \"Null rawTokenId not allowed\");`."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/protocol/oidc/encode/AccessTokenContext.java",
+          "startLine": 70,
+          "endLine": 79,
+          "severity": "low",
+          "category": "bug",
+          "description": "Fix duplicate null-check on grantType instead of rawTokenId in AccessTokenContext constructor — WHAT: `Objects.requireNonNull` checks `grantType` twice instead of validating `rawTokenId` on the second check.\nWHY: Passing a `null` `rawTokenId` will bypass constructor validation and fail later when encoding or inspecting the token context.\nHOW: Replace the second `grantType` check with `Objects.requireNonNull(rawTokenId, \"Null rawTokenId not allowed\");`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 394475,
+        "outputTokens": 5739,
+        "reasoningTokens": 3224,
+        "cacheReadTokens": 224131
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 16,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "notification-rule-processing-engine-grafana-codex",
+      "findings": [],
+      "usage": {
+        "inputTokens": 504158,
+        "outputTokens": 4640,
+        "reasoningTokens": 3717,
+        "cacheReadTokens": 416160
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 10,
+        "replayCalls": 16,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
+      "findings": [
+        {
+          "path": "packages/app-store/salesforce/lib/CalendarService.ts",
+          "startLine": 86,
+          "endLine": 86,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Checking response.statusText !== 'OK' instead of !response.ok can cause valid token refresh responses to throw an error. — WHAT: `response.statusText !== \"OK\"` is used to determine if the Salesforce token refresh request failed.\nWHY: `response.statusText` is not guaranteed to be `\"OK\"` for successful HTTP responses (for example, in HTTP/2 where statusText is empty `\"\"`, or if a proxy alters reason phrases), which causes successful token refresh requests to falsely throw an `HttpError`.\nHOW: Check `!response.ok` instead of comparing `response.statusText` against `\"OK\"`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 414207,
+        "outputTokens": 6930,
+        "reasoningTokens": 5596,
+        "cacheReadTokens": 203526
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 10,
+        "replayCalls": 20,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
+      "findings": [],
+      "usage": {
+        "inputTokens": 180535,
+        "outputTokens": 3064,
+        "reasoningTokens": 2358,
+        "cacheReadTokens": 105789
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 9,
+        "replayCalls": 8,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex",
+      "findings": [],
+      "usage": {
+        "inputTokens": 410330,
+        "outputTokens": 2811,
+        "reasoningTokens": 1824,
+        "cacheReadTokens": 240334
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 17,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "replays-self-serve-bulk-delete-system-sentry",
+      "findings": [],
+      "usage": {
+        "inputTokens": 269653,
+        "outputTokens": 6774,
+        "reasoningTokens": 5676,
+        "cacheReadTokens": 89464
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 13,
+        "unexpectedToolCalls": 6
+      }
+    },
+    {
+      "caseId": "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry",
+      "findings": [],
+      "usage": {
+        "inputTokens": 263164,
+        "outputTokens": 3598,
+        "reasoningTokens": 2806,
+        "cacheReadTokens": 150579
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 10,
+        "replayCalls": 11,
+        "unexpectedToolCalls": 6
+      }
+    },
+    {
+      "caseId": "sms-workflow-reminder-retry-count-tracking-cal-com",
+      "findings": [
+        {
+          "path": "packages/features/ee/workflows/api/scheduleSMSReminders.ts",
+          "startLine": 50,
+          "endLine": 63,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Delete condition for retryCount > 1 in scheduleSMSReminders lacks the SMS method filter, deleting non-SMS reminders. — WHAT: The `retryCount: { gt: 1 }` condition in `deleteMany` is not scoped by `method: WorkflowMethods.SMS`.\n\nWHY: Moving `method: WorkflowMethods.SMS` into only the first `OR` branch causes `deleteMany` to match and delete any `WorkflowReminder` record across other reminder methods (e.g. WHATSAPP, EMAIL) whenever its `retryCount > 1`.\n\nHOW: Keep `method: WorkflowMethods.SMS` at the top level of the `where` clause so both `scheduledDate` and `retryCount` conditions only apply to SMS reminders."
+        }
+      ],
+      "usage": {
+        "inputTokens": 236588,
+        "outputTokens": 4787,
+        "reasoningTokens": 3390,
+        "cacheReadTokens": 77314
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 6,
+        "replayCalls": 14,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry",
+      "findings": [],
+      "usage": {
+        "inputTokens": 520357,
+        "outputTokens": 4276,
+        "reasoningTokens": 3530,
+        "cacheReadTokens": 366953
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 16,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "unified-storage-performance-optimizations-grafana-codex",
+      "findings": [],
+      "usage": {
+        "inputTokens": 437901,
+        "outputTokens": 3129,
+        "reasoningTokens": 2205,
+        "cacheReadTokens": 252642
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 15,
+        "unexpectedToolCalls": 0
+      }
+    }
+  ]
+}

@@ -1,184 +1,199 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useMemo, Fragment } from 'react';
 import Link from 'next/link';
 import leaderboardData from '@/lib/data/leaderboard.json';
+import caseIndexData from '@/lib/data/case-index.json';
+import meta from '@/lib/data/meta.json';
 import { cn } from '@/lib/utils';
-import { formatScore, formatLatency } from '@/lib/format';
-import { LANGUAGE_LABELS, CATEGORY_LABELS, ALL_LANGUAGES, ALL_CATEGORIES, PROVIDER_COLORS } from '@/lib/constants';
-import FilterBar from '@/components/shared/FilterBar';
+import { formatScore, formatMoney, formatCI } from '@/lib/format';
+import { displayNameOf, providerOf, PROVIDER_COLORS, REPO_LABELS, LANGUAGE_LABELS, SIZE_LABELS } from '@/lib/constants';
+import { bootstrapCI } from '@/lib/bootstrap';
+import CostFrontier, { type FrontierPoint } from '@/components/charts/CostFrontier';
 import ViewSwitcher from '@/components/shared/ViewSwitcher';
-import ScatterPlotChart from '@/components/charts/ScatterPlot';
-import BarChartComponent from '@/components/charts/BarChart';
-import RadarChartComponent from '@/components/charts/RadarChart';
-import JudgeAgreement from '@/components/charts/JudgeAgreement';
-import { List, LayoutGrid, BarChart3, Radar, Scale, FlaskConical, Layers, AlertCircle, ArrowUpDown, ChevronDown } from 'lucide-react';
-import type { LeaderboardModel } from '@/lib/types';
+import { List, LineChart, ArrowUpDown, ChevronDown, Scale, SlidersHorizontal, RotateCcw } from 'lucide-react';
+import type { LeaderboardData, LeaderboardEntry, CaseIndexRow } from '@/lib/types';
 
-const data = leaderboardData as { models: LeaderboardModel[]; averages: { score: number; coverage: number; validity: number; localScore: number; crossFileScore: number } };
+const data = leaderboardData as unknown as LeaderboardData;
+const caseIndex = caseIndexData as unknown as CaseIndexRow[];
 
 const VIEWS = [
   { key: 'table', label: 'Table', icon: List },
-  { key: 'scatter', label: 'Scatter', icon: LayoutGrid },
-  { key: 'bar', label: 'Bar', icon: BarChart3 },
-  { key: 'radar', label: 'Radar', icon: Radar },
-  { key: 'judges', label: 'Judges', icon: Scale },
+  { key: 'frontier', label: 'Pareto Frontier', icon: LineChart },
 ];
 
-type SortKey = 'rank' | 'score' | 'coverage' | 'validity' | 'localScore' | 'crossFileScore' | 'passRate' | 'latency' | 'errors';
+type SortKey = 'rank' | 'f1' | 'precision' | 'recall' | 'costPerPR' | 'costPerBugFound';
+
+/** Métricas recomputadas de um subconjunto filtrado de casos — não vêm do
+ *  leaderboard.json (que só tem o bench inteiro). null = sem caso nenhum
+ *  no subconjunto pra essa entrada, não 0 — 0 mentiria "testado e zerou". */
+interface FilteredMetrics {
+  n: number;
+  goldens: number;
+  recall: number | null;
+  precision: number | null;
+  f1: number | null;
+  ciLow: number | null;
+  ciHigh: number | null;
+}
+
+function computeFiltered(rows: CaseIndexRow[]): FilteredMetrics {
+  if (!rows.length) return { n: 0, goldens: 0, recall: null, precision: null, f1: null, ciLow: null, ciHigh: null };
+  const goldens = rows.reduce((s, r) => s + r.goldens, 0);
+  const matched = rows.reduce((s, r) => s + r.matched, 0);
+  const tp = rows.reduce((s, r) => s + r.tpFindings, 0);
+  const fp = rows.reduce((s, r) => s + r.fpFindings, 0);
+  const recall = goldens ? (matched / goldens) * 100 : null;
+  const precision = tp + fp > 0 ? (tp / (tp + fp)) * 100 : null;
+  const f1 = precision == null || recall == null ? null : recall + precision > 0 ? (2 * recall * precision) / (recall + precision) : 0;
+  const { lo, hi } = bootstrapCI(rows.map((r) => [r.matched, r.goldens] as [number, number]));
+  return { n: rows.length, goldens, recall, precision, f1, ciLow: lo, ciHigh: hi };
+}
+
+function FilterGroup({
+  label,
+  options,
+  labelOf,
+  selected,
+  onToggle,
+}: {
+  label: string;
+  options: string[];
+  labelOf: (v: string) => string;
+  selected: Set<string>;
+  onToggle: (v: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-[10px] font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">{label}</span>
+      <div className="flex flex-wrap gap-1.5">
+        {options.map((opt) => {
+          const active = selected.has(opt);
+          return (
+            <button
+              key={opt}
+              onClick={() => onToggle(opt)}
+              className={cn(
+                'px-2.5 py-1 rounded-md text-xs font-mono border transition-colors',
+                active
+                  ? 'bg-[var(--accent-dim)] border-[var(--accent)] text-[var(--accent)]'
+                  : 'bg-[var(--surface)] border-[var(--border)] text-[var(--muted-dim)] hover:text-[var(--muted)] hover:border-[var(--border-bright)]',
+              )}
+            >
+              {labelOf(opt)}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function LeaderboardClient() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const lang = searchParams.get('lang') || 'all';
-  const category = searchParams.get('category') || 'all';
   const [view, setView] = useState('table');
-  const [sortKey, setSortKey] = useState<SortKey>('rank');
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
-  const [scoringOpen, setScoringOpen] = useState(false);
+  const [sortKey, setSortKey] = useState<SortKey>('f1');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [methodologyOpen, setMethodologyOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const setFilter = useCallback(
-    (key: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (value === 'all') {
-        params.delete(key);
-      } else {
-        params.set(key, value);
+  const [selLangs, setSelLangs] = useState<Set<string>>(new Set(meta.languages));
+  const [selRepos, setSelRepos] = useState<Set<string>>(new Set(meta.repos));
+  const [selSizes, setSelSizes] = useState<Set<string>>(new Set(meta.sizes));
+
+  const isFiltered =
+    selLangs.size !== meta.languages.length || selRepos.size !== meta.repos.length || selSizes.size !== meta.sizes.length;
+
+  const toggleIn = (setter: React.Dispatch<React.SetStateAction<Set<string>>>) => (v: string) =>
+    setter((prev) => {
+      const next = new Set(prev);
+      if (next.has(v)) next.delete(v);
+      else next.add(v);
+      return next;
+    });
+
+  const resetFilters = () => {
+    setSelLangs(new Set(meta.languages));
+    setSelRepos(new Set(meta.repos));
+    setSelSizes(new Set(meta.sizes));
+  };
+
+  // Um FilteredMetrics por entrada, recomputado do case-index (não do
+  // leaderboard.json) sempre que os filtros mudam. Sem filtro ativo isso
+  // ainda roda, mas dá exatamente os números publicados — dá pra usar sempre.
+  const filteredByKey = useMemo(() => {
+    const map = new Map<string, FilteredMetrics>();
+    for (const e of data.entries) {
+      const rows = caseIndex.filter(
+        (r) => r.entryKey === e.key && selLangs.has(r.language) && selRepos.has(r.repo) && (r.sizeBucket == null || selSizes.has(r.sizeBucket)),
+      );
+      map.set(e.key, computeFiltered(rows));
+    }
+    return map;
+  }, [selLangs, selRepos, selSizes]);
+
+  const entries = useMemo(() => {
+    const sorted = [...data.entries].sort((a, b) => {
+      const fa = filteredByKey.get(a.key);
+      const fb = filteredByKey.get(b.key);
+      let av: number, bv: number;
+      switch (sortKey) {
+        case 'f1':
+          av = (isFiltered ? fa?.f1 : a.f1) ?? -Infinity; bv = (isFiltered ? fb?.f1 : b.f1) ?? -Infinity; break;
+        case 'precision':
+          av = (isFiltered ? fa?.precision : a.precision) ?? -Infinity; bv = (isFiltered ? fb?.precision : b.precision) ?? -Infinity; break;
+        case 'recall':
+          av = (isFiltered ? fa?.recall : a.score) ?? -Infinity; bv = (isFiltered ? fb?.recall : b.score) ?? -Infinity; break;
+        case 'costPerPR':
+          // custo n/a vai sempre pro fim, nos dois sentidos — nao e "gratis"
+          av = a.costPerPR ?? Infinity; bv = b.costPerPR ?? Infinity; break;
+        case 'costPerBugFound':
+          av = a.costPerBugFound ?? Infinity; bv = b.costPerBugFound ?? Infinity; break;
+        default:
+          av = a.rank; bv = b.rank; break;
       }
-      router.replace(`/leaderboard?${params.toString()}`, { scroll: false });
-    },
-    [searchParams, router]
-  );
-
-  // Compute filtered/recalculated scores
-  const hasFilter = lang !== 'all' || category !== 'all';
-
-  const models = useMemo(() => {
-    const mapped = data.models
-      .map((m) => {
-        let score = m.score;
-        let coverage = m.coverage;
-        let validity = m.validity;
-
-        if (lang !== 'all' && m.byLanguage[lang]) {
-          const l = m.byLanguage[lang];
-          score = l.score;
-          coverage = l.coverage;
-          validity = l.validity;
-        }
-        if (category !== 'all' && m.byCategory[category]) {
-          const c = m.byCategory[category];
-          score = c.score;
-          coverage = c.coverage;
-          validity = c.validity;
-        }
-
-        return { ...m, score, coverage, validity };
-      })
-      .sort((a, b) => {
-        let aVal: number, bVal: number;
-        switch (sortKey) {
-          case 'score': aVal = a.score; bVal = b.score; break;
-          case 'coverage': aVal = a.coverage; bVal = b.coverage; break;
-          case 'validity': aVal = a.validity; bVal = b.validity; break;
-          case 'localScore': aVal = a.localScore; bVal = b.localScore; break;
-          case 'crossFileScore': aVal = a.crossFileScore; bVal = b.crossFileScore; break;
-          case 'passRate': aVal = a.passRate; bVal = b.passRate; break;
-          case 'latency': aVal = a.latency.p50; bVal = b.latency.p50; break;
-          case 'errors': aVal = a.errors; bVal = b.errors; break;
-          default: aVal = a.score; bVal = b.score; break;
-        }
-        const defaultDesc = sortKey === 'latency' || sortKey === 'errors';
-        const dir = sortKey === 'rank' ? 'desc' : sortDir;
-        return dir === 'asc' ? aVal - bVal : bVal - aVal;
-      });
-
-    // Re-assign ranks based on current sort (by score desc)
-    const ranked = [...mapped].sort((a, b) => b.score - a.score);
-    const rankMap = new Map(ranked.map((m, i) => [m.slug, i + 1]));
-    return mapped.map((m) => ({ ...m, rank: rankMap.get(m.slug) || m.rank }));
-  }, [lang, category, sortKey, sortDir]);
+      const dir = sortKey === 'rank' ? 1 : sortDir === 'asc' ? 1 : -1;
+      return (av - bv) * dir;
+    });
+    return sorted;
+  }, [sortKey, sortDir, filteredByKey, isFiltered]);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
       setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortKey(key);
-      setSortDir(key === 'rank' || key === 'latency' || key === 'errors' ? 'asc' : 'desc');
+      setSortDir(key === 'rank' ? 'asc' : 'desc');
     }
   };
 
-  const setExclusiveFilter = useCallback(
-    (key: 'lang' | 'category', value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      const other = key === 'lang' ? 'category' : 'lang';
-      if (value === 'all') {
-        params.delete(key);
-      } else {
-        params.set(key, value);
-        params.delete(other); // clear the other filter
-      }
-      router.replace(`/leaderboard?${params.toString()}`, { scroll: false });
-    },
-    [searchParams, router]
-  );
-
-  const filterGroups = [
-    {
-      key: 'lang',
-      label: 'Language',
-      options: [{ value: 'all', label: 'All' }, ...ALL_LANGUAGES.map((l) => ({ value: l, label: LANGUAGE_LABELS[l] }))],
-      value: lang,
-      onChange: (v: string) => setExclusiveFilter('lang', v),
-    },
-    {
-      key: 'category',
-      label: 'Category',
-      options: [{ value: 'all', label: 'All' }, ...ALL_CATEGORIES.map((c) => ({ value: c, label: CATEGORY_LABELS[c] }))],
-      value: category,
-      onChange: (v: string) => setExclusiveFilter('category', v),
-    },
-  ];
-
-  // Chart data helpers
-  const scatterData = models.map((m) => ({
-    name: m.displayName,
-    provider: m.provider,
-    x: m.localScore,
-    y: m.crossFileScore,
-    z: m.score,
-  }));
-
-  const barData = models.map((m) => ({
-    name: m.displayName,
-    local: m.byCategory['local']?.score || 0,
-    crossFile: m.byCategory['cross-file']?.score || 0,
-  }));
-
-  const radarAxes = ALL_LANGUAGES.filter((l) => models.some((m) => m.byLanguage[l]));
-  const radarData = radarAxes.map((lang) => {
-    const point: { axis: string; [key: string]: string | number } = { axis: LANGUAGE_LABELS[lang] };
-    models.forEach((m) => {
-      point[m.slug] = m.byLanguage[lang]?.score || 0;
+  // Filtrado, o eixo Y do Pareto usa o subconjunto (recall/CI recomputados);
+  // custo por PR continua o do bench inteiro — não dá pra fatiar tokens por
+  // caso sem inflar o bundle, então o eixo X nunca muda com o filtro.
+  const frontierData: FrontierPoint[] = data.entries
+    .filter((e) => e.costPerPR != null && (filteredByKey.get(e.key)?.n ?? 0) > 0)
+    .map((e) => {
+      const f = filteredByKey.get(e.key);
+      const recall = (isFiltered ? f?.recall : e.score) ?? 0;
+      const ciLow = (isFiltered ? f?.ciLow : e.ciLow) ?? recall;
+      const ciHigh = (isFiltered ? f?.ciHigh : e.ciHigh) ?? recall;
+      return {
+        name: displayNameOf(e.modelId),
+        provider: providerOf(e.modelId),
+        costPerPR: e.costPerPR as number,
+        recall,
+        ciLow,
+        ciHigh,
+        costPerBug: e.costPerBugFound,
+        tokensOut: Math.round(e.usage.outputTokens / e.cases),
+      };
     });
-    return point;
-  });
-
-  const judgeData = models.map((m) => ({
-    name: m.displayName,
-    provider: m.provider,
-    sonnet: (m.judges.sonnet.coverage + m.judges.sonnet.validity) / 2 * 100 / 100,
-    gpt: (m.judges.gpt.coverage + m.judges.gpt.validity) / 2 * 100 / 100,
-  }));
 
   const SortHeader = ({ label, sortKeyName, className }: { label: string; sortKeyName: SortKey; className?: string }) => (
     <th
       className={cn('px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest cursor-pointer hover:text-[var(--foreground)] transition-colors select-none font-bold', className)}
       onClick={() => toggleSort(sortKeyName)}
     >
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 justify-end">
         {label}
         {sortKey === sortKeyName && <ArrowUpDown className="size-3" />}
       </div>
@@ -192,178 +207,202 @@ export default function LeaderboardClient() {
         <span className="text-xs font-mono text-[var(--accent)] uppercase tracking-widest font-bold block mb-3">Rankings</span>
         <h1 className="text-3xl sm:text-4xl font-display text-[var(--foreground)] mb-3">AI Code Review Benchmark Leaderboard</h1>
         <p className="text-[15px] text-[var(--muted)] max-w-2xl leading-relaxed">
-          Which models actually find bugs, and which ones just add noise? Filter by language and category to see how each model performs.
+          {meta.totalCases} real pull requests, {meta.totalGoldens} human-authored golden bugs, judged by {meta.judges[0]}.
+          Ranked by F1 — recall alone rewards whoever talks most.
         </p>
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-8 pb-8 border-b border-[var(--border)]">
-        <FilterBar groups={filterGroups} />
+      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-4 pb-8 border-b border-[var(--border)]">
+        <div className="flex flex-wrap gap-2 items-center">
+          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)]">
+            {meta.repos.length} repos
+          </span>
+          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)]">
+            harness: {meta.harnesses.join(', ')}
+          </span>
+          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)]">
+            1 run per model
+          </span>
+          <button
+            onClick={() => setFiltersOpen((v) => !v)}
+            className={cn(
+              'flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded border transition-colors',
+              isFiltered
+                ? 'bg-[var(--accent-dim)] border-[var(--accent)] text-[var(--accent)]'
+                : 'bg-[var(--surface)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--border-bright)]',
+            )}
+          >
+            <SlidersHorizontal className="size-3" />
+            Filters
+            {isFiltered && <span className="font-bold">· active</span>}
+          </button>
+        </div>
         <ViewSwitcher views={VIEWS} active={view} onChange={setView} />
       </div>
 
-      {/* Scoring methodology panel */}
-      {view === 'table' && (
-        <div className="mb-8 border border-[var(--border)] rounded-xl bg-[var(--surface)] overflow-hidden">
-          <button
-            onClick={() => setScoringOpen((v) => !v)}
-            className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--surface-2)] transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="size-8 rounded-lg bg-[var(--accent-dim)] flex items-center justify-center">
-                <Scale className="size-4 text-[var(--accent)]" />
-              </div>
-              <div className="text-left">
-                <span className="text-sm font-semibold text-[var(--foreground)]">How we measure performance</span>
-                <span className="text-xs text-[var(--muted-dim)] block">Scoring weights, pass criteria, and what each column means</span>
-              </div>
-            </div>
-            <ChevronDown className={cn('size-4 text-[var(--muted)] transition-transform', scoringOpen && 'rotate-180')} />
-          </button>
-
-          {scoringOpen && (
-            <div className="border-t border-[var(--border)] px-6 py-6">
-              {/* Two-column layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Left: Score breakdown */}
-                <div>
-                  <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Score</h3>
-                  <p className="text-sm text-[var(--muted)] mb-4">Continuous quality score from 0 to 1. Weighted average of four components:</p>
-                  <div className="space-y-2.5">
-                    {[
-                      { name: 'Recall', weight: 45, desc: 'Expected decisions detected (strict match)' },
-                      { name: 'Soft Coverage', weight: 25, desc: 'Flexible match between predicted and expected' },
-                      { name: 'Precision', weight: 20, desc: 'Of predicted decisions, how many were correct' },
-                      { name: 'Count Score', weight: 10, desc: 'Penalty if decision count is out of range' },
-                    ].map((c) => (
-                      <div key={c.name} className="flex items-start gap-3">
-                        <div className="flex items-center gap-2 shrink-0 w-36">
-                          <div className="h-1.5 rounded-full bg-[var(--surface-2)] w-full overflow-hidden">
-                            <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${c.weight}%` }} />
-                          </div>
-                          <span className="text-xs font-mono text-[var(--accent)] tabular-nums w-8 text-right">{c.weight}%</span>
-                        </div>
-                        <div className="min-w-0">
-                          <span className="text-sm text-[var(--foreground)] font-medium">{c.name}</span>
-                          <span className="text-sm text-[var(--muted)]"> — {c.desc}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Right: Pass Rate */}
-                <div>
-                  <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Pass Rate</h3>
-                  <p className="text-sm text-[var(--muted)] mb-4">Binary. A test passes only if <span className="text-[var(--foreground)]">all four</span> thresholds are met:</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { metric: 'score', op: '\u2265', val: '0.72' },
-                      { metric: 'recall', op: '\u2265', val: '1.0' },
-                      { metric: 'precision', op: '\u2265', val: '0.6' },
-                      { metric: 'countScore', op: '\u2265', val: '0.7' },
-                    ].map((t) => (
-                      <div key={t.metric} className="px-3 py-2.5 rounded-lg bg-[var(--surface-2)] border border-[var(--border)] font-mono text-sm">
-                        <span className="text-[var(--foreground)]">{t.metric}</span>
-                        <span className="text-[var(--muted-dim)]"> {t.op} </span>
-                        <span className="text-[var(--accent)]">{t.val}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-sm text-[var(--muted)] mt-4">A test can score 0.85 but still fail if recall is below 1.0. One missed threshold and the test fails.</p>
-                </div>
-              </div>
-
-              {/* Column glossary */}
-              <div className="mt-6 pt-6 border-t border-[var(--border)]">
-                <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">Column reference</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-2 text-sm text-[var(--muted)]">
-                  <p><span className="text-[var(--foreground)] font-medium">Coverage</span> — % of known bugs found</p>
-                  <p><span className="text-[var(--foreground)] font-medium">Validity</span> — % of suggestions that were correct</p>
-                  <p><span className="text-[var(--foreground)] font-medium">Local</span> — score on single-file bugs</p>
-                  <p><span className="text-[var(--foreground)] font-medium">Cross-File</span> — score on multi-file bugs</p>
-                  <p><span className="text-[var(--foreground)] font-medium">Latency</span> — median response time</p>
-                  <p><span className="text-[var(--foreground)] font-medium">Errors</span> — failed API calls, excluded from score</p>
-                </div>
-              </div>
-            </div>
-          )}
+      {/* Filter panel */}
+      {filtersOpen && (
+        <div className="mb-8 p-5 border border-[var(--border)] rounded-xl bg-[var(--surface)]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <FilterGroup label="Language" options={meta.languages} labelOf={(v) => LANGUAGE_LABELS[v] || v} selected={selLangs} onToggle={toggleIn(setSelLangs)} />
+            <FilterGroup label="Repo" options={meta.repos} labelOf={(v) => REPO_LABELS[v] || v} selected={selRepos} onToggle={toggleIn(setSelRepos)} />
+            <FilterGroup label="PR size" options={meta.sizes} labelOf={(v) => SIZE_LABELS[v] || v} selected={selSizes} onToggle={toggleIn(setSelSizes)} />
+          </div>
+          <div className="flex items-center justify-between mt-5 pt-4 border-t border-[var(--border)]">
+            <p className="text-xs text-[var(--muted-dim)] max-w-lg">
+              Recomputed from the filtered PRs — not the published headline numbers. With only {meta.totalCases} PRs total, a
+              narrow filter can leave very few cases per model; watch the <span className="text-[var(--muted)]">n=</span> count
+              and the CI. $/PR and $/bug always reflect the full run — cost isn&apos;t tracked per PR.
+            </p>
+            {isFiltered && (
+              <button onClick={resetFilters} className="flex items-center gap-1.5 text-xs font-mono text-[var(--muted)] hover:text-[var(--foreground)] transition-colors shrink-0 ml-4">
+                <RotateCcw className="size-3" />
+                Reset
+              </button>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Views */}
+      {/* Methodology panel */}
+      <div className="mb-8 border border-[var(--border)] rounded-xl bg-[var(--surface)] overflow-hidden">
+        <button
+          onClick={() => setMethodologyOpen((v) => !v)}
+          className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--surface-2)] transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="size-8 rounded-lg bg-[var(--accent-dim)] flex items-center justify-center">
+              <Scale className="size-4 text-[var(--accent)]" />
+            </div>
+            <div className="text-left">
+              <span className="text-sm font-semibold text-[var(--foreground)]">How to read this table</span>
+              <span className="text-xs text-[var(--muted-dim)] block">What F1/precision/recall mean here, tiers, and what this benchmark doesn&apos;t measure</span>
+            </div>
+          </div>
+          <ChevronDown className={cn('size-4 text-[var(--muted)] transition-transform', methodologyOpen && 'rotate-180')} />
+        </button>
+
+        {methodologyOpen && (
+          <div className="border-t border-[var(--border)] px-6 py-6 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Metrics</h3>
+                <p className="text-sm text-[var(--muted)] mb-3">
+                  Micro-averaged: true/false positives and false negatives are summed across all {meta.totalCases} PRs, then
+                  precision and recall are computed once from the totals — not averaged per-PR. Same convention published by
+                  the Martian and Alibaba code review benchmarks.
+                </p>
+                <div className="grid grid-cols-1 gap-2 text-sm">
+                  <p><span className="text-[var(--foreground)] font-medium">Recall</span> — <span className="text-[var(--muted)]">golden bugs the model actually found</span></p>
+                  <p><span className="text-[var(--foreground)] font-medium">Precision</span> — <span className="text-[var(--muted)]">of what it reported, how much was real</span></p>
+                  <p><span className="text-[var(--foreground)] font-medium">F1</span> — <span className="text-[var(--muted)]">harmonic mean of both, equal weight</span></p>
+                  <p><span className="text-[var(--foreground)] font-medium">Tier</span> — <span className="text-[var(--muted)]">models whose recall confidence intervals overlap the tier leader&apos;s</span></p>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">What this run does not measure</h3>
+                <ul className="text-sm text-[var(--muted)] space-y-2 leading-relaxed list-disc list-inside">
+                  <li><span className="text-[var(--foreground)]">Run-to-run variance.</span> One pass per model. The judge alone varies up to ~3pp of recall between identical re-scores of the same submission — treat models within a few points of each other as tied.</li>
+                  <li><span className="text-[var(--foreground)]">Claude or GPT via API.</span> Anthropic was excluded on subscription-terms grounds; GPT models were measured but ran on a ChatGPT subscription (a different quota regime) and are held back pending an API re-run.</li>
+                  <li><span className="text-[var(--foreground)]">Large PRs.</span> Median diff size in this set is ~13K characters; the largest is ~38K. Some commercial reviewers decline PRs above 200K characters — this benchmark says nothing about that regime.</li>
+                </ul>
+              </div>
+            </div>
+            <div className="pt-4 border-t border-[var(--border)] text-sm text-[var(--muted)]">
+              <span className="text-[var(--foreground)] font-medium">Conflict of interest: </span>
+              this benchmark is run and published by Kodus, which sells an AI code review product, on Kodus&apos;s own harness.
+              It measures models inside one fixed harness — it is not a comparison of review products, and the same harness
+              running a different model can score very differently than the numbers here.
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Table */}
       {view === 'table' && (
         <div className="w-full border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--surface)]">
           <div className="overflow-x-auto custom-scrollbar">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <SortHeader label="#" sortKeyName="rank" />
-                  <th className="px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest min-w-[240px] font-bold">Model</th>
-                  <SortHeader label="Score" sortKeyName="score" />
-                  <SortHeader label="Coverage" sortKeyName="coverage" />
-                  <SortHeader label="Validity" sortKeyName="validity" />
-                  <SortHeader label="Local" sortKeyName="localScore" />
-                  <SortHeader label="Cross-File" sortKeyName="crossFileScore" className="text-blue-400" />
-                  <SortHeader label="Pass Rate" sortKeyName="passRate" />
-                  <SortHeader label="Latency" sortKeyName="latency" />
-                  <SortHeader label="Errors" sortKeyName="errors" />
+                  <th className="px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">#</th>
+                  <th className="px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest min-w-[220px] font-bold">Model</th>
+                  <SortHeader label="F1" sortKeyName="f1" />
+                  <SortHeader label="Precision" sortKeyName="precision" />
+                  <SortHeader label="Recall" sortKeyName="recall" />
+                  <th className="px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">95% CI</th>
+                  <SortHeader label="$/PR" sortKeyName="costPerPR" />
+                  <SortHeader label="$/bug" sortKeyName="costPerBugFound" />
                 </tr>
               </thead>
               <tbody>
-                {models.map((m, idx) => {
-                  const isTop = m.rank === 1;
+                {entries.map((e: LeaderboardEntry, idx) => {
+                  const showTierDivider = !isFiltered && idx > 0 && entries[idx - 1].tier !== e.tier;
+                  const provider = providerOf(e.modelId);
+                  const color = PROVIDER_COLORS[provider] || '#71717a';
+                  const f = filteredByKey.get(e.key);
+                  const f1 = isFiltered ? f?.f1 ?? null : e.f1;
+                  const precision = isFiltered ? f?.precision ?? null : e.precision;
+                  const recall = isFiltered ? f?.recall ?? null : e.score;
+                  const ciLow = isFiltered ? f?.ciLow ?? null : e.ciLow;
+                  const ciHigh = isFiltered ? f?.ciHigh ?? null : e.ciHigh;
+                  const isTop = idx === 0 && (!isFiltered || (f?.n ?? 0) > 0);
                   return (
-                    <tr key={m.slug} className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface-2)] transition-colors group">
-                      <td className="px-5 py-4">
-                        <span className={cn('text-sm font-mono tabular-nums', isTop ? 'text-[var(--accent)] font-bold' : 'text-[var(--muted)]')}>
-                          {m.rank.toString().padStart(2, '0')}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <Link href={`/model/${m.slug}`} className="flex flex-col gap-0.5 group/link">
-                          <span className={cn('text-sm font-semibold tracking-tight group-hover/link:text-[var(--accent)] transition-colors', isTop ? 'text-[var(--foreground)]' : 'text-[var(--foreground)]/80')}>
-                            {m.displayName}
+                    <Fragment key={e.key}>
+                      {showTierDivider && (
+                        <tr key={`tier-${e.tier}`} className="bg-[var(--background)]">
+                          <td colSpan={8} className="px-5 py-1.5 text-[10px] font-mono text-[var(--muted-dim)] uppercase tracking-widest">
+                            Tier {e.tier} — not statistically distinguishable from the entries above within this group
+                          </td>
+                        </tr>
+                      )}
+                      <tr key={e.key} className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface-2)] transition-colors group">
+                        <td className="px-5 py-4">
+                          <span className={cn('text-sm font-mono tabular-nums', isTop ? 'text-[var(--accent)] font-bold' : 'text-[var(--muted)]')}>
+                            {(isFiltered ? idx + 1 : e.rank).toString().padStart(2, '0')}
                           </span>
-                          <span className="text-[11px] text-[var(--muted)] font-mono uppercase tracking-widest">{m.provider}</span>
-                        </Link>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className={cn('text-base tabular-nums font-mono font-bold', isTop ? 'text-[var(--accent)]' : 'text-[var(--foreground)]')}>
-                          {formatScore(m.score)}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{formatScore(m.coverage)}</span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{formatScore(m.validity)}</span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{formatScore(m.localScore)}</span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className={cn('text-sm tabular-nums font-mono font-semibold', m.crossFileScore > 80 ? 'text-[var(--accent)]' : 'text-[var(--muted)]')}>
-                          {formatScore(m.crossFileScore)}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{formatScore(m.passRate)}</span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{formatLatency(m.latency.p50)}</span>
-                      </td>
-                      <td className="px-5 py-4">
-                        {m.errors > 0 ? (
-                          <div className="flex items-center gap-1.5 text-[#f85149]">
-                            <AlertCircle className="size-3" />
-                            <span className="text-xs font-mono font-bold">{m.errors}</span>
-                          </div>
-                        ) : (
-                          <span className="text-xs font-mono text-[var(--muted)]/50">0</span>
-                        )}
-                      </td>
-                    </tr>
+                        </td>
+                        <td className="px-5 py-4">
+                          <Link href={`/model/${e.modelId}`} className="flex items-center gap-2.5 group/link">
+                            <span className="size-2 rounded-full shrink-0" style={{ background: color }} />
+                            <span className="flex flex-col gap-0.5 min-w-0">
+                              <span className="text-sm font-semibold tracking-tight text-[var(--foreground)] group-hover/link:text-[var(--accent)] transition-colors truncate">
+                                {displayNameOf(e.modelId)}
+                              </span>
+                              <span className="text-[11px] text-[var(--muted)] font-mono uppercase tracking-widest">{provider}</span>
+                            </span>
+                          </Link>
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <span className={cn('text-base tabular-nums font-mono font-bold', isTop ? 'text-[var(--accent)]' : 'text-[var(--foreground)]')}>
+                            {f1 == null ? '—' : f1.toFixed(1)}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{precision == null ? '—' : formatScore(precision)}</span>
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{recall == null ? '—' : formatScore(recall)}</span>
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <span className="text-xs tabular-nums font-mono text-[var(--muted-dim)]">
+                            {formatCI(ciLow, ciHigh)}
+                            {isFiltered && <span className="ml-1.5 text-[var(--muted-dim)]">n={f?.n ?? 0}</span>}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          {e.costPerPR != null ? (
+                            <span className="text-sm tabular-nums font-mono text-[var(--foreground)]">{formatMoney(e.costPerPR, 3)}</span>
+                          ) : (
+                            <span className="text-xs font-mono text-[var(--muted-dim)]">subscription</span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{formatMoney(e.costPerBugFound, 2)}</span>
+                        </td>
+                      </tr>
+                    </Fragment>
                   );
                 })}
               </tbody>
@@ -372,62 +411,17 @@ export default function LeaderboardClient() {
         </div>
       )}
 
-      {view === 'scatter' && (
-        <ScatterPlotChart
-          data={scatterData}
-          xLabel="Local Logic Score"
-          yLabel="Cross-File Score"
-          avgX={data.averages.localScore}
-          avgY={data.averages.crossFileScore}
-          height={600}
-        />
-      )}
-
-      {view === 'bar' && (
-        <BarChartComponent
-          data={barData}
-          series={[
-            { key: 'local', label: 'Local Logic', color: '#5a5d65' },
-            { key: 'crossFile', label: 'Cross-File', color: '#ff6b35' },
-          ]}
-          height={500}
-        />
-      )}
-
-      {view === 'radar' && (
-        <RadarChartComponent
-          data={radarData}
-          series={models.slice(0, 5).map((m) => ({
-            key: m.slug,
-            label: m.displayName,
-            color: PROVIDER_COLORS[m.provider] || '#71717a',
-          }))}
-          height={550}
-        />
-      )}
-
-      {view === 'judges' && (
-        <JudgeAgreement data={judgeData} height={550} />
-      )}
-
-      {/* Explainer Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[var(--border)] rounded-lg overflow-hidden mt-10">
-        <div className="flex flex-col gap-3 p-6 bg-[var(--surface)]">
-          <FlaskConical className="size-5 text-[var(--muted)]" />
-          <h3 className="text-sm font-semibold text-[var(--foreground)]">Local Logic</h3>
-          <p className="text-sm text-[var(--muted)] leading-[1.75]">Bugs inside a single file. Logic errors, wrong conditions, broken state.</p>
+      {/* Frontier */}
+      {view === 'frontier' && (
+        <div>
+          <p className="text-sm text-[var(--muted)] mb-4 max-w-2xl">
+            Recall against measured cost per PR, log scale. The dashed line connects only the Pareto frontier — models where
+            nothing is both cheaper and better. Whiskers are the 95% bootstrap interval on recall.
+            {isFiltered && ' Recall and CI reflect the active filters; cost per PR is always from the full run.'}
+          </p>
+          <CostFrontier data={frontierData} height={560} />
         </div>
-        <div className="flex flex-col gap-3 p-6 bg-[var(--surface)]">
-          <Layers className="size-5 text-[var(--accent)]" />
-          <h3 className="text-sm font-semibold text-[var(--foreground)]">Cross-File Context</h3>
-          <p className="text-sm text-[var(--muted)] leading-[1.75]">A change in one file breaks something in another. The hard part of code review.</p>
-        </div>
-        <div className="flex flex-col gap-3 p-6 bg-[var(--surface)]">
-          <AlertCircle className="size-5 text-[var(--muted)]" />
-          <h3 className="text-sm font-semibold text-[var(--foreground)]">Process Fails</h3>
-          <p className="text-sm text-[var(--muted)] leading-[1.75]">Tests that timed out or returned garbage output.</p>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

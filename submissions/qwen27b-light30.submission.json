@@ -6,7 +6,7 @@
       "version": "dev"
     },
     "model": {
-      "id": "Qwen/Qwen3.8-27B",
+      "id": "qwen3.8-27b",
       "provider": "openai_compatible",
       "accessPath": "api"
     },

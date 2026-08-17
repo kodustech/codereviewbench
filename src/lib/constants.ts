@@ -1,74 +1,77 @@
-export const MODEL_NAMES: Record<string, { slug: string; displayName: string; provider: string }> = {
-  'anthropic:messages:claude-sonnet-4-5-20250929': {
-    slug: 'claude-sonnet-4-5',
-    displayName: 'Claude Sonnet 4.5',
-    provider: 'Anthropic',
-  },
-  'anthropic:messages:claude-haiku-4-5-20251001': {
-    slug: 'claude-haiku-4-5',
-    displayName: 'Claude Haiku 4.5',
-    provider: 'Anthropic',
-  },
-  'google:gemini-2.5-pro': {
-    slug: 'gemini-2-5-pro',
-    displayName: 'Gemini 2.5 Pro',
-    provider: 'Google',
-  },
-  'google:gemini-3.1-pro-preview': {
-    slug: 'gemini-3-1-pro',
-    displayName: 'Gemini 3.1 Pro',
-    provider: 'Google',
-  },
-  'google:gemini-3-flash-preview': {
-    slug: 'gemini-3-flash',
-    displayName: 'Gemini 3 Flash',
-    provider: 'Google',
-  },
-  'openai:gpt-5.2': {
-    slug: 'gpt-5-2',
-    displayName: 'GPT-5.2',
-    provider: 'OpenAI',
-  },
-  'openrouter:moonshotai/kimi-k2.5': {
-    slug: 'kimi-k2-5',
-    displayName: 'Kimi K2.5',
-    provider: 'Moonshot AI',
-  },
-  'openrouter:z-ai/glm-5': {
-    slug: 'glm-5',
-    displayName: 'GLM-5',
-    provider: 'Zhipu AI',
-  },
+/** modelId (o mesmo que TIER0 no kodus-ai) → nome e fornecedor pra exibição. */
+export const DISPLAY_NAMES: Record<string, { name: string; provider: string }> = {
+  'deepseek-v4-pro': { name: 'DeepSeek V4 Pro', provider: 'DeepSeek' },
+  'deepseek-v4-flash': { name: 'DeepSeek V4 Flash', provider: 'DeepSeek' },
+  'qwen3.8-max': { name: 'Qwen3.8 Max', provider: 'Alibaba' },
+  'qwen3.8-27b': { name: 'Qwen3.8 27B', provider: 'Alibaba' },
+  'kimi-k3': { name: 'Kimi K3', provider: 'Moonshot' },
+  'kimi-k2.7-code': { name: 'Kimi K2.7 Code', provider: 'Moonshot' },
+  'muse-spark-1.2': { name: 'Muse Spark 1.2', provider: 'Meta' },
+  'gemini-3.7-flash': { name: 'Gemini 3.7 Flash', provider: 'Google' },
+  'gpt-5.6-luna': { name: 'GPT-5.6 Luna', provider: 'OpenAI' },
+  'gpt-5.6-terra': { name: 'GPT-5.6 Terra', provider: 'OpenAI' },
+  'grok-4.5': { name: 'Grok 4.5', provider: 'xAI' },
+  'grok-4.6': { name: 'Grok 4.6', provider: 'xAI' },
+  'glm-5.2': { name: 'GLM-5.2', provider: 'Zhipu' },
+};
+
+export function displayNameOf(modelId: string): string {
+  return DISPLAY_NAMES[modelId]?.name || modelId;
+}
+
+export function providerOf(modelId: string): string {
+  return DISPLAY_NAMES[modelId]?.provider || 'Unknown';
+}
+
+/** As 6 primeiras foram validadas com scripts/validate_palette.js (skill
+ *  dataviz) nos modos claro e escuro: banda de luminância, piso de croma,
+ *  separação CVD (ΔE ≥ 8 nos pares adjacentes) e contraste contra a
+ *  superfície. Ordem fixa — nunca ciclar. xAI/Zhipu NÃO estão validadas
+ *  (nenhum modelo desses fornecedores está publicado ainda) — rodar o
+ *  validador com o conjunto completo antes de publicar algo que os use. */
+export const PROVIDER_COLORS: Record<string, string> = {
+  Alibaba: '#2b6cb0',
+  DeepSeek: '#dd6b20',
+  Moonshot: '#38a169',
+  Meta: '#805ad5',
+  OpenAI: '#c53030',
+  Google: '#0987a0',
+  // não validadas:
+  xAI: '#71717a',
+  Zhipu: '#b45309',
+};
+
+export const REPO_LABELS: Record<string, string> = {
+  'cal.com': 'cal.com',
+  discourse: 'Discourse',
+  grafana: 'Grafana',
+  keycloak: 'Keycloak',
+  sentry: 'Sentry',
 };
 
 export const LANGUAGE_LABELS: Record<string, string> = {
-  'typescript/node': 'Node.js',
-  'python': 'Python',
-  'typescript/react': 'React',
-  'ruby': 'Ruby',
-  'java': 'Java',
+  typescript: 'TypeScript',
+  python: 'Python',
+  ruby: 'Ruby',
+  java: 'Java',
+  go: 'Go',
 };
 
-export const LANGUAGE_COLORS: Record<string, string> = {
-  'typescript/node': '#3178c6',
-  'python': '#3572a5',
-  'typescript/react': '#61dafb',
-  'ruby': '#cc342d',
-  'java': '#b07219',
-};
-
-export const PROVIDER_COLORS: Record<string, string> = {
-  Anthropic: '#d4a27f',
-  Google: '#4285f4',
-  OpenAI: '#10a37f',
-  'Moonshot AI': '#6366f1',
-  'Zhipu AI': '#f59e0b',
-};
-
-export const CATEGORY_LABELS: Record<string, string> = {
-  local: 'Local Logic',
-  'cross-file': 'Cross-File',
+export const ACCESS_PATH_LABELS: Record<string, string> = {
+  api: 'API',
+  subscription: 'Subscription',
+  local: 'Local',
+  unknown: 'Unknown',
 };
 
 export const ALL_LANGUAGES = Object.keys(LANGUAGE_LABELS);
-export const ALL_CATEGORIES = ['local', 'cross-file'];
+export const ALL_REPOS = Object.keys(REPO_LABELS);
+
+/** sizeBucket (pr-size.json) → rótulo com a faixa real em linhas alteradas. */
+export const SIZE_LABELS: Record<string, string> = {
+  XS: 'XS · <30 lines',
+  S: 'S · 30–99 lines',
+  M: 'M · 100–299 lines',
+  L: 'L · 300–799 lines',
+  XL: 'XL · 800+ lines',
+};

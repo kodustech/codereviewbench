@@ -17,6 +17,16 @@ export function formatDelta(value: number): string {
   return `${sign}${value.toFixed(1)}`;
 }
 
+export function formatMoney(value: number | null, decimals = 3): string {
+  if (value == null) return '—';
+  return `$${value.toFixed(decimals)}`;
+}
+
+export function formatCI(lo: number | null, hi: number | null): string {
+  if (lo == null || hi == null) return '—';
+  return `${lo.toFixed(1)}–${hi.toFixed(1)}`;
+}
+
 export function slugify(str: string): string {
   return str
     .toLowerCase()

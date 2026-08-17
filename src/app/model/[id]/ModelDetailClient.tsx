@@ -1,72 +1,37 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { formatScore, formatLatency, formatDelta } from '@/lib/format';
-import { LANGUAGE_LABELS, PROVIDER_COLORS } from '@/lib/constants';
-import type { LeaderboardModel, Sample } from '@/lib/types';
+import { formatScore, formatMoney, formatCI, formatDelta } from '@/lib/format';
+import { displayNameOf, providerOf, PROVIDER_COLORS, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import type { LeaderboardEntry, LeaderboardAverages, CaseSample } from '@/lib/types';
 import StatsCard from '@/components/shared/StatsCard';
 import Badge from '@/components/shared/Badge';
-import Histogram from '@/components/charts/Histogram';
-import RadarChartComponent from '@/components/charts/RadarChart';
-import BarChartComponent from '@/components/charts/BarChart';
-import TraceCard from '@/components/code/TraceCard';
 import Link from 'next/link';
-import {
-  Trophy,
-  Target,
-  Shield,
-  Zap,
-  ArrowLeft,
-  CheckCircle2,
-} from 'lucide-react';
+import { ArrowLeft, Target, Shield, DollarSign, Coins, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 
 interface ModelDetailClientProps {
-  model: LeaderboardModel;
-  averages: { score: number; coverage: number; validity: number; localScore: number; crossFileScore: number };
-  allModels: LeaderboardModel[];
-  samples: Sample[];
+  entry: LeaderboardEntry;
+  averages: LeaderboardAverages;
+  allEntries: LeaderboardEntry[];
+  cases: CaseSample[];
 }
 
-export default function ModelDetailClient({
-  model,
-  averages,
-  allModels,
-  samples,
-}: ModelDetailClientProps) {
-  const providerColor = PROVIDER_COLORS[model.provider] || '#71717a';
+function classificationLabel(c: string): { label: string; variant: 'default' | 'amber' | 'error' } {
+  if (c === 'realMiss') return { label: 'missed — code was available', variant: 'error' };
+  if (c === 'artifact') return { label: 'outside replay corpus', variant: 'default' };
+  return { label: 'unverifiable', variant: 'amber' };
+}
 
-  // Radar data: language breakdown
-  const radarAxes = Object.keys(model.byLanguage).filter((l) => model.byLanguage[l]);
-  const radarData = radarAxes.map((lang) => ({
-    axis: LANGUAGE_LABELS[lang] || lang,
-    model: model.byLanguage[lang]?.score || 0,
-    average: Math.round(
-      allModels.reduce((sum, m) => sum + (m.byLanguage[lang]?.score || 0), 0) / allModels.length
-    ),
-  }));
+export default function ModelDetailClient({ entry, averages, allEntries, cases }: ModelDetailClientProps) {
+  const [expandedCase, setExpandedCase] = useState<string | null>(null);
+  const provider = providerOf(entry.modelId);
+  const providerColor = PROVIDER_COLORS[provider] || '#71717a';
 
-  // Judge comparison bar data
-  const judgeBarData = [
-    {
-      name: 'Coverage',
-      sonnet: model.judges.sonnet.coverage,
-      gpt: model.judges.gpt.coverage,
-    },
-    {
-      name: 'Validity',
-      sonnet: model.judges.sonnet.validity,
-      gpt: model.judges.gpt.validity,
-    },
-  ];
-
-  // Latency comparison data
-  const latencyData = allModels
-    .map((m) => ({ name: m.displayName, p50: m.latency.p50, isActive: m.slug === model.slug }))
-    .sort((a, b) => a.p50 - b.p50);
+  const repoRows = Object.entries(entry.byRepo).sort((a, b) => b[1].goldens - a[1].goldens);
 
   return (
     <div className="max-w-[1400px] mx-auto w-full px-6 sm:px-12 py-12">
-      {/* Back link */}
       <Link
         href="/leaderboard"
         className="inline-flex items-center gap-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors mb-8"
@@ -78,200 +43,176 @@ export default function ModelDetailClient({
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-12 pb-8 border-b border-[var(--border)]">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-3">
-            <h1 className="text-4xl font-display text-[var(--foreground)]">
-              {model.displayName}
-            </h1>
-            <Badge variant="default" className="text-xs">{model.provider}</Badge>
+            <span className="size-2.5 rounded-full" style={{ background: providerColor }} />
+            <h1 className="text-4xl font-display text-[var(--foreground)]">{displayNameOf(entry.modelId)}</h1>
+            <Badge variant="default">{provider}</Badge>
+            <Badge variant={entry.tier === 1 ? 'success' : 'default'}>Tier {entry.tier}</Badge>
           </div>
           <p className="text-[var(--muted)] font-mono text-sm">
-            Rank #{model.rank} of {allModels.length} models
+            Rank #{entry.rank} of {allEntries.length} · {entry.cases} PRs · {entry.goldensMatched}/{entry.goldensTotal} golden bugs found
           </p>
         </div>
-        <div className="flex items-center gap-8">
-          <div className="text-center">
-            <span className="text-5xl font-bold font-mono tabular-nums text-[var(--accent)]">
-              {formatScore(model.score)}
-            </span>
-            <p className="text-xs text-[var(--muted)] font-mono uppercase mt-1">
-              {formatDelta(model.score - averages.score)} vs avg
-            </p>
-          </div>
+        <div className="text-center">
+          <span className="text-5xl font-bold font-mono tabular-nums text-[var(--accent)]">{entry.f1.toFixed(1)}</span>
+          <p className="text-xs text-[var(--muted)] font-mono uppercase mt-1">
+            F1 · {averages.f1 != null ? formatDelta(entry.f1 - averages.f1) : '—'} vs avg
+          </p>
         </div>
       </div>
 
-      {/* Stats Cards Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         <StatsCard
           icon={Target}
-          label="Coverage"
-          value={formatScore(model.coverage)}
-          delta={model.coverage - averages.coverage}
+          label="Recall"
+          value={formatScore(entry.score)}
+          delta={averages.score != null ? entry.score - averages.score : undefined}
         />
         <StatsCard
           icon={Shield}
-          label="Validity"
-          value={formatScore(model.validity)}
-          delta={model.validity - averages.validity}
+          label="Precision"
+          value={formatScore(entry.precision)}
+          delta={averages.precision != null ? entry.precision - averages.precision : undefined}
         />
-        <StatsCard
-          icon={Trophy}
-          label="Local Score"
-          value={formatScore(model.localScore)}
-          delta={model.localScore - averages.localScore}
-        />
-        <StatsCard
-          icon={Zap}
-          label="Cross-File"
-          value={formatScore(model.crossFileScore)}
-          delta={model.crossFileScore - averages.crossFileScore}
-        />
+        <StatsCard icon={DollarSign} label="Cost / PR" value={formatMoney(entry.costPerPR, 3)} />
+        <StatsCard icon={Coins} label="Cost / bug found" value={formatMoney(entry.costPerBugFound, 2)} />
       </div>
 
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-        {/* Score Distribution */}
-        <div>
-          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
-            Score Distribution
-          </h3>
-          <Histogram
-            buckets={model.histogram}
-            avgScore={averages.score}
-            color={providerColor}
-            height={280}
-          />
+      {/* Regime + CI */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="border border-[var(--border)] rounded-lg bg-[var(--surface)] p-6">
+          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Confidence</h3>
+          <p className="text-sm text-[var(--muted)] leading-relaxed">
+            95% bootstrap interval on recall (2000 resamples over the {entry.cases} PRs):
+            <span className="text-[var(--foreground)] font-mono font-semibold mx-1">{formatCI(entry.ciLow, entry.ciHigh)}</span>
+            points. This measures sampling variance from which PRs are in the set — not run-to-run variance from a
+            different pass of the same model (1 run per entry).
+          </p>
         </div>
-
-        {/* Language Radar */}
-        <div>
-          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
-            Performance by Language
-          </h3>
-          <RadarChartComponent
-            data={radarData}
-            series={[
-              { key: 'model', label: model.displayName, color: providerColor, fillOpacity: 0.2 },
-              { key: 'average', label: 'Dataset Average', color: '#5a5d65', fillOpacity: 0.05 },
-            ]}
-            height={280}
-          />
-        </div>
-      </div>
-
-      {/* Category + Judge row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-        {/* Category Comparison */}
-        <div>
-          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
-            Category Comparison
-          </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <StatsCard
-              label="Local Logic"
-              value={formatScore(model.byCategory['local']?.score || 0)}
-            />
-            <StatsCard
-              label="Cross-File"
-              value={formatScore(model.byCategory['cross-file']?.score || 0)}
-              className="border-[var(--accent)]/20"
-            />
+        <div className="border border-[var(--border)] rounded-lg bg-[var(--surface)] p-6">
+          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Run configuration</h3>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <span className="text-[var(--muted)]">Harness</span>
+            <span className="text-[var(--foreground)] font-mono">{entry.harness}</span>
+            <span className="text-[var(--muted)]">Access path</span>
+            <span className="text-[var(--foreground)] font-mono">{entry.accessPath}</span>
+            <span className="text-[var(--muted)]">Execution mode</span>
+            <span className="text-[var(--foreground)] font-mono">{entry.executionMode}</span>
+            <span className="text-[var(--muted)]">Reasoning</span>
+            <span className="text-[var(--foreground)] font-mono">
+              {entry.reasoningConfig}{entry.reasoningEffort ? ` (${entry.reasoningEffort})` : ''}
+            </span>
+            <span className="text-[var(--muted)]">Judge</span>
+            <span className="text-[var(--foreground)] font-mono">{entry.judge}</span>
           </div>
         </div>
-
-        {/* Judge Analysis */}
-        <div>
-          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
-            Judge Analysis (Sonnet vs GPT)
-          </h3>
-          <BarChartComponent
-            data={judgeBarData}
-            series={[
-              { key: 'sonnet', label: 'Sonnet', color: '#d4a27f' },
-              { key: 'gpt', label: 'GPT', color: '#10a37f' },
-            ]}
-            height={280}
-          />
-        </div>
       </div>
 
-      {/* Latency Section */}
+      {/* By repo */}
       <div className="mb-12">
-        <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
-          Latency (p50 / p90 / p99)
-        </h3>
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="p-4 border border-[var(--border)] rounded-lg bg-[var(--surface)] text-center">
-            <span className="text-2xl font-bold font-mono text-[var(--foreground)]">{formatLatency(model.latency.p50)}</span>
-            <p className="text-xs text-[var(--muted)] font-mono uppercase mt-1">p50</p>
-          </div>
-          <div className="p-4 border border-[var(--border)] rounded-lg bg-[var(--surface)] text-center">
-            <span className="text-2xl font-bold font-mono text-[var(--foreground)]">{formatLatency(model.latency.p90)}</span>
-            <p className="text-xs text-[var(--muted)] font-mono uppercase mt-1">p90</p>
-          </div>
-          <div className="p-4 border border-[var(--border)] rounded-lg bg-[var(--surface)] text-center">
-            <span className="text-2xl font-bold font-mono text-[var(--foreground)]">{formatLatency(model.latency.p99)}</span>
-            <p className="text-xs text-[var(--muted)] font-mono uppercase mt-1">p99</p>
-          </div>
-        </div>
-        {/* Latency comparison bars */}
-        <div className="border border-[var(--border)] rounded-xl bg-[var(--surface)] p-6">
-          <div className="space-y-3">
-            {latencyData.map((m) => {
-              const maxLatency = Math.max(...latencyData.map((d) => d.p50));
-              const pct = (m.p50 / maxLatency) * 100;
-              return (
-                <div key={m.name} className="flex items-center gap-4">
-                  <span
-                    className={cn(
-                      'text-xs font-mono w-32 truncate text-right',
-                      m.isActive ? 'text-[var(--foreground)] font-bold' : 'text-[var(--muted)]'
-                    )}
-                  >
-                    {m.name}
-                  </span>
-                  <div className="flex-1 h-3 bg-[var(--surface-2)] rounded-full overflow-hidden">
-                    <div
-                      className={cn('h-full rounded-full transition-all', m.isActive ? 'bg-[var(--accent)]' : 'bg-[var(--border-bright)]')}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                  <span className={cn('text-xs font-mono w-16 tabular-nums', m.isActive ? 'text-[var(--foreground)]' : 'text-[var(--muted)]')}>
-                    {formatLatency(m.p50)}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+        <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">By repository</h3>
+        <div className="border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--surface)]">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-[var(--border)]">
+                <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">Repo</th>
+                <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">Recall</th>
+                <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">Precision</th>
+                <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">Goldens</th>
+                <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">PRs</th>
+              </tr>
+            </thead>
+            <tbody>
+              {repoRows.map(([repo, stat]) => (
+                <tr key={repo} className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface-2)] transition-colors">
+                  <td className="px-5 py-3 text-sm text-[var(--foreground)] font-medium">{REPO_LABELS[repo] || repo}</td>
+                  <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{formatScore(stat.recall)}</td>
+                  <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{formatScore(stat.precision)}</td>
+                  <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{stat.goldens}</td>
+                  <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{stat.count}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* Additional Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
-        <StatsCard icon={CheckCircle2} label="Pass Rate" value={formatScore(model.passRate)} />
-        <StatsCard label="Parse Rate" value={formatScore(model.parseRate)} />
-        <StatsCard label="Tests" value={model.tests.toString()} />
-        <StatsCard label="Errors" value={model.errors.toString()} />
-      </div>
-
-      {/* Sample Traces */}
+      {/* Per-PR breakdown */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">
-            Sample Traces ({Math.min(10, samples.length)} of {samples.length})
-          </h3>
-          <Link
-            href={`/traces?model=${model.slug}`}
-            className="text-sm text-[var(--muted)] hover:text-[var(--accent)] transition-colors font-mono"
-          >
-            View all in Explorer →
-          </Link>
-        </div>
+        <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
+          Per-PR breakdown ({cases.length})
+        </h3>
         <div className="flex flex-col gap-2">
-          {samples.slice(0, 10).map((s) => (
-            <TraceCard key={s.id} sample={s} />
-          ))}
-          {samples.length === 0 && (
-            <p className="text-[var(--muted)] text-center py-12 font-mono">No traces available for this model.</p>
+          {cases.map((c) => {
+            const isOpen = expandedCase === c.id;
+            return (
+              <div key={c.id} className="border border-[var(--border)] rounded-lg bg-[var(--surface)] overflow-hidden">
+                <button
+                  onClick={() => setExpandedCase(isOpen ? null : c.id)}
+                  className="w-full flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-[var(--surface-2)] transition-colors text-left"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-[11px] font-mono text-[var(--muted-dim)] uppercase tracking-widest shrink-0">
+                      {REPO_LABELS[c.repo] || c.repo} · {LANGUAGE_LABELS[c.language] || c.language}
+                    </span>
+                    <span className="text-sm text-[var(--foreground)] truncate font-mono">{c.caseId}</span>
+                  </div>
+                  <div className="flex items-center gap-4 shrink-0">
+                    <span className="text-xs font-mono text-[var(--muted)]">
+                      {c.matched}/{c.goldens} found · {c.findings.length} reported
+                    </span>
+                    {isOpen ? <ChevronUp className="size-4 text-[var(--muted)]" /> : <ChevronDown className="size-4 text-[var(--muted)]" />}
+                  </div>
+                </button>
+                {isOpen && (
+                  <div className="border-t border-[var(--border)] px-5 py-4 space-y-4">
+                    {c.findings.length > 0 && (
+                      <div>
+                        <span className="text-[11px] font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold block mb-2">
+                          Reported ({c.findings.length})
+                        </span>
+                        <div className="space-y-2">
+                          {c.findings.map((f, i) => (
+                            <div key={i} className="text-sm bg-[var(--background)] border border-[var(--border)] rounded-md p-3">
+                              {f.path && (
+                                <span className="block text-xs font-mono text-[var(--muted-dim)] mb-1 truncate">
+                                  {f.path}{f.startLine ? `:${f.startLine}` : ''}
+                                </span>
+                              )}
+                              <span className="text-[var(--muted)] leading-relaxed">{f.description}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {c.missedGoldens.length > 0 && (
+                      <div>
+                        <span className="text-[11px] font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold block mb-2">
+                          Missed golden bugs ({c.missedGoldens.length})
+                        </span>
+                        <div className="space-y-2">
+                          {c.missedGoldens.map((g, i) => {
+                            const cls = classificationLabel(g.classification);
+                            return (
+                              <div key={i} className="text-sm bg-[var(--background)] border border-[var(--border)] rounded-md p-3 flex items-start gap-3">
+                                <Badge variant={cls.variant} className="shrink-0 mt-0.5">{cls.label}</Badge>
+                                <span className="text-[var(--muted)] leading-relaxed">{g.text}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                    {c.findings.length === 0 && c.missedGoldens.length === 0 && (
+                      <p className="text-sm text-[var(--muted)]">No findings reported, no golden bugs in this PR.</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {cases.length === 0 && (
+            <p className={cn('text-[var(--muted)] text-center py-12 font-mono text-sm')}>No case data available for this model.</p>
           )}
         </div>
       </div>

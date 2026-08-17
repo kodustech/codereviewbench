@@ -1,21 +1,54 @@
 {
-  "totalResults": 216,
-  "totalModels": 8,
-  "totalTestCases": 75,
+  "totalEntries": 8,
+  "harnesses": [
+    "kodus"
+  ],
+  "models": [
+    "deepseek-v4-flash",
+    "deepseek-v4-pro",
+    "gemini-3.7-flash",
+    "kimi-k2.7-code",
+    "kimi-k3",
+    "muse-spark-1.2",
+    "qwen3.8-27b",
+    "qwen3.8-max"
+  ],
   "languages": [
+    "go",
     "java",
     "python",
     "ruby",
-    "typescript/node",
-    "typescript/react"
+    "typescript"
   ],
-  "categories": [
-    "cross-file",
-    "local"
+  "repos": [
+    "cal.com",
+    "discourse",
+    "grafana",
+    "keycloak",
+    "sentry"
+  ],
+  "sizes": [
+    "XS",
+    "S",
+    "M",
+    "L"
+  ],
+  "executionModes": [
+    "replay"
+  ],
+  "accessPaths": [
+    "api"
   ],
   "judges": [
-    "sonnet",
-    "gpt"
+    "claude-haiku-4-5"
   ],
-  "generatedAt": "2026-02-26T18:16:51.513Z"
+  "totalCases": 30,
+  "totalGoldens": 95,
+  "tiers": 2,
+  "varianceCaveat": {
+    "measured": "case-sampling (bootstrap 2000x sobre os casos)",
+    "notMeasured": "run-to-run (mesmo modelo, rodadas diferentes)",
+    "runsPerEntry": 1
+  },
+  "generatedAt": "2026-08-17T23:21:33.421Z"
 }

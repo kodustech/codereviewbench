@@ -10,9 +10,8 @@ const SOCIAL_LINKS = [
 
 const SITE_LINKS = [
   { label: 'Leaderboard', href: '/leaderboard' },
-  { label: 'Trace Explorer', href: '/traces' },
   { label: 'Benchmark Repo', href: 'https://github.com/kodustech/codereviewbench', external: true },
-  { label: 'Contribute Test Cases', href: 'https://github.com/kodustech/kodus-ai/blob/main/evals/promptfoo/README.md', external: true },
+  { label: 'Contribute Test Cases', href: 'https://github.com/kodustech/kodus-ai/blob/main/evals/scorer/README.md', external: true },
   { label: 'AI Tools Benchmark', href: 'https://kodus.io/benchmark-ai-code-review/', external: true },
   { label: 'Kodus Engine', href: 'https://kodus.io', external: true },
 ];
