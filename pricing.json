@@ -68,6 +68,13 @@
       "cacheRead": null,
       "provider": "zhipu"
     },
+    "glm-5.3": {
+      "input": 1.4,
+      "output": 4.4,
+      "cacheRead": null,
+      "provider": "zhipu",
+      "note": "lançado 2026-08-14, Z.ai ainda não publicou preço oficial por token no endpoint pago — valor de agregador terceiro (OpenRouter), não da fonte primária. Se a credencial rodar por assinatura (Coding Plan) isso não é usado: accessPath vira subscription e o custo sai null."
+    },
     "grok-4.5": {
       "input": 2,
       "output": 6,

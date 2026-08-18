@@ -69,6 +69,21 @@ const PR_SIZE = (() => {
 })();
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL'];
 
+// caseId → golden completo (texto + severidade real do golden, não do
+// finding) — extraído uma vez de evals/investigation/datasets/*.json (ver
+// scripts/extract-goldens.js). O scorecard só grava os PERDIDOS; pra saber
+// quais foram ACERTADOS (necessário pro /compare — "A achou, B não") dá pra
+// derivar por diferença: golden completo menos os que aparecem em
+// missedGoldens (match exato de texto, mesma fonte).
+const GOLDENS = (() => {
+    try {
+        return JSON.parse(fs.readFileSync(path.join(__dirname, 'goldens.json'), 'utf8'));
+    } catch {
+        console.warn('  ⚠ goldens.json não encontrado — /compare ficará sem detalhe por golden');
+        return {};
+    }
+})();
+
 /**
  * Custo por PR e por bug encontrado.
  *
@@ -204,6 +219,16 @@ for (const { data: sc } of scorecards) {
     const byLanguage = {};
     const byRepo = {};
     const bySize = {};
+    // Mix de severidade/categoria do que o modelo REPORTOU — não é recall por
+    // severidade (goldens não têm severidade anotada, só texto+classificação).
+    // É um sinal de calibração: esse modelo grita "critical" pra tudo, ou é
+    // conservador? Categoria normalizada pras 3 que o scorer realmente usa de
+    // forma consistente entre modelos — o resto é string livre por modelo
+    // (ex.: "existing-finding-1", "BUG LENS") e vira "other" em vez de fingir
+    // que é taxonomia real.
+    const CANONICAL_CATEGORIES = new Set(['bug', 'performance', 'security']);
+    const bySeverity = { low: 0, medium: 0, high: 0, critical: 0 };
+    const byCategory = { bug: 0, performance: 0, security: 0, other: 0 };
     for (const c of scored) {
         const { repo, language } = classify(c.caseId);
         const size = PR_SIZE[c.caseId] || null;
@@ -219,6 +244,23 @@ for (const { data: sc } of scorecards) {
             bucket[name].precisions.push(c.metrics.precision);
             bucket[name].count += 1;
         }
+
+        const caseFindings = findingsIndex.get(`${key}::${run.runAt}::${c.caseId}`) || [];
+        for (const f of caseFindings) {
+            const sev = (f.severity || '').toLowerCase();
+            if (sev in bySeverity) bySeverity[sev] += 1;
+            const cat = (f.category || '').toLowerCase();
+            byCategory[CANONICAL_CATEGORIES.has(cat) ? cat : 'other'] += 1;
+        }
+
+        const missedGoldens = c.metrics.missedGoldens || [];
+        const missedTexts = new Set(missedGoldens.map((m) => m.text));
+        const fullGoldens = GOLDENS[c.caseId] || null;
+        // null (não []): sem goldens.json pra esse caso, não dá pra afirmar
+        // "achou zero" — diferente de genuinamente não ter detalhe nenhum.
+        const goldensDetail = fullGoldens
+            ? fullGoldens.map((g) => ({ text: g.text, severity: g.severity, matched: !missedTexts.has(g.text) }))
+            : null;
 
         allSamples.push({
             id: `s${sampleId++}`,
@@ -236,8 +278,9 @@ for (const { data: sc } of scorecards) {
             f1: c.metrics.f1,
             goldens: c.metrics.goldens,
             matched: c.metrics.matched,
-            findings: findingsIndex.get(`${key}::${run.runAt}::${c.caseId}`) || [],
-            missedGoldens: c.metrics.missedGoldens || [],
+            findings: caseFindings,
+            missedGoldens,
+            goldensDetail,
             usage: c.usage || null,
             latencyMs: c.latencyMs ?? null,
         });
@@ -330,6 +373,8 @@ for (const { data: sc } of scorecards) {
         byLanguage: finalize(byLanguage),
         byRepo: finalize(byRepo),
         bySize: finalize(bySize),
+        findingsBySeverity: bySeverity,
+        findingsByCategory: byCategory,
 
         ...costOf(run, a),
     });

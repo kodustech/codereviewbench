@@ -9,6 +9,7 @@ import { useState } from 'react';
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
   { href: '/leaderboard', label: 'Leaderboard' },
+  { href: '/compare', label: 'Compare' },
 ];
 
 export default function Navbar() {

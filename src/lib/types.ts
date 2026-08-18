@@ -76,6 +76,11 @@ export interface LeaderboardEntry {
   byLanguage: Record<string, BucketStat>;
   byRepo: Record<string, BucketStat>;
   bySize: Record<string, BucketStat>;
+  /** Severidade/categoria dos findings REPORTADOS — sinal de calibração do
+   *  modelo (grita "critical" pra tudo, ou é conservador?), não recall por
+   *  severidade — goldens não têm severidade anotada. */
+  findingsBySeverity: { low: number; medium: number; high: number; critical: number };
+  findingsByCategory: { bug: number; performance: number; security: number; other: number };
 
   costTotal: number | null;
   costPerPR: number | null;
@@ -120,6 +125,14 @@ export interface MissedGolden {
   classification: 'realMiss' | 'artifact' | 'untestable';
 }
 
+/** Golden completo (achado ou não) — pra diff entre dois modelos no mesmo
+ *  caso. null no CaseSample quando goldens.json não cobre esse caseId. */
+export interface GoldenDetail {
+  text: string;
+  severity: string | null;
+  matched: boolean;
+}
+
 /** Índice leve por caso — sem findings/texto — pra filtro combinado
  *  (linguagem + repo + tamanho) client-side sem embarcar o samples.json
  *  inteiro (que carrega descrições de finding) no bundle. */
@@ -153,6 +166,7 @@ export interface CaseSample {
   matched: number;
   findings: Finding[];
   missedGoldens: MissedGolden[];
+  goldensDetail: GoldenDetail[] | null;
   usage: Usage | null;
   latencyMs: number | null;
 }

@@ -7,7 +7,7 @@ import type { LeaderboardEntry, LeaderboardAverages, CaseSample } from '@/lib/ty
 import StatsCard from '@/components/shared/StatsCard';
 import Badge from '@/components/shared/Badge';
 import Link from 'next/link';
-import { ArrowLeft, Target, Shield, DollarSign, Coins, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Target, Shield, DollarSign, Coins, ChevronDown, ChevronUp, Code2, Check } from 'lucide-react';
 import { useState } from 'react';
 
 interface ModelDetailClientProps {
@@ -23,21 +23,94 @@ function classificationLabel(c: string): { label: string; variant: 'default' | '
   return { label: 'unverifiable', variant: 'amber' };
 }
 
+// Cores reaproveitadas dos tokens do tema (neutro → âmbar da marca → coral →
+// perigo), sem inventar uma nova cor só pra essa faixa de severidade.
+const SEVERITY_ORDER = [
+  { key: 'low' as const, label: 'Low', color: 'var(--muted)' },
+  { key: 'medium' as const, label: 'Medium', color: 'var(--accent)' },
+  { key: 'high' as const, label: 'High', color: 'var(--accent-2)' },
+  { key: 'critical' as const, label: 'Critical', color: 'var(--danger)' },
+];
+
+const CATEGORY_ORDER = [
+  { key: 'bug' as const, label: 'Bug' },
+  { key: 'performance' as const, label: 'Performance' },
+  { key: 'security' as const, label: 'Security' },
+  { key: 'other' as const, label: 'Other' },
+];
+
+const SITE_URL = 'https://codereviewbench.com';
+
+function EmbedButton({ modelId }: { modelId: string }) {
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const badgeUrl = `${SITE_URL}/badge/${modelId}.svg`;
+  const pageUrl = `${SITE_URL}/model/${modelId}`;
+  const markdown = `[![CodeReviewBench](${badgeUrl})](${pageUrl})`;
+
+  const copy = async () => {
+    await navigator.clipboard.writeText(markdown);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-1.5 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors font-mono"
+      >
+        <Code2 className="size-4" /> Embed
+      </button>
+      {/* card-hairline sets position:relative on itself (unlayered CSS beats
+          the Tailwind `absolute` utility in the cascade regardless of source
+          order) — so positioning lives on this outer div, card-hairline only
+          on the inner one. Learned by measuring a real overflow in Playwright:
+          the popover rendered position:relative, not absolute, at any width. */}
+      {open && (
+        <div className="absolute right-0 top-full mt-2 z-10 w-[min(20rem,calc(100vw-3rem))]">
+          <div className="card-hairline overflow-hidden p-4">
+            <p className="text-xs text-[var(--muted-dim)] mb-3">Drop this in your README to link back to this result.</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`/badge/${modelId}.svg`} alt="CodeReviewBench badge" className="block max-w-full h-auto mb-3" />
+            <div className="flex items-center gap-2 min-w-0">
+              <code className="flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-xs font-mono bg-[var(--background)] border border-[var(--border)] rounded-md px-2.5 py-2 text-[var(--foreground-2)]">
+                {markdown}
+              </code>
+              <button
+                onClick={copy}
+                className="shrink-0 size-8 rounded-md border border-[var(--border-bright)] flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                aria-label="Copy embed markdown"
+              >
+                {copied ? <Check className="size-3.5 text-[var(--success)]" /> : <Code2 className="size-3.5" />}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ModelDetailClient({ entry, averages, allEntries, cases }: ModelDetailClientProps) {
   const [expandedCase, setExpandedCase] = useState<string | null>(null);
   const provider = providerOf(entry.modelId);
   const providerColor = PROVIDER_COLORS[provider] || '#71717a';
+  const severityTotal = Object.values(entry.findingsBySeverity).reduce((a, b) => a + b, 0);
 
   const repoRows = Object.entries(entry.byRepo).sort((a, b) => b[1].goldens - a[1].goldens);
 
   return (
     <div className="max-w-[1400px] mx-auto w-full px-6 sm:px-12 py-12">
-      <Link
-        href="/leaderboard"
-        className="inline-flex items-center gap-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors mb-8"
-      >
-        <ArrowLeft className="size-4" /> Back to Leaderboard
-      </Link>
+      <div className="flex items-center justify-between gap-4 mb-8">
+        <Link
+          href="/leaderboard"
+          className="inline-flex items-center gap-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+        >
+          <ArrowLeft className="size-4" /> Back to Leaderboard
+        </Link>
+        <EmbedButton modelId={entry.modelId} />
+      </div>
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-12 pb-8 border-b border-[var(--border)]">
@@ -108,6 +181,51 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
             </span>
             <span className="text-[var(--muted)]">Judge</span>
             <span className="text-[var(--foreground)] font-mono">{entry.judge}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Severity/category mix */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="card-hairline p-6">
+          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-1 relative">Severity mix</h3>
+          <p className="text-xs text-[var(--muted-dim)] mb-4 relative">
+            What the model called its own findings — not recall by severity, goldens aren&apos;t severity-tagged.
+          </p>
+          {severityTotal > 0 ? (
+            <div className="relative">
+              <div className="flex h-2.5 w-full rounded-full overflow-hidden bg-[var(--surface-2)]">
+                {SEVERITY_ORDER.map(({ key, color }) => {
+                  const count = entry.findingsBySeverity[key];
+                  if (!count) return null;
+                  return <div key={key} style={{ width: `${(count / severityTotal) * 100}%`, background: color }} />;
+                })}
+              </div>
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-3">
+                {SEVERITY_ORDER.map(({ key, color, label }) => (
+                  <span key={key} className="flex items-center gap-1.5 text-xs font-mono text-[var(--muted)]">
+                    <span className="size-2 rounded-full shrink-0" style={{ background: color }} />
+                    {label} <span className="text-[var(--foreground-2)]">{entry.findingsBySeverity[key]}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-[var(--muted-dim)] relative">No findings reported.</p>
+          )}
+        </div>
+        <div className="card-hairline p-6">
+          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-1 relative">Category mix</h3>
+          <p className="text-xs text-[var(--muted-dim)] mb-4 relative">
+            Only bug/performance/security are consistent across models — the rest is free text, bucketed as other.
+          </p>
+          <div className="flex flex-wrap gap-2 relative">
+            {CATEGORY_ORDER.map(({ key, label }) => (
+              <span key={key} className="inline-flex items-baseline gap-1.5 px-2.5 py-1.5 rounded-md bg-[var(--surface-2)] text-xs font-mono">
+                <span className="text-[var(--muted)]">{label}</span>
+                <span className="text-[var(--foreground)] font-semibold">{entry.findingsByCategory[key]}</span>
+              </span>
+            ))}
           </div>
         </div>
       </div>

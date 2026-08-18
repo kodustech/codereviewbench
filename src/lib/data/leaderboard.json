@@ -123,6 +123,18 @@
           "count": 2
         }
       },
+      "findingsBySeverity": {
+        "low": 29,
+        "medium": 50,
+        "high": 22,
+        "critical": 0
+      },
+      "findingsByCategory": {
+        "bug": 97,
+        "performance": 2,
+        "security": 2,
+        "other": 0
+      },
       "costTotal": 8.99,
       "costPerPR": 0.3,
       "costPerBugFound": 0.21,
@@ -255,6 +267,18 @@
           "goldens": 4,
           "count": 2
         }
+      },
+      "findingsBySeverity": {
+        "low": 29,
+        "medium": 49,
+        "high": 33,
+        "critical": 5
+      },
+      "findingsByCategory": {
+        "bug": 112,
+        "performance": 5,
+        "security": 4,
+        "other": 3
       },
       "costTotal": 48.65,
       "costPerPR": 1.62,
@@ -389,6 +413,18 @@
           "count": 2
         }
       },
+      "findingsBySeverity": {
+        "low": 2,
+        "medium": 55,
+        "high": 49,
+        "critical": 4
+      },
+      "findingsByCategory": {
+        "bug": 110,
+        "performance": 0,
+        "security": 0,
+        "other": 7
+      },
       "costTotal": 14.63,
       "costPerPR": 0.49,
       "costPerBugFound": 0.38,
@@ -522,6 +558,18 @@
           "count": 2
         }
       },
+      "findingsBySeverity": {
+        "low": 24,
+        "medium": 49,
+        "high": 20,
+        "critical": 4
+      },
+      "findingsByCategory": {
+        "bug": 104,
+        "performance": 1,
+        "security": 1,
+        "other": 1
+      },
       "costTotal": 36.27,
       "costPerPR": 1.21,
       "costPerBugFound": 0.93,
@@ -654,6 +702,18 @@
           "count": 2
         }
       },
+      "findingsBySeverity": {
+        "low": 8,
+        "medium": 57,
+        "high": 40,
+        "critical": 6
+      },
+      "findingsByCategory": {
+        "bug": 98,
+        "performance": 2,
+        "security": 6,
+        "other": 6
+      },
       "costTotal": 16.62,
       "costPerPR": 0.55,
       "costPerBugFound": 0.46,
@@ -785,6 +845,18 @@
           "goldens": 4,
           "count": 2
         }
+      },
+      "findingsBySeverity": {
+        "low": 29,
+        "medium": 49,
+        "high": 17,
+        "critical": 0
+      },
+      "findingsByCategory": {
+        "bug": 83,
+        "performance": 8,
+        "security": 4,
+        "other": 0
       },
       "costTotal": 2.96,
       "costPerPR": 0.1,
@@ -919,6 +991,18 @@
           "count": 2
         }
       },
+      "findingsBySeverity": {
+        "low": 27,
+        "medium": 36,
+        "high": 23,
+        "critical": 5
+      },
+      "findingsByCategory": {
+        "bug": 86,
+        "performance": 3,
+        "security": 0,
+        "other": 8
+      },
       "costTotal": 10,
       "costPerPR": 0.34,
       "costPerBugFound": 0.31,
@@ -1051,6 +1135,18 @@
           "goldens": 4,
           "count": 2
         }
+      },
+      "findingsBySeverity": {
+        "low": 1,
+        "medium": 14,
+        "high": 8,
+        "critical": 0
+      },
+      "findingsByCategory": {
+        "bug": 23,
+        "performance": 0,
+        "security": 0,
+        "other": 0
       },
       "costTotal": 8.23,
       "costPerPR": 0.27,
