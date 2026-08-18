@@ -751,7 +751,36 @@
       "costPerPR": 0.55,
       "costPerBugFound": 0.46,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
+      "runToRunVariance": {
+        "runs": 3,
+        "recall": {
+          "mean": 37.54,
+          "stdev": 0.61,
+          "values": [
+            37.89,
+            36.84,
+            37.89
+          ]
+        },
+        "precision": {
+          "mean": 47.92,
+          "stdev": 1.86,
+          "values": [
+            50,
+            46.43,
+            47.32
+          ]
+        },
+        "f1": {
+          "mean": 42.09,
+          "stdev": 1.02,
+          "values": [
+            43.11,
+            41.08,
+            42.09
+          ]
+        }
+      },
       "ciHalfWidth": 9.76,
       "ciLow": 28.13,
       "ciHigh": 48.68,
@@ -896,7 +925,36 @@
       "costPerPR": 0.1,
       "costPerBugFound": 0.08,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
+      "runToRunVariance": {
+        "runs": 3,
+        "recall": {
+          "mean": 36.84,
+          "stdev": 0,
+          "values": [
+            36.84,
+            36.84,
+            36.84
+          ]
+        },
+        "precision": {
+          "mean": 42.11,
+          "stdev": 0,
+          "values": [
+            42.11,
+            42.11,
+            42.11
+          ]
+        },
+        "f1": {
+          "mean": 39.3,
+          "stdev": 0,
+          "values": [
+            39.3,
+            39.3,
+            39.3
+          ]
+        }
+      },
       "ciHalfWidth": 9.7,
       "ciLow": 26.37,
       "ciHigh": 47.87,
@@ -1188,7 +1246,36 @@
       "costPerPR": 0.27,
       "costPerBugFound": 0.75,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
+      "runToRunVariance": {
+        "runs": 3,
+        "recall": {
+          "mean": 11.58,
+          "stdev": 0,
+          "values": [
+            11.58,
+            11.58,
+            11.58
+          ]
+        },
+        "precision": {
+          "mean": 73.91,
+          "stdev": 0,
+          "values": [
+            73.91,
+            73.91,
+            73.91
+          ]
+        },
+        "f1": {
+          "mean": 20.02,
+          "stdev": 0,
+          "values": [
+            20.02,
+            20.02,
+            20.02
+          ]
+        }
+      },
       "ciHalfWidth": 6.43,
       "ciLow": 5.95,
       "ciHigh": 18.28,

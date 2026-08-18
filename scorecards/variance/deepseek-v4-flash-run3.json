@@ -1,0 +1,1184 @@
+{
+  "benchmarkVersion": "light-v1",
+  "run": {
+    "harness": {
+      "name": "kodus",
+      "version": "dev"
+    },
+    "model": {
+      "id": "deepseek-v4-flash",
+      "provider": "openai_compatible",
+      "accessPath": "api"
+    },
+    "executionMode": "replay",
+    "runAt": "2026-08-04T18:45:23.274Z",
+    "reasoning": {
+      "config": "vendor-default",
+      "effortRequested": null,
+      "_backfilledAt": "2026-08-04T20:12:23.617Z",
+      "_evidence": "log da passada: buildProviderOptions -> reasoningPayload {} / hasOverride false"
+    }
+  },
+  "scoredAt": "2026-08-18T23:12:58.867Z",
+  "judge": {
+    "model": "claude-haiku-4-5"
+  },
+  "aggregate": {
+    "cases": 30,
+    "casesScored": 30,
+    "recallMicro": 0.3684210526315789,
+    "recallMacro": 0.3605555555555556,
+    "precisionMicro": 0.42105263157894735,
+    "precisionMacro": 0.45346854791299235,
+    "f1Micro": 0.3929824561403508,
+    "f1Macro": 0.40224998917809374,
+    "fairRecallMacro": 0.3783333333333333,
+    "loopFidelityMacro": 0.8220111843841995,
+    "goldensTotal": 95,
+    "goldensMatched": 35,
+    "usage": {
+      "inputTokens": 18180399,
+      "outputTokens": 1470196
+    }
+  },
+  "cases": [
+    {
+      "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+      "status": "scored",
+      "metrics": {
+        "recall": 0,
+        "precision": 0,
+        "f1": 0,
+        "fairRecall": 0,
+        "hitRate": 0.9821428571428571,
+        "totalCalls": 56,
+        "unserved": 1,
+        "matched": 0,
+        "goldens": 2,
+        "findings": 2,
+        "tpFindings": 0,
+        "fpFindings": 2,
+        "realMiss": 0,
+        "artifact": 0,
+        "untestable": 2,
+        "missedGoldens": [
+          {
+            "text": "Recursive caching call using session instead of delegate",
+            "classification": "untestable"
+          },
+          {
+            "text": "Cleanup reference uses incorrect alias - should be 'idp-alias-' + i instead of 'alias'.",
+            "classification": "untestable"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 913921,
+        "outputTokens": 80938
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.3333333333333333,
+        "precision": 0.3333333333333333,
+        "f1": 0.3333333333333333,
+        "fairRecall": 0.3333333333333333,
+        "hitRate": 0.75,
+        "totalCalls": 84,
+        "unserved": 21,
+        "matched": 1,
+        "goldens": 3,
+        "findings": 3,
+        "tpFindings": 1,
+        "fpFindings": 2,
+        "realMiss": 2,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "Inconsistent feature flag bug causing orphaned permissions. The AdminPermissions event listener, responsible for cleaning up permissions upon role, client, or group removal, is incorrectly guarded by ",
+            "classification": "real-miss"
+          },
+          {
+            "text": "In getClientsWithPermission(String scope), iterating resourceStore.findByType(server, AdminPermissionsSchema.CLIENTS_RESOURCE_TYPE) and returning resource.getName() will only ever consider the type-le",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 937951,
+        "outputTokens": 54513
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.8,
+        "precision": 0.6666666666666666,
+        "f1": 0.7272727272727272,
+        "fairRecall": 0.8,
+        "hitRate": 0.825,
+        "totalCalls": 80,
+        "unserved": 14,
+        "matched": 4,
+        "goldens": 5,
+        "findings": 6,
+        "tpFindings": 4,
+        "fpFindings": 2,
+        "realMiss": 1,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "Starting with an array containing an empty string may cause validation issues. Consider starting with an empty array [] and handling the empty state in the MultiEmail component instead.",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 560390,
+        "outputTokens": 38745
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+      "status": "scored",
+      "metrics": {
+        "recall": 0,
+        "precision": 0,
+        "f1": 0,
+        "fairRecall": 0,
+        "hitRate": 0.6153846153846154,
+        "totalCalls": 52,
+        "unserved": 20,
+        "matched": 0,
+        "goldens": 4,
+        "findings": 3,
+        "tpFindings": 0,
+        "fpFindings": 3,
+        "realMiss": 2,
+        "artifact": 1,
+        "untestable": 1,
+        "missedGoldens": [
+          {
+            "text": "The translation is in Italian instead of Lithuanian. This should be translated to Lithuanian to match the file's locale (messages_lt.properties).",
+            "classification": "not-in-corpus"
+          },
+          {
+            "text": "The totpStep1 value uses Traditional Chinese terms in the Simplified Chinese file (zh_CN), which is likely incorrect for this locale. Please verify the locale‑appropriate translation.",
+            "classification": "real-miss"
+          },
+          {
+            "text": "The anchor sanitization logic has a potential issue where it consumes English matcher groups without proper validation. If the translated text has more anchor tags than the English text, this could le",
+            "classification": "untestable"
+          },
+          {
+            "text": "The method name 'santizeAnchors' should be 'sanitizeAnchors' (missing 'i').",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 855234,
+        "outputTokens": 74677
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.6,
+        "precision": 0.6,
+        "f1": 0.6,
+        "fairRecall": 0.6,
+        "hitRate": 0.6349206349206349,
+        "totalCalls": 63,
+        "unserved": 23,
+        "matched": 3,
+        "goldens": 5,
+        "findings": 5,
+        "tpFindings": 3,
+        "fpFindings": 2,
+        "realMiss": 2,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "This call won’t compile: dbSession.Exec(args...) is given a []interface{} where the first element is the query, but Exec’s signature requires a first parameter of type string (not an interface{} splat",
+            "classification": "real-miss"
+          },
+          {
+            "text": "Time window calculation inconsistency: Using device.UpdatedAt.UTC().Add(-anonymousDeviceExpiration) as the lower bound but device.UpdatedAt as the current time may not match the intended logic. Consid",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 761931,
+        "outputTokens": 44683
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "dual-storage-architecture-grafana-codex",
+      "status": "scored",
+      "metrics": {
+        "recall": 1,
+        "precision": 0.42857142857142855,
+        "f1": 0.6,
+        "fairRecall": 1,
+        "hitRate": 0.9375,
+        "totalCalls": 64,
+        "unserved": 4,
+        "matched": 3,
+        "goldens": 3,
+        "findings": 7,
+        "tpFindings": 3,
+        "fpFindings": 4,
+        "realMiss": 0,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": []
+      },
+      "usage": {
+        "inputTokens": 802809,
+        "outputTokens": 43938
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.16666666666666666,
+        "precision": 0.14285714285714285,
+        "f1": 0.15384615384615383,
+        "fairRecall": 0.2,
+        "hitRate": 0.7258064516129032,
+        "totalCalls": 62,
+        "unserved": 17,
+        "matched": 1,
+        "goldens": 6,
+        "findings": 7,
+        "tpFindings": 1,
+        "fpFindings": 6,
+        "realMiss": 3,
+        "artifact": 1,
+        "untestable": 1,
+        "missedGoldens": [
+          {
+            "text": "The current origin validation using indexOf is insufficient and can be bypassed. An attacker could use a malicious domain like evil-discourseUrl.com to pass this check.",
+            "classification": "real-miss"
+          },
+          {
+            "text": "postMessage targetOrigin should be the origin (scheme+host+port), not the full referrer URL; using the full URL will cause the message to be dropped and prevent resizing.",
+            "classification": "real-miss"
+          },
+          {
+            "text": "The code sets X-Frame-Options: ALLOWALL which completely disables clickjacking protection. The referer validation can be bypassed (referer headers are easily spoofed), and the fallback to empty string",
+            "classification": "not-in-corpus"
+          },
+          {
+            "text": "The TopicEmbed.import method is susceptible to a NoMethodError if the contents parameter is nil when attempting to append a string, and an XSS vulnerability due to unescaped url interpolation in the g",
+            "classification": "real-miss"
+          },
+          {
+            "text": "The ERB block closes with end if, which is invalid Ruby/ERB and will raise at render; it should just be end to close the if block.",
+            "classification": "untestable"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 353802,
+        "outputTokens": 61235
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "feat-2fa-backup-codes-cal-com",
+      "status": "scored",
+      "metrics": {
+        "recall": 0,
+        "precision": 0,
+        "f1": 0,
+        "fairRecall": 0,
+        "hitRate": 0.8208955223880597,
+        "totalCalls": 67,
+        "unserved": 12,
+        "matched": 0,
+        "goldens": 4,
+        "findings": 5,
+        "tpFindings": 0,
+        "fpFindings": 5,
+        "realMiss": 3,
+        "artifact": 0,
+        "untestable": 1,
+        "missedGoldens": [
+          {
+            "text": "The exported function TwoFactor handles backup codes and is in BackupCode.tsx. Inconsistent naming.",
+            "classification": "real-miss"
+          },
+          {
+            "text": "Error message mentions 'backup code login' but this is a disable endpoint, not login",
+            "classification": "untestable"
+          },
+          {
+            "text": "Backup code validation is case-sensitive due to the use of indexOf(). This causes validation to fail if a user enters uppercase hex characters, as backup codes should be case-insensitive for a better ",
+            "classification": "real-miss"
+          },
+          {
+            "text": "Because backupCodes are decrypted and mutated in memory before being written back, two concurrent login requests using the same backupCode could both pass this check and update, so a single backup cod",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 741689,
+        "outputTokens": 58926
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+      "status": "scored",
+      "metrics": {
+        "recall": 0,
+        "precision": 0,
+        "f1": 0,
+        "fairRecall": 0,
+        "hitRate": 0.8809523809523809,
+        "totalCalls": 42,
+        "unserved": 5,
+        "matched": 0,
+        "goldens": 2,
+        "findings": 2,
+        "tpFindings": 0,
+        "fpFindings": 2,
+        "realMiss": 2,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "In getBaseConditions(), the else if (filterConditions) and final else branches are unreachable. This is because getAuthorizationConditions() always returns a non-null Prisma.Sql object, making authCon",
+            "classification": "real-miss"
+          },
+          {
+            "text": "Fetching userIdsFromOrg only when teamsFromOrg.length > 0 can exclude org-level members for orgs without child teams; consider deriving from teamIds (which includes orgId) or removing the guard so org",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 447289,
+        "outputTokens": 45202
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.25,
+        "precision": 0.5,
+        "f1": 0.3333333333333333,
+        "fairRecall": 0.25,
+        "hitRate": 0.8055555555555556,
+        "totalCalls": 72,
+        "unserved": 14,
+        "matched": 1,
+        "goldens": 4,
+        "findings": 2,
+        "tpFindings": 1,
+        "fpFindings": 1,
+        "realMiss": 3,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "The method name has a typo: test_from_dict_inalid_data should be test_from_dict_invalid_data.",
+            "classification": "real-miss"
+          },
+          {
+            "text": "Method name says 'empty_array' but tests empty dict - consider renaming to 'test_from_dict_empty_dict' for clarity.",
+            "classification": "real-miss"
+          },
+          {
+            "text": "to_dict() returns a datetime for queued; if this dict is passed in task kwargs (e.g., via apply_async), JSON serialization may fail depending on the serializer, which can cause enqueue errors.",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 761830,
+        "outputTokens": 70293
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.5,
+        "precision": 1,
+        "f1": 0.6666666666666666,
+        "fairRecall": 0.5,
+        "hitRate": 0.9743589743589743,
+        "totalCalls": 39,
+        "unserved": 1,
+        "matched": 1,
+        "goldens": 2,
+        "findings": 1,
+        "tpFindings": 1,
+        "fpFindings": 0,
+        "realMiss": 1,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "Docstring says this returns a list of DetectorEvaluationResult, but the method now returns a dict keyed by DetectorGroupKey. Consider updating the docstring to match the new return type.",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 453344,
+        "outputTokens": 38462
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.6666666666666666,
+        "precision": 0.75,
+        "f1": 0.7058823529411765,
+        "fairRecall": 0.6666666666666666,
+        "hitRate": 0.8333333333333334,
+        "totalCalls": 48,
+        "unserved": 8,
+        "matched": 2,
+        "goldens": 3,
+        "findings": 4,
+        "tpFindings": 3,
+        "fpFindings": 1,
+        "realMiss": 1,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "Passing 80% as the dimensions can fail for animated GIFs when allow_animated_thumbnails is true, since the animated path uses gifsicle --resize-fit which expects WxH geometry, not a percentage; downsi",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 331793,
+        "outputTokens": 38016
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.75,
+        "precision": 1,
+        "f1": 0.8571428571428571,
+        "fairRecall": 0.75,
+        "hitRate": 0.7435897435897436,
+        "totalCalls": 39,
+        "unserved": 10,
+        "matched": 3,
+        "goldens": 4,
+        "findings": 3,
+        "tpFindings": 3,
+        "fpFindings": 0,
+        "realMiss": 1,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "record_for_host compares lower(host) = ? but does not normalize the parameter’s case, so mixed‑case referer hosts may fail to match even though comparison intends to be case‑insensitive.",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 310250,
+        "outputTokens": 34878
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
+      "status": "scored",
+      "metrics": {
+        "recall": 0,
+        "precision": 0,
+        "f1": 0,
+        "fairRecall": 0,
+        "hitRate": 0.6666666666666666,
+        "totalCalls": 48,
+        "unserved": 16,
+        "matched": 0,
+        "goldens": 2,
+        "findings": 2,
+        "tpFindings": 0,
+        "fpFindings": 2,
+        "realMiss": 2,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "Thread-safety issue with lazy @loaded_locales",
+            "classification": "real-miss"
+          },
+          {
+            "text": "Consider normalizing the input locale (e.g., to a symbol) when checking/loading here to avoid double-loading if the same locale is passed as a String vs Symbol (also applies to other locations in the ",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 360136,
+        "outputTokens": 59854
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.5,
+        "precision": 1,
+        "f1": 0.6666666666666666,
+        "fairRecall": 1,
+        "hitRate": 0.875,
+        "totalCalls": 48,
+        "unserved": 6,
+        "matched": 1,
+        "goldens": 2,
+        "findings": 1,
+        "tpFindings": 1,
+        "fpFindings": 0,
+        "realMiss": 0,
+        "artifact": 1,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "The reader thread isn’t waited for; flipping deletedAll to true and asserting immediately can race and miss exceptions added just after the flag change, making this test flaky.",
+            "classification": "not-in-corpus"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 435110,
+        "outputTokens": 33717
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.2,
+        "precision": 1,
+        "f1": 0.33333333333333337,
+        "fairRecall": 0.2,
+        "hitRate": 0.9117647058823529,
+        "totalCalls": 34,
+        "unserved": 3,
+        "matched": 1,
+        "goldens": 5,
+        "findings": 1,
+        "tpFindings": 1,
+        "fpFindings": 0,
+        "realMiss": 4,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "Potential null reference if mainHostDestinationCalendar is undefined if evt.destinationCalendar is null or an empty array ",
+            "classification": "real-miss"
+          },
+          {
+            "text": "The optional chaining on mainHostDestinationCalendar?.integration is redundant since you already check mainHostDestinationCalendar in the ternary condition.",
+            "classification": "real-miss"
+          },
+          {
+            "text": "Logic error: when externalCalendarId is provided, you're searching for a calendar where externalId === externalCalendarId, but this will always fail since you're looking for a calendar that matches it",
+            "classification": "real-miss"
+          },
+          {
+            "text": "The Calendar interface now requires createEvent(event, credentialId), but some implementations (e.g., Lark/Office365) still declare createEvent(event) only—this breaks the interface contract (also app",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 401855,
+        "outputTokens": 27914
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.6666666666666666,
+        "precision": 0.5,
+        "f1": 0.5714285714285715,
+        "fairRecall": 0.6666666666666666,
+        "hitRate": 0.8275862068965517,
+        "totalCalls": 58,
+        "unserved": 10,
+        "matched": 2,
+        "goldens": 3,
+        "findings": 4,
+        "tpFindings": 2,
+        "fpFindings": 2,
+        "realMiss": 1,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "HTTP method mismatch in .remove_member - test uses PUT but remove_member action expects DELETE",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 750302,
+        "outputTokens": 47260
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "fixing-re-authentication-with-passkeys-keycloak",
+      "status": "scored",
+      "metrics": {
+        "recall": 0,
+        "precision": null,
+        "f1": null,
+        "fairRecall": 0,
+        "hitRate": 0.8333333333333334,
+        "totalCalls": 30,
+        "unserved": 5,
+        "matched": 0,
+        "goldens": 2,
+        "findings": 0,
+        "tpFindings": 0,
+        "fpFindings": 0,
+        "realMiss": 2,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "ConditionalPasskeysEnabled() called without UserModel parameter",
+            "classification": "real-miss"
+          },
+          {
+            "text": "With isConditionalPasskeysEnabled(UserModel user) requiring user != null, authenticate(...) will not call webauthnAuth.fillContextForm(context) on the initial login page where context.getUser() is sti",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 628748,
+        "outputTokens": 46207
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "frontend-asset-optimization-grafana-codex",
+      "status": "scored",
+      "metrics": {
+        "recall": 0,
+        "precision": null,
+        "f1": null,
+        "fairRecall": 0,
+        "hitRate": 0.9333333333333333,
+        "totalCalls": 15,
+        "unserved": 1,
+        "matched": 0,
+        "goldens": 2,
+        "findings": 0,
+        "tpFindings": 0,
+        "fpFindings": 0,
+        "realMiss": 2,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "The GetWebAssets function implements an incomplete double-checked locking pattern for caching web assets. The function first checks if the cache is populated using a read lock (RLock), and if the cach",
+            "classification": "real-miss"
+          },
+          {
+            "text": "In addition to the missing double-check, the function has a critical flaw in its error handling: it unconditionally assigns the fetch result to the cache (line 69: entryPointAssetsCache = result) rega",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 135504,
+        "outputTokens": 20879
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "github-oauth-security-enhancement-sentry",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.3333333333333333,
+        "precision": 0.3333333333333333,
+        "f1": 0.3333333333333333,
+        "fairRecall": 0.3333333333333333,
+        "hitRate": 0.8103448275862069,
+        "totalCalls": 58,
+        "unserved": 11,
+        "matched": 1,
+        "goldens": 3,
+        "findings": 3,
+        "tpFindings": 1,
+        "fpFindings": 2,
+        "realMiss": 2,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "Null reference if github_authenticated_user state is missing",
+            "classification": "real-miss"
+          },
+          {
+            "text": "OAuth state uses pipeline.signature (static) instead of a per-request random value",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 697880,
+        "outputTokens": 47382
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "implement-access-token-context-encoding-framework-keycloak",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.25,
+        "precision": 0.3333333333333333,
+        "f1": 0.28571428571428575,
+        "fairRecall": 0.25,
+        "hitRate": 0.7878787878787878,
+        "totalCalls": 66,
+        "unserved": 14,
+        "matched": 1,
+        "goldens": 4,
+        "findings": 3,
+        "tpFindings": 1,
+        "fpFindings": 2,
+        "realMiss": 3,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "In isAccessTokenId, the substring for the grant shortcut and the equality check look inverted: the grant shortcut occupies indices 4–5 (substring(4,6)), and a match should return true (combined with U",
+            "classification": "real-miss"
+          },
+          {
+            "text": "Javadoc mentions \"usually like 3-letters shortcut\" but some implementations use 2-letter shortcuts (\"ac\", \"cc\", \"rt\", \"te\", \"pc\", \"ci\", \"ro\"). Consider updating documentation to reflect actual usage p",
+            "classification": "real-miss"
+          },
+          {
+            "text": " Catching generic RuntimeException is too broad. The implementation throws IllegalArgumentException specifically - catch that instead for more precise testing.",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 738180,
+        "outputTokens": 48343
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "notification-rule-processing-engine-grafana-codex",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.5,
+        "precision": 0.6666666666666666,
+        "f1": 0.5714285714285715,
+        "fairRecall": 0.5,
+        "hitRate": 0.9464285714285714,
+        "totalCalls": 56,
+        "unserved": 3,
+        "matched": 1,
+        "goldens": 2,
+        "findings": 3,
+        "tpFindings": 2,
+        "fpFindings": 1,
+        "realMiss": 1,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "The rendered GrafanaRuleListItem is missing the required key prop for React list items. This can cause rendering issues when the list order changes.",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 794481,
+        "outputTokens": 37800
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.6,
+        "precision": 0.5555555555555556,
+        "f1": 0.576923076923077,
+        "fairRecall": 0.6,
+        "hitRate": 0.8363636363636363,
+        "totalCalls": 110,
+        "unserved": 18,
+        "matched": 3,
+        "goldens": 5,
+        "findings": 9,
+        "tpFindings": 5,
+        "fpFindings": 4,
+        "realMiss": 2,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "Invalid Zod schema syntax. Computed property keys like [z.string().toString()] are not valid in Zod object schemas and will cause runtime errors. ",
+            "classification": "real-miss"
+          },
+          {
+            "text": "When the sync endpoint path is used, res is a fetch Response and has no .data; res?.data will be undefined and token.access_token will throw at runtime. This relies on a consistent return shape from r",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 1030578,
+        "outputTokens": 88021
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.5,
+        "precision": 0.3333333333333333,
+        "f1": 0.4,
+        "fairRecall": 0.5,
+        "hitRate": 0.7346938775510204,
+        "totalCalls": 49,
+        "unserved": 13,
+        "matched": 1,
+        "goldens": 2,
+        "findings": 3,
+        "tpFindings": 1,
+        "fpFindings": 2,
+        "realMiss": 0,
+        "artifact": 0,
+        "untestable": 1,
+        "missedGoldens": [
+          {
+            "text": "-ms-align-items never existed in any version of IE/Edge; the correct legacy property is -ms-flex-align.",
+            "classification": "untestable"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 393133,
+        "outputTokens": 46391
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.5,
+        "precision": 0.5,
+        "f1": 0.5,
+        "fairRecall": 0.5,
+        "hitRate": 0.7735849056603774,
+        "totalCalls": 53,
+        "unserved": 12,
+        "matched": 1,
+        "goldens": 2,
+        "findings": 2,
+        "tpFindings": 1,
+        "fpFindings": 1,
+        "realMiss": 1,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "The ContextualLoggerMiddleware methods (QueryData, CallResource, CheckHealth, CollectMetrics) panic when a nil request is received. This occurs because they directly access req.PluginContext (via the ",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 616282,
+        "outputTokens": 35910
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "replays-self-serve-bulk-delete-system-sentry",
+      "status": "scored",
+      "metrics": {
+        "recall": 0,
+        "precision": 0,
+        "f1": 0,
+        "fairRecall": 0,
+        "hitRate": 0.5,
+        "totalCalls": 26,
+        "unserved": 13,
+        "matched": 0,
+        "goldens": 3,
+        "findings": 2,
+        "tpFindings": 0,
+        "fpFindings": 2,
+        "realMiss": 1,
+        "artifact": 0,
+        "untestable": 2,
+        "missedGoldens": [
+          {
+            "text": "Breaking changes in error response format",
+            "classification": "untestable"
+          },
+          {
+            "text": "Detector validator uses wrong key when updating type",
+            "classification": "untestable"
+          },
+          {
+            "text": "Using zip(error_ids, events.values()) assumes the get_multi result preserves the input order; dict value order is not guaranteed to match error_ids, so event data can be paired with the wrong ID (miss",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 355920,
+        "outputTokens": 48534
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry",
+      "status": "scored",
+      "metrics": {
+        "recall": 0,
+        "precision": null,
+        "f1": null,
+        "fairRecall": 0,
+        "hitRate": 0.7575757575757576,
+        "totalCalls": 33,
+        "unserved": 8,
+        "matched": 0,
+        "goldens": 2,
+        "findings": 0,
+        "tpFindings": 0,
+        "fpFindings": 0,
+        "realMiss": 2,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "The function modifies the config variable to include display values but then returns the original monitor.config instead of the modified version.",
+            "classification": "real-miss"
+          },
+          {
+            "text": "The code fetches MonitorCheckIn objects by ID when the required data already exists in previous_checkins. This creates an unnecessary database query.",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 451345,
+        "outputTokens": 29599
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "sms-workflow-reminder-retry-count-tracking-cal-com",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.5,
+        "precision": 0.4,
+        "f1": 0.4444444444444445,
+        "fairRecall": 0.5,
+        "hitRate": 0.9649122807017544,
+        "totalCalls": 57,
+        "unserved": 2,
+        "matched": 1,
+        "goldens": 2,
+        "findings": 5,
+        "tpFindings": 2,
+        "fpFindings": 3,
+        "realMiss": 1,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": [
+          {
+            "text": "Using retryCount: reminder.retryCount + 1 reads a possibly stale value and can lose increments under concurrency; consider an atomic increment via Prisma (increment: 1) to avoid race conditions (also ",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 529737,
+        "outputTokens": 58836
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry",
+      "status": "scored",
+      "metrics": {
+        "recall": 0.2,
+        "precision": 0.2,
+        "f1": 0.20000000000000004,
+        "fairRecall": 0.2,
+        "hitRate": 0.9714285714285714,
+        "totalCalls": 70,
+        "unserved": 2,
+        "matched": 1,
+        "goldens": 5,
+        "findings": 5,
+        "tpFindings": 1,
+        "fpFindings": 4,
+        "realMiss": 2,
+        "artifact": 0,
+        "untestable": 2,
+        "missedGoldens": [
+          {
+            "text": "Inconsistent metric tagging with 'shard' and 'shards'",
+            "classification": "untestable"
+          },
+          {
+            "text": "Fixed sleep in tests can be flaky; wait on condition instead",
+            "classification": "untestable"
+          },
+          {
+            "text": "Because flusher processes are created via multiprocessing.get_context('spawn').Process, they are instances of multiprocessing.context.SpawnProcess, which on POSIX is not a subclass of multiprocessing.",
+            "classification": "real-miss"
+          },
+          {
+            "text": "Sleep in test_consumer.py won’t actually wait because time.sleep was monkeypatched above; consider restoring sleep or using a different sync to ensure the flusher has time to process.",
+            "classification": "real-miss"
+          }
+        ]
+      },
+      "usage": {
+        "inputTokens": 933041,
+        "outputTokens": 71882
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    },
+    {
+      "caseId": "unified-storage-performance-optimizations-grafana-codex",
+      "status": "scored",
+      "metrics": {
+        "recall": 1,
+        "precision": 1,
+        "f1": 1,
+        "fairRecall": 1,
+        "hitRate": 1,
+        "totalCalls": 50,
+        "unserved": 0,
+        "matched": 2,
+        "goldens": 2,
+        "findings": 2,
+        "tpFindings": 2,
+        "fpFindings": 0,
+        "realMiss": 0,
+        "artifact": 0,
+        "untestable": 0,
+        "missedGoldens": []
+      },
+      "usage": {
+        "inputTokens": 695934,
+        "outputTokens": 37161
+      },
+      "latencyMs": null,
+      "finishReason": null,
+      "steps": null
+    }
+  ]
+}

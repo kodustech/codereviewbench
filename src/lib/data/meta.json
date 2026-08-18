@@ -49,8 +49,8 @@
     "measured": "case-sampling (bootstrap 2000x) e judge run-to-run (3 rodadas do mesmo judge sobre a mesma submission, onde disponível)",
     "notMeasured": "model run-to-run (rodar o MESMO modelo de novo do zero — 1 passada por entrada)",
     "runsPerEntry": 1,
-    "judgeRunsAvailable": 1,
+    "judgeRunsAvailable": 4,
     "judgeRunsTotal": 8
   },
-  "generatedAt": "2026-08-18T23:09:09.212Z"
+  "generatedAt": "2026-08-18T23:46:09.011Z"
 }
