@@ -7,10 +7,11 @@ import caseIndexData from '@/lib/data/case-index.json';
 import meta from '@/lib/data/meta.json';
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney, formatCI } from '@/lib/format';
-import { displayNameOf, providerOf, PROVIDER_COLORS, REPO_LABELS, LANGUAGE_LABELS, SIZE_LABELS } from '@/lib/constants';
+import { displayNameOf, providerOf, REPO_LABELS, LANGUAGE_LABELS, SIZE_LABELS } from '@/lib/constants';
 import { bootstrapCI } from '@/lib/bootstrap';
 import CostFrontier, { type FrontierPoint } from '@/components/charts/CostFrontier';
 import ViewSwitcher from '@/components/shared/ViewSwitcher';
+import ProviderLogo from '@/components/shared/ProviderLogo';
 import { List, LineChart, ArrowUpDown, ChevronDown, Scale, SlidersHorizontal, RotateCcw } from 'lucide-react';
 import type { LeaderboardData, LeaderboardEntry, CaseIndexRow } from '@/lib/types';
 
@@ -354,7 +355,6 @@ export default function LeaderboardClient() {
                 {entries.map((e: LeaderboardEntry, idx) => {
                   const showTierDivider = !isFiltered && idx > 0 && entries[idx - 1].tier !== e.tier;
                   const provider = providerOf(e.modelId);
-                  const color = PROVIDER_COLORS[provider] || '#71717a';
                   const f = filteredByKey.get(e.key);
                   const f1 = isFiltered ? f?.f1 ?? null : e.f1;
                   const precision = isFiltered ? f?.precision ?? null : e.precision;
@@ -379,7 +379,7 @@ export default function LeaderboardClient() {
                         </td>
                         <td className="px-5 py-4">
                           <Link href={`/model/${e.modelId}`} className="flex items-center gap-2.5 group/link">
-                            <span className="size-2 rounded-full shrink-0" style={{ background: color }} />
+                            <ProviderLogo provider={provider} />
                             <span className="flex flex-col gap-0.5 min-w-0">
                               <span className="text-sm font-semibold tracking-tight text-[var(--foreground)] group-hover/link:text-[var(--accent)] transition-colors truncate">
                                 {displayNameOf(e.modelId)}

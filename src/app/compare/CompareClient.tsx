@@ -6,8 +6,9 @@ import Link from 'next/link';
 import { ArrowLeftRight, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney } from '@/lib/format';
-import { displayNameOf, providerOf, PROVIDER_COLORS, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import { displayNameOf, providerOf, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
 import type { LeaderboardEntry, CaseSample } from '@/lib/types';
+import ProviderLogo from '@/components/shared/ProviderLogo';
 
 interface Props {
   entries: LeaderboardEntry[];
@@ -122,7 +123,7 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
       {/* Picker */}
       <div className="flex flex-col sm:grid sm:grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-4 mb-10">
         <div className="flex items-center gap-3 w-full">
-          <span className="size-2.5 rounded-full shrink-0" style={{ background: PROVIDER_COLORS[providerA] || '#71717a' }} />
+          <ProviderLogo provider={providerA} className="size-4" />
           <ModelPicker entries={entries} value={entryA.modelId} otherValue={entryB.modelId} onChange={(v) => setModels(v, entryB.modelId)} />
         </div>
         <button
@@ -134,7 +135,7 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
         </button>
         <div className="flex items-center gap-3 w-full">
           <ModelPicker entries={entries} value={entryB.modelId} otherValue={entryA.modelId} onChange={(v) => setModels(entryA.modelId, v)} />
-          <span className="size-2.5 rounded-full shrink-0" style={{ background: PROVIDER_COLORS[providerB] || '#71717a' }} />
+          <ProviderLogo provider={providerB} className="size-4" />
         </div>
       </div>
 

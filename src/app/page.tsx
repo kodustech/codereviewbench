@@ -9,6 +9,7 @@ import { formatScore, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import Apparatus from '@/components/hero/Apparatus';
 import MeterStrip from '@/components/hero/MeterStrip';
+import ProviderLogo from '@/components/shared/ProviderLogo';
 
 const lb = leaderboardData as unknown as LeaderboardData;
 const caseIndex = caseIndexData as unknown as CaseIndexRow[];
@@ -294,11 +295,14 @@ export default function Home() {
                       </span>
                     </td>
                     <td className="px-5 py-4">
-                      <Link href={`/model/${e.modelId}`} className="group/link flex flex-col gap-0.5">
-                        <span className="text-sm font-semibold tracking-tight transition-colors group-hover/link:text-[var(--accent)] text-[var(--foreground)]">
-                          {displayNameOf(e.modelId)}
+                      <Link href={`/model/${e.modelId}`} className="group/link flex items-center gap-2.5">
+                        <ProviderLogo provider={providerOf(e.modelId)} />
+                        <span className="flex flex-col gap-0.5">
+                          <span className="text-sm font-semibold tracking-tight transition-colors group-hover/link:text-[var(--accent)] text-[var(--foreground)]">
+                            {displayNameOf(e.modelId)}
+                          </span>
+                          <span className="text-xs text-[var(--muted-dim)] font-mono uppercase tracking-widest">{providerOf(e.modelId)}</span>
                         </span>
-                        <span className="text-xs text-[var(--muted-dim)] font-mono uppercase tracking-widest">{providerOf(e.modelId)}</span>
                       </Link>
                     </td>
                     <td className="px-5 py-4">

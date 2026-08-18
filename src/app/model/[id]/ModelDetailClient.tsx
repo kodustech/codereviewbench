@@ -2,10 +2,11 @@
 
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney, formatCI, formatDelta } from '@/lib/format';
-import { displayNameOf, providerOf, PROVIDER_COLORS, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import { displayNameOf, providerOf, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
 import type { LeaderboardEntry, LeaderboardAverages, CaseSample } from '@/lib/types';
 import StatsCard from '@/components/shared/StatsCard';
 import Badge from '@/components/shared/Badge';
+import ProviderLogo from '@/components/shared/ProviderLogo';
 import Link from 'next/link';
 import { ArrowLeft, Target, Shield, DollarSign, Coins, ChevronDown, ChevronUp, Code2, Check } from 'lucide-react';
 import { useState } from 'react';
@@ -95,7 +96,6 @@ function EmbedButton({ modelId }: { modelId: string }) {
 export default function ModelDetailClient({ entry, averages, allEntries, cases }: ModelDetailClientProps) {
   const [expandedCase, setExpandedCase] = useState<string | null>(null);
   const provider = providerOf(entry.modelId);
-  const providerColor = PROVIDER_COLORS[provider] || '#71717a';
   const severityTotal = Object.values(entry.findingsBySeverity).reduce((a, b) => a + b, 0);
 
   const repoRows = Object.entries(entry.byRepo).sort((a, b) => b[1].goldens - a[1].goldens);
@@ -117,7 +117,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <span className="flex items-center gap-3 min-w-0">
-              <span className="size-2.5 rounded-full shrink-0" style={{ background: providerColor }} />
+              <ProviderLogo provider={provider} className="size-6" />
               <h1 className="text-3xl sm:text-4xl font-display text-[var(--foreground)]">{displayNameOf(entry.modelId)}</h1>
             </span>
             <span className="flex items-center gap-2">
