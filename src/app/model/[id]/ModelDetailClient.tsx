@@ -159,11 +159,24 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
         <div className="card-hairline p-6">
           <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Confidence</h3>
-          <p className="text-sm text-[var(--foreground-2)] leading-relaxed relative">
+          <p className="text-sm text-[var(--foreground-2)] leading-relaxed relative mb-3">
             95% bootstrap interval on recall (2000 resamples over the {entry.cases} PRs):
             <span className="text-[var(--foreground)] font-mono font-semibold mx-1">{formatCI(entry.ciLow, entry.ciHigh)}</span>
-            points. This measures sampling variance from which PRs are in the set — not run-to-run variance from a
-            different pass of the same model (1 run per entry).
+            points. This measures sampling variance from which PRs are in the set.
+          </p>
+          {entry.runToRunVariance ? (
+            <p className="text-sm text-[var(--foreground-2)] leading-relaxed relative mb-3">
+              Judge noise (same submission, {entry.runToRunVariance.runs} independent re-scores): recall
+              <span className="text-[var(--foreground)] font-mono font-semibold mx-1">
+                {entry.runToRunVariance.recall.mean.toFixed(1)} ± {entry.runToRunVariance.recall.stdev?.toFixed(1) ?? '—'}
+              </span>
+              pts (n={entry.runToRunVariance.runs}). This is the judge alone — the exact same findings, scored again.
+            </p>
+          ) : (
+            <p className="text-sm text-[var(--muted-dim)] leading-relaxed relative mb-3">Judge run-to-run variance not yet measured for this model.</p>
+          )}
+          <p className="text-xs text-[var(--muted-dim)] leading-relaxed relative">
+            Neither measures model run-to-run variance — re-running the review agent itself, not just the judge. One pass per entry.
           </p>
         </div>
         <div className="card-hairline p-6">

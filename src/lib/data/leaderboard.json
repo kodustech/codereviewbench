@@ -139,6 +139,36 @@
       "costPerPR": 0.3,
       "costPerBugFound": 0.21,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": {
+        "runs": 3,
+        "recall": {
+          "mean": 43.86,
+          "stdev": 0.61,
+          "values": [
+            44.21,
+            44.21,
+            43.16
+          ]
+        },
+        "precision": {
+          "mean": 43.56,
+          "stdev": 0.99,
+          "values": [
+            43.56,
+            42.57,
+            44.55
+          ]
+        },
+        "f1": {
+          "mean": 43.7,
+          "stdev": 0.28,
+          "values": [
+            43.89,
+            43.38,
+            43.85
+          ]
+        }
+      },
       "ciHalfWidth": 9.99,
       "ciLow": 32.32,
       "ciHigh": 56.31,
@@ -284,6 +314,7 @@
       "costPerPR": 1.62,
       "costPerBugFound": 1.25,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
       "ciHalfWidth": 9.89,
       "ciLow": 32.29,
       "ciHigh": 50.46,
@@ -429,6 +460,7 @@
       "costPerPR": 0.49,
       "costPerBugFound": 0.38,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
       "ciHalfWidth": 9.89,
       "ciLow": 31.25,
       "ciHigh": 52,
@@ -574,6 +606,7 @@
       "costPerPR": 1.21,
       "costPerBugFound": 0.93,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
       "ciHalfWidth": 9.89,
       "ciLow": 29.55,
       "ciHigh": 53.75,
@@ -718,6 +751,7 @@
       "costPerPR": 0.55,
       "costPerBugFound": 0.46,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
       "ciHalfWidth": 9.76,
       "ciLow": 28.13,
       "ciHigh": 48.68,
@@ -862,6 +896,7 @@
       "costPerPR": 0.1,
       "costPerBugFound": 0.08,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
       "ciHalfWidth": 9.7,
       "ciLow": 26.37,
       "ciHigh": 47.87,
@@ -1007,6 +1042,7 @@
       "costPerPR": 0.34,
       "costPerBugFound": 0.31,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
       "ciHalfWidth": 9.66,
       "ciLow": 24.05,
       "ciHigh": 45.36,
@@ -1152,6 +1188,7 @@
       "costPerPR": 0.27,
       "costPerBugFound": 0.75,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
       "ciHalfWidth": 6.43,
       "ciLow": 5.95,
       "ciHigh": 18.28,

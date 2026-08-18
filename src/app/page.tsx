@@ -188,8 +188,9 @@ export default function Home() {
             </div>
             <div className="p-6 flex flex-col gap-4 relative">
               <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
-                <span className="text-[var(--foreground)] font-medium">Run-to-run variance.</span> One pass per model. Re-scoring
-                the same submission twice already moves recall by a few points from judge noise alone — treat close scores as tied.
+                <span className="text-[var(--foreground)] font-medium">Model run-to-run variance.</span> One pass per model — the
+                review agent itself only runs once per entry. Judge noise (re-scoring the same submission) is measured
+                separately where available — treat close scores as tied either way.
               </p>
               <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
                 <span className="text-[var(--foreground)] font-medium">Claude or GPT via API.</span> Anthropic is excluded on

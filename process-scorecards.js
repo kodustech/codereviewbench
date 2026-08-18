@@ -27,6 +27,11 @@ const SUB_DIR = path.resolve(args.submissions || './submissions');
 // Default escreve nos dados do site. `--out=` existe para poder testar o pipeline
 // sem sobrescrever o que está publicado (aprendido do jeito difícil).
 const OUT_DIR = args.out ? path.resolve(args.out) : path.join(__dirname, 'src', 'lib', 'data');
+// Re-scores adicionais da MESMA submission, mesmo judge — mede run-to-run
+// (ruído do próprio judge), não re-roda o modelo de review. Arquivo:
+// scorecards/variance/<modelId>-run{2,3}.json. O run1 já está no scorecard
+// canônico (IN_DIR); ausente = sem `variance` no entry, não um erro.
+const VARIANCE_DIR = path.join(__dirname, 'scorecards', 'variance');
 
 // caseId → repo/linguagem. Derivado do sufixo do caseId para o site não precisar
 // dos datasets do kodus-ai (que são grandes e vivem em outro repo).
@@ -417,6 +422,53 @@ function bootstrapCI(cases, iterations = 2000, seed = 42) {
     return { lo: at(0.025), hi: at(0.975) };
 }
 
+function mean(xs) {
+    return xs.reduce((a, b) => a + b, 0) / xs.length;
+}
+// stdev amostral (n-1) — com n=3 é uma estimativa bem grosseira, por isso o
+// site rotula explicitamente "n=3" perto de qualquer número que use isso.
+function stdev(xs) {
+    if (xs.length < 2) return null;
+    const m = mean(xs);
+    return Math.sqrt(xs.reduce((s, x) => s + (x - m) ** 2, 0) / (xs.length - 1));
+}
+
+// Variância run-a-run: reroda o MESMO judge sobre a MESMA submission (não
+// rereoda o modelo de review) — isola ruído do julgamento do ruído de qual
+// PR caiu no set (que o bootstrap acima já cobre). null quando não há
+// scorecards/variance/<modelId>-run{2,3}.json para esse modelo — ausência,
+// não zero.
+function runToRunVariance(entry) {
+    if (!entry.modelId) return null;
+    const runs = [{ recallMicro: entry.score / 100, precisionMicro: entry.precision / 100, f1Micro: entry.f1 / 100 }];
+    for (const n of [2, 3]) {
+        const p = path.join(VARIANCE_DIR, `${entry.modelId}-run${n}.json`);
+        try {
+            const sc = JSON.parse(fs.readFileSync(p, 'utf8'));
+            const a = sc.aggregate || {};
+            runs.push({ recallMicro: a.recallMicro ?? 0, precisionMicro: a.precisionMicro ?? 0, f1Micro: a.f1Micro ?? 0 });
+        } catch {
+            // arquivo dessa rodada ainda não existe — variância parcial não é
+            // publicada, é tudo ou nada pra não sugerir mais confiança do que
+            // o dado sustenta.
+            return null;
+        }
+    }
+    const recalls = runs.map((r) => r.recallMicro * 100);
+    const precisions = runs.map((r) => r.precisionMicro * 100);
+    const f1s = runs.map((r) => r.f1Micro * 100);
+    return {
+        runs: runs.length,
+        recall: { mean: mean(recalls), stdev: stdev(recalls), values: recalls },
+        precision: { mean: mean(precisions), stdev: stdev(precisions), values: precisions },
+        f1: { mean: mean(f1s), stdev: stdev(f1s), values: f1s },
+    };
+}
+
+for (const e of entries) {
+    e.runToRunVariance = runToRunVariance(e);
+}
+
 for (const e of entries) {
     const p = e.score / 100;
     const n = e.goldensTotal || 1;
@@ -469,12 +521,13 @@ const meta = {
     totalCases: Math.max(...entries.map((e) => e.cases)),
     totalGoldens: Math.max(...entries.map((e) => e.goldensTotal)),
     tiers: tier,
-    // Rótulo obrigatório: o intervalo publicado cobre amostragem de casos, não
-    // variância entre rodadas do mesmo modelo (1 passada por entrada).
+    // Rótulo obrigatório: dois tipos de variância, dois status diferentes.
     varianceCaveat: {
-        measured: 'case-sampling (bootstrap 2000x sobre os casos)',
-        notMeasured: 'run-to-run (mesmo modelo, rodadas diferentes)',
+        measured: 'case-sampling (bootstrap 2000x) e judge run-to-run (3 rodadas do mesmo judge sobre a mesma submission, onde disponível)',
+        notMeasured: 'model run-to-run (rodar o MESMO modelo de novo do zero — 1 passada por entrada)',
         runsPerEntry: 1,
+        judgeRunsAvailable: entries.filter((e) => e.runToRunVariance).length,
+        judgeRunsTotal: entries.length,
     },
     generatedAt: new Date().toISOString(),
 };

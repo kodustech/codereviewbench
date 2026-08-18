@@ -3,6 +3,8 @@ export interface VarianceCaveat {
   measured: string;
   notMeasured: string;
   runsPerEntry: number;
+  judgeRunsAvailable: number;
+  judgeRunsTotal: number;
 }
 
 export interface Meta {
@@ -92,8 +94,26 @@ export interface LeaderboardEntry {
   ciHigh: number | null;
   ciHalfWidthBootstrap: number;
 
+  /** Judge re-scored 3x sobre a MESMA submission — ruído do judge, não do
+   *  modelo. null quando as rodadas extras ainda não existem pra essa
+   *  entrada (parcial não é publicado — ver process-scorecards.js). */
+  runToRunVariance: RunToRunVariance | null;
+
   rank: number;
   tier: number;
+}
+
+export interface VarianceStat {
+  mean: number;
+  stdev: number | null;
+  values: number[];
+}
+
+export interface RunToRunVariance {
+  runs: number;
+  recall: VarianceStat;
+  precision: VarianceStat;
+  f1: VarianceStat;
 }
 
 export interface LeaderboardAverages {

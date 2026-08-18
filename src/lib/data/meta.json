@@ -46,9 +46,11 @@
   "totalGoldens": 95,
   "tiers": 2,
   "varianceCaveat": {
-    "measured": "case-sampling (bootstrap 2000x sobre os casos)",
-    "notMeasured": "run-to-run (mesmo modelo, rodadas diferentes)",
-    "runsPerEntry": 1
+    "measured": "case-sampling (bootstrap 2000x) e judge run-to-run (3 rodadas do mesmo judge sobre a mesma submission, onde disponível)",
+    "notMeasured": "model run-to-run (rodar o MESMO modelo de novo do zero — 1 passada por entrada)",
+    "runsPerEntry": 1,
+    "judgeRunsAvailable": 1,
+    "judgeRunsTotal": 8
   },
-  "generatedAt": "2026-08-18T22:39:58.856Z"
+  "generatedAt": "2026-08-18T23:09:09.212Z"
 }
