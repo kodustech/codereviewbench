@@ -42,18 +42,22 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-12 pb-8 border-b border-[var(--border)]">
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3">
-            <span className="size-2.5 rounded-full" style={{ background: providerColor }} />
-            <h1 className="text-4xl font-display text-[var(--foreground)]">{displayNameOf(entry.modelId)}</h1>
-            <Badge variant="default">{provider}</Badge>
-            <Badge variant={entry.tier === 1 ? 'success' : 'default'}>Tier {entry.tier}</Badge>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <span className="flex items-center gap-3 min-w-0">
+              <span className="size-2.5 rounded-full shrink-0" style={{ background: providerColor }} />
+              <h1 className="text-3xl sm:text-4xl font-display text-[var(--foreground)]">{displayNameOf(entry.modelId)}</h1>
+            </span>
+            <span className="flex items-center gap-2">
+              <Badge variant="default">{provider}</Badge>
+              <Badge variant={entry.tier === 1 ? 'success' : 'default'}>Tier {entry.tier}</Badge>
+            </span>
           </div>
           <p className="text-[var(--muted)] font-mono text-sm">
             Rank #{entry.rank} of {allEntries.length} · {entry.cases} PRs · {entry.goldensMatched}/{entry.goldensTotal} golden bugs found
           </p>
         </div>
         <div className="text-center">
-          <span className="text-5xl font-bold font-mono tabular-nums text-[var(--accent)]">{entry.f1.toFixed(1)}</span>
+          <span className="font-display text-5xl tabular-nums text-[var(--accent)]">{entry.f1.toFixed(1)}</span>
           <p className="text-xs text-[var(--muted)] font-mono uppercase mt-1">
             F1 · {averages.f1 != null ? formatDelta(entry.f1 - averages.f1) : '—'} vs avg
           </p>
@@ -80,18 +84,18 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
 
       {/* Regime + CI */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-        <div className="border border-[var(--border)] rounded-lg bg-[var(--surface)] p-6">
-          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Confidence</h3>
-          <p className="text-sm text-[var(--muted)] leading-relaxed">
+        <div className="card-hairline p-6">
+          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Confidence</h3>
+          <p className="text-sm text-[var(--foreground-2)] leading-relaxed relative">
             95% bootstrap interval on recall (2000 resamples over the {entry.cases} PRs):
             <span className="text-[var(--foreground)] font-mono font-semibold mx-1">{formatCI(entry.ciLow, entry.ciHigh)}</span>
             points. This measures sampling variance from which PRs are in the set — not run-to-run variance from a
             different pass of the same model (1 run per entry).
           </p>
         </div>
-        <div className="border border-[var(--border)] rounded-lg bg-[var(--surface)] p-6">
-          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Run configuration</h3>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+        <div className="card-hairline p-6">
+          <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Run configuration</h3>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm relative">
             <span className="text-[var(--muted)]">Harness</span>
             <span className="text-[var(--foreground)] font-mono">{entry.harness}</span>
             <span className="text-[var(--muted)]">Access path</span>
@@ -111,29 +115,31 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
       {/* By repo */}
       <div className="mb-12">
         <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold mb-4">By repository</h3>
-        <div className="border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--surface)]">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-[var(--border)]">
-                <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">Repo</th>
-                <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">Recall</th>
-                <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">Precision</th>
-                <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">Goldens</th>
-                <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">PRs</th>
-              </tr>
-            </thead>
-            <tbody>
-              {repoRows.map(([repo, stat]) => (
-                <tr key={repo} className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface-2)] transition-colors">
-                  <td className="px-5 py-3 text-sm text-[var(--foreground)] font-medium">{REPO_LABELS[repo] || repo}</td>
-                  <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{formatScore(stat.recall)}</td>
-                  <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{formatScore(stat.precision)}</td>
-                  <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{stat.goldens}</td>
-                  <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{stat.count}</td>
+        <div className="card-hairline overflow-hidden">
+          <div className="overflow-x-auto custom-scrollbar relative">
+            <table className="w-full text-left border-collapse whitespace-nowrap">
+              <thead>
+                <tr className="border-b border-[var(--border)]">
+                  <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">Repo</th>
+                  <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">Recall</th>
+                  <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">Precision</th>
+                  <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">Goldens</th>
+                  <th className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">PRs</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {repoRows.map(([repo, stat]) => (
+                  <tr key={repo} className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface-2)] transition-colors">
+                    <td className="px-5 py-3 text-sm text-[var(--foreground)] font-medium">{REPO_LABELS[repo] || repo}</td>
+                    <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{formatScore(stat.recall)}</td>
+                    <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{formatScore(stat.precision)}</td>
+                    <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{stat.goldens}</td>
+                    <td className="px-5 py-3 text-sm font-mono tabular-nums text-[var(--muted)] text-right">{stat.count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -146,10 +152,10 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
           {cases.map((c) => {
             const isOpen = expandedCase === c.id;
             return (
-              <div key={c.id} className="border border-[var(--border)] rounded-lg bg-[var(--surface)] overflow-hidden">
+              <div key={c.id} className="card-hairline overflow-hidden">
                 <button
                   onClick={() => setExpandedCase(isOpen ? null : c.id)}
-                  className="w-full flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-[var(--surface-2)] transition-colors text-left"
+                  className="relative w-full flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-[var(--surface-2)] transition-colors text-left"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="text-[11px] font-mono text-[var(--muted-dim)] uppercase tracking-widest shrink-0">
@@ -179,7 +185,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
                                   {f.path}{f.startLine ? `:${f.startLine}` : ''}
                                 </span>
                               )}
-                              <span className="text-[var(--muted)] leading-relaxed">{f.description}</span>
+                              <span className="text-[var(--foreground-2)] leading-relaxed">{f.description}</span>
                             </div>
                           ))}
                         </div>
@@ -196,7 +202,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
                             return (
                               <div key={i} className="text-sm bg-[var(--background)] border border-[var(--border)] rounded-md p-3 flex items-start gap-3">
                                 <Badge variant={cls.variant} className="shrink-0 mt-0.5">{cls.label}</Badge>
-                                <span className="text-[var(--muted)] leading-relaxed">{g.text}</span>
+                                <span className="text-[var(--foreground-2)] leading-relaxed">{g.text}</span>
                               </div>
                             );
                           })}

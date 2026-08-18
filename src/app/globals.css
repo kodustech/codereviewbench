@@ -1,3 +1,8 @@
+/* Hallmark · genre: atmospheric · macrostructure: Marquee Hero (home) / Stat-Led (app pages)
+ * theme: Lumen (Night Foundry drop) · enrichment: Tier A/B hand-built apparatus (home only)
+ * nav: N5 · footer: Ft5-extended · design-system: design.md · designed-as-app
+ * pre-emit critique: P5 H4 E4 S5 R5 V4
+ */
 @import "tailwindcss";
 
 @theme {
@@ -10,28 +15,129 @@
 
 @layer base {
   :root {
-    --background: #0a0b0d;
-    --foreground: #eeece9;
-    --accent: #ff6b35;
-    --accent-dim: #ff6b3520;
-    --surface: #121316;
-    --surface-2: #1a1c20;
-    --border: #232630;
-    --border-bright: #2f3340;
-    --muted: #a1a4ac;
-    --muted-dim: #6b6e76;
+    /* Lumen · Night Foundry — see design.md for the full role mapping */
+    --background: oklch(13% 0.014 265);
+    --foreground: oklch(96% 0.006 262);
+    --foreground-2: oklch(86% 0.008 262);
+    --accent: oklch(76% 0.17 50);
+    --accent-dim: oklch(76% 0.17 50 / 0.14);
+    --accent-2: oklch(68% 0.16 18);
+    --surface: oklch(17% 0.015 265);
+    --surface-2: oklch(21% 0.016 265);
+    --border: oklch(96% 0.006 262 / 0.09);
+    --border-bright: oklch(96% 0.006 262 / 0.16);
+    --muted: oklch(66% 0.010 262);
+    --muted-dim: oklch(48% 0.010 262);
+    --glow: oklch(80% 0.16 50 / 0.42);
+    --paper-emit: oklch(76% 0.17 50 / 0.05);
+    --rule-blueprint: oklch(96% 0.006 262 / 0.045);
+    --focus: oklch(80% 0.17 50);
+    --success: oklch(72% 0.15 145);
+    --danger: oklch(68% 0.18 25);
+    --info: oklch(72% 0.14 240);
+
+    /* 4pt spacing scale */
+    --space-3xs: 0.125rem;
+    --space-2xs: 0.25rem;
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2.5rem;
+    --space-2xl: 4rem;
+    --space-3xl: 6rem;
+
+    /* motion */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --dur-micro: 120ms;
+    --dur-short: 220ms;
+    --dur-long: 420ms;
+    --dur-pulse: 4s;
   }
+}
+
+html {
+  overflow-x: clip;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+  overflow-x: clip;
 }
 
-/* Typography utilities */
+/* Display type — Instrument Serif, roman only. Italic is retired. */
 .font-display {
   font-family: var(--font-display), Georgia, serif;
-  font-style: italic;
+  font-style: normal;
+}
+
+/* Verb landmark: exactly one accent-2 word per hero headline, never italic —
+   colour + a 1px underline that draws in once on first paint. */
+.verb-landmark {
+  font-style: normal;
+  color: var(--accent-2);
+  position: relative;
+  white-space: nowrap;
+}
+.verb-landmark::after {
+  content: '';
+  position: absolute;
+  left: 0.05em;
+  right: 0.05em;
+  bottom: 0.03em;
+  height: 1px;
+  background: var(--accent-2);
+  transform-origin: left;
+  animation: pivot-underline var(--dur-long) var(--ease-out) 700ms backwards;
+}
+@keyframes pivot-underline {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Mono eyebrow — UPPERCASE technical label, capped at one per page. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  opacity: 0.55;
+}
+
+/* Hairline card with inner emission — never a drop-shadow, never a glow. */
+.card-hairline {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--surface);
+  transition: border-color var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out);
+}
+.card-hairline::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120% 100% at 20% 0%, var(--paper-emit), transparent 70%);
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity var(--dur-short) var(--ease-out);
+}
+.card-hairline:hover {
+  border-color: var(--border-bright);
+}
+
+/* Blueprint grid — the hero's "engineered, not vibed" signal. 4.5% opacity. */
+.blueprint-grid {
+  background:
+    linear-gradient(var(--rule-blueprint) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, var(--rule-blueprint) 1px, transparent 1px) 0 0 / 48px 48px,
+    radial-gradient(60% 55% at 78% 25%, var(--paper-emit) 0%, transparent 65%),
+    var(--background);
 }
 
 /* Custom scrollbar */
@@ -49,61 +155,169 @@ body {
   background: var(--muted);
 }
 
-/* Stagger animation */
-@keyframes fade-up {
+/* Page-load reveal — one orchestrated stagger, DOM-index driven, capped ~500ms */
+@keyframes reveal {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+.reveal {
+  opacity: 0;
+  animation: reveal var(--dur-long) var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
 
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
-@keyframes slide-in {
-  from {
-    opacity: 0;
-    transform: translateX(-12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.animate-fade-up {
-  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
 .animate-fade-in {
-  animation: fade-in 0.6s ease both;
+  animation: fade-in var(--dur-long) var(--ease-out) both;
 }
 
-.animate-slide-in {
-  animation: slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+/* Apparatus filament pulse — 3% intensity, 4s period, never rotates */
+@keyframes filament-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.86; }
 }
 
-/* Glow effect for accent */
-.accent-glow {
-  box-shadow: 0 0 40px rgba(255, 107, 53, 0.08), 0 0 80px rgba(255, 107, 53, 0.04);
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+  }
+  .reveal { animation-name: fade-in; }
+  .verb-landmark::after { animation: none; transform: scaleX(1); }
+  .apparatus__edge { animation: none; }
+  .apparatus__core::before { animation: none; }
 }
 
-/* Subtle grid bg */
-.grid-bg {
-  background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size: 60px 60px;
+/* Apparatus — codebase-topology (judge + 5 real repo nodes). Pure SVG. */
+.apparatus {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 420px;
+  margin-inline: auto;
+}
+.apparatus__svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.apparatus__edge {
+  stroke: var(--border-bright);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  animation: flow 3.2s linear infinite;
+}
+@keyframes flow {
+  to { stroke-dashoffset: -32; }
+}
+.apparatus__core {
+  fill: var(--surface);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 14px var(--glow));
+  animation: filament-pulse var(--dur-pulse) ease-in-out infinite;
+}
+.apparatus__node {
+  fill: var(--accent);
+  opacity: 0.85;
+}
+.apparatus__core-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  opacity: 0.75;
+  text-align: center;
+  pointer-events: none;
+}
+.apparatus__callouts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.apparatus__callout {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 3px 0;
+  pointer-events: none;
+}
+.apparatus__callout[data-side='right'] { align-items: flex-start; padding-left: 14px; }
+.apparatus__callout[data-side='left'] { align-items: flex-end; padding-right: 14px; text-align: right; }
+.apparatus__callout[data-side='center'] { align-items: center; text-align: center; }
+.apparatus__callout-name {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+.apparatus__callout-meta {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* Meter strip — real per-case recall spectrum, not decoration. */
+.meter {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-sm) 0;
+  border-block: 1px solid var(--border);
+}
+.meter__bars {
+  display: flex;
+  gap: 1.5px;
+  align-items: end;
+  height: 32px;
+}
+.meter__bars > span {
+  flex: 1;
+  min-width: 1px;
+  background: var(--accent);
+  border-radius: 0.5px;
+}
+.meter__label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  margin: 0;
+}
+.meter__label--right {
+  text-align: right;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(255, 107, 53, 0.3);
-  color: #fff;
+  background: color-mix(in oklch, var(--accent) 35%, transparent);
+  color: var(--background);
+}
+
+/* Focus ring — instant, never transitioned */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }

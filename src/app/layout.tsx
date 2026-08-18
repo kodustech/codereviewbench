@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { DM_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Script from "next/script";
 
-const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans", weight: ["400", "500", "600", "700"] });
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans", weight: ["400", "500", "600"] });
 const instrumentSerif = Instrument_Serif({ subsets: ["latin"], variable: "--font-display", weight: "400" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
@@ -46,7 +46,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={cn(
-        dmSans.variable,
+        geist.variable,
         instrumentSerif.variable,
         mono.variable,
         "font-sans bg-[var(--background)] text-[var(--foreground)] min-h-dvh flex flex-col relative"

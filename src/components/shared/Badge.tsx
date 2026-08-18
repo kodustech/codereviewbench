@@ -8,10 +8,10 @@ interface BadgeProps {
 
 const VARIANTS = {
   default: 'bg-[var(--surface-2)] text-[var(--muted)] border-[var(--border)]',
-  success: 'bg-[#12261e] text-[#3fb950] border-[#2ea04366]',
-  error: 'bg-[#2d1214] text-[#f85149] border-[#f8514966]',
-  blue: 'bg-[#0d2239] text-[#79c0ff] border-[#1f6feb66]',
-  amber: 'bg-[#2d2204] text-[#d29922] border-[#d2992266]',
+  success: 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30',
+  error: 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30',
+  blue: 'bg-[var(--info)]/10 text-[var(--info)] border-[var(--info)]/30',
+  amber: 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]/30',
 };
 
 export default function Badge({ children, variant = 'default', className }: BadgeProps) {

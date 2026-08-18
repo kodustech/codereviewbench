@@ -17,7 +17,6 @@
  */
 
 import {
-  ScatterChart,
   Scatter,
   Line,
   ComposedChart,
@@ -68,7 +67,12 @@ function money(v: number) {
   return v < 1 ? `$${v.toFixed(2)}` : `$${v.toFixed(2)}`;
 }
 
-function FrontierTooltip({ active, payload }: any) {
+interface FrontierTooltipProps {
+  active?: boolean;
+  payload?: Array<{ payload: FrontierPoint }>;
+}
+
+function FrontierTooltip({ active, payload }: FrontierTooltipProps) {
   if (!active || !payload?.length) return null;
   const d: FrontierPoint = payload[0].payload;
   return (
@@ -84,23 +88,23 @@ function FrontierTooltip({ active, payload }: any) {
         </span>
       </p>
       <p className="text-[var(--muted)]">
-        custo/PR{' '}
+        cost/PR{' '}
         <span className="text-[var(--foreground)] font-mono">
           {money(d.costPerPR)}
         </span>
       </p>
       {d.costPerBug != null && (
         <p className="text-[var(--muted)]">
-          custo/bug{' '}
+          cost/bug{' '}
           <span className="text-[var(--foreground)] font-mono">
             {money(d.costPerBug)}
           </span>
         </p>
       )}
       <p className="text-[var(--muted)]">
-        tokens de saída/PR{' '}
+        output tokens/PR{' '}
         <span className="text-[var(--foreground)] font-mono">
-          {d.tokensOut.toLocaleString('pt-BR')}
+          {d.tokensOut.toLocaleString('en-US')}
         </span>
       </p>
     </div>
@@ -136,22 +140,22 @@ export default function CostFrontier({ data, height = 520 }: Props) {
     >
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart margin={{ top: 30, right: 50, bottom: 55, left: 55 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#232630" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
           <XAxis
             type="number"
             dataKey="costPerPR"
             scale="log"
             domain={[xMin, xMax]}
             ticks={[0.05, 0.1, 0.25, 0.5, 1, 2, 4]}
-            stroke="#232630"
-            tick={{ fill: '#a1a4ac', fontSize: 13 }}
+            stroke="var(--border)"
+            tick={{ fill: 'var(--muted)', fontSize: 13 }}
             tickFormatter={(v) => `$${v < 1 ? v.toFixed(2) : v.toFixed(0)}`}
             tickLine={false}
             allowDataOverflow
             label={{
-              value: 'custo medido por PR (escala log) — mais barato →',
+              value: 'measured cost per PR (log scale) — cheaper →',
               position: 'bottom',
-              fill: '#a1a4ac',
+              fill: 'var(--muted)',
               fontSize: 13,
               offset: 28,
             }}
@@ -160,16 +164,16 @@ export default function CostFrontier({ data, height = 520 }: Props) {
             type="number"
             dataKey="recall"
             domain={[yMin, yMax]}
-            stroke="#232630"
-            tick={{ fill: '#a1a4ac', fontSize: 13 }}
+            stroke="var(--border)"
+            tick={{ fill: 'var(--muted)', fontSize: 13 }}
             tickFormatter={(v) => `${v}%`}
             tickLine={false}
             axisLine={false}
             label={{
-              value: 'recall (bugs reais encontrados)',
+              value: 'recall (real bugs found)',
               angle: -90,
               position: 'left',
-              fill: '#a1a4ac',
+              fill: 'var(--muted)',
               fontSize: 13,
               offset: 34,
             }}
@@ -181,7 +185,7 @@ export default function CostFrontier({ data, height = 520 }: Props) {
             data={front}
             dataKey="recall"
             type="linear"
-            stroke="#5a5d65"
+            stroke="var(--muted-dim)"
             strokeWidth={2}
             strokeDasharray="6 4"
             dot={false}
@@ -194,8 +198,8 @@ export default function CostFrontier({ data, height = 520 }: Props) {
             {withErr.map((d, i) => (
               <Cell
                 key={i}
-                fill={PROVIDER_COLORS[d.provider] || '#2a2d35'}
-                stroke={PROVIDER_COLORS[d.provider] || '#5a5d65'}
+                fill={PROVIDER_COLORS[d.provider] || 'var(--surface-2)'}
+                stroke={PROVIDER_COLORS[d.provider] || 'var(--muted-dim)'}
                 strokeWidth={2}
               />
             ))}
@@ -203,14 +207,14 @@ export default function CostFrontier({ data, height = 520 }: Props) {
               dataKey="err"
               width={5}
               strokeWidth={1.5}
-              stroke="#5a5d65"
+              stroke="var(--muted-dim)"
               direction="y"
             />
             <LabelList
               dataKey="name"
               position="top"
               fontSize={12}
-              fill="#a1a4ac"
+              fill="var(--muted)"
               fontWeight="600"
               offset={14}
             />

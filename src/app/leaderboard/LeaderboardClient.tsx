@@ -24,6 +24,32 @@ const VIEWS = [
 
 type SortKey = 'rank' | 'f1' | 'precision' | 'recall' | 'costPerPR' | 'costPerBugFound';
 
+function SortHeader({
+  label,
+  sortKeyName,
+  className,
+  activeKey,
+  onSort,
+}: {
+  label: string;
+  sortKeyName: SortKey;
+  className?: string;
+  activeKey: SortKey;
+  onSort: (key: SortKey) => void;
+}) {
+  return (
+    <th
+      className={cn('px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest cursor-pointer hover:text-[var(--foreground)] transition-colors select-none font-bold', className)}
+      onClick={() => onSort(sortKeyName)}
+    >
+      <div className="flex items-center gap-1.5 justify-end">
+        {label}
+        {activeKey === sortKeyName && <ArrowUpDown className="size-3" />}
+      </div>
+    </th>
+  );
+}
+
 /** Métricas recomputadas de um subconjunto filtrado de casos — não vêm do
  *  leaderboard.json (que só tem o bench inteiro). null = sem caso nenhum
  *  no subconjunto pra essa entrada, não 0 — 0 mentiria "testado e zerou". */
@@ -188,25 +214,13 @@ export default function LeaderboardClient() {
       };
     });
 
-  const SortHeader = ({ label, sortKeyName, className }: { label: string; sortKeyName: SortKey; className?: string }) => (
-    <th
-      className={cn('px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest cursor-pointer hover:text-[var(--foreground)] transition-colors select-none font-bold', className)}
-      onClick={() => toggleSort(sortKeyName)}
-    >
-      <div className="flex items-center gap-1.5 justify-end">
-        {label}
-        {sortKey === sortKeyName && <ArrowUpDown className="size-3" />}
-      </div>
-    </th>
-  );
-
   return (
     <div className="max-w-[1400px] mx-auto w-full px-6 sm:px-12 py-12">
       {/* Header */}
       <div className="mb-10">
-        <span className="text-xs font-mono text-[var(--accent)] uppercase tracking-widest font-bold block mb-3">Rankings</span>
+        <span className="eyebrow block mb-3">Rankings</span>
         <h1 className="text-3xl sm:text-4xl font-display text-[var(--foreground)] mb-3">AI Code Review Benchmark Leaderboard</h1>
-        <p className="text-[15px] text-[var(--muted)] max-w-2xl leading-relaxed">
+        <p className="text-[15px] text-[var(--foreground-2)] max-w-2xl leading-relaxed">
           {meta.totalCases} real pull requests, {meta.totalGoldens} human-authored golden bugs, judged by {meta.judges[0]}.
           Ranked by F1 — recall alone rewards whoever talks most.
         </p>
@@ -243,8 +257,8 @@ export default function LeaderboardClient() {
 
       {/* Filter panel */}
       {filtersOpen && (
-        <div className="mb-8 p-5 border border-[var(--border)] rounded-xl bg-[var(--surface)]">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="mb-8 p-5 card-hairline">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 relative">
             <FilterGroup label="Language" options={meta.languages} labelOf={(v) => LANGUAGE_LABELS[v] || v} selected={selLangs} onToggle={toggleIn(setSelLangs)} />
             <FilterGroup label="Repo" options={meta.repos} labelOf={(v) => REPO_LABELS[v] || v} selected={selRepos} onToggle={toggleIn(setSelRepos)} />
             <FilterGroup label="PR size" options={meta.sizes} labelOf={(v) => SIZE_LABELS[v] || v} selected={selSizes} onToggle={toggleIn(setSelSizes)} />
@@ -266,10 +280,10 @@ export default function LeaderboardClient() {
       )}
 
       {/* Methodology panel */}
-      <div className="mb-8 border border-[var(--border)] rounded-xl bg-[var(--surface)] overflow-hidden">
+      <div className="mb-8 card-hairline overflow-hidden">
         <button
           onClick={() => setMethodologyOpen((v) => !v)}
-          className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--surface-2)] transition-colors"
+          className="relative w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--surface-2)] transition-colors"
         >
           <div className="flex items-center gap-3">
             <div className="size-8 rounded-lg bg-[var(--accent-dim)] flex items-center justify-center">
@@ -321,19 +335,19 @@ export default function LeaderboardClient() {
 
       {/* Table */}
       {view === 'table' && (
-        <div className="w-full border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--surface)]">
+        <div className="w-full card-hairline overflow-hidden">
           <div className="overflow-x-auto custom-scrollbar">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-[var(--border)]">
                   <th className="px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">#</th>
                   <th className="px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest min-w-[220px] font-bold">Model</th>
-                  <SortHeader label="F1" sortKeyName="f1" />
-                  <SortHeader label="Precision" sortKeyName="precision" />
-                  <SortHeader label="Recall" sortKeyName="recall" />
+                  <SortHeader label="F1" sortKeyName="f1" activeKey={sortKey} onSort={toggleSort} />
+                  <SortHeader label="Precision" sortKeyName="precision" activeKey={sortKey} onSort={toggleSort} />
+                  <SortHeader label="Recall" sortKeyName="recall" activeKey={sortKey} onSort={toggleSort} />
                   <th className="px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">95% CI</th>
-                  <SortHeader label="$/PR" sortKeyName="costPerPR" />
-                  <SortHeader label="$/bug" sortKeyName="costPerBugFound" />
+                  <SortHeader label="$/PR" sortKeyName="costPerPR" activeKey={sortKey} onSort={toggleSort} />
+                  <SortHeader label="$/bug" sortKeyName="costPerBugFound" activeKey={sortKey} onSort={toggleSort} />
                 </tr>
               </thead>
               <tbody>

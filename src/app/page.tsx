@@ -1,100 +1,125 @@
 import Link from 'next/link';
-import { ArrowRight, FlaskConical, Layers, Scale, GitPullRequest, Bug, FileCode2, Cpu, ShieldCheck, ChevronRight } from 'lucide-react';
+import { ArrowRight, FlaskConical, Layers, Scale, GitPullRequest, Bug, FileCode2, Cpu, ShieldCheck } from 'lucide-react';
 import meta from '@/lib/data/meta.json';
 import leaderboardData from '@/lib/data/leaderboard.json';
-import type { LeaderboardData } from '@/lib/types';
-import { displayNameOf, providerOf, REPO_LABELS } from '@/lib/constants';
+import caseIndexData from '@/lib/data/case-index.json';
+import type { LeaderboardData, CaseIndexRow } from '@/lib/types';
+import { displayNameOf, providerOf, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
 import { formatScore, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
-import CodeScanAnimation from '@/components/hero/CodeScanAnimation';
+import Apparatus from '@/components/hero/Apparatus';
+import MeterStrip from '@/components/hero/MeterStrip';
 
 const lb = leaderboardData as unknown as LeaderboardData;
+const caseIndex = caseIndexData as unknown as CaseIndexRow[];
+
+function apparatusNodes() {
+  const seen = new Set<string>();
+  const byRepo: Record<string, { goldens: number; cases: number; language: string }> = {};
+  for (const row of caseIndex) {
+    if (seen.has(row.caseId)) continue;
+    seen.add(row.caseId);
+    byRepo[row.repo] = byRepo[row.repo] || { goldens: 0, cases: 0, language: row.language };
+    byRepo[row.repo].goldens += row.goldens;
+    byRepo[row.repo].cases += 1;
+  }
+  return meta.repos.map((repo) => ({
+    repo,
+    label: REPO_LABELS[repo] || repo,
+    language: LANGUAGE_LABELS[byRepo[repo]?.language] || byRepo[repo]?.language || '',
+    goldens: byRepo[repo]?.goldens ?? 0,
+    cases: byRepo[repo]?.cases ?? 0,
+  }));
+}
+
+function meterValues() {
+  return caseIndex
+    .map((r) => (r.goldens ? (r.matched / r.goldens) * 100 : 0))
+    .sort((a, b) => a - b);
+}
 
 export default function Home() {
   const topEntries = [...lb.entries].sort((a, b) => b.f1 - a.f1).slice(0, 5);
+  const nodes = apparatusNodes();
+  const meterVals = meterValues();
+  const meanRecall = meterVals.reduce((a, b) => a + b, 0) / meterVals.length;
 
   return (
     <div className="flex-1 flex flex-col items-center">
-      {/* Hero */}
-      <header className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 pt-20 sm:pt-32 pb-32 grid-bg relative">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--accent)] opacity-[0.03] blur-[120px] rounded-full pointer-events-none" />
+      {/* Hero — Marquee: apparatus at hero-right, verb-landmark headline at hero-left */}
+      <header className="w-full blueprint-grid relative overflow-clip">
+        <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 pt-8 sm:pt-12 pb-16">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 lg:gap-8 items-center">
+            <div className="reveal" style={{ ['--i' as string]: 0 }}>
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-[var(--foreground)] leading-[1.08] mb-7 max-w-2xl lowercase">
+                we check what the model actually&nbsp;<span className="verb-landmark">finds</span>.
+              </h1>
 
-        <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-12 lg:gap-16 items-center">
-          <div>
-            <h1 className="animate-fade-up text-5xl sm:text-7xl lg:text-[5.5rem] font-display tracking-tight text-[var(--foreground)] leading-[1.05] mb-8" style={{ animationDelay: '0ms' }}>
-              AI Code Review<br />Benchmark.
-            </h1>
+              <p className="text-lg text-[var(--foreground-2)] max-w-xl leading-relaxed mb-12">
+                We run real AI review agents against real pull requests from real open-source
+                projects, and check how many of the known bugs they actually find. No synthetic
+                regressions, no cherry-picking.
+              </p>
 
-            <p className="animate-fade-up text-lg sm:text-xl text-[var(--muted)] max-w-2xl leading-relaxed mb-16" style={{ animationDelay: '80ms' }}>
-              We run real AI review agents against real pull requests from real open-source projects, and check how many of the
-              known bugs they actually find. No synthetic regressions, no cherry-picking.
-            </p>
+              <div className="flex flex-wrap gap-10 mb-12">
+                {[
+                  { value: meta.totalCases.toString(), label: 'real pull requests' },
+                  { value: meta.totalGoldens.toString(), label: 'golden bugs' },
+                  { value: meta.models.length.toString().padStart(2, '0'), label: 'models' },
+                ].map((stat) => (
+                  <div key={stat.label} className="flex flex-col">
+                    <span className="font-display text-3xl sm:text-4xl tabular-nums text-[var(--foreground)]">
+                      {stat.value}
+                    </span>
+                    <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-widest mt-1">
+                      {stat.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
 
-            <div className="animate-fade-up flex flex-wrap gap-12 sm:gap-16 mb-12" style={{ animationDelay: '160ms' }}>
-              {[
-                { value: meta.totalCases.toString(), label: 'real pull requests' },
-                { value: meta.totalGoldens.toString(), label: 'golden bugs' },
-                { value: meta.models.length.toString().padStart(2, '0'), label: 'models' },
-                { value: meta.repos.length.toString().padStart(2, '0'), label: 'OSS repos' },
-              ].map((stat) => (
-                <div key={stat.label} className="flex flex-col">
-                  <span className="text-3xl sm:text-4xl font-mono font-bold tabular-nums text-[var(--foreground)]">
-                    {stat.value}
-                  </span>
-                  <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-widest mt-1">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className="animate-fade-up flex flex-wrap items-center gap-4" style={{ animationDelay: '240ms' }}>
               <Link
                 href="/leaderboard"
-                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 transition-opacity"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-full bg-[var(--accent)] text-[var(--background)] hover:brightness-110 transition-[filter]"
               >
-                View Rankings
+                View rankings
                 <ArrowRight className="size-4" />
               </Link>
-              <a
-                href="https://github.com/kodustech/kodus-ai/blob/main/evals/scorer/README.md"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border-bright)] transition-all"
-              >
-                <GitPullRequest className="size-4" />
-                Submit a model
-              </a>
+            </div>
+
+            <div className="hidden lg:block reveal" style={{ ['--i' as string]: 1 }}>
+              <Apparatus judgeLabel={meta.judges[0] || 'judge'} nodes={nodes} />
             </div>
           </div>
+        </div>
 
-          <div className="hidden lg:block h-[520px] animate-fade-up" style={{ animationDelay: '200ms' }}>
-            <CodeScanAnimation />
-          </div>
+        <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12">
+          <MeterStrip
+            values={meterVals}
+            leftLabel={`RECALL · ${meterVals.length} SAMPLES`}
+            rightLabel={`μ ${meanRecall.toFixed(1)}%`}
+          />
         </div>
       </header>
 
-      <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12">
-        <div className="h-px bg-gradient-to-r from-transparent via-[var(--border-bright)] to-transparent" />
-      </div>
-
       {/* Methodology */}
       <section className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 py-24">
-        <span className="text-xs font-mono text-[var(--accent)] uppercase tracking-widest font-bold block mb-3">Methodology</span>
-        <h2 className="text-3xl sm:text-4xl font-display text-[var(--foreground)] mb-4">How It Works</h2>
-        <p className="text-base text-[var(--muted)] max-w-2xl mb-16 leading-[1.75]">
+        <span className="eyebrow block mb-3">Methodology</span>
+        <h2 className="font-display text-3xl sm:text-4xl text-[var(--foreground)] mb-4">How it works</h2>
+        <p className="text-base text-[var(--foreground-2)] max-w-2xl mb-14 leading-[1.75]">
           Every model reviews the same {meta.totalCases} real PRs, against the same human-authored golden comments, judged the
           same way. One run per model, at vendor defaults — the numbers are what you get out of the box.
         </p>
 
-        {/* Pipeline Steps */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-20">
+        {/* Pipeline — a flowing numbered list, not a 4-up icon-tile grid */}
+        <div className="flex flex-col mb-20 border-t border-[var(--border)]">
           {[
             {
               step: '01',
               icon: FileCode2,
               title: 'Real PRs, real bugs',
               desc: `${meta.totalCases} merged pull requests from ${meta.repos.length} production OSS repos, each with human-authored review comments as ground truth — ${meta.totalGoldens} golden bugs in total.`,
+              wide: true,
             },
             {
               step: '02',
@@ -107,6 +132,7 @@ export default function Home() {
               icon: Scale,
               title: 'One judge, every finding',
               desc: `${meta.judges[0]} decides whether each reported finding describes the same underlying issue as a golden comment. Micro-averaged: true/false positives are summed across all PRs before computing precision and recall.`,
+              wide: true,
             },
             {
               step: '04',
@@ -114,28 +140,33 @@ export default function Home() {
               title: 'Publish the artifacts',
               desc: 'Every submission and scorecard is versioned in the repo. Re-scoring never requires re-running a model — only the judge call is repeated.',
             },
-          ].map((item, i) => (
-            <div key={item.step} className="relative flex flex-col gap-4 p-6 bg-[var(--surface)] border border-[var(--border)] rounded-lg">
-              <div className="flex items-center gap-3">
-                <span className="text-[11px] font-mono text-[var(--accent)] font-bold">{item.step}</span>
+          ].map((item) => (
+            <div
+              key={item.step}
+              className={cn(
+                'grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-4 sm:gap-8 py-7 border-b border-[var(--border)]',
+                item.wide ? 'sm:pr-0' : 'sm:pr-24',
+              )}
+            >
+              <div className="flex items-center gap-3 shrink-0">
+                <span className="font-mono text-[13px] text-[var(--accent)] font-bold tabular-nums">{item.step}</span>
                 <item.icon className="size-4 text-[var(--muted)]" />
               </div>
-              <h3 className="text-sm font-semibold text-[var(--foreground)]">{item.title}</h3>
-              <p className="text-sm text-[var(--muted)] leading-[1.75]">{item.desc}</p>
-              {i < 3 && (
-                <ChevronRight className="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 size-4 text-[var(--border-bright)] z-10" />
-              )}
+              <div>
+                <h3 className="text-[15px] font-semibold text-[var(--foreground)] mb-1.5">{item.title}</h3>
+                <p className="text-sm text-[var(--foreground-2)] leading-[1.75] max-w-2xl">{item.desc}</p>
+              </div>
             </div>
           ))}
         </div>
 
         {/* Two columns: What we measure + What we don't */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-20">
-          <div className="border border-[var(--border)] rounded-lg bg-[var(--surface)] overflow-hidden">
-            <div className="px-6 py-4 border-b border-[var(--border)]">
+          <div className="card-hairline overflow-hidden">
+            <div className="px-6 py-4 border-b border-[var(--border)] relative">
               <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">Metrics</h3>
             </div>
-            <div className="divide-y divide-[var(--border)]">
+            <div className="divide-y divide-[var(--border)] relative">
               {[
                 { metric: 'Recall', desc: 'How many of the known bugs the model actually found.' },
                 { metric: 'Precision', desc: 'Of what it reported, how much was real — a model that talks more finds more but also misfires more.' },
@@ -144,27 +175,27 @@ export default function Home() {
               ].map((m) => (
                 <div key={m.metric} className="px-6 py-4 flex items-start gap-4">
                   <span className="text-sm font-semibold text-[var(--foreground)] font-mono w-24 shrink-0">{m.metric}</span>
-                  <p className="text-sm text-[var(--muted)] leading-[1.75]">{m.desc}</p>
+                  <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">{m.desc}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="border border-[var(--border)] rounded-lg bg-[var(--surface)] overflow-hidden">
-            <div className="px-6 py-4 border-b border-[var(--border)] flex items-center gap-3">
+          <div className="card-hairline overflow-hidden">
+            <div className="px-6 py-4 border-b border-[var(--border)] flex items-center gap-3 relative">
               <FlaskConical className="size-4 text-[var(--accent)]" />
               <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">What this doesn&apos;t measure</h3>
             </div>
-            <div className="p-6 flex flex-col gap-4">
-              <p className="text-sm text-[var(--muted)] leading-[1.75]">
+            <div className="p-6 flex flex-col gap-4 relative">
+              <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
                 <span className="text-[var(--foreground)] font-medium">Run-to-run variance.</span> One pass per model. Re-scoring
                 the same submission twice already moves recall by a few points from judge noise alone — treat close scores as tied.
               </p>
-              <p className="text-sm text-[var(--muted)] leading-[1.75]">
+              <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
                 <span className="text-[var(--foreground)] font-medium">Claude or GPT via API.</span> Anthropic is excluded on
                 subscription-terms grounds; GPT models were measured on a ChatGPT subscription and held back pending an API run.
               </p>
-              <p className="text-sm text-[var(--muted)] leading-[1.75]">
+              <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
                 <span className="text-[var(--foreground)] font-medium">A comparison of review products.</span> This is one harness
                 (Kodus&apos;s own) reviewing models inside it — not a comparison between Kodus and other code review tools.
               </p>
@@ -174,11 +205,11 @@ export default function Home() {
 
         {/* Repos + Powered by Kodus */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-3 border border-[var(--border)] rounded-lg bg-[var(--surface)] overflow-hidden">
-            <div className="px-6 py-4 border-b border-[var(--border)]">
+          <div className="lg:col-span-3 card-hairline overflow-hidden">
+            <div className="px-6 py-4 border-b border-[var(--border)] relative">
               <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">Source repositories</h3>
             </div>
-            <div className="p-6 flex flex-wrap gap-2">
+            <div className="p-6 flex flex-wrap gap-2 relative">
               {meta.repos.map((repo) => (
                 <span key={repo} className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[var(--background)] border border-[var(--border)] text-sm text-[var(--foreground)]">
                   <Layers className="size-3.5 text-[var(--muted)]" />
@@ -186,24 +217,24 @@ export default function Home() {
                 </span>
               ))}
             </div>
-            <div className="px-6 pb-6">
-              <p className="text-sm text-[var(--muted)] leading-[1.75]">
+            <div className="px-6 pb-6 relative">
+              <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
                 Merged PRs across {meta.languages.length} languages ({meta.languages.join(', ')}). Same set, same golden
                 comments, for every model — the comparison is fair even when the result isn&apos;t flattering.
               </p>
             </div>
           </div>
 
-          <div className="lg:col-span-2 border border-[var(--border)] rounded-lg bg-[var(--surface)] overflow-hidden flex flex-col">
-            <div className="px-6 py-4 border-b border-[var(--border)]">
-              <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">Powered By</h3>
+          <div className="lg:col-span-2 card-hairline overflow-hidden flex flex-col">
+            <div className="px-6 py-4 border-b border-[var(--border)] relative">
+              <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">Powered by</h3>
             </div>
-            <div className="p-6 flex flex-col gap-5 flex-1">
-              <a href="https://kodus.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity">
+            <div className="p-6 flex flex-col gap-5 flex-1 relative">
+              <a href="https://kodus.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity w-fit">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/kodus-logo.webp" alt="Kodus" className="h-6" />
               </a>
-              <p className="text-sm text-[var(--muted)] leading-[1.75]">
+              <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
                 This benchmark is run and published by
                 <a href="https://kodus.io" target="_blank" rel="noopener noreferrer" className="text-[var(--foreground)] hover:text-[var(--accent)] transition-colors mx-1 font-medium">Kodus</a>,
                 an AI code review company, on Kodus&apos;s own harness. It measures models, not review products — see the
@@ -214,7 +245,7 @@ export default function Home() {
                 href="https://kodus.io"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-auto inline-flex items-center gap-2 text-sm text-[var(--accent)] hover:underline font-medium group"
+                className="mt-auto inline-flex items-center gap-2 text-sm text-[var(--accent)] hover:underline font-medium group w-fit"
               >
                 Learn about Kodus <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
               </a>
@@ -223,16 +254,12 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12">
-        <div className="h-px bg-gradient-to-r from-transparent via-[var(--border-bright)] to-transparent" />
-      </div>
-
       {/* Mini Leaderboard */}
-      <section className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 py-24">
+      <section className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 py-24 border-t border-[var(--border)]">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10">
           <div>
-            <span className="text-xs font-mono text-[var(--accent)] uppercase tracking-widest font-bold block mb-3">Rankings</span>
-            <h2 className="text-3xl sm:text-4xl font-display text-[var(--foreground)]">Global Leaderboard</h2>
+            <span className="eyebrow block mb-3">Rankings</span>
+            <h2 className="font-display text-3xl sm:text-4xl text-[var(--foreground)]">Global leaderboard</h2>
           </div>
           <Link
             href="/leaderboard"
@@ -242,8 +269,8 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--surface)]">
-          <div className="overflow-x-auto custom-scrollbar">
+        <div className="card-hairline overflow-hidden">
+          <div className="overflow-x-auto custom-scrollbar relative">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-[var(--border)]">
@@ -267,7 +294,7 @@ export default function Home() {
                     </td>
                     <td className="px-5 py-4">
                       <Link href={`/model/${e.modelId}`} className="group/link flex flex-col gap-0.5">
-                        <span className={cn('text-sm font-semibold tracking-tight transition-colors group-hover/link:text-[var(--accent)]', idx === 0 ? 'text-[var(--foreground)]' : 'text-[var(--foreground)]/80')}>
+                        <span className="text-sm font-semibold tracking-tight transition-colors group-hover/link:text-[var(--accent)] text-[var(--foreground)]">
                           {displayNameOf(e.modelId)}
                         </span>
                         <span className="text-xs text-[var(--muted-dim)] font-mono uppercase tracking-widest">{providerOf(e.modelId)}</span>
@@ -295,27 +322,29 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12">
-        <div className="h-px bg-gradient-to-r from-transparent via-[var(--border-bright)] to-transparent" />
-      </div>
-
-      {/* Explainer */}
-      <section className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 py-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[var(--border)] rounded-lg overflow-hidden">
-          <div className="flex flex-col gap-3 p-6 bg-[var(--surface)]">
-            <Bug className="size-5 text-[var(--muted)]" />
-            <h3 className="text-sm font-semibold text-[var(--foreground)]">No model finds even half</h3>
-            <p className="text-sm text-[var(--muted)] leading-[1.75]">The best recall in this benchmark is under 45%. Code review has a lot of headroom left.</p>
+      {/* Explainer — unequal spans, icon inline with heading, not a 3-up icon-tile grid */}
+      <section className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 py-24 border-t border-[var(--border)]">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr_0.9fr] gap-6">
+          <div className="card-hairline p-7 flex flex-col gap-3">
+            <div className="flex items-center gap-2.5 relative">
+              <Bug className="size-4 text-[var(--muted)]" />
+              <h3 className="text-[15px] font-semibold text-[var(--foreground)]">No model finds even half</h3>
+            </div>
+            <p className="text-sm text-[var(--foreground-2)] leading-[1.75] relative">The best recall in this benchmark is under 45%. Code review has a lot of headroom left.</p>
           </div>
-          <div className="flex flex-col gap-3 p-6 bg-[var(--surface)]">
-            <Scale className="size-5 text-[var(--accent)]" />
-            <h3 className="text-sm font-semibold text-[var(--foreground)]">Precision and recall trade off</h3>
-            <p className="text-sm text-[var(--muted)] leading-[1.75]">The model that talks the least is often the most precise. Neither end of that curve is wrong — they&apos;re different products.</p>
+          <div className="card-hairline p-7 flex flex-col gap-3">
+            <div className="flex items-center gap-2.5 relative">
+              <Scale className="size-4 text-[var(--accent)]" />
+              <h3 className="text-[15px] font-semibold text-[var(--foreground)]">Precision and recall trade off</h3>
+            </div>
+            <p className="text-sm text-[var(--foreground-2)] leading-[1.75] relative">The model that talks the least is often the most precise — different products, not different quality.</p>
           </div>
-          <div className="flex flex-col gap-3 p-6 bg-[var(--surface)]">
-            <GitPullRequest className="size-5 text-[var(--muted)]" />
-            <h3 className="text-sm font-semibold text-[var(--foreground)]">Bring your own harness</h3>
-            <p className="text-sm text-[var(--muted)] leading-[1.75]">Submissions are a documented JSON contract. Run your own harness against the same PRs and submit a PR.</p>
+          <div className="card-hairline p-7 flex flex-col gap-3">
+            <div className="flex items-center gap-2.5 relative">
+              <GitPullRequest className="size-4 text-[var(--muted)]" />
+              <h3 className="text-[15px] font-semibold text-[var(--foreground)]">Bring your own harness</h3>
+            </div>
+            <p className="text-sm text-[var(--foreground-2)] leading-[1.75] relative">Submissions are a documented JSON contract. Submit a PR against the same cases.</p>
           </div>
         </div>
       </section>
