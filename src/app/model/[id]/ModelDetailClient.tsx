@@ -155,7 +155,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
               <div key={c.id} className="card-hairline overflow-hidden">
                 <button
                   onClick={() => setExpandedCase(isOpen ? null : c.id)}
-                  className="relative w-full flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-[var(--surface-2)] transition-colors text-left"
+                  className="relative w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-5 py-3.5 hover:bg-[var(--surface-2)] transition-colors text-left"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="text-[11px] font-mono text-[var(--muted-dim)] uppercase tracking-widest shrink-0">
@@ -163,7 +163,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
                     </span>
                     <span className="text-sm text-[var(--foreground)] truncate font-mono">{c.caseId}</span>
                   </div>
-                  <div className="flex items-center gap-4 shrink-0">
+                  <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0">
                     <span className="text-xs font-mono text-[var(--muted)]">
                       {c.matched}/{c.goldens} found · {c.findings.length} reported
                     </span>
