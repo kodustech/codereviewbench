@@ -56,8 +56,12 @@ function main() {
     fs.mkdirSync(OUT_DIR, { recursive: true });
     let count = 0;
     for (const e of lb.entries) {
+        // Nome do arquivo usa o slug (`--`), nao o id cru: `@` num path de URL
+        // 404a no Next. Mesma regra de modelSlug() em src/lib/constants.ts —
+        // duplicada aqui porque este script e CommonJS puro, sem o alias `@/`.
+        const slug = e.modelId.replace('@', '--');
         const svg = badgeSvg('codereviewbench', `${e.modelId} · F1 ${e.f1.toFixed(1)}`, ACCENT_HEX);
-        fs.writeFileSync(path.join(OUT_DIR, `${e.modelId}.svg`), svg);
+        fs.writeFileSync(path.join(OUT_DIR, `${slug}.svg`), svg);
         count += 1;
     }
     console.log(`✅ ${count} badge(s) → public/badge/`);

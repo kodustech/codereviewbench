@@ -13,7 +13,22 @@ export const DISPLAY_NAMES: Record<string, { name: string; provider: string }> =
   'grok-4.5': { name: 'Grok 4.5', provider: 'xAI' },
   'grok-4.6': { name: 'Grok 4.6', provider: 'xAI' },
   'glm-5.2': { name: 'GLM-5.2', provider: 'Zhipu' },
+  // Rodado via Fireworks (gateway), nao pela API nativa da Z.ai — o sufixo
+  // fica no id (e no scorecard), mas o nome exibido e do MODELO, nao da rota.
+  // A rota aparece no campo `harness`/nota de custo, nao no nome.
+  'glm-5.2@fireworks': { name: 'GLM-5.2', provider: 'Zhipu' },
 };
+
+/** modelId → segmento de URL seguro.
+ *
+ *  O sufixo de rota (`@fireworks`, `@nvidia`) e convencao do harness e precisa
+ *  ficar no DADO — e o que distingue "GLM-5.2 pela Z.ai" de "GLM-5.2 por
+ *  gateway", e o que indexa o pricing.json. Mas `@` quebra o roteamento do
+ *  Next (rota 404 mesmo com o HTML gerado no build, testado), entao a URL usa
+ *  `--`. Sempre comparar via slug; nunca reconstruir o id de volta na mao. */
+export function modelSlug(modelId: string): string {
+  return modelId.replace('@', '--');
+}
 
 export function displayNameOf(modelId: string): string {
   return DISPLAY_NAMES[modelId]?.name || modelId;

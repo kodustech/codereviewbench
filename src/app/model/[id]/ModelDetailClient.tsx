@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney, formatCI, formatDelta } from '@/lib/format';
-import { displayNameOf, providerOf, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
 import type { LeaderboardEntry, LeaderboardAverages, CaseSample } from '@/lib/types';
 import StatsCard from '@/components/shared/StatsCard';
 import Badge from '@/components/shared/Badge';
@@ -45,8 +45,9 @@ const SITE_URL = 'https://codereviewbench.com';
 function EmbedButton({ modelId }: { modelId: string }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const badgeUrl = `${SITE_URL}/badge/${modelId}.svg`;
-  const pageUrl = `${SITE_URL}/model/${modelId}`;
+  const slug = modelSlug(modelId);
+  const badgeUrl = `${SITE_URL}/badge/${slug}.svg`;
+  const pageUrl = `${SITE_URL}/model/${slug}`;
   const markdown = `[![CodeReviewBench](${badgeUrl})](${pageUrl})`;
 
   const copy = async () => {
@@ -73,7 +74,7 @@ function EmbedButton({ modelId }: { modelId: string }) {
           <div className="card-hairline overflow-hidden p-4">
             <p className="text-xs text-[var(--muted-dim)] mb-3">Drop this in your README to link back to this result.</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/badge/${modelId}.svg`} alt="CodeReviewBench badge" className="block max-w-full h-auto mb-3" />
+            <img src={`/badge/${slug}.svg`} alt="CodeReviewBench badge" className="block max-w-full h-auto mb-3" />
             <div className="flex items-center gap-2 min-w-0">
               <code className="flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-xs font-mono bg-[var(--background)] border border-[var(--border)] rounded-md px-2.5 py-2 text-[var(--foreground-2)]">
                 {markdown}

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { ArrowLeftRight, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney } from '@/lib/format';
-import { displayNameOf, providerOf, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
 import type { LeaderboardEntry, CaseSample } from '@/lib/types';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 
@@ -142,11 +142,11 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
       {/* Stats */}
       <div className="card-hairline p-6 mb-6">
         <div className="grid grid-cols-[1fr_auto_1fr] gap-4 mb-2">
-          <Link href={`/model/${entryA.modelId}`} className="text-sm font-semibold text-right text-[var(--foreground)] hover:text-[var(--accent)] transition-colors">
+          <Link href={`/model/${modelSlug(entryA.modelId)}`} className="text-sm font-semibold text-right text-[var(--foreground)] hover:text-[var(--accent)] transition-colors">
             {displayNameOf(entryA.modelId)}
           </Link>
           <span className="w-28" />
-          <Link href={`/model/${entryB.modelId}`} className="text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors">
+          <Link href={`/model/${modelSlug(entryB.modelId)}`} className="text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors">
             {displayNameOf(entryB.modelId)}
           </Link>
         </div>

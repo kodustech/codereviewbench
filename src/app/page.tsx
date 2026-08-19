@@ -4,7 +4,7 @@ import meta from '@/lib/data/meta.json';
 import leaderboardData from '@/lib/data/leaderboard.json';
 import caseIndexData from '@/lib/data/case-index.json';
 import type { LeaderboardData, CaseIndexRow } from '@/lib/types';
-import { displayNameOf, providerOf, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
 import { formatScore, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import Apparatus from '@/components/hero/Apparatus';
@@ -295,7 +295,7 @@ export default function Home() {
                       </span>
                     </td>
                     <td className="px-5 py-4">
-                      <Link href={`/model/${e.modelId}`} className="group/link flex items-center gap-2.5">
+                      <Link href={`/model/${modelSlug(e.modelId)}`} className="group/link flex items-center gap-2.5">
                         <ProviderLogo provider={providerOf(e.modelId)} />
                         <span className="flex flex-col gap-0.5">
                           <span className="text-sm font-semibold tracking-tight transition-colors group-hover/link:text-[var(--accent)] text-[var(--foreground)]">

@@ -1,5 +1,5 @@
 {
-  "totalEntries": 8,
+  "totalEntries": 9,
   "harnesses": [
     "kodus"
   ],
@@ -7,6 +7,7 @@
     "deepseek-v4-flash",
     "deepseek-v4-pro",
     "gemini-3.7-flash",
+    "glm-5.2@fireworks",
     "kimi-k2.7-code",
     "kimi-k3",
     "muse-spark-1.2",
@@ -50,7 +51,7 @@
     "notMeasured": "model run-to-run (rodar o MESMO modelo de novo do zero — 1 passada por entrada)",
     "runsPerEntry": 1,
     "judgeRunsAvailable": 4,
-    "judgeRunsTotal": 8
+    "judgeRunsTotal": 9
   },
-  "generatedAt": "2026-08-18T23:46:09.011Z"
+  "generatedAt": "2026-08-19T18:05:36.240Z"
 }

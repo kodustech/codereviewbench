@@ -1,0 +1,1192 @@
+{
+  "benchmarkVersion": "light-v1",
+  "run": {
+    "harness": {
+      "name": "kodus",
+      "version": "dev"
+    },
+    "model": {
+      "id": "glm-5.2@fireworks",
+      "provider": "openai_compatible",
+      "accessPath": "api"
+    },
+    "executionMode": "replay",
+    "heavy": false,
+    "reasoning": {
+      "config": "vendor-default",
+      "effortRequested": null
+    },
+    "runAt": "2026-08-19T18:02:18.951Z"
+  },
+  "results": [
+    {
+      "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 630618,
+        "outputTokens": 61018,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 466541
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 40,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+      "findings": [
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+          "startLine": 192,
+          "endLine": 195,
+          "severity": "high",
+          "category": "bug",
+          "description": "Client removal crashes with UnsupportedOperationException when V1+V2 features are both enabled because ClientPermissionsV2.setPermissionsEnabled throws — WHAT: `setPermissionsEnabled(ClientModel, boolean)` throws `UnsupportedOperationException`, but the event listener in `AdminPermissions.registerListener` (line 164) calls `management(session, realm).clients().setPermissionsEnabled(client, false)` when a client is removed. WHY: When both `ADMIN_FINE_GRAINED_AUTHZ` (V1, gates the listener at line 150) and `ADMIN_FINE_GRAINED_AUTHZ_V2` (V2, makes `management()` return `MgmtPermissionsV2`) are enabled, removing any client throws `UnsupportedOperationException` instead of cleaning up permissions — the crash prevents the removal event from completing. Before this PR, `MgmtPermissionsV2` did not override `clients()`, so the V1 implementation was used and worked. This PR adds `MgmtPermissionsV2.clients()` (lines 88-93) which dispatches to `ClientPermissionsV2`, where `setPermissionsEnabled` throws. HOW: Make `ClientPermissionsV2.setPermissionsEnabled` a no-op (or log-and-return) instead of throwing, since V2 doesn't use the V1 per-client permission model and there is nothing to clean up."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+          "startLine": 215,
+          "endLine": 222,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Missing null check on getResourceTypeResource result causes NPE in hasPermission(ClientModel, String) when all-clients resource doesn't exist — WHAT: `hasPermission(ClientModel, String)` calls `AdminPermissionsSchema.SCHEMA.getResourceTypeResource(...)` (line 217) and then immediately uses the result in `findByResource(server, resource)` (line 219) without a null check. WHY: `getResourceTypeResource` returns null when the \"Clients\" type resource has not been created yet in the store (or when `supportsAuthorizationSchema` returns false), causing a NullPointerException in `policyStore.findByResource(server, null)` — this would crash any `canManage`/`canView`/`canConfigure`/`canMapRoles` check for a client that has no per-client resource. HOW: Add a null check after `getResourceTypeResource` and return false, mirroring the null-safe pattern already used in `hasPermission(String scope)` (lines 244-247)."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+          "startLine": 193,
+          "endLine": 195,
+          "severity": "high",
+          "category": "bug",
+          "description": "setPermissionsEnabled throws UnsupportedOperationException but is called by the ClientRemovedEvent listener when V2 is active, crashing cleanup — WHAT: `setPermissionsEnabled(ClientModel, boolean)` throws `UnsupportedOperationException`, but the event listener in `AdminPermissions.registerListener` (line 150) calls `management(...).clients().setPermissionsEnabled(cast.getClient(), false)` when `ADMIN_FINE_GRAINED_AUTHZ` is enabled — and `management()` returns `MgmtPermissionsV2` when V2 is enabled, whose `clients()` returns `ClientPermissionsV2`. WHY: When both `ADMIN_FINE_GRAINED_AUTHZ` and `ADMIN_FINE_GRAINED_AUTHZ_V2` features are enabled, removing a client triggers the `ClientRemovedEvent` handler which calls this method and throws `UnsupportedOperationException`, crashing the event listener and preventing permission cleanup. The same issue affects `RoleRemovedEvent` and `GroupRemovedEvent` via the V2 equivalents. HOW: Either make `setPermissionsEnabled` a no-op in V2 (instead of throwing) or guard the event listener to check which V1/V2 mode is active before calling cleanup methods."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+          "startLine": 215,
+          "endLine": 222,
+          "severity": "medium",
+          "category": "bug",
+          "description": "hasPermission can NPE when getResourceTypeResource returns null because there is no null check before findByResource — WHAT: `hasPermission(ClientModel, String)` at line 219 calls `authz.getStoreFactory().getPolicyStore().findByResource(server, resource)` without null-checking `resource`, which can be null when `getResourceTypeResource` returns null (e.g., when the 'all-clients' resource does not exist yet or admin permissions are not fully configured for the realm). WHY: If the per-client resource lookup fails (line 214-215 returns null) and the fallback `getResourceTypeResource` also returns null, the `findByResource` call at line 219 will throw a NullPointerException, causing all permission checks for that client to fail with a server error rather than returning false. HOW: Add a null check on `resource` after the `getResourceTypeResource` call, returning false if null, mirroring the guard pattern already used for `server == null`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 713966,
+        "outputTokens": 38137,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 489009
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 70,
+        "unexpectedToolCalls": 7
+      }
+    },
+    {
+      "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 46,
+          "endLine": 48,
+          "severity": "high",
+          "category": "bug",
+          "description": "isTeamAdminOrOwner uses && instead of ||, blocking team admins from adding guests — WHAT: `isTeamAdminOrOwner` uses `&&` between `isTeamAdmin` and `isTeamOwner`, but `isTeamOwner` is a strict subset of `isTeamAdmin` (OWNER implies ADMIN), so the expression collapses to `isTeamOwner` only. WHY: Team admins (role=ADMIN, not OWNER) are blocked from adding guests even though the variable name and intent indicate both admins and owners should be allowed — they get a FORBIDDEN error. HOW: Change `&&` to `||`."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 168,
+          "endLine": 168,
+          "severity": "medium",
+          "category": "bug",
+          "description": "sendAddGuestsEmails receives original guests array instead of filtered uniqueGuests, sending notifications to existing attendees — WHAT: `sendAddGuestsEmails(evt, guests)` passes the original `guests` array instead of `uniqueGuests`, which excludes existing attendees and blacklisted emails. WHY: `sendAddGuestsEmails` uses the second argument to determine which attendees receive the 'new guests added' notification (email-manager.ts line 541: `if (newGuests.includes(attendee.email))`), so existing attendees whose emails appear in the original `guests` list will receive spurious notification emails even though they were not newly added. HOW: Pass `uniqueGuests` instead of `guests`."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 74,
+          "endLine": 78,
+          "severity": "medium",
+          "category": "security",
+          "description": "Blacklist bypass via case mismatch — guest emails are not lowercased before comparison against the lowercased blacklist — WHAT: The blacklist comparison `!blacklistedGuestEmails.includes(guest)` does not lowercase `guest` before comparing, while `blacklistedGuestEmails` are explicitly lowercased. WHY: A blacklisted email like `admin@example.com` can be bypassed by submitting `Admin@Example.com` — the `includes` check fails because the case differs, allowing the blacklisted guest to be added to the booking. HOW: Lowercase `guest` before comparison: `!blacklistedGuestEmails.includes(guest.toLowerCase())`."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 74,
+          "endLine": 78,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Input array is not deduplicated before createMany, allowing duplicate attendee records — WHAT: `uniqueGuests` filter only removes emails already in `booking.attendees` and blacklisted emails, but does not deduplicate within the input `guests` array. The Attendee Prisma model has no `@@unique([bookingId, email])` constraint, so `createMany` creates duplicate attendee records when the input contains the same email twice.\n\nWHY: Passing `guests: [\"a@b.com\", \"a@b.com\"]` creates two identical Attendee rows for the same booking, causing duplicate calendar invites and emails.\n\nHOW: Deduplicate the input before filtering: `const uniqueGuests = [...new Set(guests)].filter(...)`."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 158,
+          "endLine": 165,
+          "severity": "high",
+          "category": "bug",
+          "description": "EventManager uses requesting user's credentials instead of booking organizer's, breaking calendar updates when a non-organizer team admin adds guests — WHAT: `EventManager` is initialized with `ctx.user`'s credentials and identity instead of the booking organizer's. The booking query at lines 35-39 fetches `booking.user.credentials` (organizer's credentials) but these are never used — line 158 calls `getUsersCredentials(ctx.user)` and line 160-163 spreads `user` (ctx.user) into EventManager.\n\nWHY: When a team admin/owner who is NOT the organizer adds guests, `updateCalendarAttendees` attempts to update the calendar event using the admin's calendar credentials, which don't have access to the organizer's calendar — the calendar update silently fails or throws.\n\nHOW: Use the organizer's credentials and identity: `const eventManager = new EventManager({ ...booking.user, credentials: booking.user?.credentials ?? [] })`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 488056,
+        "outputTokens": 29306,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 353379
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 59,
+        "unexpectedToolCalls": 11
+      }
+    },
+    {
+      "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/services/anonymous/anonimpl/client.go",
+          "startLine": 44,
+          "endLine": 50,
+          "severity": "critical",
+          "category": "bug",
+          "description": "ErrDeviceLimitReached from updateDevice fails the entire anonymous authentication, blocking new visitors from accessing Grafana once the device limit is reached. — WHAT: When the device limit is reached, a new anonymous device whose device_id is not in the DB causes updateDevice to return ErrDeviceLimitReached (rowsAffected == 0), which Authenticate propagates as a return error — failing the entire anonymous authentication. WHY: Any new anonymous visitor is blocked from accessing Grafana once the configured device limit is full, instead of simply not being tracked. This is almost certainly not the intended behavior of a device-tracking limit. HOW: In client.go, do not return ErrDeviceLimitReached from Authenticate — treat it as a non-fatal tracking failure (log and continue), the same way other TagDevice errors are handled. The limit should only prevent new device records from being created, not deny anonymous access."
+        },
+        {
+          "path": "pkg/services/anonymous/anonimpl/client.go",
+          "startLine": 44,
+          "endLine": 50,
+          "severity": "medium",
+          "category": "performance",
+          "description": "Moving TagDevice from an async goroutine to the synchronous auth path adds DB latency to every anonymous request. — WHAT: TagDevice is now called synchronously on the request context instead of in a fire-and-forget goroutine, blocking authentication on DB I/O for every anonymous request. WHY: Every anonymous page load now waits for at least one CountDevices query plus an INSERT/UPDATE roundtrip before authentication completes, adding material latency to a high-frequency hot path that was previously non-blocking. HOW: Either revert to asynchronous execution (goroutine with context.Background and timeout) for the tracking side-effect, or ensure the device-limit check and write are cached/fast enough to not block the auth path."
+        },
+        {
+          "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
+          "startLine": 109,
+          "endLine": 118,
+          "severity": "low",
+          "category": "bug",
+          "description": "TOCTOU race between CountDevices and INSERT allows concurrent requests to exceed the configured device limit. — WHAT: The device-limit enforcement in CreateOrUpdateDevice uses a check-then-act pattern (CountDevices then INSERT) with no transaction or lock, so concurrent requests can both pass the count < limit check and both INSERT, exceeding the configured limit. WHY: Under concurrent anonymous traffic, the device count can exceed the configured limit because the count check and the insert are not atomic. HOW: Wrap the count check and insert in a single transaction with an appropriate isolation level, or enforce the limit with a conditional INSERT guarded by a unique constraint and a count subquery."
+        }
+      ],
+      "usage": {
+        "inputTokens": 403740,
+        "outputTokens": 39687,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 311263
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 43,
+        "unexpectedToolCalls": 11
+      }
+    },
+    {
+      "caseId": "dual-storage-architecture-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 45,
+          "endLine": 45,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Create error path records storage failure under legacy metrics histogram instead of storage metrics — WHAT: Create's storage error path calls `recordLegacyDuration` instead of `recordStorageDuration`, recording a storage failure under the legacy metrics histogram. WHY: Storage Create failures will be observed as legacy duration metrics, corrupting observability dashboards and making it impossible to distinguish storage failures from legacy failures. HOW: Change `d.recordLegacyDuration(true, mode3Str, options.Kind, method, startStorage)` to `d.recordStorageDuration(true, mode3Str, options.Kind, method, startStorage)` to match Delete (line 103) and DeleteCollection (line 156)."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 129,
+          "endLine": 129,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Update error path records storage failure under legacy metrics histogram instead of storage metrics — WHAT: Update's storage error path calls `recordLegacyDuration` instead of `recordStorageDuration`, recording a storage failure under the legacy metrics histogram. WHY: Storage Update failures will be observed as legacy duration metrics, corrupting observability dashboards and making it impossible to distinguish storage failures from legacy failures. HOW: Change `d.recordLegacyDuration(true, mode3Str, options.Kind, method, startStorage)` to `d.recordStorageDuration(true, mode3Str, options.Kind, method, startStorage)` to match Delete (line 103) and DeleteCollection (line 156)."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 166,
+          "endLine": 166,
+          "severity": "medium",
+          "category": "bug",
+          "description": "DeleteCollection async goroutine records legacy operation under storage metrics histogram instead of legacy metrics — WHAT: DeleteCollection's async legacy goroutine calls `recordStorageDuration` instead of `recordLegacyDuration`, recording a legacy operation's duration under the storage metrics histogram. WHY: Legacy DeleteCollection durations will be observed as storage metrics, corrupting observability dashboards. The goroutine performs `d.Legacy.DeleteCollection` with `startLegacy` as the start time, confirming intent was to record legacy duration. HOW: Change `d.recordStorageDuration(err != nil, mode3Str, options.Kind, method, startLegacy)` to `d.recordLegacyDuration(err != nil, mode3Str, options.Kind, method, startLegacy)` to match Create (line 56), Delete (line 113), and Update (line 140)."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 97,
+          "endLine": 97,
+          "severity": "low",
+          "category": "bug",
+          "description": "Delete uses base logger d.Log instead of configured log for context, losing structured logging values in async goroutine — WHAT: Delete uses `d.Log` (base logger without structured values) instead of `log` (the logger configured with kind/name/method via WithValues) when creating the context. WHY: The async legacy Delete goroutine (line 112) receives this context, so any logging inside `d.Legacy.Delete` will lack the kind/name/method structured context that all other methods provide, making it harder to correlate legacy delete logs. HOW: Change `ctx = klog.NewContext(ctx, d.Log)` to `ctx = klog.NewContext(ctx, log)` to match every other method in this file."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 106,
+          "endLine": 106,
+          "severity": "low",
+          "category": "bug",
+          "description": "Delete success path passes object name instead of resource kind to metrics, creating inconsistent label values between success and error paths — WHAT: Delete's success path passes `name` (the object name, e.g. \"my-dashboard\") instead of `options.Kind` (the resource kind) to `recordStorageDuration`, while the error path (line 103) correctly passes `options.Kind`. WHY: The metric label is \"kind\" (metrics.go:76), so passing the object name creates inconsistent label cardinality — success metrics are recorded under the object name while error metrics are recorded under the resource kind, splitting the same operation across unrelated label values. HOW: Change `d.recordStorageDuration(false, mode3Str, name, method, startStorage)` to `d.recordStorageDuration(false, mode3Str, options.Kind, method, startStorage)` to match the error path and all other methods."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 85,
+          "endLine": 92,
+          "severity": "high",
+          "category": "bug",
+          "description": "Async legacy-write goroutines use the request context as parent for the timeout, so the legacy writes get cancelled when the request completes instead of running for up to 10 seconds. — WHAT: The async legacy-write goroutine in Create (and identically in Delete line 145, Update line 170, DeleteCollection line 198) uses the request context `ctx` as the parent for `context.WithTimeoutCause`, so the 10-second timeout is a child of the request context. WHY: Go's net/http cancels the request context when the HTTP handler returns; that cancellation propagates to the child context and aborts the legacy write almost immediately — defeating the entire purpose of mode 3's async legacy writes as a safety measure. HOW: Detach from the request context before applying the timeout, e.g. `ctx, cancel := context.WithTimeoutCause(context.WithoutCancel(ctx), time.Second*10, errors.New(\"legacy create timeout\"))` (Go 1.21+) or use `context.Background()` with a fresh timeout and carry over only the klog logger via `klog.NewContext`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 624847,
+        "outputTokens": 42572,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 489417
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 10,
+        "replayCalls": 43,
+        "unexpectedToolCalls": 8
+      }
+    },
+    {
+      "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 13,
+          "endLine": 22,
+          "severity": "high",
+          "category": "security",
+          "description": "Stored XSS: unescaped user-controlled embed_url is injected into a raw_html post and rendered with `raw`. — WHAT: User-controlled embed_url is interpolated into HTML without escaping and stored as a raw_html post (cook_method bypasses sanitization), then rendered with `raw`. WHY: An attacker submits embed_url=`https://<embeddablehost>/x'onclick='alert(1)` — the single quote is a valid URI char so URI(...).host still matches embeddable_host, the host-only check in TopicRetriever passes, and the quote breaks out of the `href='...'` attribute in the imported footer, executing JavaScript in viewers' browsers (stored XSS in the Discourse origin inside the embeddable iframe). HOW: HTML-escape the url when interpolating: `<a href='#{CGI.escapeHTML(url)}'>#{CGI.escapeHTML(url)}</a>`."
+        },
+        {
+          "path": "app/jobs/scheduled/poll_feed.rb",
+          "startLine": 35,
+          "endLine": 36,
+          "severity": "medium",
+          "category": "bug",
+          "description": "nil feed item content raises NoMethodError, aborting processing of all remaining feed items. — WHAT: `i.content.scrub` raises NoMethodError when a feed item has no content element. WHY: SimpleRSS returns nil for `content` on RSS 2.0 feeds that only expose `<description>` (no `content:encoded`); nil.scrub raises inside `rss.items.each`, aborting the entire loop so all remaining feed items are skipped, and with `sidekiq_options retry: false` (line 12) the job fails silently until the next hourly run. HOW: Guard nil/blank content before processing, e.g. `next if i.content.blank?` or fall back to `i.description`."
+        },
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 64,
+          "endLine": 71,
+          "severity": "low",
+          "category": "bug",
+          "description": "Protocol-relative URLs (//host) are incorrectly rewritten as root-relative paths, breaking links/images. — WHAT: `start_with?('/')` also matches protocol-relative URLs (`//cdn.com/x`), which are then mangled into `https://<embeddablehost>/cdn.com/x`. WHY: `sub(/^\\/+/, '')` strips ALL leading slashes, so `//cdn.com/img.png` becomes `cdn.com/img.png` and is prefixed with the embeddable host, producing a broken link/image for any protocol-relative URL in imported content. HOW: Exclude protocol-relative URLs from the rewrite: `href.start_with?('/') && !href.start_with?('//')`."
+        },
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 15,
+          "endLine": 30,
+          "severity": "high",
+          "category": "bug",
+          "description": "Non-atomic check-then-create in TopicEmbed.import races between the hourly poll_feed job and retrieve_topic jobs, creating duplicate topics/embeds for the same URL. — WHAT: TopicEmbed.import performs a non-atomic check-then-create: it reads `embed = TopicEmbed.where(embed_url: url).first` then, if blank, creates a topic+post+TopicEmbed inside a transaction with no locking. WHY: Two concurrent callers reaching import with the same URL — the hourly scheduled Jobs::PollFeed (poll_feed.rb:36) and a Jobs::RetrieveTopic fired by EmbedController#best via TopicRetriever#import_remote (topic_retriever.rb:52) — both pass the embed.blank? check and both create duplicate topics/posts/embeds (or one raises ActiveRecord::RecordNotUnique inside the transaction with no rescue, since no unique-index error handling exists). The `exists?` guard in perform_retrieve (topic_retriever.rb:37) is itself a separate TOCTOU check and does not close the window. HOW: Guard the lookup-then-create atomically, e.g. `TopicEmbed.where(embed_url: url).first_or_create!` semantics inside the transaction, or wrap with an advisory lock / `with_lock` keyed on embed_url, and rescue RecordNotUnique to re-fetch the existing embed."
+        }
+      ],
+      "usage": {
+        "inputTokens": 264144,
+        "outputTokens": 40520,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 189858
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 7,
+        "replayCalls": 46,
+        "unexpectedToolCalls": 8
+      }
+    },
+    {
+      "caseId": "feat-2fa-backup-codes-cal-com",
+      "findings": [
+        {
+          "path": "packages/features/auth/lib/next-auth-options.ts",
+          "startLine": 198,
+          "endLine": 215,
+          "severity": "high",
+          "category": "bug",
+          "description": "Race condition in backup code consumption allows a used code to be reused under concurrent login requests — WHAT: Backup code consumption uses a non-atomic read-modify-write — the encrypted array is decrypted, a code is null'd, and the whole array is re-encrypted and written back without any locking or optimistic concurrency check. WHY: Two concurrent login requests using different backup codes both read the original array, each nulls a different index, and the second write overwrites the first — re-enabling the first request's code and allowing it to be reused, breaking the one-time-use guarantee. HOW: Use a database transaction with a row lock (SELECT ... FOR UPDATE) or an atomic update that checks the encrypted value hasn't changed since the read (optimistic concurrency)."
+        },
+        {
+          "path": "apps/web/components/settings/EnableTwoFactorModal.tsx",
+          "startLine": 134,
+          "endLine": 136,
+          "severity": "medium",
+          "category": "bug",
+          "description": "onEnable() callback is not called if user dismisses dialog during the backup codes display step — WHAT: The PR replaced the immediate onEnable() call with setStep(SetupStep.DisplayBackupCodes), deferring onEnable() to the Close button's onClick handler — but if the user dismisses the dialog via onOpenChange (Escape key or clicking outside), onEnable() is never called. WHY: 2FA has already been enabled server-side by the enable() API call, but the parent component's state is not updated, leaving the settings UI showing \"Enable 2FA\" instead of \"Disable 2FA\" until a manual page refresh. HOW: Call onEnable() in the onOpenChange handler when the step is DisplayBackupCodes, or move the onEnable() call to a useEffect that triggers when the dialog closes during that step."
+        },
+        {
+          "path": "apps/web/components/settings/EnableTwoFactorModal.tsx",
+          "startLine": 71,
+          "endLine": 75,
+          "severity": "low",
+          "category": "bug",
+          "description": "resetState() doesn't revoke object URL or clear backup codes state, causing memory leak — WHAT: resetState() clears password, errorMessage, and step but does not revoke the backupCodesUrl object URL or clear backupCodes/dataUri/secret state. WHY: Each call to URL.createObjectURL creates a persistent memory reference; without revocation in resetState(), the URL leaks when the modal is closed and reopened without going through setup again. HOW: Add URL.revokeObjectURL(backupCodesUrl) and clear backupCodes, backupCodesUrl, dataUri, and secret in resetState()."
+        },
+        {
+          "path": "packages/features/auth/lib/next-auth-options.ts",
+          "startLine": 198,
+          "endLine": 200,
+          "severity": "low",
+          "category": "bug",
+          "description": "JSON.parse of decrypted backup codes has no error handling, crashes on key rotation or corrupted data — WHAT: JSON.parse(symmetricDecrypt(...)) is called without a try-catch on the decrypted backup codes in both the login authorize() and the disable endpoint. WHY: If the CALENDSO_ENCRYPTION_KEY changes between write and read (key rotation), or the stored data is corrupted, symmetricDecrypt produces garbage and JSON.parse throws an unhandled exception — in the login flow this surfaces as a generic InternalServerError, and in the disable endpoint it crashes the API handler with a 500. HOW: Wrap the JSON.parse in a try-catch that throws ErrorCode.MissingBackupCodes or ErrorCode.InternalServerError."
+        },
+        {
+          "path": "DisableTwoFactorModal.tsx",
+          "startLine": null,
+          "endLine": null,
+          "severity": "medium",
+          "category": "Pre-existing bug fix: Overwritten error message",
+          "description": "The final if/else chain in the old code would overwrite a correct error message with 'something_went_wrong', which is now fixed by an else if chain. — This is a note that the transition from independent `if` statements to an `else if` chain fixes a pre-existing bug where the old code's final `if/else` would overwrite a correct error message with 'something_went_wrong'. No action needed for this regression."
+        },
+        {
+          "path": "",
+          "startLine": null,
+          "endLine": null,
+          "severity": "medium",
+          "category": "Existing Finding: Race condition in non-atomic read-modify-write",
+          "description": "A race condition exists due to non-atomic read-modify-write operations. — The analysis notes that the existing finding regarding a race condition in non-atomic read-modify-write is still valid and covers this concrete issue."
+        },
+        {
+          "path": "",
+          "startLine": null,
+          "endLine": null,
+          "severity": "medium",
+          "category": "Existing Finding: Object URL leak in resetState",
+          "description": "There is an object URL leak in the resetState function. — The analysis explicitly references the existing finding of an object URL leak in resetState as a concrete issue."
+        }
+      ],
+      "usage": {
+        "inputTokens": 795899,
+        "outputTokens": 53616,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 580083
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 81,
+        "unexpectedToolCalls": 10
+      }
+    },
+    {
+      "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+      "findings": [
+        {
+          "path": "packages/lib/server/service/insightsBooking.ts",
+          "startLine": 164,
+          "endLine": 168,
+          "severity": "medium",
+          "category": "bug",
+          "description": "ANY(${array}) in Prisma.sql may not correctly serialize JS arrays as PostgreSQL array parameters, causing runtime SQL errors — WHAT: JS arrays are passed directly to PostgreSQL's `ANY()` function via `Prisma.sql` template interpolation (`ANY(${teamIds})`, `ANY(${uniqueUserIds})`, `ANY(${userIdsFromTeam})`), but Prisma's query engine may not correctly serialize JS arrays as PostgreSQL array parameters for use with `ANY()`. WHY: When `getBaseConditions()` is eventually used in a `$queryRaw` call with \"org\" or \"team\" scope and multiple teams/users, the query could fail with a type mismatch or syntax error at runtime; the integration tests only compare `Prisma.Sql` objects and never execute the SQL, so this would not be caught. HOW: Use `Prisma.join()` for array interpolation, e.g. `Prisma.sql\\`(\"teamId\" IN (${Prisma.join(teamIds)})) AND (\"isTeamBooking\" = true)\\`` or `Prisma.sql\\`(\"teamId\" = ANY(ARRAY[${Prisma.join(teamIds)}]::int[])) AND (\"isTeamBooking\" = true)\\``."
+        },
+        {
+          "path": "insightsBooking.ts",
+          "startLine": null,
+          "endLine": null,
+          "severity": null,
+          "severityRaw": "bug",
+          "category": "bug",
+          "description": "Address the `ANY()` usage with JS arrays in raw SQL. — `ANY()` with JS arrays: The existing finding regarding the use of `ANY()` with JS arrays in the raw SQL conversion is explicitly referenced in the analysis. Ensure that `ANY()` is used correctly with Postgres arrays or replaced with an `IN` clause."
+        }
+      ],
+      "usage": {
+        "inputTokens": 514114,
+        "outputTokens": 48259,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 367888
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 12,
+        "replayCalls": 53,
+        "unexpectedToolCalls": 4
+      }
+    },
+    {
+      "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/integrations/services/assignment_source.py",
+          "startLine": 14,
+          "endLine": 18,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Dataclass default `queued: datetime = timezone.now()` is evaluated once at class definition time, giving all instances the same stale timestamp — WHAT: The `queued` field uses `timezone.now` as a direct default value, which is evaluated once at class definition time (import time) and shared across all instances. WHY: Every `AssignmentSource` created via `from_integration()` gets the same frozen timestamp — the time the module was first imported — instead of the actual time the assignment was queued, making the field semantically incorrect for all instances created after process start. HOW: Use `field(default_factory=timezone.now)` from `dataclasses` so a fresh timestamp is generated per instance."
+        }
+      ],
+      "usage": {
+        "inputTokens": 667804,
+        "outputTokens": 38924,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 489682
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 12,
+        "replayCalls": 47,
+        "unexpectedToolCalls": 9
+      }
+    },
+    {
+      "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/incidents/grouptype.py",
+          "startLine": 11,
+          "endLine": 12,
+          "severity": "high",
+          "category": "bug",
+          "description": "MetricAlertDetectorHandler is uninstantiable because it extends StatefulDetectorHandler without implementing any of its 5 abstract methods — WHAT: `MetricAlertDetectorHandler` was changed from extending `DetectorHandler` (with `evaluate` implemented) to extending `StatefulDetectorHandler` with just `pass`, but `StatefulDetectorHandler` has 5 abstract methods (`counter_names`, `get_dedupe_value`, `get_group_key_values`, `build_occurrence_and_event_data`, inherited `evaluate`) — none of which are implemented. WHY: When a detector with type `metric_alert_fire` is processed, `Detector.detector_handler` calls `group_type.detector_handler(self)` which tries to instantiate `MetricAlertDetectorHandler`, raising `TypeError: Can't instantiate abstract class` and crashing the detector processing path. The previous code implemented `evaluate` and extended `DetectorHandler` (only 1 abstract method), so it was instantiable. HOW: Either implement all abstract methods in `MetricAlertDetectorHandler`, or keep it extending `DetectorHandler` with the stub `evaluate` until the full stateful detector implementation is ready."
+        },
+        {
+          "path": "src/sentry/incidents/grouptype.py",
+          "startLine": 11,
+          "endLine": 12,
+          "severity": "high",
+          "category": "bug",
+          "description": "MetricAlertDetectorHandler cannot be instantiated because it extends StatefulDetectorHandler without implementing any of its 5 abstract methods — WHAT: `MetricAlertDetectorHandler` was changed from extending `DetectorHandler` (with `evaluate` implemented) to extending `StatefulDetectorHandler` with a `pass` body, but `StatefulDetectorHandler` has 5 abstract methods (`evaluate`, `counter_names`, `get_dedupe_value`, `get_group_key_values`, `build_occurrence_and_event_data`) that are not implemented. WHY: When `Detector.detector_handler` (model line 86) calls `group_type.detector_handler(self)` to instantiate this class, Python's `abc.ABC` raises `TypeError: Can't instantiate abstract class` — crashing any detector processing path for detectors with type \"metric_alert_fire\". The old class was instantiable because it implemented `evaluate`; the new class is not. HOW: Either keep `MetricAlertDetectorHandler` extending `DetectorHandler` until the abstract methods are implemented, or provide stub implementations for all abstract methods (returning empty/no-op values as the old `evaluate` did)."
+        }
+      ],
+      "usage": {
+        "inputTokens": 506879,
+        "outputTokens": 58038,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 355868
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 45,
+        "unexpectedToolCalls": 5
+      }
+    },
+    {
+      "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/optimized_image.rb",
+          "startLine": 145,
+          "endLine": 151,
+          "severity": "critical",
+          "category": "bug",
+          "description": "Duplicate downsize method definition overrides the 4-arg version, breaking resize_emoji.rb which still calls it with 4 args. — WHAT: The diff defines self.downsize twice — line 145 with (from, to, max_width, max_height, opts) and line 149 with (from, to, dimensions, opts) — and Ruby silently keeps only the last definition, so the surviving method takes 3 positional args. WHY: The existing caller app/jobs/regular/resize_emoji.rb:14 invokes OptimizedImage.downsize(path, path, 100, 100, opts) with the old 4-arg signature, which now raises ArgumentError: wrong number of arguments (given 5, expected 4) on every emoji resize job. HOW: Remove the duplicate 4-arg definition (line 145) and update resize_emoji.rb to pass a dimensions string, e.g. OptimizedImage.downsize(path, path, \"100x100\", opts), or keep one downsize that accepts both by normalizing width/height into a dimensions string."
+        },
+        {
+          "path": "app/assets/javascripts/discourse/lib/utilities.js",
+          "startLine": 179,
+          "endLine": 185,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Hardcoding 10MB for all upload types ignores per-type size settings and produces wrong 413 error messages for attachments. — WHAT: The client-side size check hardcodes maxSizeKB = 10 * 1024 for every file type, discarding Discourse.SiteSettings['max_' + type + '_size_kb'], and the 413 error branch hardcodes max_image_size_kb even for attachment failures. WHY: When an admin configures max_attachment_size_kb below 10MB, the client no longer rejects oversized attachments up front (server 413 / validator becomes the only gate), and the 413 message quotes the image limit rather than the attachment limit — a wrong/misleading error and a UX regression. HOW: Restore the per-type lookup for the pre-check (var maxSizeKB = Discourse.SiteSettings['max_' + type + '_size_kb'];) and in the 413 branch use the setting matching the uploaded type."
+        },
+        {
+          "path": "optimized_image.rb",
+          "startLine": 145,
+          "endLine": 149,
+          "severity": null,
+          "severityRaw": "Bug",
+          "category": "bug",
+          "description": "Duplicate `downsize` definition shadows the 5-arg version, causing ArgumentError when called with 5 positional args. — Duplicate `downsize` definition (optimized_image.rb:145 & :149) — Ruby keeps the last definition (4-arg), shadowing the 5-arg version. Traced caller resize_emoji.rb:14 which calls `OptimizedImage.downsize(path, path, 100, 100, opts)` with 5 positional args → ArgumentError at runtime. The controller's new call (line 106) uses 3 positional + opts hash, matching the surviving 4-arg definition, so it works. Already captured in existing findings."
+        },
+        {
+          "path": "JS utilities",
+          "startLine": 1,
+          "endLine": 1,
+          "severity": null,
+          "severityRaw": "Bug",
+          "category": "bug",
+          "description": "Client-side file size check hardcoded to 10MB instead of using site settings, causing client/server mismatch. — Hardcoded 10MB in JS utilities — client-side check now uses `10 * 1024` for all file types instead of `Discourse.SiteSettings['max_' + type + '_size_kb']`. For attachment uploads, the server doesn't auto-downsize, so the client allows 10MB but the server still enforces `max_attachment_size_kb`. Already captured in existing findings."
+        }
+      ],
+      "usage": {
+        "inputTokens": 320841,
+        "outputTokens": 50202,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 224725
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 38,
+        "unexpectedToolCalls": 4
+      }
+    },
+    {
+      "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/controllers/admin/embeddable_hosts_controller.rb",
+          "startLine": 9,
+          "endLine": 17,
+          "severity": "high",
+          "category": "bug",
+          "description": "update and destroy crash with NoMethodError when the host id does not exist because the nil result of where(...).first is used without a guard. — WHAT: update and destroy call EmbeddableHost.where(id: params[:id]).first which returns nil when no record matches, then operate on nil without a guard. WHY: save_host(nil) executes nil.host = params[:embeddable_host][:host] and destroy executes nil.destroy, both raising NoMethodError and returning a 500 instead of a clean 404/error when an admin references a non-existent or already-deleted host id. HOW: guard for nil before calling save_host/destroy and return an error response."
+        },
+        {
+          "path": "app/models/embeddable_host.rb",
+          "startLine": 14,
+          "endLine": 17,
+          "severity": "medium",
+          "category": "bug",
+          "description": "record_for_host lowercases the stored column but not the query parameter, so referer hosts with uppercase letters fail to match a configured host. — WHAT: record_for_host compares lower(host) on the stored column against the raw uri.host query parameter without downcasing the parameter. WHY: the before_validation callback strips scheme/path but does not normalize case, and the validation regex is case-insensitive (/i) so mixed-case hosts can be persisted; when a referer host retains uppercase letters (Ruby URI.parse preserves host case), lower(stored) = 'Example.com' fails to match a configured 'example.com', causing host_allowed? to reject a legitimately configured embed host. HOW: downcase the query parameter to match the lowercased column: where(\"lower(host) = ?\", host.downcase).first."
+        },
+        {
+          "path": "app/controllers/admin/embeddable_hosts_controller.rb",
+          "startLine": 14,
+          "endLine": 18,
+          "severity": "medium",
+          "category": "bug",
+          "description": "destroy action references undefined success_json helper, causing NoMethodError (500) on every successful destroy. — WHAT: the destroy action renders `success_json`, a helper that is not defined anywhere in the codebase (repo-wide grep for `def success_json` and all `success_json` usages returns only this single line; application_controller.rb defines no such method). WHY: after `host.destroy` succeeds, evaluating the undefined `success_json` raises NoMethodError, so every successful destroy returns a 500 instead of a success response (the record is already deleted by then). HOW: replace with an explicit hash, e.g. `render json: { success: 'ok' }`, or define `success_json` in the base controller."
+        },
+        {
+          "path": "app/models/embeddable_host.rb",
+          "startLine": 5,
+          "endLine": 8,
+          "severity": "low",
+          "category": "bug",
+          "description": "before_validation calls sub! on a possibly-nil host, raising NoMethodError instead of a clean validation error when the host param is missing. — WHAT: the before_validation callback calls `self.host.sub!(...)` with no nil guard, but `host` can be nil when the `embeddable_host[host]` param is omitted (save_host assigns `host.host = params[:embeddable_host][:host]`, which is nil for a missing key). WHY: `nil.sub!` raises NoMethodError during `host.save`, so the controller's `if host.save ... else render_json_error(host)` never reaches the clean validation-error branch — a bad/missing host param produces a 500 crash instead of a 400 validation error. HOW: coerce or guard before mutating, e.g. `self.host = self.host.to_s` or `return if self.host.blank?` at the top of the callback."
+        }
+      ],
+      "usage": {
+        "inputTokens": 158642,
+        "outputTokens": 37129,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 105283
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 4,
+        "replayCalls": 29,
+        "unexpectedToolCalls": 9
+      }
+    },
+    {
+      "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
+      "findings": [
+        {
+          "path": "config/initializers/i18n.rb",
+          "startLine": 13,
+          "endLine": 18,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Broken uniq in fallback list: locale left as String while others are Symbols, so dedup fails for anonymous users and causes double locale loading + dead fallback lookups. — WHAT: FallbackLocaleList#[] calls `.to_sym` on SiteSetting.default_locale but not on `locale`, so when I18n.locale is a String (anonymous users get `I18n.locale = SiteSetting.default_locale`, a String from LocaleSiteSetting) the `[locale, default_locale.to_sym, :en].uniq` does not dedup (\"en\" != :en), yielding e.g. [\"en\", :en]. WHY: ensure_loaded! then loads the same locale yml twice (translate_accelerator keys @loaded_locales by exact object, \"en\" and :en are distinct) and the string fallback entry always misses the symbol-keyed backend, adding a guaranteed-miss lookup on every cache-miss translate for all anonymous traffic. HOW: sym the locale too — `[locale.to_sym, SiteSetting.default_locale.to_sym, :en].uniq.compact`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 246135,
+        "outputTokens": 44847,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 183414
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 9,
+        "replayCalls": 32,
+        "unexpectedToolCalls": 11
+      }
+    },
+    {
+      "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 354802,
+        "outputTokens": 23064,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 251485
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 35,
+        "unexpectedToolCalls": 5
+      }
+    },
+    {
+      "caseId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/organizations/create.handler.ts",
+          "startLine": 151,
+          "endLine": 153,
+          "severity": "critical",
+          "category": "bug",
+          "description": "Inverted slug condition creates orgs with no slug when billing is disabled and redundant slug+requestedSlug when enabled — WHAT: The slug condition was inverted — `IS_TEAM_BILLING_ENABLED ? { slug } : {}` sets slug when billing is enabled and omits it when disabled, which is the opposite of the original `!IS_TEAM_BILLING_ENABLED && { slug }`. WHY: When `IS_TEAM_BILLING_ENABLED` is false (e.g., self-hosted instances), the organization is created with no slug at all, breaking subdomain-based routing; when it is true, both `slug` and `requestedSlug` are set simultaneously, defeating the approval/billing flow that `requestedSlug` was designed for. HOW: Restore the original condition polarity: `...(!IS_TEAM_BILLING_ENABLED ? { slug } : {})` for the slug field, keeping `requestedSlug` under the `IS_TEAM_BILLING_ENABLED` branch."
+        }
+      ],
+      "usage": {
+        "inputTokens": 390490,
+        "outputTokens": 27027,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 307443
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 39,
+        "unexpectedToolCalls": 11
+      }
+    },
+    {
+      "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/controllers/admin/groups_controller.rb",
+          "startLine": 65,
+          "endLine": 86,
+          "severity": "critical",
+          "category": "bug",
+          "description": "add_members and remove_member require params[:group_id] but the member route provides params[:id], crashing every member management call — WHAT: `add_members` and `remove_member` call `params.require(:group_id)` but the routes at config/routes.rb:88-89 are member routes (`delete/put \"members\"` inside `resources :groups`) that provide the group id as `params[:id]`, and the JS model (discourse/models/group.js:42,53) sends the id in the URL path with only `user_id`/`usernames` in the body — `group_id` is never present. WHY: Every attempt to add or remove a group member raises `ActionController::ParameterMissing: param is missing or the value is empty: group_id`, producing a 500 error and making both features completely non-functional. HOW: Replace `params.require(:group_id).to_i` with `params[:id].to_i` (or change the routes to pass `group_id`), matching how `update` and `destroy` already use `params[:id]`."
+        },
+        {
+          "path": "app/controllers/admin/groups_controller.rb",
+          "startLine": 90,
+          "endLine": 90,
+          "severity": "high",
+          "category": "bug",
+          "description": "remove_member passes an integer id to a through-association delete instead of a record object — WHAT: `remove_member` calls `group.users.delete(user_id)` passing a raw integer to a `has_many :users, through: :group_users` association. WHY: For through-associations, `delete` expects ActiveRecord record objects, not integer ids — this may raise a `NoMethodError` or silently fail to remove the membership, making the remove-member feature broken even after the param mismatch is fixed. HOW: Find the user record first and delete it, e.g. `group.users.delete(User.find(user_id))`, or destroy the join record directly: `group.group_users.where(user_id: user_id).destroy_all`."
+        },
+        {
+          "path": "app/assets/javascripts/admin/controllers/admin-group.js.es6",
+          "startLine": 11,
+          "endLine": 14,
+          "severity": "medium",
+          "category": "bug",
+          "description": "totalPages off-by-one when user_count is exactly divisible by limit creates a phantom empty page — WHAT: `totalPages` computes `Math.floor(user_count / limit) + 1` without checking whether `user_count` is exactly divisible by `limit`. WHY: When `user_count % limit == 0` (e.g., 50 members with limit 50), `totalPages` returns 2 instead of 1, so `showingLast` is false on the last real page, enabling navigation to an empty phantom page that shows zero members. HOW: Use `Math.ceil(user_count / limit)` (with a guard for `limit == 0`) instead of `Math.floor(...) + 1`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 538010,
+        "outputTokens": 62791,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 398733
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 51,
+        "unexpectedToolCalls": 6
+      }
+    },
+    {
+      "caseId": "fixing-re-authentication-with-passkeys-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 478404,
+        "outputTokens": 34099,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 340361
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 34,
+        "unexpectedToolCalls": 4
+      }
+    },
+    {
+      "caseId": "frontend-asset-optimization-grafana-codex",
+      "findings": [
+        {
+          "path": "webassets.go",
+          "startLine": 82,
+          "endLine": 82,
+          "severity": null,
+          "severityRaw": "Non-material",
+          "category": "CONCURRENCY",
+          "description": "Double-checked locking missing the re-check after acquiring the write lock at line 82, dismissed as a non-material micro-inefficiency rather than a correctness bug. — Double-checked locking missing the re-check after acquiring the write lock."
+        },
+        {
+          "path": "webassets.go",
+          "startLine": 103,
+          "endLine": 103,
+          "severity": null,
+          "severityRaw": "Pre-existing",
+          "category": "ERROR_HANDLING",
+          "description": "Error path sets entryPointAssetsCache=nil at line 103, causing a retry on the next call, which is pre-existing and unchanged by the PR. — Error path sets entryPointAssetsCache=nil causing a retry on next call."
+        },
+        {
+          "path": "webassets.go",
+          "startLine": 74,
+          "endLine": 105,
+          "severity": null,
+          "severityRaw": "Non-material",
+          "category": "PERFORMANCE",
+          "description": "Dev-mode serializes every call through the write lock, but this is not material because Dev calls re-read every time and are panic-recovery only. — Dev-mode now serializes every call through the write lock."
+        },
+        {
+          "path": "webassets.go",
+          "startLine": 74,
+          "endLine": 105,
+          "severity": null,
+          "severityRaw": "Non-material",
+          "category": "PERFORMANCE",
+          "description": "Write lock held during a fast file read on a cold-start-only/panic-recovery path is not a material slowdown, especially since the CDN HTTP branch is dead. — Performance lens: write lock held during a fast file read."
+        }
+      ],
+      "usage": {
+        "inputTokens": 218454,
+        "outputTokens": 31826,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 140970
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 4,
+        "replayCalls": 40,
+        "unexpectedToolCalls": 8
+      }
+    },
+    {
+      "caseId": "github-oauth-security-enhancement-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/integrations/github/integration.py",
+          "startLine": 501,
+          "endLine": 505,
+          "severity": "high",
+          "category": "bug",
+          "description": "KeyError when accessing integration.metadata[\"sender\"][\"login\"] if sender key was never set in metadata — WHAT: `integration.metadata[\"sender\"][\"login\"]` is accessed without verifying that the `sender` key exists in the metadata dict. WHY: The `setup` method (lines 376-377) only sets `sender` conditionally (`if state.get(\"sender\")`), so an Integration that exists with `external_id=installation_id` and `status=ObjectStatus.ACTIVE` but lacks a `sender` key in its metadata will raise an unhandled `KeyError`, crashing the request instead of returning a graceful error page. HOW: Use `.get()` with a default or check for the key's existence before accessing nested values, and return `error(request, self.active_organization)` if the key is missing."
+        },
+        {
+          "path": "src/sentry/integrations/github/integration.py",
+          "startLine": 416,
+          "endLine": 420,
+          "severity": "high",
+          "category": "bug",
+          "description": "Missing redirect_uri in OAuth2 token exchange causes GitHub to potentially reject the token request — WHAT: The OAuth2 token exchange request (lines 416-420) omits `redirect_uri` even though it was included in the authorize URL (line 408). WHY: GitHub requires the `redirect_uri` in the token exchange to match the one used during authorization; omitting it can cause GitHub to reject the token exchange, resulting in `access_token` not being in the response payload and the entire installation flow failing silently with a generic error. HOW: Add `\"redirect_uri\": redirect_uri` to the `data` dict passed to `safe_urlopen`."
+        },
+        {
+          "path": "src/sentry/integrations/github/integration.py",
+          "startLine": 422,
+          "endLine": 429,
+          "severity": "medium",
+          "category": "bug",
+          "description": "safe_urlopen is called outside try/except, causing unhandled exceptions on network failures instead of graceful error page — WHAT: `safe_urlopen()` is called outside the try/except block, so if it raises a network exception (URLError, HTTPError, timeout), the exception is unhandled and propagates as a 500 error instead of showing the friendly error page. WHY: The try/except on lines 425-429 was intended to gracefully handle all token-exchange failures by setting `payload = {}` and then returning `error(...)`, but `safe_urlopen` at line 423 is outside its scope, so network failures bypass the graceful fallback. HOW: Move the `safe_urlopen` call inside the try block so all token-exchange errors are caught."
+        }
+      ],
+      "usage": {
+        "inputTokens": 487034,
+        "outputTokens": 36391,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 351316
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 65,
+        "unexpectedToolCalls": 26
+      }
+    },
+    {
+      "caseId": "implement-access-token-context-encoding-framework-keycloak",
+      "findings": [
+        {
+          "path": "AccessTokenContext.java",
+          "startLine": 73,
+          "endLine": 73,
+          "severity": null,
+          "severityRaw": "bug",
+          "category": "Fix copy-paste bug in null check",
+          "description": "Checks grantType twice instead of checking rawTokenId, leading to null concatenation in encodeTokenId. — Line 73 contains a copy-paste bug where `Objects.requireNonNull` checks `grantType` twice instead of checking `rawTokenId`. This means `rawTokenId` can be null without throwing an exception, leading to null concatenation in `encodeTokenId`."
+        },
+        {
+          "path": "DefaultTokenContextEncoderProvider.java",
+          "startLine": 57,
+          "endLine": 248,
+          "severity": null,
+          "severityRaw": "functional gap",
+          "category": "Propagate grant type for non-refresh flows",
+          "description": "Grant type is never propagated to client session context for non-refresh flows, always defaulting to 'na'. — In `DefaultTokenContextEncoderProvider.java` (line 57), `getTokenContextFromClientSessionContext` reads `Constants.GRANT_TYPE` from the client session context. However, `setAttribute.*GRANT_TYPE` is only set in `TokenManager.java` (line 248) for the refresh token flow. For authorization_code, client_credentials, and other grant flows, the GRANT_TYPE attribute is never set, so it defaults to 'na'. The `OAuth2GrantType.Context` class was modified to capture `grantType` from `formParams` (line 102) and a `getGrantType()` getter was added (line 173), but this getter is never called outside the class to propagate the grant type to the client session context."
+        },
+        {
+          "path": "DefaultTokenContextEncoderProviderFactory.java",
+          "startLine": 82,
+          "endLine": 82,
+          "severity": null,
+          "severityRaw": "edge case",
+          "category": "Improve validation for duplicate grants",
+          "description": "Size comparison validation fails to detect when two grants have the same ID and same shortcut. — The validation on line 82 checks `grantsByShortcuts.size() != grantsToShortcuts.size()` to detect duplicate shortcuts/IDs. However, it would not detect the edge case where two grants have both the same ID and the same shortcut, as both maps would shrink equally."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/protocol/oidc/encode/AccessTokenContext.java",
+          "startLine": 73,
+          "endLine": 73,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Constructor checks grantType twice instead of checking rawTokenId, allowing null rawTokenId to propagate into the token ID. — WHAT: The constructor's null-check for rawTokenId is a copy-paste error — it checks grantType twice and never checks rawTokenId. WHY: A null rawTokenId is accepted silently, producing an AccessTokenContext whose getRawTokenId() returns null, which then propagates into encodeTokenId as a null segment in the token ID and into getTokenContextFromTokenId as a null rawId. HOW: Replace the duplicate check with Objects.requireNonNull(rawTokenId, \"Null rawTokenId not allowed\")."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/protocol/oidc/encode/DefaultTokenContextEncoderProvider.java",
+          "startLine": 57,
+          "endLine": 60,
+          "severity": "high",
+          "category": "bug",
+          "description": "Grant type is encoded as \"na\" for all non-refresh-token grants because Constants.GRANT_TYPE is never set on the client session context for those paths. — WHAT: getTokenContextFromClientSessionContext reads Constants.GRANT_TYPE from the client session context, but that attribute is set in only one place across the entire codebase — TokenManager.validateToken (line 248) hard-codes it to REFRESH_TOKEN on the refresh-token path. For all other grant types (authorization_code, password, client_credentials, token-exchange, device_code, etc.) the attribute is never set, so grantType resolves to null and falls back to \"na\". The PR added OAuth2GrantType.Context.getGrantType() (OAuth2GrantType.java:173) to expose the grant type from the token request, but no code ever reads it or sets the client session attribute from it. WHY: The grant type context encoded into the access-token ID is always \"na\" except for refresh-token grants, defeating the PR's stated purpose of making grant type available downstream (introspection, userInfo, etc.) for the majority of issued tokens. HOW: In the grant handling paths (or in initToken/createClientAccessToken), set clientSessionCtx.setAttribute(Constants.GRANT_TYPE, context.getGrantType()) before initToken is called, using the newly-added OAuth2GrantType.Context.getGrantType() accessor."
+        }
+      ],
+      "usage": {
+        "inputTokens": 554439,
+        "outputTokens": 37491,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 425814
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 66,
+        "unexpectedToolCalls": 12
+      }
+    },
+    {
+      "caseId": "notification-rule-processing-engine-grafana-codex",
+      "findings": [
+        {
+          "path": "public/app/features/alerting/unified/rule-list/GrafanaRuleListItem.tsx",
+          "startLine": 47,
+          "endLine": 47,
+          "severity": "high",
+          "category": "bug",
+          "description": "Silence drawer never opens in list view: clicking the visible \"Silence notifications\" button does nothing because the drawer guard requires an undefined rulerRule. — WHAT: GrafanaRuleListItem renders <RuleActionsButtons> with only promRule and no rulerRule, so in the alert list view the \"Silence notifications\" menu item (which has no ruler guard in AlertRuleMenu) becomes clickable but the SilenceGrafanaRuleDrawer never opens because RuleActionsButtons.V2 gates it on `rulerRuleType.grafana.alertingRule(rule)` where rule=rulerRule=undefined. WHY: users see a working-looking \"Silence notifications\" button that silently does nothing when clicked. HOW: either pass a promRule-compatible silence drawer (render SilenceGrafanaRuleDrawer from promRule when rulerRule is absent) or guard the silence menu item in AlertRuleMenu on prometheusRuleType.grafana.alertingRule(promRule) so the button only shows when a drawer can actually open."
+        },
+        {
+          "path": "public/app/features/alerting/unified/rule-list/GrafanaRuleListItem.tsx",
+          "startLine": 47,
+          "endLine": 47,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Pause and Delete menu items never render in the new alert list view because their rendering guards still require an undefined rulerRule, despite grafana-based abilities being computed for them. — WHAT: GrafanaRuleListItem passes only promRule to RuleActionsButtons, leaving rulerRule undefined, which makes AlertRuleMenu's pause and delete menu items never render because their guards `rulerRuleType.grafana.rule(rulerRule)` (line 123) and `canDelete && rulerRule` (line 165) are both false when rulerRule is undefined — even though canPause/canDelete can be true via the newly-added grafana ability path. WHY: Pause and Delete actions that were available in the old list view (which fetched ruler and passed rulerRule) silently disappear in the new list view, contradicting the PR's stated intent (comments at AlertRuleMenu lines 41-42, 66) to support these actions via promRule. HOW: update the rendering guards in AlertRuleMenu to also accept the promRule-based condition, e.g. `canPause && (rulerRuleType.grafana.rule(rulerRule) || prometheusRuleType.grafana.rule(promRule))` for pause and `canDelete && (rulerRule || prometheusRuleType.grafana.rule(promRule))` for delete, and pass promRule-derived data to the handlers."
+        }
+      ],
+      "usage": {
+        "inputTokens": 672956,
+        "outputTokens": 63983,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 532046
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 9,
+        "replayCalls": 50,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
+      "findings": [
+        {
+          "path": "packages/app-store/salesforce/lib/CalendarService.ts",
+          "startLine": 90,
+          "endLine": 99,
+          "severity": "high",
+          "category": "bug",
+          "description": "Salesforce Connection uses stale access_token after token refresh, causing auth failures — WHAT: The jsforce.Connection is constructed with the stale credentialKey.access_token and credentialKey.instance_url instead of the freshly refreshed accessTokenParsed.data.access_token and accessTokenParsed.data.instance_url. WHY: The new code refreshes tokens and saves them to the DB, but the Connection used for all subsequent API calls still uses the old (potentially expired) access token, causing authentication failures on every Salesforce API call. HOW: Use accessTokenParsed.data.access_token and accessTokenParsed.data.instance_url in the Connection constructor."
+        },
+        {
+          "path": "packages/app-store/zoomvideo/lib/VideoApiAdapter.ts",
+          "startLine": 104,
+          "endLine": 111,
+          "severity": "high",
+          "category": "bug",
+          "description": "parseRefreshTokenResponse sets dummy \"refresh_token\" literal that callers persist to DB, breaking future refreshes — WHAT: parseRefreshTokenResponse sets refreshTokenResponse.data.refresh_token to the literal string \"refresh_token\" when the token response omits it, and callers persist this dummy value to the database. WHY: When APP_CREDENTIAL_SHARING_ENABLED is on, the sync endpoint response may not include refresh_token; the dummy \"refresh_token\" is then saved via key.refresh_token = newTokens.refresh_token (line 451-452), corrupting the stored credential so all future token refreshes fail. The same issue affects Office365 CalendarService.ts:264 where the spread overwrites o365AuthCredentials.refresh_token with the dummy. HOW: In parseRefreshTokenResponse.ts, do not set a dummy refresh_token — preserve the existing refresh_token from the credential instead of substituting a placeholder."
+        },
+        {
+          "path": "apps/web/pages/api/webhook/app-credential.ts",
+          "startLine": 17,
+          "endLine": 21,
+          "severity": "medium",
+          "category": "security",
+          "description": "Webhook handler lacks HTTP method restriction, accepts non-POST requests — WHAT: The webhook handler does not check req.method, accepting any HTTP method. WHY: A webhook that writes credentials should only accept POST; non-POST requests reach zod.parse (line 31) and throw unhandled ZodErrors producing 500 responses instead of a proper 405, and GET/DELETE requests could trigger credential side effects if a body is present. HOW: Add a method guard at the top of the handler."
+        },
+        {
+          "path": "apps/web/pages/api/webhook/app-credential.ts",
+          "startLine": 62,
+          "endLine": 80,
+          "severity": "medium",
+          "category": "bug",
+          "description": "TOCTOU race in findFirst + create/update can create duplicate credentials — WHAT: The findFirst + create/update sequence has a TOCTOU race condition with no unique constraint or transaction. WHY: Two concurrent webhook calls for the same userId+appId can both find no existing credential (findFirst returns null), then both proceed to create, producing duplicate credential rows for the same user and app. HOW: Use a database unique constraint on (userId, appId) and prisma.credential.upsert, or wrap the find+create/update in a transaction."
+        },
+        {
+          "path": "packages/app-store/salesforce/lib/CalendarService.ts",
+          "startLine": 86,
+          "endLine": 86,
+          "severity": "medium",
+          "category": "bug",
+          "description": "response.statusText check fails over HTTP/2 where statusText is always empty — WHAT: The success check uses response.statusText !== \"OK\" instead of response.ok or response.status === 200. WHY: Per the WHATWG Fetch spec, HTTP/2 responses have an empty statusText (no reason phrases in HTTP/2), so this check always evaluates to true (\"\" !== \"OK\") and throws even for successful 200 responses, completely preventing token refresh over HTTP/2 connections. HOW: Use response.ok or response.status === 200 instead of response.statusText."
+        }
+      ],
+      "usage": {
+        "inputTokens": 558410,
+        "outputTokens": 74106,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 429565
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 10,
+        "replayCalls": 58,
+        "unexpectedToolCalls": 8
+      }
+    },
+    {
+      "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/assets/stylesheets/common/base/topic-post.scss",
+          "startLine": 263,
+          "endLine": 266,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Making .small-action a flex container silently disables button{float:right} without a compensating margin-left:auto, so the action button loses right-edge alignment. — WHAT: Making `.small-action` a flex container (`@include flexbox()` + `@include align-items(center)`) turns its `button { float: right; }` into a no-op, because floats are ignored on flex items, yet no `margin-left: auto` (or `flex: 1` on the description) was added to re-right-align the button. WHY: the small-action button (e.g. topic status action buttons) shifts from the right edge to sit immediately after the description text — a visible layout regression. HOW: add `margin-left: auto;` to `.small-action button` to push it to the right edge of the flex row, mirroring the `margin-left: auto` already added to `.panel` in header.scss for the same float-removal reason."
+        }
+      ],
+      "usage": {
+        "inputTokens": 175281,
+        "outputTokens": 28705,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 119301
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 5,
+        "replayCalls": 26,
+        "unexpectedToolCalls": 6
+      }
+    },
+    {
+      "caseId": "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/services/pluginsintegration/clientmiddleware/logger_middleware.go",
+          "startLine": 36,
+          "endLine": 60,
+          "severity": "medium",
+          "category": "bug",
+          "description": "traceID is lost from plugin request logs because LoggerMiddleware.logRequest now relies on FromContext which does not include traceID in context attributes — WHAT: The traceID field is no longer included in plugin request log output because LoggerMiddleware.logRequest was changed to rely on FromContext(ctx) for context enrichment, but neither instrumentContext (in ContextualLoggerMiddleware) nor the new logRequest implementation adds traceID. WHY: Degrades observability by breaking log-to-trace correlation for plugin requests — operators can no longer search logs by traceID to find related plugin request entries. HOW: Either add traceID to the context attributes in instrumentContext (via tracing.TraceIDFromContext), or explicitly append it to logParams in logRequest as the old code did."
+        },
+        {
+          "path": "metrics_middleware.go",
+          "startLine": null,
+          "endLine": null,
+          "severity": null,
+          "severityRaw": "concern",
+          "category": "context-unmodified",
+          "description": "Removed instrumentContext call at line 110 results in passing context unmodified without enrichment. — The instrumentContext(ctx, endpoint, pluginCtx) call was removed from instrumentPluginRequest (line 110 in old code). Context is now passed unmodified instead of being enriched with pluginId, endpoint, dsName, dsUID, uname. This causes a broader loss of these attributes in logs if ContextualLoggerMiddleware is not properly wired or is misordered, though wiring could not be verified due to wire-generated code."
+        },
+        {
+          "path": "logger_middleware.go",
+          "startLine": null,
+          "endLine": null,
+          "severity": null,
+          "severityRaw": "bug",
+          "category": "traceid-regression",
+          "description": "traceID is definitively lost from plugin request logs because it was removed and no contextual provider replaces it. — The traceID field was removed from explicit logParams in logRequest. Since no tracing contextual log provider exists in the registered providers (only logParamsContextKey is handled), traceID is definitively lost from plugin request logs."
+        },
+        {
+          "path": "contextual_logger_middleware.go",
+          "startLine": null,
+          "endLine": null,
+          "severity": null,
+          "severityRaw": "observation",
+          "category": "missing-callsites",
+          "description": "NewContextualLoggerMiddleware constructor has zero production callsites, making its wiring unverifiable. — The NewContextualLoggerMiddleware() constructor is exported but has zero production callsites via grep. While the previous constructor had the same characteristic (indicating wire-generated wiring), the actual wiring of this middleware cannot be confirmed or denied."
+        }
+      ],
+      "usage": {
+        "inputTokens": 625510,
+        "outputTokens": 40627,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 492663
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 82,
+        "unexpectedToolCalls": 9
+      }
+    },
+    {
+      "caseId": "replays-self-serve-bulk-delete-system-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/issues/endpoints/browser_reporting_collector.py",
+          "startLine": 50,
+          "endLine": 60,
+          "severity": "low",
+          "category": "bug",
+          "description": "Mutual-exclusivity validation uses truthiness instead of key presence, accepting reports missing both age/timestamp and bypassing the check when both are falsy. — WHAT: `validate_timestamp` and `validate_age` test `self.initial_data.get(\"<other>\")` for truthiness instead of key presence, and both fields are `required=False` with no `validate()` enforcing at-least-one. WHY: DRF only invokes `validate_<field>` when that field is present, so (1) a report missing both `age` and `timestamp` passes validation, violating the docstring's \"exactly one required\" contract, and (2) a report with both present but falsy (e.g. `age: 0, timestamp: 0`) bypasses the mutual-exclusivity check because `if 0:` is False. HOW: test key membership (`\"age\" in self.initial_data`) instead of truthiness, and add a `validate()` that raises when neither `age` nor `timestamp` is present."
+        },
+        {
+          "path": "src/sentry/issues/endpoints/browser_reporting_collector.py",
+          "startLine": 47,
+          "endLine": 48,
+          "severity": "low",
+          "category": "bug",
+          "description": "IntegerField is too strict for the spec's DOMHighResTimeStamp (double) timestamp/age, rejecting or truncating fractional-millisecond values. — WHAT: `timestamp` and `age` are declared `IntegerField`, but the referenced Reporting API spec (comments at lines 33-34) types both as `DOMHighResTimeStamp`, i.e. a double that may carry fractional milliseconds. WHY: a spec-valid report carrying a fractional value (e.g. `timestamp: 1714800000.5`) is either rejected with 422 or silently truncated to an integer, dropping/corrupting legitimate reports — a regression from the prior unvalidated dataclass which accepted floats — undermining the collector's goal of capturing real-world data. HOW: use `serializers.FloatField(required=False, min_value=0)` for both fields to accept integer and fractional DOMHighResTimeStamp values."
+        },
+        {
+          "path": "browser_reporting_collector.py",
+          "startLine": null,
+          "endLine": null,
+          "severity": null,
+          "severityRaw": "N/A",
+          "category": "bug",
+          "description": "Truthiness vs key presence check in validate_timestamp and validate_age. — Truthiness vs key presence check in validate_timestamp and validate_age."
+        },
+        {
+          "path": "browser_reporting_collector.py",
+          "startLine": null,
+          "endLine": null,
+          "severity": null,
+          "severityRaw": "N/A",
+          "category": "bug",
+          "description": "IntegerField type mismatch for timestamp and age fields. — IntegerField type mismatch for timestamp and age fields."
+        }
+      ],
+      "usage": {
+        "inputTokens": 401497,
+        "outputTokens": 71564,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 294521
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 7,
+        "replayCalls": 52,
+        "unexpectedToolCalls": 24
+      }
+    },
+    {
+      "caseId": "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry",
+      "findings": [
+        {
+          "path": "incident_occurrence.py",
+          "startLine": 160,
+          "endLine": 168,
+          "severity": "low",
+          "category": "bug",
+          "description": "Pre-existing copy-vs-display bug in get_monitor_environment_context returns the original config instead of the mutated copy. — Ensure line 168 of `get_monitor_environment_context` in `incident_occurrence.py` returns the mutated copy of the config instead of the original `monitor_environment.monitor.config`. (Reviewer note: This is a pre-existing bug copied verbatim, not introduced or worsened by this PR)."
+        },
+        {
+          "path": "incident_occurrence.py",
+          "startLine": null,
+          "endLine": null,
+          "severity": "low",
+          "category": "bug",
+          "description": "Pre-existing edge case in get_failure_reason handles empty Counter poorly, interpolating an empty string. — Handle the edge case in `get_failure_reason` where all statuses are filtered out, which results in an empty Counter (sum==0), causing a fall through to `get_text_list([])` and an empty string interpolation. (Reviewer note: This is pre-existing and unchanged by this PR)."
+        },
+        {
+          "path": "incident_occurrence.py",
+          "startLine": 168,
+          "endLine": 168,
+          "severity": "low",
+          "category": "Bug",
+          "description": "Config copy bug at incident_occurrence.py:168 — Pre-existing bug moved verbatim from old mark_failed.py: a config copy bug at incident_occurrence.py:168. The PR does not make this worse or newly reachable — the function is still called only from the same occurrence-creation path with the same data. Per scope rules, this pre-existing issue should not be reported as introduced by this PR, but it is the only concrete defect at this location."
+        }
+      ],
+      "usage": {
+        "inputTokens": 415834,
+        "outputTokens": 33065,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 324306
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 49,
+        "unexpectedToolCalls": 13
+      }
+    },
+    {
+      "caseId": "sms-workflow-reminder-retry-count-tracking-cal-com",
+      "findings": [
+        {
+          "path": "packages/features/ee/workflows/api/scheduleSMSReminders.ts",
+          "startLine": 38,
+          "endLine": 42,
+          "severity": "high",
+          "category": "bug",
+          "description": "deleteMany retryCount condition is not scoped to SMS method, deleting non-SMS reminders — WHAT: The `deleteMany` OR branch for `retryCount: { gt: 1 }` is not scoped to `method: WorkflowMethods.SMS`, unlike the first OR branch. WHY: This deletes ANY WorkflowReminder record (including EMAIL and other non-SMS methods) with retryCount > 1, not just SMS reminders — confirmed that WorkflowReminder is a shared model used by EMAIL and SMS methods (see getWorkflowReminders.ts which queries the same model with `method: WorkflowMethods.EMAIL`). HOW: Add `method: WorkflowMethods.SMS` to the second OR branch, or restructure the query so the method filter applies to both branches."
+        },
+        {
+          "path": "packages/features/ee/workflows/api/scheduleSMSReminders.ts",
+          "startLine": 178,
+          "endLine": 197,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Temporary failures (SMS lock, rate limit) increment retryCount and cause permanent deletion of reminders — WHAT: When `scheduleSMS` returns `undefined` due to temporary conditions (SMS sending locked via `isSMSSendingLocked`, or rate-limited via `checkSMSRateLimit` throwing), the new `else` and `catch` branches increment retryCount as if it were a permanent failure. WHY: After 2 such temporary failures (retryCount goes 0→1→2), the next cron run permanently deletes the reminder via `retryCount: { gt: 1 }`, silently dropping SMS notifications that should have been sent once the lock/rate-limit lifts. The PR intent is to stop retrying permanently invalid numbers, not to delete reminders during transient outages. HOW: Distinguish between permanent failures (e.g. invalid phone number from Twilio API error response) and temporary failures (SMS lock, rate limit) — only increment retryCount for permanent failures, or skip the increment when `scheduleSMS` returns undefined due to a lock condition."
+        },
+        {
+          "path": "packages/features/ee/workflows/api/scheduleSMSReminders.ts",
+          "startLine": 298,
+          "endLine": 307,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Catch block increments retryCount for message-preparation errors (not just SMS-sending failures), causing permanent reminder deletion after 2 transient non-SMS failures — WHAT: The catch block (lines 298-307) now increments retryCount for ANY exception thrown in the try block, which wraps message-preparation code (DB queries like `prisma.profile.findFirst` at line 220, `bookingMetadataSchema.parse` at line 243, `attendees[0].name` access at line 191) that runs BEFORE `scheduleSMS` is ever called at line 268. WHY: After 2 transient message-preparation failures (e.g., DB query timeout, malformed booking metadata, or empty attendees array causing TypeError), `deleteMany` at line 138 permanently removes the reminder — even though the SMS was never attempted. Before this PR, the catch block only did `console.log`, so the reminder persisted and was retried on subsequent cron runs. This is a regression: non-SMS-sending failures now count toward the retry limit and cause permanent deletion. HOW: Narrow the retryCount increment to only catch exceptions from the `scheduleSMS` call itself (wrap only the `twilio.scheduleSMS(...)` call and its result handling in an inner try/catch), or distinguish error types so message-preparation errors do not increment retryCount."
+        }
+      ],
+      "usage": {
+        "inputTokens": 408680,
+        "outputTokens": 51612,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 293271
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 12,
+        "replayCalls": 34,
+        "unexpectedToolCalls": 7
+      }
+    },
+    {
+      "caseId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/spans/consumers/process/flusher.py",
+          "startLine": 336,
+          "endLine": 347,
+          "severity": "medium",
+          "category": "bug",
+          "description": "join() may skip terminating processes when deadline expires due to early break — WHAT: The `join` method breaks out of the process-termination loop when the deadline expires, skipping `process.terminate()` for the current and all remaining processes. WHY: If `next_step.join(timeout)` or waiting for earlier processes consumes the deadline, subsequent processes are never terminated, leaving them running with open Redis and Kafka connections until the main process exits — a regression from the old code which always called `terminate()` on its single process. HOW: Move the `process.terminate()` call into a `finally`-like pattern or iterate all processes for termination after the wait loop, e.g. collect processes that need termination during the wait loop and terminate them all after the loop completes."
+        }
+      ],
+      "usage": {
+        "inputTokens": 609800,
+        "outputTokens": 57624,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 422852
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 33,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "unified-storage-performance-optimizations-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/storage/unified/resource/search.go",
+          "startLine": 216,
+          "endLine": 216,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Newly added TotalDocs() call races with watch goroutine's concurrent map write, causing potential process crash — WHAT: The newly added `s.search.TotalDocs()` call iterates the bleve cache map without holding any lock, while the watch event goroutine (started 3 lines above) can concurrently write to the same map via BuildIndex. WHY: `TotalDocs()` in bleve.go does `for _, v := range b.cache` without acquiring `cacheMu`, but `BuildIndex` writes `b.cache[key] = idx` under `cacheMu.Lock()` — concurrent map iteration and map write is a Go data race that crashes the process with \"fatal error: concurrent map iteration and map write\". HOW: Add `b.cacheMu.RLock()` / `defer b.cacheMu.RUnlock()` in `TotalDocs()`, or move the `TotalDocs()` call before the watch goroutine is started."
+        }
+      ],
+      "usage": {
+        "inputTokens": 744409,
+        "outputTokens": 77520,
+        "reasoningTokens": 0,
+        "cacheReadTokens": 519773
+      },
+      "trace": {
+        "finishReason": "budget-exhausted",
+        "steps": 12,
+        "replayCalls": 41,
+        "unexpectedToolCalls": 1
+      }
+    }
+  ]
+}

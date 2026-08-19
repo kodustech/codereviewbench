@@ -963,6 +963,152 @@
       "tier": 1
     },
     {
+      "key": "kodus::glm-5.2@fireworks",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "modelId": "glm-5.2@fireworks",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "executionMode": "replay",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "reasoningTokens": null,
+      "finishReasons": {
+        "stopped": 28,
+        "budget-exhausted": 1
+      },
+      "maxFindingsInCase": 7,
+      "judge": "claude-haiku-4-5",
+      "runAt": "2026-08-19T18:02:18.951Z",
+      "score": 35.16,
+      "recallMacro": 35.63,
+      "precision": 46.99,
+      "precisionMacro": 52.96,
+      "f1": 40.23,
+      "fairRecall": 35.63,
+      "loopFidelity": 82.33,
+      "goldensTotal": 91,
+      "goldensMatched": 32,
+      "cases": 29,
+      "usage": {
+        "inputTokens": 13969695,
+        "outputTokens": 1333750
+      },
+      "byLanguage": {
+        "java": {
+          "recall": 7.69,
+          "precision": 20,
+          "goldens": 13,
+          "count": 5
+        },
+        "typescript": {
+          "recall": 34.78,
+          "precision": 43.65,
+          "goldens": 23,
+          "count": 6
+        },
+        "go": {
+          "recall": 68.75,
+          "precision": 66.67,
+          "goldens": 16,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 35,
+          "precision": 51.39,
+          "goldens": 20,
+          "count": 6
+        },
+        "python": {
+          "recall": 26.32,
+          "precision": 61.11,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "keycloak": {
+          "recall": 7.69,
+          "precision": 20,
+          "goldens": 13,
+          "count": 5
+        },
+        "cal.com": {
+          "recall": 34.78,
+          "precision": 43.65,
+          "goldens": 23,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 68.75,
+          "precision": 66.67,
+          "goldens": 16,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 35,
+          "precision": 51.39,
+          "goldens": 20,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 26.32,
+          "precision": 61.11,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "M": {
+          "recall": 32,
+          "precision": 46.13,
+          "goldens": 50,
+          "count": 13
+        },
+        "L": {
+          "recall": 41.18,
+          "precision": 40,
+          "goldens": 17,
+          "count": 6
+        },
+        "S": {
+          "recall": 35,
+          "precision": 76.19,
+          "goldens": 20,
+          "count": 8
+        },
+        "XS": {
+          "recall": 50,
+          "precision": 50,
+          "goldens": 4,
+          "count": 2
+        }
+      },
+      "findingsBySeverity": {
+        "low": 12,
+        "medium": 33,
+        "high": 19,
+        "critical": 4
+      },
+      "findingsByCategory": {
+        "bug": 66,
+        "performance": 3,
+        "security": 3,
+        "other": 11
+      },
+      "costTotal": 25.43,
+      "costPerPR": 0.88,
+      "costPerBugFound": 0.79,
+      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
+      "ciHalfWidth": 9.81,
+      "ciLow": 24.72,
+      "ciHigh": 47.06,
+      "ciHalfWidthBootstrap": 11.17,
+      "rank": 7,
+      "tier": 1
+    },
+    {
       "key": "kodus::qwen3.8-27b",
       "harness": "kodus",
       "harnessVersion": "dev",
@@ -1105,7 +1251,7 @@
       "ciLow": 24.05,
       "ciHigh": 45.36,
       "ciHalfWidthBootstrap": 10.66,
-      "rank": 7,
+      "rank": 8,
       "tier": 1
     },
     {
@@ -1280,13 +1426,13 @@
       "ciLow": 5.95,
       "ciHigh": 18.28,
       "ciHalfWidthBootstrap": 6.16,
-      "rank": 8,
+      "rank": 9,
       "tier": 2
     }
   ],
   "averages": {
-    "score": 36.01,
-    "precision": 45.68,
-    "f1": 37.82
+    "score": 35.92,
+    "precision": 45.82,
+    "f1": 38.09
   }
 }

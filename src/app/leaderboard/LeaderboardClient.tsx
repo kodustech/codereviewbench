@@ -7,7 +7,7 @@ import caseIndexData from '@/lib/data/case-index.json';
 import meta from '@/lib/data/meta.json';
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney, formatCI } from '@/lib/format';
-import { displayNameOf, providerOf, REPO_LABELS, LANGUAGE_LABELS, SIZE_LABELS } from '@/lib/constants';
+import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS, SIZE_LABELS } from '@/lib/constants';
 import { bootstrapCI } from '@/lib/bootstrap';
 import CostFrontier, { type FrontierPoint } from '@/components/charts/CostFrontier';
 import ViewSwitcher from '@/components/shared/ViewSwitcher';
@@ -378,7 +378,7 @@ export default function LeaderboardClient() {
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <Link href={`/model/${e.modelId}`} className="flex items-center gap-2.5 group/link">
+                          <Link href={`/model/${modelSlug(e.modelId)}`} className="flex items-center gap-2.5 group/link">
                             <ProviderLogo provider={provider} />
                             <span className="flex flex-col gap-0.5 min-w-0">
                               <span className="text-sm font-semibold tracking-tight text-[var(--foreground)] group-hover/link:text-[var(--accent)] transition-colors truncate">
