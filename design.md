@@ -48,6 +48,33 @@ labels only. Two narrowings, both content-driven:
 Recorded here explicitly so a future Hallmark run doesn't "fix" this back to
 strict spec — both are considered, content-driven exceptions, not drift.
 
+## Hero: H1 vs. statement de marca (emenda, 2026-08-19)
+
+O hero tinha UM elemento no topo: o statement lowercase com verb-landmark,
+marcado como `<h1>`. Duas coisas quebravam com isso:
+
+1. **SEO.** O H1 (`we check what the model actually finds.`) nao continha
+   nenhuma das palavras-alvo do site — nem "benchmark", nem "code review",
+   nem "AI". A pagina que mais deveria rankear pra "ai code review benchmark"
+   nao usava a frase em lugar nenhum de destaque semantico.
+2. **Clareza.** "finds" sem objeto: o leitor frio nao sabia *o que* e achado
+   (bug) sem descer pro paragrafo.
+
+Estrutura atual, deliberada:
+
+- `<h1>` = **AI Code Review Benchmark**, tratado como o eyebrow mono/uppercase
+  que o resto do site ja usa (`.eyebrow`). Carrega a frase-alvo, ocupa pouco
+  espaco visual.
+- Logo abaixo, em `<p>`, o headline visual dominante: **which AI reviewer
+  actually catches bugs?** — mantem font-display, lowercase e o verb-landmark
+  (agora em "catches"). Nomeia o objeto (bugs) e fala com a intencao de quem
+  esta buscando qual ferramenta usar.
+
+O H1 pequeno e proposital: hierarquia visual continua sendo do statement, e o
+Google le o DOM, nao o font-size. O statement de fechamento do rodape
+("if your harness can review a diff, it can be measured.") NAO muda — e outro
+momento, fala com quem vai submeter, nao com quem esta escolhendo.
+
 ## Macrostructure family
 
 - **Marketing pages** (Home `/`): **Marquee Hero**, Lumen's canonical pairing

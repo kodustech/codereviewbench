@@ -52,9 +52,17 @@ export default function Home() {
         <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 pt-8 sm:pt-12 pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 lg:gap-8 items-center">
             <div className="reveal" style={{ ['--i' as string]: 0 }}>
-              <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-[var(--foreground)] leading-[1.08] mb-7 max-w-2xl lowercase">
-                we check what the model actually&nbsp;<span className="verb-landmark">finds</span>.
+              {/* H1 descritivo carrega a frase-alvo de busca; o statement da
+                  marca continua sendo o elemento visual dominante logo abaixo.
+                  Antes o H1 era so o statement e nao tinha nenhuma das
+                  palavras-alvo. Desvio registrado no design.md. */}
+              <h1 className="font-mono text-xs sm:text-sm text-[var(--accent)] uppercase tracking-[0.2em] font-bold mb-4">
+                AI Code Review Benchmark
               </h1>
+
+              <p className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-[var(--foreground)] leading-[1.08] mb-7 max-w-2xl lowercase">
+                which <span className="normal-case">AI</span> reviewer actually&nbsp;<span className="verb-landmark">catches</span> bugs?
+              </p>
 
               <p className="text-lg text-[var(--foreground-2)] max-w-xl leading-relaxed mb-12">
                 An open AI code review benchmark: we run real review agents against real merged
