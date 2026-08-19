@@ -22,9 +22,13 @@ export default function BugsFound({ total, found, modelName }: Props) {
 
   return (
     <figure className="bugs">
+      {/* Os bugs sao o GABARITO, nao um concorrente. Enquadrar como "humanos
+          acharam X, a IA achou Y" cria uma comparacao homem-vs-maquina que o
+          benchmark nao faz — a pergunta e quantos dos bugs conhecidos o
+          modelo acha. */}
       <figcaption className="bugs__lede">
-        Human reviewers caught <strong>{total} real bugs</strong> in these pull requests.
-        The best AI model found <strong>{found}</strong>.
+        These pull requests have <strong>{total} confirmed bugs</strong> in them.
+        The best model found <strong>{found}</strong>.
       </figcaption>
 
       <ol className="bugs__grid" aria-hidden="true">

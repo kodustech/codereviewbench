@@ -40,7 +40,7 @@ export default function Home() {
               <p className="text-lg text-[var(--foreground-2)] max-w-xl leading-relaxed mb-12">
                 An open AI code review benchmark: we run real review agents against real merged
                 pull requests from production open-source projects, and measure how many of the
-                bugs human reviewers caught they actually find. No synthetic regressions, no
+                known bugs in them each model actually finds. No synthetic regressions, no
                 cherry-picking.
               </p>
 
