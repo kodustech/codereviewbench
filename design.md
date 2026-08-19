@@ -75,6 +75,42 @@ Google le o DOM, nao o font-size. O statement de fechamento do rodape
 ("if your harness can review a diff, it can be measured.") NAO muda — e outro
 momento, fala com quem vai submeter, nao com quem esta escolhendo.
 
+## Hero apparatus: grade de bugs (emenda, 2026-08-19)
+
+Duas versoes anteriores foram descartadas, pelo mesmo motivo nas duas vezes:
+
+1. **Grafo de topologia** (judge no centro, 5 repos em volta, callouts com
+   contagem). Mostrava o INSUMO do bench — quais repos formam o corpus. Custava
+   40% da largura do hero pra dizer "sao 5 repos", e as linhas do grafo
+   cruzavam os proprios labels.
+2. **Escala de recall** (0-100%, 9 modelos plotados, faixa hachurada). Melhor,
+   mas ainda exigia o vocabulario do projeto: "recall", "never reached" (por
+   quem?), 9 riscos sem nome.
+
+O padrao: os dois eram instrumentos ABSTRATOS. Exigiam que o leitor ja
+soubesse o que estava vendo. Ajustar densidade, fonte e contraste melhorou a
+legibilidade sem resolver a compreensao.
+
+**O que ficou (`BugsFound.tsx`):** uma frase em ingles simples — "Human
+reviewers caught 95 real bugs in these pull requests. The best AI model found
+42." — seguida de 95 pontos, 42 acesos e 53 apagados. Cada ponto E um bug.
+Nao tem jargao, nao precisa de legenda: a proporcao de apagados se le sozinha.
+
+Consequencias registradas:
+
+- **Meter strip removido.** A grade ja carrega a comparacao; dois instrumentos
+  na mesma pagina violam o spec do Lumen ("never two apparatus objects").
+- **Three-stat row removido do hero.** Duplicava o numero (44% aparecia no
+  stat row e no readout). A legenda da grade (42 found / 53 missed / best
+  model) cobre o mesmo papel, integrada ao instrumento.
+- Visivel em mobile: a grade reflowa por auto-fill, a contagem de pontos nunca
+  muda.
+
+Nota de tensao com o spec do Lumen: o tema pede um "hand-engineered apparatus"
+com callouts em mono micro-type e leader lines. A grade e mais simples que
+isso de proposito. Clareza ganhou do registro do tema — decisao do usuario,
+repetida tres vezes.
+
 ## Macrostructure family
 
 - **Marketing pages** (Home `/`): **Marquee Hero**, Lumen's canonical pairing

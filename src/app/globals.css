@@ -350,3 +350,67 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .apparatus__core-emit { animation: none; }
 }
+
+/* Grade de bugs — cada ponto e um bug real que um humano pegou.
+   Aceso = o melhor modelo achou. Apagado = passou batido. A proporcao de
+   apagados e a informacao; nao precisa de legenda pra ler. */
+.bugs {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.bugs__lede {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 34ch;
+}
+.bugs__lede strong {
+  color: var(--foreground);
+  font-weight: 500;
+}
+.bugs__grid {
+  display: grid;
+  /* auto-fill mantem os pontos no mesmo tamanho e deixa a grade reflowar —
+     o numero de colunas muda com a largura, a contagem de pontos nunca. */
+  grid-template-columns: repeat(auto-fill, minmax(0, 14px));
+  gap: 7px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.bugs__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid var(--border-bright);
+}
+.bugs__dot[data-found] {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 8px 0 var(--glow);
+}
+.bugs__dot--legend {
+  display: inline-block;
+  flex-shrink: 0;
+}
+.bugs__key {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.bugs__key-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.bugs__key-model {
+  color: var(--muted-dim);
+}

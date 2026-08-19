@@ -7,44 +7,16 @@ import type { LeaderboardData, CaseIndexRow } from '@/lib/types';
 import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
 import { formatScore, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
-import Apparatus from '@/components/hero/Apparatus';
-import MeterStrip from '@/components/hero/MeterStrip';
+import BugsFound from '@/components/hero/BugsFound';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 
 const lb = leaderboardData as unknown as LeaderboardData;
 const caseIndex = caseIndexData as unknown as CaseIndexRow[];
 
-function apparatusNodes() {
-  const seen = new Set<string>();
-  const byRepo: Record<string, { goldens: number; cases: number; language: string }> = {};
-  for (const row of caseIndex) {
-    if (seen.has(row.caseId)) continue;
-    seen.add(row.caseId);
-    byRepo[row.repo] = byRepo[row.repo] || { goldens: 0, cases: 0, language: row.language };
-    byRepo[row.repo].goldens += row.goldens;
-    byRepo[row.repo].cases += 1;
-  }
-  return meta.repos.map((repo) => ({
-    repo,
-    label: REPO_LABELS[repo] || repo,
-    language: LANGUAGE_LABELS[byRepo[repo]?.language] || byRepo[repo]?.language || '',
-    goldens: byRepo[repo]?.goldens ?? 0,
-    cases: byRepo[repo]?.cases ?? 0,
-  }));
-}
-
-function meterValues() {
-  return caseIndex
-    .map((r) => (r.goldens ? (r.matched / r.goldens) * 100 : 0))
-    .sort((a, b) => a - b);
-}
-
 export default function Home() {
   const topEntries = [...lb.entries].sort((a, b) => b.f1 - a.f1).slice(0, 5);
   const bestRecall = [...lb.entries].sort((a, b) => b.score - a.score)[0];
-  const nodes = apparatusNodes();
-  const meterVals = meterValues();
-  const meanRecall = meterVals.reduce((a, b) => a + b, 0) / meterVals.length;
+
 
   return (
     <div className="flex-1 flex flex-col items-center">
@@ -72,27 +44,6 @@ export default function Home() {
                 cherry-picking.
               </p>
 
-              <div className="flex flex-wrap gap-10 mb-12">
-                {/* Tres celulas (o spec do Lumen exige tres), mas carregando o
-                    ACHADO, nao o insumo. Antes eram 30 PRs / 95 bugs / 09
-                    models — o tamanho do corpus, que nao e a historia. A
-                    historia e que o teto de recall e 44%. Numeros vem do
-                    leaderboard, nunca escritos a mao. */}
-                {[
-                  { value: `${bestRecall.score.toFixed(0)}%`, label: 'best recall, of any model' },
-                  { value: `${bestRecall.goldensTotal - bestRecall.goldensMatched}`, label: `bugs the best model missed` },
-                  { value: meta.models.length.toString().padStart(2, '0'), label: 'models measured' },
-                ].map((stat) => (
-                  <div key={stat.label} className="flex flex-col">
-                    <span className="font-display text-3xl sm:text-4xl tabular-nums text-[var(--foreground)]">
-                      {stat.value}
-                    </span>
-                    <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-widest mt-1">
-                      {stat.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
 
               <Link
                 href="/leaderboard"
@@ -103,19 +54,16 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="hidden lg:block reveal" style={{ ['--i' as string]: 1 }}>
-              <Apparatus judgeLabel={meta.judges[0] || 'judge'} nodes={nodes} />
+            <div className="reveal" style={{ ['--i' as string]: 1 }}>
+              <BugsFound
+                total={bestRecall.goldensTotal}
+                found={bestRecall.goldensMatched}
+                modelName={displayNameOf(bestRecall.modelId)}
+              />
             </div>
           </div>
         </div>
 
-        <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12">
-          <MeterStrip
-            values={meterVals}
-            leftLabel={`RECALL · ${meterVals.length} SAMPLES`}
-            rightLabel={`μ ${meanRecall.toFixed(1)}%`}
-          />
-        </div>
       </header>
 
       {/* Methodology */}
