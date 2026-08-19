@@ -70,7 +70,7 @@ function EmbedButton({ modelId }: { modelId: string }) {
           on the inner one. Learned by measuring a real overflow in Playwright:
           the popover rendered position:relative, not absolute, at any width. */}
       {open && (
-        <div className="absolute right-0 top-full mt-2 z-10 w-[min(20rem,calc(100vw-3rem))]">
+        <div className="absolute right-0 top-full mt-2 z-10 w-[min(20rem,calc(100vw-3rem))] panel-in">
           <div className="card-hairline overflow-hidden p-4">
             <p className="text-xs text-[var(--muted-dim)] mb-3">Drop this in your README to link back to this result.</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -303,7 +303,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
                   </div>
                 </button>
                 {isOpen && (
-                  <div className="border-t border-[var(--border)] px-5 py-4 space-y-4">
+                  <div className="border-t border-[var(--border)] px-5 py-4 space-y-4 panel-in">
                     {c.findings.length > 0 && (
                       <div>
                         <span className="text-[11px] font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold block mb-2">

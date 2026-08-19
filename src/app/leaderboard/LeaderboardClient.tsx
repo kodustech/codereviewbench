@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, Fragment } from 'react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import leaderboardData from '@/lib/data/leaderboard.json';
 import caseIndexData from '@/lib/data/case-index.json';
@@ -258,7 +259,7 @@ export default function LeaderboardClient() {
 
       {/* Filter panel */}
       {filtersOpen && (
-        <div className="mb-8 p-5 card-hairline">
+        <div className="mb-8 p-5 card-hairline panel-in">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 relative">
             <FilterGroup label="Language" options={meta.languages} labelOf={(v) => LANGUAGE_LABELS[v] || v} selected={selLangs} onToggle={toggleIn(setSelLangs)} />
             <FilterGroup label="Repo" options={meta.repos} labelOf={(v) => REPO_LABELS[v] || v} selected={selRepos} onToggle={toggleIn(setSelRepos)} />
@@ -299,7 +300,7 @@ export default function LeaderboardClient() {
         </button>
 
         {methodologyOpen && (
-          <div className="border-t border-[var(--border)] px-6 py-6 space-y-6">
+          <div className="border-t border-[var(--border)] px-6 py-6 space-y-6 panel-in">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Metrics</h3>
@@ -371,7 +372,16 @@ export default function LeaderboardClient() {
                           </td>
                         </tr>
                       )}
-                      <tr key={e.key} className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface-2)] transition-colors group">
+                      {/* layout: ao reordenar (clique no cabecalho), a linha
+                          DESLIZA ate a nova posicao em vez de pular. Isso
+                          carrega informacao — da pra ver quem subiu e quem
+                          desceu — nao e enfeite. */}
+                      <motion.tr
+                        key={e.key}
+                        layout
+                        transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                        className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface-2)] transition-colors group"
+                      >
                         <td className="px-5 py-4">
                           <span className={cn('text-sm font-mono tabular-nums', isTop ? 'text-[var(--accent)] font-bold' : 'text-[var(--muted)]')}>
                             {(isFiltered ? idx + 1 : e.rank).toString().padStart(2, '0')}
@@ -415,7 +425,7 @@ export default function LeaderboardClient() {
                         <td className="px-5 py-4 text-right">
                           <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{formatMoney(e.costPerBugFound, 2)}</span>
                         </td>
-                      </tr>
+                      </motion.tr>
                     </Fragment>
                   );
                 })}

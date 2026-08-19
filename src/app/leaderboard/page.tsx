@@ -1,5 +1,15 @@
 import { Suspense } from 'react';
 import LeaderboardClient from './LeaderboardClient';
+import meta from '@/lib/data/meta.json';
+import { SITE_TAGLINE } from '@/lib/site';
+
+// A pagina com mais chance de rankear pra "ai code review benchmark" — ate
+// agora herdava o metadata do layout e nao tinha titulo/descricao proprios.
+export const metadata = {
+  title: `${SITE_TAGLINE} Leaderboard`,
+  description: `Which AI model finds the most real bugs in code review? ${meta.totalEntries} models ranked on ${meta.totalCases} real merged pull requests from ${meta.repos.length} production OSS repos, scored against ${meta.totalGoldens} human-reported bugs. Recall, precision, F1 and cost per bug found.`,
+  alternates: { canonical: '/leaderboard' },
+};
 
 export default function LeaderboardPage() {
   return (

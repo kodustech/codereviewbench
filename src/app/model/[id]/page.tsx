@@ -17,7 +17,14 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const entry = lb.entries.find((e) => modelSlug(e.modelId) === id);
-  return { title: `${displayNameOf(entry?.modelId ?? id)} | CodeReviewBench` };
+  if (!entry) return { title: displayNameOf(id) };
+  const name = displayNameOf(entry.modelId);
+  return {
+    // O layout aplica "%s | CodeReviewBench" — nao repetir o nome do site.
+    title: `${name} — AI Code Review Benchmark Results`,
+    description: `How well does ${name} review code? Measured on ${entry.cases} real merged pull requests: ${entry.score.toFixed(1)}% recall, ${entry.precision.toFixed(1)}% precision, F1 ${entry.f1.toFixed(1)}, finding ${entry.goldensMatched} of ${entry.goldensTotal} human-reported bugs.`,
+    alternates: { canonical: `/model/${modelSlug(entry.modelId)}` },
+  };
 }
 
 export default async function ModelDetailPage({ params }: { params: Promise<{ id: string }> }) {

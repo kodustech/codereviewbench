@@ -7,7 +7,12 @@ const lb = leaderboardData as unknown as LeaderboardData;
 const allSamples = samplesData as unknown as CaseSample[];
 
 export const metadata = {
-  title: 'Compare Models | CodeReviewBench',
+  // O layout ja aplica o template "%s | CodeReviewBench" — repetir aqui
+  // duplicaria o nome do site no title.
+  title: 'Compare AI Code Review Models',
+  description:
+    'Compare two AI code review models side by side on the same real pull requests: which bugs one found that the other missed, per PR, with recall, precision and cost.',
+  alternates: { canonical: '/compare' },
 };
 
 export default async function ComparePage({

@@ -5,19 +5,42 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Script from "next/script";
+import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from "@/lib/site";
+import JsonLd from "@/components/seo/JsonLd";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans", weight: ["400", "500", "600"] });
 const instrumentSerif = Instrument_Serif({ subsets: ["latin"], variable: "--font-display", weight: "400" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-  title: "CodeReviewBench | AI Code Review Benchmark",
-  description: "Open benchmark for AI code review. We test how well LLMs find realistic bugs across 5 languages. Compare models, explore traces, audit every score.",
-  keywords: ["ai code review benchmark", "llm code review", "ai code review", "code review benchmark", "llm benchmark", "ai code review comparison"],
+  // metadataBase e obrigatorio pra OG/canonical resolverem em URL absoluta —
+  // sem isso o Next emite caminho relativo e o crawler/scraper social ignora.
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    // Paginas internas viram "<algo> | CodeReviewBench" sem repetir a tagline.
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  alternates: { canonical: '/' },
   openGraph: {
-    title: "CodeReviewBench | AI Code Review Benchmark",
-    description: "Open benchmark for AI code review. We test how well LLMs find realistic bugs across 5 languages.",
-    type: "website",
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
   },
   verification: {
     google: "CoUvZZvMnZ5EXhHagUpNrsK-ARNNT3Lshr0uW_YN_8A",
@@ -55,6 +78,7 @@ export default function RootLayout({
         <div className="fixed inset-0 pointer-events-none z-50 opacity-[0.03]" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
         }} />
+        <JsonLd />
         <Navbar />
         <main className="flex-1 flex flex-col relative">
           {children}

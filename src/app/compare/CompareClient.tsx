@@ -202,7 +202,7 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
                 </div>
               </button>
               {isOpen && (
-                <div className="border-t border-[var(--border)] px-5 py-4">
+                <div className="border-t border-[var(--border)] px-5 py-4 panel-in">
                   {goldens.length === 0 ? (
                     <p className="text-sm text-[var(--muted-dim)]">No golden detail for this PR.</p>
                   ) : (

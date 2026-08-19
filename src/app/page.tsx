@@ -57,9 +57,10 @@ export default function Home() {
               </h1>
 
               <p className="text-lg text-[var(--foreground-2)] max-w-xl leading-relaxed mb-12">
-                We run real AI review agents against real pull requests from real open-source
-                projects, and check how many of the known bugs they actually find. No synthetic
-                regressions, no cherry-picking.
+                An open AI code review benchmark: we run real review agents against real merged
+                pull requests from production open-source projects, and measure how many of the
+                bugs human reviewers caught they actually find. No synthetic regressions, no
+                cherry-picking.
               </p>
 
               <div className="flex flex-wrap gap-10 mb-12">
@@ -106,7 +107,7 @@ export default function Home() {
       {/* Methodology */}
       <section className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 py-24">
         <span className="eyebrow block mb-3">Methodology</span>
-        <h2 className="font-display text-3xl sm:text-4xl text-[var(--foreground)] mb-4">How it works</h2>
+        <h2 className="font-display text-3xl sm:text-4xl text-[var(--foreground)] mb-4">How the benchmark works</h2>
         <p className="text-base text-[var(--foreground-2)] max-w-2xl mb-14 leading-[1.75]">
           Every model reviews the same {meta.totalCases} real PRs, against the same human-authored golden comments, judged the
           same way. One run per model, at vendor defaults — the numbers are what you get out of the box.
