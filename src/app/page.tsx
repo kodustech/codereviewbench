@@ -41,6 +41,7 @@ function meterValues() {
 
 export default function Home() {
   const topEntries = [...lb.entries].sort((a, b) => b.f1 - a.f1).slice(0, 5);
+  const bestRecall = [...lb.entries].sort((a, b) => b.score - a.score)[0];
   const nodes = apparatusNodes();
   const meterVals = meterValues();
   const meanRecall = meterVals.reduce((a, b) => a + b, 0) / meterVals.length;
@@ -72,10 +73,15 @@ export default function Home() {
               </p>
 
               <div className="flex flex-wrap gap-10 mb-12">
+                {/* Tres celulas (o spec do Lumen exige tres), mas carregando o
+                    ACHADO, nao o insumo. Antes eram 30 PRs / 95 bugs / 09
+                    models — o tamanho do corpus, que nao e a historia. A
+                    historia e que o teto de recall e 44%. Numeros vem do
+                    leaderboard, nunca escritos a mao. */}
                 {[
-                  { value: meta.totalCases.toString(), label: 'real pull requests' },
-                  { value: meta.totalGoldens.toString(), label: 'golden bugs' },
-                  { value: meta.models.length.toString().padStart(2, '0'), label: 'models' },
+                  { value: `${bestRecall.score.toFixed(0)}%`, label: 'best recall, of any model' },
+                  { value: `${bestRecall.goldensTotal - bestRecall.goldensMatched}`, label: `bugs the best model missed` },
+                  { value: meta.models.length.toString().padStart(2, '0'), label: 'models measured' },
                 ].map((stat) => (
                   <div key={stat.label} className="flex flex-col">
                     <span className="font-display text-3xl sm:text-4xl tabular-nums text-[var(--foreground)]">

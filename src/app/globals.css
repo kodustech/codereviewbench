@@ -288,7 +288,7 @@ body {
 }
 .apparatus__callout-meta {
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 10.5px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted);
@@ -339,4 +339,14 @@ body {
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
+}
+
+/* Nucleo do apparatus: o anel sozinho lia como circulo vazio. O wash interno
+   e o que faz o Night Foundry "emitir" em vez de so desenhar contorno. */
+.apparatus__core-emit {
+  animation: filament-pulse var(--dur-pulse) ease-in-out infinite;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .apparatus__core-emit { animation: none; }
 }

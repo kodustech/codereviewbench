@@ -47,15 +47,31 @@ export default function Apparatus({ judgeLabel, nodes }: Props) {
             />
           );
         })}
+        {/* Night Foundry: o nucleo EMITE — ele contem a fonte de luz. So o
+            anel com stroke deixava um circulo oco, que le como placeholder.
+            O wash interno usa --paper-emit, o mesmo token do spec. */}
+        <defs>
+          <radialGradient id="core-emit">
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.30" />
+            <stop offset="70%" stopColor="var(--accent)" stopOpacity="0.06" />
+            <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
+          </radialGradient>
+        </defs>
         <circle cx={CENTER} cy={CENTER} r={30} className="apparatus__core" />
+        <circle cx={CENTER} cy={CENTER} r={28} fill="url(#core-emit)" className="apparatus__core-emit" />
         {nodes.map((n, i) => {
           const p = pos(i, nodes.length);
           return <circle key={`node-${n.repo}`} cx={p.x} cy={p.y} r={5} className="apparatus__node" />;
         })}
       </svg>
 
-      <span className="apparatus__core-label" style={{ left: `${(CENTER / 400) * 100}%`, top: `${(CENTER / 400) * 100}%` }}>
-        {judgeLabel}
+      {/* Ancorado ABAIXO do nucleo, nao por cima: em cima do traco do
+          circulo o texto ficava ilegivel (visivel no print do usuario). */}
+      <span
+        className="apparatus__core-label"
+        style={{ left: `${(CENTER / 400) * 100}%`, top: `${((CENTER + 46) / 400) * 100}%` }}
+      >
+        judge &middot; {judgeLabel}
       </span>
 
       <ul className="apparatus__callouts">
@@ -69,10 +85,11 @@ export default function Apparatus({ judgeLabel, nodes }: Props) {
               data-side={side}
               style={{ left: `${(p.x / 400) * 100}%`, top: `${(p.y / 400) * 100}%` }}
             >
+              {/* UM valor por callout. O spec do Lumen limita a anotacao a
+                  um par curto (`P50 · 28 MS`); tres valores por no viravam
+                  15 numeros de 9.5px espalhados em volta do grafo. */}
               <span className="apparatus__callout-name">{n.label}</span>
-              <span className="apparatus__callout-meta">
-                {n.language} &middot; {n.goldens} goldens &middot; {n.cases} prs
-              </span>
+              <span className="apparatus__callout-meta">{n.goldens} bugs</span>
             </li>
           );
         })}
