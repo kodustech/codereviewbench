@@ -135,12 +135,16 @@ export default function LeaderboardClient() {
   const [methodologyOpen, setMethodologyOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const [selLangs, setSelLangs] = useState<Set<string>>(new Set(meta.languages));
-  const [selRepos, setSelRepos] = useState<Set<string>>(new Set(meta.repos));
-  const [selSizes, setSelSizes] = useState<Set<string>>(new Set(meta.sizes));
+  // Conjunto VAZIO = sem filtro. Antes o estado inicial marcava tudo, entao o
+  // painel abria com os 14 chips acesos em azul — visualmente identico a "14
+  // filtros ativos" quando nao havia nenhum, e sem jeito de distinguir marcado
+  // de nao marcado. Com vazio-e-neutro, aceso significa exatamente uma coisa.
+  const [selLangs, setSelLangs] = useState<Set<string>>(new Set());
+  const [selRepos, setSelRepos] = useState<Set<string>>(new Set());
+  const [selSizes, setSelSizes] = useState<Set<string>>(new Set());
 
-  const isFiltered =
-    selLangs.size !== meta.languages.length || selRepos.size !== meta.repos.length || selSizes.size !== meta.sizes.length;
+  const activeFilterCount = selLangs.size + selRepos.size + selSizes.size;
+  const isFiltered = activeFilterCount > 0;
 
   const toggleIn = (setter: React.Dispatch<React.SetStateAction<Set<string>>>) => (v: string) =>
     setter((prev) => {
@@ -151,9 +155,9 @@ export default function LeaderboardClient() {
     });
 
   const resetFilters = () => {
-    setSelLangs(new Set(meta.languages));
-    setSelRepos(new Set(meta.repos));
-    setSelSizes(new Set(meta.sizes));
+    setSelLangs(new Set());
+    setSelRepos(new Set());
+    setSelSizes(new Set());
   };
 
   // Um FilteredMetrics por entrada, recomputado do case-index (não do
@@ -163,7 +167,11 @@ export default function LeaderboardClient() {
     const map = new Map<string, FilteredMetrics>();
     for (const e of data.entries) {
       const rows = caseIndex.filter(
-        (r) => r.entryKey === e.key && selLangs.has(r.language) && selRepos.has(r.repo) && (r.sizeBucket == null || selSizes.has(r.sizeBucket)),
+                (r) =>
+          r.entryKey === e.key &&
+          (selLangs.size === 0 || selLangs.has(r.language)) &&
+          (selRepos.size === 0 || selRepos.has(r.repo)) &&
+          (selSizes.size === 0 || r.sizeBucket == null || selSizes.has(r.sizeBucket)),
       );
       map.set(e.key, computeFiltered(rows));
     }
@@ -258,28 +266,44 @@ export default function LeaderboardClient() {
 
       {/* Controls */}
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-4 pb-8 border-b border-[var(--border)]">
-        <div className="flex flex-wrap gap-2 items-center">
-          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[color:var(--muted)]">
+        {/* Os tres primeiros sao METADADO do run, nao controle. Tinham a
+            mesma caixa com borda do botao de Filters, entao nada indicava qual
+            dos quatro era clicavel. Viraram texto corrido com separador; o
+            unico elemento com forma de botao na linha e o que e botao. */}
+        <div className="flex flex-wrap gap-x-3 gap-y-2 items-center">
+          <span className="text-[length:var(--text-caption)] font-mono text-[color:var(--muted)]">
             {meta.repos.length} repos
           </span>
-          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[color:var(--muted)]">
+          <span className="text-[color:var(--muted-dim)]" aria-hidden>&middot;</span>
+          <span className="text-[length:var(--text-caption)] font-mono text-[color:var(--muted)]">
             harness: {meta.harnesses.join(', ')}
           </span>
-          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[color:var(--muted)]">
+          <span className="text-[color:var(--muted-dim)]" aria-hidden>&middot;</span>
+          <span className="text-[length:var(--text-caption)] font-mono text-[color:var(--muted)]">
             1 run per model
           </span>
+
+          {/* Ghost Pill do spec quando em repouso, preenchido de azul quando ha
+              filtro. O contador diz QUANTOS, que e o que a pessoa quer saber
+              sem reabrir o painel. */}
           <button
             onClick={() => setFiltersOpen((v) => !v)}
+            aria-expanded={filtersOpen}
             className={cn(
-              'flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded border transition-colors',
+              'ml-1 inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-buttons)] text-[length:var(--text-body-sm)] font-semibold transition-colors',
               isFiltered
-                ? 'bg-[var(--accent-dim)] border-[var(--accent)] text-[color:var(--accent)]'
-                : 'bg-[var(--surface)] border-[var(--border)] text-[color:var(--muted)] hover:border-[var(--border-bright)]',
+                ? 'bg-[var(--accent)] text-[color:var(--on-accent)] border-[1.5px] border-[var(--accent)]'
+                : 'border-[1.5px] border-[var(--color-ink-black)] text-[color:var(--color-ink-black)] hover:bg-[var(--color-ink-black)] hover:text-white',
             )}
           >
-            <SlidersHorizontal className="size-3" />
+            <SlidersHorizontal className="size-3.5" />
             Filters
-            {isFiltered && <span className="font-semibold">· active</span>}
+            {isFiltered && (
+              <span className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-[var(--radius-badges)] bg-white/25 text-[length:var(--text-micro)] font-bold tabular-nums">
+                {activeFilterCount}
+              </span>
+            )}
+            <ChevronDown className={cn('size-3.5 transition-transform', filtersOpen && 'rotate-180')} />
           </button>
         </div>
         <ViewSwitcher views={VIEWS} active={view} onChange={setView} />
