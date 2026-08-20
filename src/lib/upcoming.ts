@@ -1,43 +1,23 @@
 /**
- * Modelos ainda nao publicados no leaderboard.
+ * Modelos ainda nao medidos, mostrados no fim do leaderboard.
  *
- * Cada linha diz o motivo REAL de nao estar la, tirado do
- * `docs/adr-model-access-paths.md` (quadro-resumo, secao 7). Nada aqui e
- * promessa de data: num site cujo produto e auditabilidade, "em breve" sem
- * motivo e a mesma classe de afirmacao nao verificavel que o bench existe pra
- * combater.
+ * So nome e fornecedor. A primeira versao trazia, por modelo, o motivo de nao
+ * estar publicado ("Anthropic allows this benchmark over an API key, the
+ * subscription path does not..."). Isso e um problema NOSSO de caminho de
+ * acesso: quem le nao tem esse contexto e nao muda nada pra ele. A lista
+ * responde a unica pergunta que o leitor faz aqui, que e quais modelos vem.
  *
- * Achado do ADR que define a redacao: NENHUM dos fornecedores proibe publicar
- * benchmark. O que bloqueia e o CAMINHO DE ACESSO. Via API key, Anthropic e
- * OpenAI sao explicitamente permitidos — entao estes nao estao "excluidos",
- * estao na fila esperando rodada por API.
+ * O motivo real de cada um continua registrado, com clausula e fonte, no
+ * quadro-resumo (secao 7) de docs/adr-model-access-paths.md. E la que se olha
+ * antes de mexer nesta lista.
  */
 export interface UpcomingModel {
   name: string;
   provider: string;
-  /** Estado curto, mostrado como badge. */
-  status: 'queued' | 'measured';
-  /** Por que ainda nao esta publicado. Uma frase, verificavel. */
-  note: string;
 }
 
 export const UPCOMING_MODELS: UpcomingModel[] = [
-  {
-    name: 'Claude Opus 5',
-    provider: 'Anthropic',
-    status: 'queued',
-    note: 'Anthropic allows this benchmark over an API key. The subscription path does not, so this one waits on an API run.',
-  },
-  {
-    name: 'Claude Fable 5',
-    provider: 'Anthropic',
-    status: 'queued',
-    note: 'Same access path as Opus 5, same queue.',
-  },
-  {
-    name: 'GPT-5.6',
-    provider: 'OpenAI',
-    status: 'queued',
-    note: 'OpenAI allows this benchmark over an API key. The ChatGPT subscription path does not, so this one waits on an API run.',
-  },
+  { name: 'Claude Opus 5', provider: 'Anthropic' },
+  { name: 'Claude Fable 5', provider: 'Anthropic' },
+  { name: 'GPT-5.6', provider: 'OpenAI' },
 ];

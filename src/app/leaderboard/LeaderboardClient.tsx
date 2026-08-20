@@ -474,48 +474,31 @@ export default function LeaderboardClient() {
         </div>
       )}
 
-      {/* Fila — o que ainda nao esta medido, e por que. Cada linha tem motivo
-          verificavel (docs/adr-model-access-paths.md, secao 7); nenhuma tem
-          data prometida nem numero. Num bench, "em breve" sem motivo e
-          exatamente o tipo de afirmacao que o site existe pra nao fazer. */}
+      {/* Fila — so nome e fornecedor. A versao anterior explicava, por
+          modelo, por que ainda nao rodou (caminho de API vs assinatura); isso
+          e contexto interno nosso e nao muda nada pro leitor. Os motivos, com
+          clausula e fonte, estao no docs/adr-model-access-paths.md. */}
       <section className="mt-16 pt-10 border-t border-[var(--border)]">
         <span className="eyebrow block mb-3">Next up</span>
         <h2 className="font-display text-[length:var(--text-heading)] text-[color:var(--color-ink-black)] mb-3">
           Not measured yet
         </h2>
-        <p className="text-[length:var(--text-body-sm)] text-[color:var(--muted)] max-w-2xl mb-8 leading-[var(--leading-body)]">
-          No provider in this benchmark forbids publishing comparisons. What holds a model back is
-          the access path we are allowed to run it through. These are the ones people ask for most,
-          and where each actually stands.
+        <p className="text-[length:var(--text-body-sm)] text-[color:var(--muted)] mb-8">
+          The models people ask for most.
         </p>
 
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-wrap gap-2">
           {UPCOMING_MODELS.map((m) => (
             <li
               key={m.name}
-              className="card-hairline p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6"
+              className="inline-flex items-baseline gap-2 px-4 py-2 rounded-[var(--radius-badges)] border border-[var(--border)] bg-[var(--surface-card)]"
             >
-              <div className="sm:w-56 shrink-0">
-                <span className="block text-[length:var(--text-body-sm)] font-semibold text-[color:var(--color-ink-black)]">
-                  {m.name}
-                </span>
-                <span className="block text-[length:var(--text-micro)] font-mono uppercase tracking-widest text-[color:var(--muted-dim)]">
-                  {m.provider}
-                </span>
-              </div>
-              <span
-                className={cn(
-                  'shrink-0 inline-flex items-center px-3 py-1 rounded-[var(--radius-badges)] text-[length:var(--text-caption)] font-medium w-fit',
-                  m.status === 'measured'
-                    ? 'bg-[var(--accent-dim)] text-[color:var(--accent)]'
-                    : 'bg-[var(--surface-2)] text-[color:var(--muted)]',
-                )}
-              >
-                {m.status === 'measured' ? 'measured, not published' : 'in the queue'}
+              <span className="text-[length:var(--text-body-sm)] font-semibold text-[color:var(--color-ink-black)]">
+                {m.name}
               </span>
-              <p className="text-[length:var(--text-body-sm)] text-[color:var(--muted)] leading-[var(--leading-body)]">
-                {m.note}
-              </p>
+              <span className="text-[length:var(--text-micro)] font-mono uppercase tracking-widest text-[color:var(--muted-dim)]">
+                {m.provider}
+              </span>
             </li>
           ))}
         </ul>
