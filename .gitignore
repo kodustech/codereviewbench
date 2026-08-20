@@ -48,3 +48,7 @@ next-env.d.ts
 
 # saida do playwright-mcp (snapshots/console de sessao de debug)
 .playwright-mcp/
+
+# screenshots de sessao de review visual
+portal-*.png
+hero-*.png

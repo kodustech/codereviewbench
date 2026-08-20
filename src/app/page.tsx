@@ -19,7 +19,7 @@ export default function Home() {
     <div className="flex-1 flex flex-col items-center">
       {/* Hero — Marquee: apparatus at hero-right, verb-landmark headline at hero-left */}
       <header className="w-full hero-dusk relative overflow-clip">
-        <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 pt-8 sm:pt-12 pb-16">
+        <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 pt-8 sm:pt-28 pb-16 sm:pb-24">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 lg:gap-8 items-center">
             <div className="reveal" style={{ ['--i' as string]: 0 }}>
               {/* H1 descritivo carrega a frase-alvo de busca; o statement da

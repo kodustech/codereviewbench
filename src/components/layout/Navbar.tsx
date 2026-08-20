@@ -14,6 +14,7 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const isHome = pathname === '/';
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -110,8 +111,13 @@ export default function Navbar() {
         )}
       </nav>
 
-      {/* Spacer so fixed pill nav doesn't overlap page content on desktop */}
-      <div className="hidden sm:block h-20" aria-hidden="true" />
+      {/* Espacador pra capsula fixa nao cobrir o conteudo — EXCETO na home.
+          O hero do Portal e full-bleed e a capsula flutua POR CIMA dele; com o
+          espacador a home ganhava uma faixa de canvas de 80px acima do
+          gradiente, que no tema escuro passava batido (escuro sobre escuro) e
+          no claro vira uma barra branca solta. Na home quem afasta o conteudo
+          da capsula e o padding do proprio hero. */}
+      {!isHome && <div className="hidden sm:block h-20" aria-hidden="true" />}
     </>
   );
 }
