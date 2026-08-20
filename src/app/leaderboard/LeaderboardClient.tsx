@@ -11,6 +11,7 @@ import { formatScore, formatMoney, formatCI } from '@/lib/format';
 import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS, SIZE_LABELS } from '@/lib/constants';
 import { bootstrapCI } from '@/lib/bootstrap';
 import CostFrontier, { type FrontierPoint } from '@/components/charts/CostFrontier';
+import { UPCOMING_MODELS } from '@/lib/upcoming';
 import ViewSwitcher from '@/components/shared/ViewSwitcher';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 import { List, LineChart, ArrowUpDown, ChevronDown, Scale, SlidersHorizontal, RotateCcw } from 'lucide-react';
@@ -41,7 +42,7 @@ function SortHeader({
 }) {
   return (
     <th
-      className={cn('px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest cursor-pointer hover:text-[var(--foreground)] transition-colors select-none font-bold', className)}
+      className={cn('px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest cursor-pointer hover:text-[color:var(--foreground)] transition-colors select-none font-bold', className)}
       onClick={() => onSort(sortKeyName)}
     >
       <div className="flex items-center gap-1.5 justify-end">
@@ -93,7 +94,7 @@ function FilterGroup({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-[10px] font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">{label}</span>
+      <span className="text-[10px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">{label}</span>
       <div className="flex flex-wrap gap-1.5">
         {options.map((opt) => {
           const active = selected.has(opt);
@@ -104,8 +105,8 @@ function FilterGroup({
               className={cn(
                 'px-2.5 py-1 rounded-md text-xs font-mono border transition-colors',
                 active
-                  ? 'bg-[var(--accent-dim)] border-[var(--accent)] text-[var(--accent)]'
-                  : 'bg-[var(--surface)] border-[var(--border)] text-[var(--muted-dim)] hover:text-[var(--muted)] hover:border-[var(--border-bright)]',
+                  ? 'bg-[var(--accent-dim)] border-[var(--accent)] text-[color:var(--accent)]'
+                  : 'bg-[var(--surface)] border-[var(--border)] text-[color:var(--muted-dim)] hover:text-[color:var(--muted)] hover:border-[var(--border-bright)]',
               )}
             >
               {labelOf(opt)}
@@ -221,8 +222,8 @@ export default function LeaderboardClient() {
       {/* Header */}
       <div className="mb-10">
         <span className="eyebrow block mb-3">Rankings</span>
-        <h1 className="text-3xl sm:text-4xl font-display text-[var(--foreground)] mb-3">AI Code Review Benchmark Leaderboard</h1>
-        <p className="text-[15px] text-[var(--foreground-2)] max-w-2xl leading-relaxed">
+        <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)] mb-3">AI Code Review Benchmark Leaderboard</h1>
+        <p className="text-[15px] text-[color:var(--foreground-2)] max-w-2xl leading-relaxed">
           {meta.totalCases} real pull requests, {meta.totalGoldens} human-authored golden bugs, judged by {meta.judges[0]}.
           Ranked by F1 — recall alone rewards whoever talks most.
         </p>
@@ -231,13 +232,13 @@ export default function LeaderboardClient() {
       {/* Controls */}
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-4 pb-8 border-b border-[var(--border)]">
         <div className="flex flex-wrap gap-2 items-center">
-          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)]">
+          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[color:var(--muted)]">
             {meta.repos.length} repos
           </span>
-          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)]">
+          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[color:var(--muted)]">
             harness: {meta.harnesses.join(', ')}
           </span>
-          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)]">
+          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[var(--surface)] border border-[var(--border)] text-[color:var(--muted)]">
             1 run per model
           </span>
           <button
@@ -245,8 +246,8 @@ export default function LeaderboardClient() {
             className={cn(
               'flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded border transition-colors',
               isFiltered
-                ? 'bg-[var(--accent-dim)] border-[var(--accent)] text-[var(--accent)]'
-                : 'bg-[var(--surface)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--border-bright)]',
+                ? 'bg-[var(--accent-dim)] border-[var(--accent)] text-[color:var(--accent)]'
+                : 'bg-[var(--surface)] border-[var(--border)] text-[color:var(--muted)] hover:border-[var(--border-bright)]',
             )}
           >
             <SlidersHorizontal className="size-3" />
@@ -266,13 +267,13 @@ export default function LeaderboardClient() {
             <FilterGroup label="PR size" options={meta.sizes} labelOf={(v) => SIZE_LABELS[v] || v} selected={selSizes} onToggle={toggleIn(setSelSizes)} />
           </div>
           <div className="flex items-center justify-between mt-5 pt-4 border-t border-[var(--border)]">
-            <p className="text-xs text-[var(--muted-dim)] max-w-lg">
+            <p className="text-xs text-[color:var(--muted-dim)] max-w-lg">
               Recomputed from the filtered PRs — not the published headline numbers. With only {meta.totalCases} PRs total, a
-              narrow filter can leave very few cases per model; watch the <span className="text-[var(--muted)]">n=</span> count
+              narrow filter can leave very few cases per model; watch the <span className="text-[color:var(--muted)]">n=</span> count
               and the CI. $/PR and $/bug always reflect the full run — cost isn&apos;t tracked per PR.
             </p>
             {isFiltered && (
-              <button onClick={resetFilters} className="flex items-center gap-1.5 text-xs font-mono text-[var(--muted)] hover:text-[var(--foreground)] transition-colors shrink-0 ml-4">
+              <button onClick={resetFilters} className="flex items-center gap-1.5 text-xs font-mono text-[color:var(--muted)] hover:text-[color:var(--foreground)] transition-colors shrink-0 ml-4">
                 <RotateCcw className="size-3" />
                 Reset
               </button>
@@ -289,44 +290,44 @@ export default function LeaderboardClient() {
         >
           <div className="flex items-center gap-3">
             <div className="size-8 rounded-lg bg-[var(--accent-dim)] flex items-center justify-center">
-              <Scale className="size-4 text-[var(--accent)]" />
+              <Scale className="size-4 text-[color:var(--accent)]" />
             </div>
             <div className="text-left">
-              <span className="text-sm font-semibold text-[var(--foreground)]">How to read this table</span>
-              <span className="text-xs text-[var(--muted-dim)] block">What F1/precision/recall mean here, tiers, and what this benchmark doesn&apos;t measure</span>
+              <span className="text-sm font-semibold text-[color:var(--foreground)]">How to read this table</span>
+              <span className="text-xs text-[color:var(--muted-dim)] block">What F1/precision/recall mean here, tiers, and what this benchmark doesn&apos;t measure</span>
             </div>
           </div>
-          <ChevronDown className={cn('size-4 text-[var(--muted)] transition-transform', methodologyOpen && 'rotate-180')} />
+          <ChevronDown className={cn('size-4 text-[color:var(--muted)] transition-transform', methodologyOpen && 'rotate-180')} />
         </button>
 
         {methodologyOpen && (
           <div className="border-t border-[var(--border)] px-6 py-6 space-y-6 panel-in">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Metrics</h3>
-                <p className="text-sm text-[var(--muted)] mb-3">
+                <h3 className="text-sm font-semibold text-[color:var(--foreground)] mb-1">Metrics</h3>
+                <p className="text-sm text-[color:var(--muted)] mb-3">
                   Micro-averaged: true/false positives and false negatives are summed across all {meta.totalCases} PRs, then
                   precision and recall are computed once from the totals — not averaged per-PR. Same convention published by
                   the Martian and Alibaba code review benchmarks.
                 </p>
                 <div className="grid grid-cols-1 gap-2 text-sm">
-                  <p><span className="text-[var(--foreground)] font-medium">Recall</span> — <span className="text-[var(--muted)]">golden bugs the model actually found</span></p>
-                  <p><span className="text-[var(--foreground)] font-medium">Precision</span> — <span className="text-[var(--muted)]">of what it reported, how much was real</span></p>
-                  <p><span className="text-[var(--foreground)] font-medium">F1</span> — <span className="text-[var(--muted)]">harmonic mean of both, equal weight</span></p>
-                  <p><span className="text-[var(--foreground)] font-medium">Tier</span> — <span className="text-[var(--muted)]">models whose recall confidence intervals overlap the tier leader&apos;s</span></p>
+                  <p><span className="text-[color:var(--foreground)] font-medium">Recall</span> — <span className="text-[color:var(--muted)]">golden bugs the model actually found</span></p>
+                  <p><span className="text-[color:var(--foreground)] font-medium">Precision</span> — <span className="text-[color:var(--muted)]">of what it reported, how much was real</span></p>
+                  <p><span className="text-[color:var(--foreground)] font-medium">F1</span> — <span className="text-[color:var(--muted)]">harmonic mean of both, equal weight</span></p>
+                  <p><span className="text-[color:var(--foreground)] font-medium">Tier</span> — <span className="text-[color:var(--muted)]">models whose recall confidence intervals overlap the tier leader&apos;s</span></p>
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">What this run does not measure</h3>
-                <ul className="text-sm text-[var(--muted)] space-y-2 leading-relaxed list-disc list-inside">
-                  <li><span className="text-[var(--foreground)]">Model run-to-run variance.</span> One pass per model — re-running the review agent itself isn&apos;t measured. Judge run-to-run (re-scoring the same submission) is measured separately where available — see each model&apos;s page.</li>
-                  <li><span className="text-[var(--foreground)]">Claude or GPT via API.</span> Anthropic was excluded on subscription-terms grounds; GPT models were measured but ran on a ChatGPT subscription (a different quota regime) and are held back pending an API re-run.</li>
-                  <li><span className="text-[var(--foreground)]">Large PRs.</span> Median diff size in this set is ~13K characters; the largest is ~38K. Some commercial reviewers decline PRs above 200K characters — this benchmark says nothing about that regime.</li>
+                <h3 className="text-sm font-semibold text-[color:var(--foreground)] mb-1">What this run does not measure</h3>
+                <ul className="text-sm text-[color:var(--muted)] space-y-2 leading-relaxed list-disc list-inside">
+                  <li><span className="text-[color:var(--foreground)]">Model run-to-run variance.</span> One pass per model — re-running the review agent itself isn&apos;t measured. Judge run-to-run (re-scoring the same submission) is measured separately where available — see each model&apos;s page.</li>
+                  <li><span className="text-[color:var(--foreground)]">Claude or GPT via API.</span> Anthropic was excluded on subscription-terms grounds; GPT models were measured but ran on a ChatGPT subscription (a different quota regime) and are held back pending an API re-run.</li>
+                  <li><span className="text-[color:var(--foreground)]">Large PRs.</span> Median diff size in this set is ~13K characters; the largest is ~38K. Some commercial reviewers decline PRs above 200K characters — this benchmark says nothing about that regime.</li>
                 </ul>
               </div>
             </div>
-            <div className="pt-4 border-t border-[var(--border)] text-sm text-[var(--muted)]">
-              <span className="text-[var(--foreground)] font-medium">Conflict of interest: </span>
+            <div className="pt-4 border-t border-[var(--border)] text-sm text-[color:var(--muted)]">
+              <span className="text-[color:var(--foreground)] font-medium">Conflict of interest: </span>
               this benchmark is run and published by Kodus, which sells an AI code review product, on Kodus&apos;s own harness.
               It measures models inside one fixed harness — it is not a comparison of review products, and the same harness
               running a different model can score very differently than the numbers here.
@@ -342,12 +343,12 @@ export default function LeaderboardClient() {
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <th className="px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">#</th>
-                  <th className="px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest min-w-[220px] font-bold">Model</th>
+                  <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">#</th>
+                  <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest min-w-[220px] font-bold">Model</th>
                   <SortHeader label="F1" sortKeyName="f1" activeKey={sortKey} onSort={toggleSort} />
                   <SortHeader label="Precision" sortKeyName="precision" activeKey={sortKey} onSort={toggleSort} />
                   <SortHeader label="Recall" sortKeyName="recall" activeKey={sortKey} onSort={toggleSort} />
-                  <th className="px-5 py-3.5 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold text-right">95% CI</th>
+                  <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">95% CI</th>
                   <SortHeader label="$/PR" sortKeyName="costPerPR" activeKey={sortKey} onSort={toggleSort} />
                   <SortHeader label="$/bug" sortKeyName="costPerBugFound" activeKey={sortKey} onSort={toggleSort} />
                 </tr>
@@ -367,7 +368,7 @@ export default function LeaderboardClient() {
                     <Fragment key={e.key}>
                       {showTierDivider && (
                         <tr key={`tier-${e.tier}`} className="bg-[var(--background)]">
-                          <td colSpan={8} className="px-5 py-1.5 text-[10px] font-mono text-[var(--muted-dim)] uppercase tracking-widest">
+                          <td colSpan={8} className="px-5 py-1.5 text-[10px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest">
                             Tier {e.tier} — not statistically distinguishable from the entries above within this group
                           </td>
                         </tr>
@@ -383,7 +384,7 @@ export default function LeaderboardClient() {
                         className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface-2)] transition-colors group"
                       >
                         <td className="px-5 py-4">
-                          <span className={cn('text-sm font-mono tabular-nums', isTop ? 'text-[var(--accent)] font-bold' : 'text-[var(--muted)]')}>
+                          <span className={cn('text-sm font-mono tabular-nums', isTop ? 'text-[color:var(--accent)] font-bold' : 'text-[color:var(--muted)]')}>
                             {(isFiltered ? idx + 1 : e.rank).toString().padStart(2, '0')}
                           </span>
                         </td>
@@ -391,39 +392,39 @@ export default function LeaderboardClient() {
                           <Link href={`/model/${modelSlug(e.modelId)}`} className="flex items-center gap-2.5 group/link">
                             <ProviderLogo provider={provider} />
                             <span className="flex flex-col gap-0.5 min-w-0">
-                              <span className="text-sm font-semibold tracking-tight text-[var(--foreground)] group-hover/link:text-[var(--accent)] transition-colors truncate">
+                              <span className="text-sm font-semibold tracking-tight text-[color:var(--foreground)] group-hover/link:text-[color:var(--accent)] transition-colors truncate">
                                 {displayNameOf(e.modelId)}
                               </span>
-                              <span className="text-[11px] text-[var(--muted)] font-mono uppercase tracking-widest">{provider}</span>
+                              <span className="text-[11px] text-[color:var(--muted)] font-mono uppercase tracking-widest">{provider}</span>
                             </span>
                           </Link>
                         </td>
                         <td className="px-5 py-4 text-right">
-                          <span className={cn('text-base tabular-nums font-mono font-bold', isTop ? 'text-[var(--accent)]' : 'text-[var(--foreground)]')}>
+                          <span className={cn('text-base tabular-nums font-mono font-bold', isTop ? 'text-[color:var(--accent)]' : 'text-[color:var(--foreground)]')}>
                             {f1 == null ? '—' : f1.toFixed(1)}
                           </span>
                         </td>
                         <td className="px-5 py-4 text-right">
-                          <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{precision == null ? '—' : formatScore(precision)}</span>
+                          <span className="text-sm tabular-nums font-mono text-[color:var(--muted)]">{precision == null ? '—' : formatScore(precision)}</span>
                         </td>
                         <td className="px-5 py-4 text-right">
-                          <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{recall == null ? '—' : formatScore(recall)}</span>
+                          <span className="text-sm tabular-nums font-mono text-[color:var(--muted)]">{recall == null ? '—' : formatScore(recall)}</span>
                         </td>
                         <td className="px-5 py-4 text-right">
-                          <span className="text-xs tabular-nums font-mono text-[var(--muted-dim)]">
+                          <span className="text-xs tabular-nums font-mono text-[color:var(--muted-dim)]">
                             {formatCI(ciLow, ciHigh)}
-                            {isFiltered && <span className="ml-1.5 text-[var(--muted-dim)]">n={f?.n ?? 0}</span>}
+                            {isFiltered && <span className="ml-1.5 text-[color:var(--muted-dim)]">n={f?.n ?? 0}</span>}
                           </span>
                         </td>
                         <td className="px-5 py-4 text-right">
                           {e.costPerPR != null ? (
-                            <span className="text-sm tabular-nums font-mono text-[var(--foreground)]">{formatMoney(e.costPerPR, 3)}</span>
+                            <span className="text-sm tabular-nums font-mono text-[color:var(--foreground)]">{formatMoney(e.costPerPR, 3)}</span>
                           ) : (
-                            <span className="text-xs font-mono text-[var(--muted-dim)]">subscription</span>
+                            <span className="text-xs font-mono text-[color:var(--muted-dim)]">subscription</span>
                           )}
                         </td>
                         <td className="px-5 py-4 text-right">
-                          <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{formatMoney(e.costPerBugFound, 2)}</span>
+                          <span className="text-sm tabular-nums font-mono text-[color:var(--muted)]">{formatMoney(e.costPerBugFound, 2)}</span>
                         </td>
                       </motion.tr>
                     </Fragment>
@@ -438,7 +439,7 @@ export default function LeaderboardClient() {
       {/* Frontier */}
       {view === 'frontier' && (
         <div>
-          <p className="text-sm text-[var(--muted)] mb-4 max-w-2xl">
+          <p className="text-sm text-[color:var(--muted)] mb-4 max-w-2xl">
             Recall against measured cost per PR, log scale. The dashed line connects only the Pareto frontier — models where
             nothing is both cheaper and better. Whiskers are the 95% bootstrap interval on recall.
             {isFiltered && ' Recall and CI reflect the active filters; cost per PR is always from the full run.'}
@@ -446,6 +447,53 @@ export default function LeaderboardClient() {
           <CostFrontier data={frontierData} height={560} />
         </div>
       )}
+
+      {/* Fila — o que ainda nao esta medido, e por que. Cada linha tem motivo
+          verificavel (docs/adr-model-access-paths.md, secao 7); nenhuma tem
+          data prometida nem numero. Num bench, "em breve" sem motivo e
+          exatamente o tipo de afirmacao que o site existe pra nao fazer. */}
+      <section className="mt-16 pt-10 border-t border-[var(--border)]">
+        <span className="eyebrow block mb-3">Next up</span>
+        <h2 className="font-display text-[length:var(--text-heading)] text-[color:var(--color-ink-black)] mb-3">
+          Not measured yet
+        </h2>
+        <p className="text-[length:var(--text-body-sm)] text-[color:var(--muted)] max-w-2xl mb-8 leading-[var(--leading-body)]">
+          No provider in this benchmark forbids publishing comparisons. What holds a model back is
+          the access path we are allowed to run it through. These are the ones people ask for most,
+          and where each actually stands.
+        </p>
+
+        <ul className="flex flex-col gap-3">
+          {UPCOMING_MODELS.map((m) => (
+            <li
+              key={m.name}
+              className="card-hairline p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6"
+            >
+              <div className="sm:w-56 shrink-0">
+                <span className="block text-[length:var(--text-body-sm)] font-semibold text-[color:var(--color-ink-black)]">
+                  {m.name}
+                </span>
+                <span className="block text-[length:var(--text-micro)] font-mono uppercase tracking-widest text-[color:var(--muted-dim)]">
+                  {m.provider}
+                </span>
+              </div>
+              <span
+                className={cn(
+                  'shrink-0 inline-flex items-center px-3 py-1 rounded-[var(--radius-badges)] text-[length:var(--text-caption)] font-medium w-fit',
+                  m.status === 'measured'
+                    ? 'bg-[var(--accent-dim)] text-[color:var(--accent)]'
+                    : 'bg-[var(--surface-2)] text-[color:var(--muted)]',
+                )}
+              >
+                {m.status === 'measured' ? 'measured, not published' : 'in the queue'}
+              </span>
+              <p className="text-[length:var(--text-body-sm)] text-[color:var(--muted)] leading-[var(--leading-body)]">
+                {m.note}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

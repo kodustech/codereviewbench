@@ -16,7 +16,7 @@ export default function Footer() {
           open benchmark that wants contributions, so "minimal links only"
           would drop the links that actually matter (see design.md). */}
       <div className="max-w-[var(--page-max-width)] mx-auto px-6 sm:px-12 py-16 sm:py-20">
-        <p className="font-display text-2xl sm:text-4xl text-[var(--foreground)] leading-[1.1] max-w-2xl mb-10 lowercase">
+        <p className="font-display text-2xl sm:text-4xl text-[color:var(--foreground)] leading-[1.1] max-w-2xl mb-10 lowercase">
           if your harness can review a diff, it can be&nbsp;<span className="verb-landmark">measured</span>.
         </p>
 
@@ -26,7 +26,7 @@ export default function Footer() {
               key={link.label}
               href={link.href}
               {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              className="text-sm text-[color:var(--muted)] hover:text-[color:var(--foreground)] transition-colors"
             >
               {link.label}
             </a>
@@ -34,8 +34,8 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-6 mt-6 border-t border-[var(--border)]">
-          <span className="text-sm font-semibold tracking-tight text-[var(--foreground)]">CodeReviewBench</span>
-          <p className="text-xs text-[var(--muted-dim)] font-mono">
+          <span className="text-sm font-semibold tracking-tight text-[color:var(--foreground)]">CodeReviewBench</span>
+          <p className="text-xs text-[color:var(--muted-dim)] font-mono">
             maintained by Kodus &middot; {new Date().getFullYear()}
           </p>
         </div>

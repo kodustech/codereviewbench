@@ -217,11 +217,13 @@ code, pre, .font-mono, [class*="font-mono"], table {
    inventada). A "silhueta" e a propria transicao pro canvas. */
 .hero-dusk {
   background: var(--dusk);
-  color: #ffffff;
 }
-/* Portal: nunca por texto preto sobre superficie cromatica. Dentro do hero o
-   texto inverte inteiro. */
-.hero-dusk .eyebrow { color: #ffffff; opacity: 0.72; }
+/* O eyebrow padrao usa --foreground com opacidade — em cima do gradiente isso
+   dava contraste 2.6. Sobre o dusk ele vai a branco puro. */
+.eyebrow--on-dusk {
+  color: #ffffff;
+  opacity: 1;
+}
 
 /* Custom scrollbar */
 .custom-scrollbar::-webkit-scrollbar {

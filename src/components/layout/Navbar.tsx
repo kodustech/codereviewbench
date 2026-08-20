@@ -37,7 +37,7 @@ export default function Navbar() {
             <img src="/kodus-logo.webp" alt="Kodus" />
           </span>
           <div className="w-px h-4 bg-[var(--border-bright)]" />
-          <span className="text-sm font-semibold tracking-tight text-[var(--foreground)]">
+          <span className="text-sm font-semibold tracking-tight text-[color:var(--foreground)]">
             CodeReviewBench
           </span>
         </Link>
@@ -52,8 +52,8 @@ export default function Navbar() {
                 className={cn(
                   'px-3 py-1.5 text-sm rounded-full transition-colors',
                   isActive
-                    ? 'text-[var(--foreground)] bg-[var(--surface-2)]'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                    ? 'text-[color:var(--foreground)] bg-[var(--surface-2)]'
+                    : 'text-[color:var(--muted)] hover:text-[color:var(--foreground)]'
                 )}
               >
                 {link.label}
@@ -66,7 +66,7 @@ export default function Navbar() {
           href="https://github.com/kodustech/kodus-ai/blob/main/evals/scorer/README.md"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-medium rounded-full bg-[var(--accent)] text-[var(--background)] hover:brightness-110 transition-[filter]"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-medium rounded-full bg-[var(--accent)] text-[color:var(--background)] hover:brightness-110 transition-[filter]"
         >
           <GitPullRequest className="size-3.5" />
           Contribute
@@ -81,9 +81,9 @@ export default function Navbar() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/kodus-logo.webp" alt="Kodus" />
             </span>
-            <span className="text-sm font-semibold tracking-tight text-[var(--foreground)]">CodeReviewBench</span>
+            <span className="text-sm font-semibold tracking-tight text-[color:var(--foreground)]">CodeReviewBench</span>
           </Link>
-          <button className="text-[var(--muted)] p-2" onClick={() => setMobileOpen((v) => !v)} aria-label="Toggle menu">
+          <button className="text-[color:var(--muted)] p-2" onClick={() => setMobileOpen((v) => !v)} aria-label="Toggle menu">
             {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
         </div>
@@ -98,7 +98,7 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className={cn(
                     'text-base font-medium py-2 px-3 rounded-md transition-colors',
-                    isActive ? 'text-[var(--foreground)] bg-[var(--surface)]' : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                    isActive ? 'text-[color:var(--foreground)] bg-[var(--surface)]' : 'text-[color:var(--muted)] hover:text-[color:var(--foreground)]'
                   )}
                 >
                   {link.label}
@@ -109,7 +109,7 @@ export default function Navbar() {
               href="https://github.com/kodustech/kodus-ai/blob/main/evals/scorer/README.md"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-base font-medium py-2 px-3 rounded-md text-[var(--accent)] hover:bg-[var(--surface)]"
+              className="flex items-center gap-2 text-base font-medium py-2 px-3 rounded-md text-[color:var(--accent)] hover:bg-[var(--surface)]"
             >
               <GitPullRequest className="size-4" />
               Contribute

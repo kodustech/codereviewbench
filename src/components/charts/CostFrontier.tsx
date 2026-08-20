@@ -77,33 +77,33 @@ function FrontierTooltip({ active, payload }: FrontierTooltipProps) {
   const d: FrontierPoint = payload[0].payload;
   return (
     <div className="bg-[var(--surface-2)] border border-[var(--border-bright)] p-4 rounded-xl shadow-2xl text-sm">
-      <p className="font-bold text-[var(--foreground)] mb-2">{d.name}</p>
-      <p className="text-[var(--muted)]">
+      <p className="font-bold text-[color:var(--foreground)] mb-2">{d.name}</p>
+      <p className="text-[color:var(--muted)]">
         recall{' '}
-        <span className="text-[var(--foreground)] font-mono">
+        <span className="text-[color:var(--foreground)] font-mono">
           {d.recall.toFixed(1)}%
         </span>{' '}
         <span className="font-mono text-xs">
           [{d.ciLow.toFixed(1)}–{d.ciHigh.toFixed(1)}]
         </span>
       </p>
-      <p className="text-[var(--muted)]">
+      <p className="text-[color:var(--muted)]">
         cost/PR{' '}
-        <span className="text-[var(--foreground)] font-mono">
+        <span className="text-[color:var(--foreground)] font-mono">
           {money(d.costPerPR)}
         </span>
       </p>
       {d.costPerBug != null && (
-        <p className="text-[var(--muted)]">
+        <p className="text-[color:var(--muted)]">
           cost/bug{' '}
-          <span className="text-[var(--foreground)] font-mono">
+          <span className="text-[color:var(--foreground)] font-mono">
             {money(d.costPerBug)}
           </span>
         </p>
       )}
-      <p className="text-[var(--muted)]">
+      <p className="text-[color:var(--muted)]">
         output tokens/PR{' '}
-        <span className="text-[var(--foreground)] font-mono">
+        <span className="text-[color:var(--foreground)] font-mono">
           {d.tokensOut.toLocaleString('en-US')}
         </span>
       </p>

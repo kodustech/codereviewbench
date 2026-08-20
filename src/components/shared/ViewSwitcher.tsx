@@ -27,8 +27,8 @@ export default function ViewSwitcher({ views, active, onChange }: ViewSwitcherPr
             className={cn(
               'flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-md transition-all',
               active === v.key
-                ? 'bg-[var(--surface-2)] text-[var(--foreground)] shadow-sm'
-                : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                ? 'bg-[var(--surface-2)] text-[color:var(--foreground)] shadow-sm'
+                : 'text-[color:var(--muted)] hover:text-[color:var(--foreground)]'
             )}
           >
             {Icon && <Icon className="size-4" />}

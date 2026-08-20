@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
+import { Inter, DM_Serif_Display, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/layout/Navbar";
@@ -8,10 +8,14 @@ import Script from "next/script";
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from "@/lib/site";
 import JsonLd from "@/components/seo/JsonLd";
 
-// Portal pede Perfectly Nineties no display; nao e livre. O spec nomeia
-// Playfair Display como substituto, e e o que o next/font serve.
+// Portal pede Perfectly Nineties no display; nao e livre. O spec nomeia tres
+// substitutos: Playfair Display, DM Serif Display, Recoleta.
+// DM Serif Display e a escolha certa: Perfectly Nineties e serifa retro de
+// traco PARELHO, e a Playfair e Didone (contraste extremo grosso/fino, serifa
+// capilar) — em display grande ela le fraca e some em fundo de baixo
+// contraste. Recoleta nao e livre. Registrado no design.md.
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", weight: ["400", "500", "600"] });
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-display", weight: "400" });
+const displaySerif = DM_Serif_Display({ subsets: ["latin"], variable: "--font-display", weight: "400" });
 // Desvio: o Portal nao tem mono. Este site tem caminho de arquivo, id de
 // modelo e coluna numerica — sem mono a tabela perde alinhamento e o recibo
 // deixa de parecer recibo. Mantido, registrado no design.md.
@@ -75,9 +79,9 @@ export default function RootLayout({
       </head>
       <body className={cn(
         inter.variable,
-        playfair.variable,
+        displaySerif.variable,
         mono.variable,
-        "font-sans bg-[var(--background)] text-[var(--foreground)] min-h-dvh flex flex-col relative"
+        "font-sans bg-[var(--background)] text-[color:var(--foreground)] min-h-dvh flex flex-col relative"
       )}>
         {/* O grain saiu com o Portal: textura de filme e recurso de tema
             escuro. Sobre canvas #f7f7f7 ela nao le como grao, le como tela

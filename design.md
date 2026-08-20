@@ -24,8 +24,22 @@
 >    uma TABELA — e o produto. A regra do Portal foi aplicada as secoes
 >    editoriais; as de dado seguem a alocacao que este design.md ja dava
 >    ("a benchmark table's job is density, not air").
-> 5. **Perfectly Nineties -> Playfair Display**, primeiro substituto nomeado
->    pelo proprio spec. A fonte original nao e livre.
+> 5. **Perfectly Nineties -> DM Serif Display.** O spec nomeia tres
+>    substitutos (Playfair Display, DM Serif Display, Recoleta). A primeira
+>    tentativa usou Playfair e ficou fraca: Playfair e Didone, com contraste
+>    extremo grosso/fino e serifa capilar, e some em fundo de baixo contraste.
+>    A Perfectly Nineties e serifa retro de traco PARELHO — a DM Serif Display
+>    e quem carrega isso. Recoleta nao e livre.
+>
+>    **Texto do hero fica SOBRE o gradiente**, contra o "Don't" do spec
+>    ("text must sit on white or #f7f7f7 surfaces only"). A alternativa fiel
+>    (copy num card branco) foi construida, vista e descartada: resolvia o
+>    contraste e matava o hero. Mitigacao medida: DM Serif no lugar da
+>    Playfair, branco puro sem opacidade, e conteudo ancorado no TOPO do hero
+>    (onde o gradiente ainda esta em #4a7ff2). Contraste saiu de
+>    2.61/3.37/2.65 para 3.70/3.63/3.38 (eyebrow/h1/subhead). O H1 a 48px passa
+>    AA-large; eyebrow e subhead seguem abaixo de 4.5, que e o preco conhecido
+>    de manter texto no gradiente.
 > 6. **Sem silhueta de horizonte no hero.** O Portal descreve arvores na base
 >    do gradiente. Seria ilustracao decorativa inventada, que o proprio Portal
 >    proibe em "Imagery". A transicao pro canvas faz o papel.
