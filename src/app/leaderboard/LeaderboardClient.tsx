@@ -372,7 +372,6 @@ export default function LeaderboardClient() {
                 <h3 className="text-sm font-semibold text-[color:var(--foreground)] mb-1">What this run does not measure</h3>
                 <ul className="text-sm text-[color:var(--muted)] space-y-2 leading-relaxed list-disc list-inside">
                   <li><span className="text-[color:var(--foreground)]">Model run-to-run variance.</span> One pass per model — re-running the review agent itself isn&apos;t measured. Judge run-to-run (re-scoring the same submission) is measured separately where available — see each model&apos;s page.</li>
-                  <li><span className="text-[color:var(--foreground)]">Claude or GPT via API.</span> Anthropic was excluded on subscription-terms grounds; GPT models were measured but ran on a ChatGPT subscription (a different quota regime) and are held back pending an API re-run.</li>
                   <li><span className="text-[color:var(--foreground)]">Large PRs.</span> Median diff size in this set is ~13K characters; the largest is ~38K. Some commercial reviewers decline PRs above 200K characters — this benchmark says nothing about that regime.</li>
                 </ul>
               </div>

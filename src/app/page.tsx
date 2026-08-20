@@ -166,11 +166,6 @@ export default function Home() {
             scores as tied either way.
           </p>
           <p>
-            <span className="text-[color:var(--color-ink-black)] font-semibold">Claude or GPT via API.</span>{' '}
-            Anthropic is excluded on subscription-terms grounds. GPT models were measured on a
-            ChatGPT subscription and held back pending an API run.
-          </p>
-          <p>
             <span className="text-[color:var(--color-ink-black)] font-semibold">Harnesses other than Kodus&apos;s, so far.</span>{' '}
             Every entry to date runs on the same harness, so what you are comparing is models
             inside one review agent. The submission contract is open, and other harnesses get
