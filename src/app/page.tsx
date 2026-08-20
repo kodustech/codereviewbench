@@ -21,8 +21,8 @@ export default function Home() {
           pagina: o Portal permite exatamente um visual competindo com o texto
           aqui ("the product mockup is the only visual element competing with
           text in the hero composition"). */}
-      <header className="w-full hero-dusk relative overflow-clip">
-        <div className="w-full max-w-[var(--page-max-width)] mx-auto px-6 sm:px-12 pt-8 sm:pt-28 pb-16 sm:pb-16">
+      <header className="w-full hero-dusk relative">
+        <div className="w-full max-w-[var(--page-max-width)] mx-auto px-6 sm:px-12 pt-12 sm:pt-40 pb-16 sm:pb-10">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 lg:gap-10 items-start">
             {/* Texto direto no gradiente. O card branco foi testado e
                 descartado: resolvia contraste mas matava o hero.
@@ -36,10 +36,6 @@ export default function Home() {
                      no azul escuro (#4a7ff2); mais abaixo ele clareia pro
                      malva e nada branco sobrevive ali. */}
             <div className="reveal" style={{ ['--i' as string]: 0 }}>
-              <span className="eyebrow eyebrow--on-dusk block mb-5">
-                {meta.models.length} models &middot; {meta.totalCases} real PRs &middot; {meta.totalGoldens} confirmed bugs
-              </span>
-
               {/* H1 = o nome da coisa. Num site de benchmark a categoria E a
                   oferta, e e o termo que a pessoa busca. Sem verb landmark
                   porque nao ha verbo — desvio registrado no design.md. */}
@@ -47,10 +43,11 @@ export default function Home() {
                 <span className="normal-case">AI</span> code review benchmark
               </h1>
 
-              <p className="text-[length:var(--text-body)] leading-[var(--leading-body)] tracking-[var(--tracking-body)] text-white max-w-xl mb-9">
-                Which models actually catch real bugs, measured on merged pull requests from
-                production open-source projects. Every run is versioned in the repo, so you can
-                check the numbers or re-score them yourself.
+              <p className="text-[length:var(--text-heading-sm)] font-semibold leading-[var(--leading-heading-sm)] tracking-[var(--tracking-heading-sm)] text-white max-w-xl mb-10">
+                Which models actually catch real bugs, measured on {meta.totalCases} merged pull
+                requests from production open-source projects against {meta.totalGoldens} confirmed
+                bugs. Every run is versioned in the repo, so you can check the numbers or re-score
+                them yourself.
               </p>
 
               {/* Hero Pill Button do spec: pill branco solido, texto preto.
@@ -77,7 +74,11 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="reveal" style={{ ['--i' as string]: 1 }}>
+            {/* O card transborda a borda de baixo do gradiente. E o unico
+                elemento que toca as duas zonas (dusk e canvas), entao e ele
+                que costura o hero na pagina — sem isso a coluna curta de texto
+                e a coluna comprida do card ficam soltas lado a lado. */}
+            <div className="reveal lg:-mb-28 relative z-10" style={{ ['--i' as string]: 1 }}>
               <ScorecardStack entries={topEntries.slice(0, 3)} />
             </div>
           </div>
@@ -90,7 +91,7 @@ export default function Home() {
           blocos empilhados. As paginas de DADO (leaderboard, compare, model)
           mantem densidade — ver design.md. ─────────────────────────────── */}
 
-      <section className="w-full px-6 sm:px-12 pt-[var(--section-gap)]">
+      <section className="w-full px-6 sm:px-12 pt-[calc(var(--section-gap)+7rem)]">
         <div className="editorial">
           <span className="eyebrow block mb-4">Methodology</span>
           <h2 className="mb-5">How the benchmark works</h2>

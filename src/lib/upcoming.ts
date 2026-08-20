@@ -37,7 +37,7 @@ export const UPCOMING_MODELS: UpcomingModel[] = [
   {
     name: 'GPT-5.6',
     provider: 'OpenAI',
-    status: 'measured',
-    note: 'Already measured, but over a ChatGPT subscription, which the terms do not allow for this. Held back until it is re-run over the API.',
+    status: 'queued',
+    note: 'OpenAI allows this benchmark over an API key. The ChatGPT subscription path does not, so this one waits on an API run.',
   },
 ];
