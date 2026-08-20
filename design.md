@@ -1,5 +1,45 @@
 # Design — CodeReviewBench
 
+> ## ⚠️ EXPERIMENTO ABERTO — tema Portal (branch `design/portal`, 2026-08-20)
+>
+> Esta branch troca o tema **Lumen (Night Foundry, escuro)** pelo **Portal
+> (twilight serif editorial, claro)**. O resto deste documento ainda descreve
+> o Lumen e continua valendo em `bench/scorecards-pipeline`, que esta intacta.
+> Se o Portal for adotado, este arquivo tem que ser reescrito, nao emendado.
+>
+> **Desvios conscientes do spec do Portal**, todos porque este e um site de
+> DADO, nao uma landing de produto:
+>
+> 1. **Mono mantida (JetBrains Mono).** O Portal nao tem mono. Aqui existe
+>    caminho de arquivo, id de modelo e coluna numerica; sem mono a tabela
+>    perde alinhamento e o recibo deixa de parecer recibo.
+> 2. **Paleta semantica preservada** (`--success`, `--danger`, `--accent-2`).
+>    O Portal pede um acento cromatico so. Essa regra vale pro chrome; estes
+>    tres codificam significado que o leitor distingue sem ler rotulo
+>    (achou/nao achou, severidade, lado A vs B do compare).
+> 3. **Cores de marca dos providers mantidas.** Sao identidade de terceiro,
+>    nao decoracao nossa.
+> 4. **Densidade das paginas de app mantida.** O Portal manda coluna unica de
+>    640-720px e proibe grid de cards nas secoes de marketing. A leaderboard e
+>    uma TABELA — e o produto. A regra do Portal foi aplicada as secoes
+>    editoriais; as de dado seguem a alocacao que este design.md ja dava
+>    ("a benchmark table's job is density, not air").
+> 5. **Perfectly Nineties -> Playfair Display**, primeiro substituto nomeado
+>    pelo proprio spec. A fonte original nao e livre.
+> 6. **Sem silhueta de horizonte no hero.** O Portal descreve arvores na base
+>    do gradiente. Seria ilustracao decorativa inventada, que o proprio Portal
+>    proibe em "Imagery". A transicao pro canvas faz o papel.
+>
+> **Removido junto**: o grain overlay e o `blueprint-grid` (tecnicas de tema
+> escuro), o `paper-emit` (wash interno dos cards) e ~120 linhas de CSS morto
+> do apparatus/meter, que ja nao eram usadas antes desta branch.
+>
+> **Bug de asset**: `public/kodus-logo.webp` tem o wordmark em BRANCO e so o
+> simbolo cromatico — em tema claro o wordmark sumia. A classe `.brand-mark`
+> recorta pro simbolo (34% da largura, medido no arquivo). Se o Portal for
+> adotado, o certo e exportar um logo com wordmark escuro.
+
+
 A locked design system for this app. Every page redesign reads this file before
 emitting code. Do not regenerate per page — extend or amend this file when the
 system needs to grow.

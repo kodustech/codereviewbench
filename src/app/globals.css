@@ -1,7 +1,8 @@
-/* Hallmark · genre: atmospheric · macrostructure: Marquee Hero (home) / Stat-Led (app pages)
- * theme: Lumen (Night Foundry drop) · enrichment: Tier A/B hand-built apparatus (home only)
- * nav: N5 · footer: Ft5-extended · design-system: design.md · designed-as-app
- * pre-emit critique: P5 H4 E4 S5 R5 V4
+/* Hallmark · genre: editorial · macrostructure: Marquee Hero (home) / Stat-Led (app pages)
+ * theme: Portal (twilight serif editorial, light) · nav: N5 · footer: Ft5-extended
+ * design-system: design.md · designed-as-app
+ * EXPERIMENTO — branch design/portal. O tema anterior (Lumen / Night Foundry)
+ * esta intacto em bench/scorecards-pipeline.
  */
 @import "tailwindcss";
 
@@ -11,30 +12,57 @@
   --color-accent: var(--accent);
   --color-accent-dim: var(--accent-dim);
   --font-display: var(--font-display);
+
+  /* Portal manda raio generoso em tudo: cards 22-30px, botao pill 50px.
+     Redefinir a escala do Tailwind aqui e o que faz os `rounded-md`/`rounded-lg`
+     ja espalhados pelo TSX herdarem o novo sistema sem tocar em cada arquivo. */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-2xl: 26px;
+  --radius-3xl: 30px;
 }
 
 @layer base {
   :root {
-    /* Lumen · Night Foundry — see design.md for the full role mapping */
-    --background: oklch(13% 0.014 265);
-    --foreground: oklch(96% 0.006 262);
-    --foreground-2: oklch(86% 0.008 262);
-    --accent: oklch(76% 0.17 50);
-    --accent-dim: oklch(76% 0.17 50 / 0.14);
-    --accent-2: oklch(68% 0.16 18);
-    --surface: oklch(17% 0.015 265);
-    --surface-2: oklch(21% 0.016 265);
-    --border: oklch(96% 0.006 262 / 0.09);
-    --border-bright: oklch(96% 0.006 262 / 0.16);
-    --muted: oklch(66% 0.010 262);
-    --muted-dim: oklch(48% 0.010 262);
-    --glow: oklch(80% 0.16 50 / 0.42);
-    --paper-emit: oklch(76% 0.17 50 / 0.05);
-    --rule-blueprint: oklch(96% 0.006 262 / 0.045);
-    --focus: oklch(80% 0.17 50);
-    --success: oklch(72% 0.15 145);
-    --danger: oklch(68% 0.18 25);
-    --info: oklch(72% 0.14 240);
+    /* ── Portal · twilight serif editorial ──────────────────────────────
+       Achromatico + exatamente um azul funcional (#007aff). Ver design.md. */
+
+    /* Superficies */
+    --background: #f7f7f7;   /* page canvas */
+    --surface: #ffffff;      /* card */
+    --surface-2: #f2f2f2;    /* hover / linha zebrada */
+
+    /* Texto */
+    --foreground: #000000;   /* headings, so */
+    --foreground-2: #3e3e3e; /* corpo */
+    --muted: #636363;        /* metadata */
+    --muted-dim: #8e8e8e;    /* rotulos fracos */
+
+    /* Acento funcional unico */
+    --accent: #007aff;
+    --accent-dim: rgba(0, 122, 255, 0.10);
+    --on-accent: #ffffff;
+    --focus: #007aff;
+
+    /* Bordas. Portal descreve "1px outline" + "5px glow ring #f7f7f7". O ring
+       some quando o card esta sobre o proprio canvas #f7f7f7, entao no plano
+       existe hairline; o ring fica pro que flutua sobre o gradiente. */
+    --border: rgba(0, 0, 0, 0.09);
+    --border-bright: rgba(0, 0, 0, 0.16);
+    --glow-ring: #f7f7f7;
+
+    /* Gradiente do hero — o unico momento cromatico do sistema. */
+    --dusk: linear-gradient(180deg, #4a7ff2 0%, #7b7ed8 30%, #c98ab5 65%, #e8a87c 100%);
+
+    /* Paleta SEMANTICA (dado, nao decoracao). Portal pede um acento so, e essa
+       regra vale pro chrome. Estes tres codificam significado que o leitor tem
+       que distinguir sem ler o rotulo: achou/nao achou, severidade, delta. */
+    --success: #1a7f45;
+    --danger:  #c0362c;
+    --info:    #007aff;
+    --accent-2: #b06f1e;   /* severidade alta / lado B do compare */
 
     /* 4pt spacing scale */
     --space-3xs: 0.125rem;
@@ -79,7 +107,7 @@ body {
    colour + a 1px underline that draws in once on first paint. */
 .verb-landmark {
   font-style: normal;
-  color: var(--accent-2);
+  color: var(--accent);
   position: relative;
   white-space: nowrap;
 }
@@ -90,7 +118,7 @@ body {
   right: 0.05em;
   bottom: 0.03em;
   height: 1px;
-  background: var(--accent-2);
+  background: var(--accent);
   transform-origin: left;
   animation: pivot-underline var(--dur-long) var(--ease-out) 700ms backwards;
 }
@@ -109,36 +137,38 @@ body {
   opacity: 0.55;
 }
 
-/* Hairline card with inner emission — never a drop-shadow, never a glow. */
+/* Card Portal — branco sobre canvas, raio generoso, sem drop-shadow.
+   O "inner emission" do Lumen era tecnica de tema escuro (wash quente no topo
+   de uma superficie preta); em canvas claro nao existe. A profundidade aqui e
+   hairline + o glow ring de 5px, que e a linguagem de elevacao do Portal. */
 .card-hairline {
   position: relative;
   border: 1px solid var(--border);
-  border-radius: 0.625rem;
+  border-radius: 22px;
   background: var(--surface);
-  transition: border-color var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out);
-}
-.card-hairline::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(120% 100% at 20% 0%, var(--paper-emit), transparent 70%);
-  opacity: 1;
-  pointer-events: none;
-  transition: opacity var(--dur-short) var(--ease-out);
+  transition: box-shadow var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
 }
 .card-hairline:hover {
   border-color: var(--border-bright);
 }
 
-/* Blueprint grid — the hero's "engineered, not vibed" signal. 4.5% opacity. */
-.blueprint-grid {
-  background:
-    linear-gradient(var(--rule-blueprint) 1px, transparent 1px) 0 0 / 48px 48px,
-    linear-gradient(90deg, var(--rule-blueprint) 1px, transparent 1px) 0 0 / 48px 48px,
-    radial-gradient(60% 55% at 78% 25%, var(--paper-emit) 0%, transparent 65%),
-    var(--background);
+/* Elevacao: anel palido em vez de sombra. So vale sobre o gradiente ou sobre
+   branco — sobre o canvas #f7f7f7 o anel e da cor do fundo e some. */
+.glow-ring {
+  box-shadow: 0 0 0 5px var(--glow-ring);
 }
+
+/* Hero atmosphere — o unico momento cromatico do sistema. Gradiente dusk
+   full-bleed, com a silhueta de horizonte na base feita em CSS (sem imagem:
+   o Portal proibe stock/ilustracao, e um SVG de arvore aqui seria decoracao
+   inventada). A "silhueta" e a propria transicao pro canvas. */
+.hero-dusk {
+  background: var(--dusk);
+  color: #ffffff;
+}
+/* Portal: nunca por texto preto sobre superficie cromatica. Dentro do hero o
+   texto inverte inteiro. */
+.hero-dusk .eyebrow { color: #ffffff; opacity: 0.72; }
 
 /* Custom scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
@@ -199,12 +229,6 @@ body {
   animation: panel-in var(--dur-short) var(--ease-out);
 }
 
-/* Apparatus filament pulse — 3% intensity, 4s period, never rotates */
-@keyframes filament-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.86; }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 150ms !important;
@@ -213,126 +237,12 @@ body {
   }
   .reveal { animation-name: fade-in; }
   .verb-landmark::after { animation: none; transform: scaleX(1); }
-  .apparatus__edge { animation: none; }
-  .apparatus__core::before { animation: none; }
-}
-
-/* Apparatus — codebase-topology (judge + 5 real repo nodes). Pure SVG. */
-.apparatus {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1;
-  max-width: 420px;
-  margin-inline: auto;
-}
-.apparatus__svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-.apparatus__edge {
-  stroke: var(--border-bright);
-  stroke-width: 1;
-  stroke-dasharray: 3 5;
-  animation: flow 3.2s linear infinite;
-}
-@keyframes flow {
-  to { stroke-dashoffset: -32; }
-}
-.apparatus__core {
-  fill: var(--surface);
-  stroke: var(--accent);
-  stroke-width: 1.5;
-  filter: drop-shadow(0 0 14px var(--glow));
-  animation: filament-pulse var(--dur-pulse) ease-in-out infinite;
-}
-.apparatus__node {
-  fill: var(--accent);
-  opacity: 0.85;
-}
-.apparatus__core-label {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--foreground);
-  opacity: 0.75;
-  text-align: center;
-  pointer-events: none;
-}
-.apparatus__callouts {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.apparatus__callout {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 3px 0;
-  pointer-events: none;
-}
-.apparatus__callout[data-side='right'] { align-items: flex-start; padding-left: 14px; }
-.apparatus__callout[data-side='left'] { align-items: flex-end; padding-right: 14px; text-align: right; }
-.apparatus__callout[data-side='center'] { align-items: center; text-align: center; }
-.apparatus__callout-name {
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--foreground);
-  white-space: nowrap;
-}
-.apparatus__callout-meta {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-/* Meter strip — real per-case recall spectrum, not decoration. */
-.meter {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: var(--space-lg);
-  padding: var(--space-sm) 0;
-  border-block: 1px solid var(--border);
-}
-.meter__bars {
-  display: flex;
-  gap: 1.5px;
-  align-items: end;
-  height: 32px;
-}
-.meter__bars > span {
-  flex: 1;
-  min-width: 1px;
-  background: var(--accent);
-  border-radius: 0.5px;
-}
-.meter__label {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  white-space: nowrap;
-  margin: 0;
-}
-.meter__label--right {
-  text-align: right;
 }
 
 /* Selection */
 ::selection {
-  background: color-mix(in oklch, var(--accent) 35%, transparent);
-  color: var(--background);
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
 /* Focus ring — instant, never transitioned */
@@ -341,36 +251,18 @@ body {
   outline-offset: 2px;
 }
 
-/* Nucleo do apparatus: o anel sozinho lia como circulo vazio. O wash interno
-   e o que faz o Night Foundry "emitir" em vez de so desenhar contorno. */
-.apparatus__core-emit {
-  animation: filament-pulse var(--dur-pulse) ease-in-out infinite;
-  pointer-events: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  .apparatus__core-emit { animation: none; }
-}
-
 /* Scorecard como recibo — o rastro de auditoria E o visual do hero.
    Referencia do spec do Lumen: "the receipt is the artwork". */
 .receipt {
   margin: 0;
   border: 1px solid var(--border);
-  border-radius: 0.625rem;
+  border-radius: 22px;
   background: var(--surface);
   overflow: hidden;
   max-width: 27rem;
   font-family: var(--font-mono);
   font-size: 12px;
   position: relative;
-}
-.receipt::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(120% 100% at 20% 0%, var(--paper-emit), transparent 70%);
-  pointer-events: none;
 }
 .receipt__head {
   display: flex;
@@ -491,10 +383,16 @@ body {
   bottom: 0;
   pointer-events: none;
 }
-/* As de tras escurecem pra criar profundidade sem sombra colorida (o Lumen
-   reserva emissao pro apparatus, nao pra cards). */
+/* As de tras recuam pro fundo. No tema escuro isso era `brightness` pra baixo;
+   em canvas claro escurecer um card branco deixa ele sujo.
+   Cuidado: `opacity` no .receipt inteiro deixa VAZAR a carta de baixo atraves
+   dela (a superficie fica translucida e o gradiente e o texto de tras
+   aparecem). O fade tem que ser no CONTEUDO, com a superficie opaca. */
 .stack__item:not(:first-child) .receipt {
-  filter: brightness(calc(1 - var(--i) * 0.18));
+  background: var(--surface);
+}
+.stack__item:not(:first-child) .receipt > * {
+  opacity: calc(1 - var(--i) * 0.28);
 }
 .stack:hover {
   --stack-shift: var(--stack-shift-max);
@@ -502,4 +400,24 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .stack__item { transition: none; }
   .stack:hover { --stack-shift: 0px; }
+}
+
+/* Marca Kodus em tema claro. O asset tem o wordmark "kodus" em BRANCO (feito
+   pro tema escuro) e so o simbolo e cromatico — sobre a capsula branca do
+   Portal o wordmark simplesmente sumia. Recorta pro simbolo, que e a parte
+   que sobrevive em qualquer fundo. O nome ja esta escrito ao lado, que e o
+   lockup que o proprio Portal descreve (icone + wordmark em texto).
+   34% e onde o pixel colorido termina no arquivo (244px de largura). */
+.brand-mark {
+  display: block;
+  overflow: hidden;
+  width: calc(var(--brand-h) * (244 / 84) * 0.336);
+  height: var(--brand-h);
+}
+.brand-mark img {
+  height: var(--brand-h);
+  width: calc(var(--brand-h) * (244 / 84));
+  max-width: none;
+  object-fit: cover;
+  object-position: left center;
 }

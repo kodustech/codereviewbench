@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <div className="flex-1 flex flex-col items-center">
       {/* Hero — Marquee: apparatus at hero-right, verb-landmark headline at hero-left */}
-      <header className="w-full blueprint-grid relative overflow-clip">
+      <header className="w-full hero-dusk relative overflow-clip">
         <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 pt-8 sm:pt-12 pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 lg:gap-8 items-center">
             <div className="reveal" style={{ ['--i' as string]: 0 }}>
@@ -36,11 +36,11 @@ export default function Home() {
               {/* H1 = o nome da coisa. Num site de benchmark a categoria E a
                   oferta, e e o termo que a pessoa busca. Sem verb landmark
                   porque nao ha verbo — desvio registrado no design.md. */}
-              <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-[var(--foreground)] leading-[1.08] mb-7 max-w-2xl lowercase">
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-white leading-[1.08] mb-7 max-w-2xl lowercase">
                 <span className="normal-case">AI</span> code review benchmark
               </h1>
 
-              <p className="text-lg text-[var(--foreground-2)] max-w-xl leading-relaxed mb-12">
+              <p className="text-lg text-white/85 max-w-xl leading-relaxed mb-12">
                 Which models actually catch real bugs, measured on merged pull requests from
                 production open-source projects. Every run is versioned in the repo, so you can
                 check the numbers or re-score them yourself.
@@ -53,7 +53,7 @@ export default function Home() {
               <div className="flex flex-wrap items-center gap-3">
                 <Link
                   href="/leaderboard"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-full bg-[var(--accent)] text-[var(--background)] hover:brightness-110 transition-[filter]"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold rounded-full bg-white text-black hover:bg-white/90 transition-colors"
                 >
                   View rankings
                   <ArrowRight className="size-4" />
@@ -62,7 +62,7 @@ export default function Home() {
                   href="https://github.com/kodustech/codereviewbench"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-full border border-[var(--border-bright)] text-[var(--foreground-2)] hover:text-[var(--foreground)] hover:border-[var(--accent)] transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-full border-[1.5px] border-white/70 text-white hover:bg-white/10 hover:border-white transition-colors"
                 >
                   <GitPullRequest className="size-4" />
                   Check the artifacts
@@ -208,8 +208,10 @@ export default function Home() {
             </div>
             <div className="p-6 flex flex-col gap-5 flex-1 relative">
               <a href="https://kodus.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity w-fit">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/kodus-logo.webp" alt="Kodus" className="h-6" />
+                <span className="brand-mark" style={{ ['--brand-h' as string]: '24px' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/kodus-logo.webp" alt="Kodus" />
+                </span>
               </a>
               <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
                 This benchmark is run and published by

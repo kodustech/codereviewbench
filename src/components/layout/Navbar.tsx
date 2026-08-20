@@ -21,16 +21,13 @@ export default function Navbar() {
       {/* N5 · Floating pill — detached, content-sized, blur backdrop */}
       <nav
         aria-label="Primary"
-        className="hidden sm:inline-flex fixed top-4 left-1/2 -translate-x-1/2 z-20 items-center gap-6 pl-4 pr-2 py-2 rounded-full border border-[var(--border)] shadow-[0_8px_24px_-12px_oklch(0%_0_0_/_0.4)]"
-        style={{ background: 'color-mix(in oklch, var(--background) 78%, transparent)', backdropFilter: 'blur(14px) saturate(120%)' }}
+        className="hidden sm:inline-flex fixed top-5 left-1/2 -translate-x-1/2 z-20 items-center gap-6 pl-4 pr-2 py-2 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] glow-ring"
       >
         <Link href="/" className="flex items-center gap-2.5 group">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/kodus-logo.webp"
-            alt="Kodus"
-            className="h-5 opacity-90 group-hover:opacity-100 transition-opacity"
-          />
+          <span className="brand-mark opacity-90 group-hover:opacity-100 transition-opacity" style={{ ['--brand-h' as string]: '20px' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/kodus-logo.webp" alt="Kodus" />
+          </span>
           <div className="w-px h-4 bg-[var(--border-bright)]" />
           <span className="text-sm font-semibold tracking-tight text-[var(--foreground)]">
             CodeReviewBench
@@ -72,8 +69,10 @@ export default function Navbar() {
       <nav aria-label="Primary" className="sm:hidden w-full border-b border-[var(--border)] bg-[var(--background)]/90 backdrop-blur-xl sticky top-0 z-20">
         <div className="px-6 flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2.5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/kodus-logo.webp" alt="Kodus" className="h-5" />
+            <span className="brand-mark" style={{ ['--brand-h' as string]: '20px' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/kodus-logo.webp" alt="Kodus" />
+            </span>
             <span className="text-sm font-semibold tracking-tight text-[var(--foreground)]">CodeReviewBench</span>
           </Link>
           <button className="text-[var(--muted)] p-2" onClick={() => setMobileOpen((v) => !v)} aria-label="Toggle menu">

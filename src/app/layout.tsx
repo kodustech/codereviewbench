@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/layout/Navbar";
@@ -8,8 +8,13 @@ import Script from "next/script";
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from "@/lib/site";
 import JsonLd from "@/components/seo/JsonLd";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans", weight: ["400", "500", "600"] });
-const instrumentSerif = Instrument_Serif({ subsets: ["latin"], variable: "--font-display", weight: "400" });
+// Portal pede Perfectly Nineties no display; nao e livre. O spec nomeia
+// Playfair Display como substituto, e e o que o next/font serve.
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans", weight: ["400", "500", "600"] });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-display", weight: "400" });
+// Desvio: o Portal nao tem mono. Este site tem caminho de arquivo, id de
+// modelo e coluna numerica — sem mono a tabela perde alinhamento e o recibo
+// deixa de parecer recibo. Mantido, registrado no design.md.
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
@@ -69,15 +74,14 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={cn(
-        geist.variable,
-        instrumentSerif.variable,
+        inter.variable,
+        playfair.variable,
         mono.variable,
         "font-sans bg-[var(--background)] text-[var(--foreground)] min-h-dvh flex flex-col relative"
       )}>
-        {/* Grain texture overlay */}
-        <div className="fixed inset-0 pointer-events-none z-50 opacity-[0.03]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-        }} />
+        {/* O grain saiu com o Portal: textura de filme e recurso de tema
+            escuro. Sobre canvas #f7f7f7 ela nao le como grao, le como tela
+            suja, e o Portal pede superficie chapada. */}
         <JsonLd />
         <Navbar />
         <main className="flex-1 flex flex-col relative">
