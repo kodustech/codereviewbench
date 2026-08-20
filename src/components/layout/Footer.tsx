@@ -17,7 +17,7 @@ export default function Footer() {
           would drop the links that actually matter (see design.md). */}
       <div className="max-w-[var(--page-max-width)] mx-auto px-6 sm:px-12 py-16 sm:py-20">
         <p className="font-display text-2xl sm:text-4xl text-[color:var(--foreground)] leading-[1.1] max-w-2xl mb-10 lowercase">
-          if your harness can review a diff, it can be&nbsp;<span className="verb-landmark">measured</span>.
+          vendors publish claims. we publish the&nbsp;<span className="landmark">run</span>.
         </p>
 
         <div className="flex flex-wrap gap-x-6 gap-y-2 pt-6 border-t border-[var(--border)]">

@@ -31,6 +31,14 @@
 >    A Perfectly Nineties e serifa retro de traco PARELHO — a DM Serif Display
 >    e quem carrega isso. Recoleta nao e livre.
 >
+> 7. **O verb-landmark virou landmark, e nao e mais obrigatoriamente verbo.**
+>    O Lumen pedia exatamente um VERBO em accent por statement. Nesta branch a
+>    regra nao se sustenta: o H1 e sintagma nominal e o statement do rodape
+>    ("vendors publish claims. we publish the **run**.") marca um substantivo.
+>    O que a marcacao serve pra fazer e destacar a palavra de virada da frase,
+>    e ela nem sempre e um verbo. Classe renomeada de `.verb-landmark` pra
+>    `.landmark` pra o nome nao mentir sobre a regra.
+>
 >    **Texto do hero fica SOBRE o gradiente**, contra o "Don't" do spec
 >    ("text must sit on white or #f7f7f7 surfaces only"). A alternativa fiel
 >    (copy num card branco) foi construida, vista e descartada: resolvia o

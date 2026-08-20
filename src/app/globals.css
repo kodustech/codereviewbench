@@ -156,15 +156,19 @@ code, pre, .font-mono, [class*="font-mono"], table {
   letter-spacing: normal;
 }
 
-/* Verb landmark: exactly one accent-2 word per hero headline, never italic —
-   colour + a 1px underline that draws in once on first paint. */
-.verb-landmark {
+/* Landmark: exatamente uma palavra em accent por statement, nunca italico —
+   cor + um sublinhado de 1px que desenha uma vez no primeiro paint.
+   Era "verb-landmark" no Lumen, com a regra de ser sempre um VERBO. Nesta
+   branch a regra caiu: o H1 e sintagma nominal (sem verbo) e o statement do
+   rodape marca "run", que e substantivo. O que importa e destacar a palavra
+   de virada da frase, e ela nem sempre e um verbo. Registrado no design.md. */
+.landmark {
   font-style: normal;
   color: var(--accent);
   position: relative;
   white-space: nowrap;
 }
-.verb-landmark::after {
+.landmark::after {
   content: '';
   position: absolute;
   left: 0.05em;
@@ -284,7 +288,7 @@ code, pre, .font-mono, [class*="font-mono"], table {
     transition-duration: 150ms !important;
   }
   .reveal { animation-name: fade-in; }
-  .verb-landmark::after { animation: none; transform: scaleX(1); }
+  .landmark::after { animation: none; transform: scaleX(1); }
 }
 
 /* Selection */

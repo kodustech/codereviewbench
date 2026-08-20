@@ -22,7 +22,7 @@ export default function Home() {
           aqui ("the product mockup is the only visual element competing with
           text in the hero composition"). */}
       <header className="w-full hero-dusk relative">
-        <div className="w-full max-w-[var(--page-max-width)] mx-auto px-6 sm:px-12 pt-12 sm:pt-40 pb-16 sm:pb-10">
+        <div className="w-full max-w-[var(--page-max-width)] mx-auto px-6 sm:px-12 pt-16 sm:pt-56 pb-20 sm:pb-24">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 lg:gap-10 items-start">
             {/* Texto direto no gradiente. O card branco foi testado e
                 descartado: resolvia contraste mas matava o hero.
@@ -78,7 +78,7 @@ export default function Home() {
                 elemento que toca as duas zonas (dusk e canvas), entao e ele
                 que costura o hero na pagina — sem isso a coluna curta de texto
                 e a coluna comprida do card ficam soltas lado a lado. */}
-            <div className="reveal lg:-mb-28 relative z-10" style={{ ['--i' as string]: 1 }}>
+            <div className="reveal lg:mt-8 lg:-mb-40 relative z-10" style={{ ['--i' as string]: 1 }}>
               <ScorecardStack entries={topEntries.slice(0, 3)} />
             </div>
           </div>
@@ -171,9 +171,10 @@ export default function Home() {
             ChatGPT subscription and held back pending an API run.
           </p>
           <p>
-            <span className="text-[color:var(--color-ink-black)] font-semibold">A comparison of review products.</span>{' '}
-            This is one harness (Kodus&apos;s own) reviewing models inside it, not a comparison
-            between Kodus and other code review tools.
+            <span className="text-[color:var(--color-ink-black)] font-semibold">Harnesses other than Kodus&apos;s, so far.</span>{' '}
+            Every entry to date runs on the same harness, so what you are comparing is models
+            inside one review agent. The submission contract is open, and other harnesses get
+            measured the same way once they are submitted.
           </p>
         </div>
       </section>
@@ -308,8 +309,8 @@ export default function Home() {
           <p>
             This benchmark is run and published by
             <a href="https://kodus.io" target="_blank" rel="noopener noreferrer" className="text-[color:var(--color-ink-black)] hover:text-[color:var(--accent)] transition-colors mx-1 font-medium">Kodus</a>,
-            an AI code review company, on Kodus&apos;s own harness. It measures models, not review
-            products. See the
+            an AI code review company, on Kodus&apos;s own harness. Every entry so far runs on
+            that harness, so what the ranking compares is models inside it. See the
             <Link href="/leaderboard" className="text-[color:var(--accent)] hover:underline mx-1">leaderboard</Link>
             for the full disclosure.
           </p>
