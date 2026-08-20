@@ -22,7 +22,7 @@ interface Props {
 export default function ScorecardStack({ entries }: Props) {
   // A de indice 0 fica na frente; as seguintes recuam.
   return (
-    <div className="stack">
+    <div className="stack stack--ringed">
       {entries.map((e, i) => (
         <div
           key={e.key}

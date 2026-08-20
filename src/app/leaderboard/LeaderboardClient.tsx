@@ -217,7 +217,7 @@ export default function LeaderboardClient() {
     });
 
   return (
-    <div className="max-w-[1400px] mx-auto w-full px-6 sm:px-12 py-12">
+    <div className="max-w-[var(--page-max-width)] mx-auto w-full px-6 sm:px-12 py-12">
       {/* Header */}
       <div className="mb-10">
         <span className="eyebrow block mb-3">Rankings</span>

@@ -22,7 +22,14 @@ export default function Navbar() {
       {/* N5 · Floating pill — detached, content-sized, blur backdrop */}
       <nav
         aria-label="Primary"
-        className="hidden sm:inline-flex fixed top-5 left-1/2 -translate-x-1/2 z-20 items-center gap-6 pl-4 pr-2 py-2 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] glow-ring"
+        className="hidden sm:inline-flex fixed top-5 left-1/2 -translate-x-1/2 z-20 items-center gap-6 pl-4 pr-2 py-2 rounded-[var(--radius-nav)] border border-[var(--border)] glow-ring"
+        /* Desvio do spec: ele pede #ffffff solido. A capsula tem quase a
+           mesma largura da coluna de leitura (615 vs 680px), entao TODO texto
+           da pagina passa exatamente por tras dela; solida, ela cortava a
+           frase no meio e lia como bug de render. Frosted resolve e e coerente
+           com a propria linguagem do Portal, que descreve o glow ring como
+           emprestado do visionOS/frosted glass. */
+        style={{ background: 'rgba(255, 255, 255, 0.82)', backdropFilter: 'blur(14px) saturate(140%)' }}
       >
         <Link href="/" className="flex items-center gap-2.5 group">
           <span className="brand-mark opacity-90 group-hover:opacity-100 transition-opacity" style={{ ['--brand-h' as string]: '20px' }}>

@@ -102,7 +102,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
   const repoRows = Object.entries(entry.byRepo).sort((a, b) => b[1].goldens - a[1].goldens);
 
   return (
-    <div className="max-w-[1400px] mx-auto w-full px-6 sm:px-12 py-12">
+    <div className="max-w-[var(--page-max-width)] mx-auto w-full px-6 sm:px-12 py-12">
       <div className="flex items-center justify-between gap-4 mb-8">
         <Link
           href="/leaderboard"

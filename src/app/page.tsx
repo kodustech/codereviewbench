@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, FlaskConical, Layers, Scale, GitPullRequest, Bug, FileCode2, Cpu, ShieldCheck } from 'lucide-react';
+import { ArrowRight, GitPullRequest } from 'lucide-react';
 import meta from '@/lib/data/meta.json';
 import leaderboardData from '@/lib/data/leaderboard.json';
 import type { LeaderboardData } from '@/lib/types';
@@ -14,55 +14,53 @@ const lb = leaderboardData as unknown as LeaderboardData;
 export default function Home() {
   const topEntries = [...lb.entries].sort((a, b) => b.f1 - a.f1).slice(0, 5);
 
-
   return (
     <div className="flex-1 flex flex-col items-center">
-      {/* Hero — Marquee: apparatus at hero-right, verb-landmark headline at hero-left */}
+      {/* Hero — full-bleed, a capsula da nav flutua por cima (o spacer do
+          Navbar e suprimido na home). E a unica composicao de duas colunas da
+          pagina: o Portal permite exatamente um visual competindo com o texto
+          aqui ("the product mockup is the only visual element competing with
+          text in the hero composition"). */}
       <header className="w-full hero-dusk relative overflow-clip">
-        <div className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 pt-8 sm:pt-28 pb-16 sm:pb-24">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 lg:gap-8 items-center">
+        <div className="w-full max-w-[var(--page-max-width)] mx-auto px-6 sm:px-12 pt-8 sm:pt-28 pb-16 sm:pb-24">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 lg:gap-10 items-center">
             <div className="reveal" style={{ ['--i' as string]: 0 }}>
-              {/* H1 descritivo carrega a frase-alvo de busca; o statement da
-                  marca continua sendo o elemento visual dominante logo abaixo.
-                  Antes o H1 era so o statement e nao tinha nenhuma das
-                  palavras-alvo. Desvio registrado no design.md. */}
               {/* Eyebrow carrega a ESCALA em registro de label de maquina.
-                  Substitui o stat row de tres celulas (padrao templado); a
-                  mesma informacao cabe numa linha. Numeros do meta.json. */}
-              <span className="eyebrow block mb-4">
+                  Numeros do meta.json. */}
+              <span className="eyebrow block mb-5">
                 {meta.models.length} models &middot; {meta.totalCases} real PRs &middot; {meta.totalGoldens} confirmed bugs
               </span>
 
               {/* H1 = o nome da coisa. Num site de benchmark a categoria E a
                   oferta, e e o termo que a pessoa busca. Sem verb landmark
-                  porque nao ha verbo — desvio registrado no design.md. */}
-              <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-white leading-[1.08] mb-7 max-w-2xl lowercase">
+                  porque nao ha verbo — desvio registrado no design.md.
+                  Tamanho: --text-display (48px) do spec. */}
+              <h1 className="font-display text-[2rem] sm:text-[2.75rem] lg:text-[var(--text-display)] text-white mb-7 max-w-2xl lowercase">
                 <span className="normal-case">AI</span> code review benchmark
               </h1>
 
-              <p className="text-lg text-white/85 max-w-xl leading-relaxed mb-12">
+              <p className="text-[var(--text-body)] leading-[var(--leading-body)] text-white/85 max-w-xl mb-12">
                 Which models actually catch real bugs, measured on merged pull requests from
                 production open-source projects. Every run is versioned in the repo, so you can
                 check the numbers or re-score them yourself.
               </p>
 
-
-              {/* O texto promete "re-score it yourself" — sem o link pro repo
-                  a promessa fica solta. CTA secundario e o que fecha a tese
-                  de auditabilidade. */}
+              {/* Hero Pill Button do spec: pill branco, texto preto — o azul
+                  se perderia dentro do proprio gradiente azul. */}
               <div className="flex flex-wrap items-center gap-3">
                 <Link
                   href="/leaderboard"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold rounded-full bg-white text-black hover:bg-white/90 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 text-[var(--text-body-sm)] font-semibold rounded-[var(--radius-buttons)] bg-white text-black hover:bg-white/90 transition-colors"
                 >
                   View rankings
                   <ArrowRight className="size-4" />
                 </Link>
+                {/* Ghost Pill: borda 1.5px, nunca preenchido. */}
                 <a
                   href="https://github.com/kodustech/codereviewbench"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-full border-[1.5px] border-white/70 text-white hover:bg-white/10 hover:border-white transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 text-[var(--text-body-sm)] font-medium rounded-[var(--radius-buttons)] border-[1.5px] border-white/70 text-white hover:bg-white/10 hover:border-white transition-colors"
                 >
                   <GitPullRequest className="size-4" />
                   Check the artifacts
@@ -75,186 +73,141 @@ export default function Home() {
             </div>
           </div>
         </div>
-
       </header>
 
-      {/* Methodology */}
-      <section className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 py-24">
-        <span className="eyebrow block mb-3">Methodology</span>
-        <h2 className="font-display text-3xl sm:text-4xl text-[var(--foreground)] mb-4">How the benchmark works</h2>
-        <p className="text-base text-[var(--foreground-2)] max-w-2xl mb-14 leading-[1.75]">
-          Every model reviews the same {meta.totalCases} real PRs, against the same human-authored golden comments, judged the
-          same way. One run per model, at vendor defaults — the numbers are what you get out of the box.
-        </p>
+      {/* ── Daqui pra baixo: coluna unica, largura de leitura, texto corrido.
+          O Portal proibe grid de cards nas secoes editoriais; as tres grades
+          que existiam aqui (metrics 2-up, repos 3/2, explainer 3-up) viraram
+          blocos empilhados. As paginas de DADO (leaderboard, compare, model)
+          mantem densidade — ver design.md. ─────────────────────────────── */}
 
-        {/* Pipeline — a flowing numbered list, not a 4-up icon-tile grid */}
-        <div className="flex flex-col mb-20 border-t border-[var(--border)]">
-          {[
-            {
-              step: '01',
-              icon: FileCode2,
-              title: 'Real PRs, real bugs',
-              desc: `${meta.totalCases} merged pull requests from ${meta.repos.length} production OSS repos, each with human-authored review comments as ground truth — ${meta.totalGoldens} golden bugs in total.`,
-              wide: true,
-            },
-            {
-              step: '02',
-              icon: Cpu,
-              title: 'Deterministic replay',
-              desc: 'Each model runs the same production review agent, with tool calls replayed against a frozen snapshot of the repo — no live network, no non-determinism from the codebase changing under it.',
-            },
-            {
-              step: '03',
-              icon: Scale,
-              title: 'One judge, every finding',
-              desc: `${meta.judges[0]} decides whether each reported finding describes the same underlying issue as a golden comment. Micro-averaged: true/false positives are summed across all PRs before computing precision and recall.`,
-              wide: true,
-            },
-            {
-              step: '04',
-              icon: ShieldCheck,
-              title: 'Publish the artifacts',
-              desc: 'Every submission and scorecard is versioned in the repo. Re-scoring never requires re-running a model — only the judge call is repeated.',
-            },
-          ].map((item) => (
-            <div
-              key={item.step}
-              className={cn(
-                'grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-4 sm:gap-8 py-7 border-b border-[var(--border)]',
-                item.wide ? 'sm:pr-0' : 'sm:pr-24',
-              )}
-            >
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="font-mono text-[13px] text-[var(--accent)] font-bold tabular-nums">{item.step}</span>
-                <item.icon className="size-4 text-[var(--muted)]" />
-              </div>
-              <div>
-                <h3 className="text-[15px] font-semibold text-[var(--foreground)] mb-1.5">{item.title}</h3>
-                <p className="text-sm text-[var(--foreground-2)] leading-[1.75] max-w-2xl">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Two columns: What we measure + What we don't */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-20">
-          <div className="card-hairline overflow-hidden">
-            <div className="px-6 py-4 border-b border-[var(--border)] relative">
-              <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">Metrics</h3>
-            </div>
-            <div className="divide-y divide-[var(--border)] relative">
-              {[
-                { metric: 'Recall', desc: 'How many of the known bugs the model actually found.' },
-                { metric: 'Precision', desc: 'Of what it reported, how much was real — a model that talks more finds more but also misfires more.' },
-                { metric: 'F1', desc: 'Harmonic mean of both, equal weight. What the leaderboard ranks by, so talking more is never free.' },
-                { metric: 'Tier', desc: 'Models whose recall confidence interval overlaps the tier leader’s. The exact rank inside a tier is noise, not signal.' },
-              ].map((m) => (
-                <div key={m.metric} className="px-6 py-4 flex items-start gap-4">
-                  <span className="text-sm font-semibold text-[var(--foreground)] font-mono w-24 shrink-0">{m.metric}</span>
-                  <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">{m.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="card-hairline overflow-hidden">
-            <div className="px-6 py-4 border-b border-[var(--border)] flex items-center gap-3 relative">
-              <FlaskConical className="size-4 text-[var(--accent)]" />
-              <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">What this doesn&apos;t measure</h3>
-            </div>
-            <div className="p-6 flex flex-col gap-4 relative">
-              <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
-                <span className="text-[var(--foreground)] font-medium">Model run-to-run variance.</span> One pass per model — the
-                review agent itself only runs once per entry. Judge noise (re-scoring the same submission) is measured
-                separately where available — treat close scores as tied either way.
-              </p>
-              <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
-                <span className="text-[var(--foreground)] font-medium">Claude or GPT via API.</span> Anthropic is excluded on
-                subscription-terms grounds; GPT models were measured on a ChatGPT subscription and held back pending an API run.
-              </p>
-              <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
-                <span className="text-[var(--foreground)] font-medium">A comparison of review products.</span> This is one harness
-                (Kodus&apos;s own) reviewing models inside it — not a comparison between Kodus and other code review tools.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Repos + Powered by Kodus */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-3 card-hairline overflow-hidden">
-            <div className="px-6 py-4 border-b border-[var(--border)] relative">
-              <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">Source repositories</h3>
-            </div>
-            <div className="p-6 flex flex-wrap gap-2 relative">
-              {meta.repos.map((repo) => (
-                <span key={repo} className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[var(--background)] border border-[var(--border)] text-sm text-[var(--foreground)]">
-                  <Layers className="size-3.5 text-[var(--muted)]" />
-                  {REPO_LABELS[repo] || repo}
-                </span>
-              ))}
-            </div>
-            <div className="px-6 pb-6 relative">
-              <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
-                Merged PRs across {meta.languages.length} languages ({meta.languages.join(', ')}). Same set, same golden
-                comments, for every model — the comparison is fair even when the result isn&apos;t flattering.
-              </p>
-            </div>
-          </div>
-
-          <div className="lg:col-span-2 card-hairline overflow-hidden flex flex-col">
-            <div className="px-6 py-4 border-b border-[var(--border)] relative">
-              <h3 className="text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">Powered by</h3>
-            </div>
-            <div className="p-6 flex flex-col gap-5 flex-1 relative">
-              <a href="https://kodus.io" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:opacity-100 transition-opacity w-fit">
-                <span className="brand-mark" style={{ ['--brand-h' as string]: '24px' }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/kodus-logo.webp" alt="Kodus" />
-                </span>
-              </a>
-              <p className="text-sm text-[var(--foreground-2)] leading-[1.75]">
-                This benchmark is run and published by
-                <a href="https://kodus.io" target="_blank" rel="noopener noreferrer" className="text-[var(--foreground)] hover:text-[var(--accent)] transition-colors mx-1 font-medium">Kodus</a>,
-                an AI code review company, on Kodus&apos;s own harness. It measures models, not review products — see the
-                <Link href="/leaderboard" className="text-[var(--accent)] hover:underline mx-1">leaderboard</Link>
-                for the full disclosure.
-              </p>
-              <a
-                href="https://kodus.io"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-auto inline-flex items-center gap-2 text-sm text-[var(--accent)] hover:underline font-medium group w-fit"
-              >
-                Learn about Kodus <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
-              </a>
-            </div>
-          </div>
+      <section className="w-full px-6 sm:px-12 pt-[var(--section-gap)]">
+        <div className="editorial">
+          <span className="eyebrow block mb-4">Methodology</span>
+          <h2 className="mb-5">How the benchmark works</h2>
+          <p>
+            Every model reviews the same {meta.totalCases} real PRs, against the same human-authored
+            golden comments, judged the same way. One run per model, at vendor defaults, so the
+            numbers are what you get out of the box.
+          </p>
         </div>
       </section>
 
-      {/* Mini Leaderboard */}
-      <section className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 py-24 border-t border-[var(--border)]">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10">
-          <div>
-            <span className="eyebrow block mb-3">Rankings</span>
-            <h2 className="font-display text-3xl sm:text-4xl text-[var(--foreground)]">Global leaderboard</h2>
+      {/* Pipeline — quatro blocos editoriais, um por passo. O numero fica como
+          rotulo mono discreto acima do titulo, nao como coluna de grid. */}
+      {[
+        {
+          step: '01',
+          title: 'Real PRs, real bugs',
+          body: `${meta.totalCases} merged pull requests from ${meta.repos.length} production OSS repos, each with human-authored review comments as ground truth. ${meta.totalGoldens} golden bugs in total.`,
+        },
+        {
+          step: '02',
+          title: 'Deterministic replay',
+          body: 'Each model runs the same production review agent, with tool calls replayed against a frozen snapshot of the repo. No live network, and no non-determinism from the codebase changing under it.',
+        },
+        {
+          step: '03',
+          title: 'One judge, every finding',
+          body: `${meta.judges[0]} decides whether each reported finding describes the same underlying issue as a golden comment. Micro-averaged: true and false positives are summed across all PRs before computing precision and recall.`,
+        },
+        {
+          step: '04',
+          title: 'Publish the artifacts',
+          body: 'Every submission and scorecard is versioned in the repo. Re-scoring never requires re-running a model, only the judge call is repeated.',
+        },
+      ].map((s) => (
+        <section key={s.step} className="w-full px-6 sm:px-12 pt-[var(--spacing-60)]">
+          <div className="editorial">
+            <span className="font-mono text-[var(--text-caption)] text-[var(--accent)] font-bold tabular-nums block mb-2">
+              {s.step}
+            </span>
+            <h3 className="mb-2">{s.title}</h3>
+            <p>{s.body}</p>
           </div>
-          <Link
-            href="/leaderboard"
-            className="inline-flex items-center gap-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors group"
-          >
-            Full ranking <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
-          </Link>
+        </section>
+      ))}
+
+      {/* Metricas — lista de definicao em texto corrido, nao card com linhas. */}
+      <section className="w-full px-6 sm:px-12 pt-[var(--section-gap)]">
+        <div className="editorial">
+          <h2 className="mb-5">What the numbers mean</h2>
+          {[
+            { metric: 'Recall', desc: 'How many of the known bugs the model actually found.' },
+            { metric: 'Precision', desc: 'Of what it reported, how much was real. A model that talks more finds more but also misfires more.' },
+            { metric: 'F1', desc: 'Harmonic mean of both, equal weight. What the leaderboard ranks by, so talking more is never free.' },
+            { metric: 'Tier', desc: 'Models whose recall confidence interval overlaps the tier leader’s. The exact rank inside a tier is noise, not signal.' },
+          ].map((m) => (
+            <p key={m.metric}>
+              <span className="text-[var(--color-ink-black)] font-semibold">{m.metric}.</span>{' '}
+              {m.desc}
+            </p>
+          ))}
+        </div>
+      </section>
+
+      <section className="w-full px-6 sm:px-12 pt-[var(--section-gap)]">
+        <div className="editorial">
+          <h2 className="mb-5">What this doesn&apos;t measure</h2>
+          <p>
+            <span className="text-[var(--color-ink-black)] font-semibold">Model run-to-run variance.</span>{' '}
+            One pass per model, so the review agent itself only runs once per entry. Judge noise
+            (re-scoring the same submission) is measured separately where available. Treat close
+            scores as tied either way.
+          </p>
+          <p>
+            <span className="text-[var(--color-ink-black)] font-semibold">Claude or GPT via API.</span>{' '}
+            Anthropic is excluded on subscription-terms grounds. GPT models were measured on a
+            ChatGPT subscription and held back pending an API run.
+          </p>
+          <p>
+            <span className="text-[var(--color-ink-black)] font-semibold">A comparison of review products.</span>{' '}
+            This is one harness (Kodus&apos;s own) reviewing models inside it, not a comparison
+            between Kodus and other code review tools.
+          </p>
+        </div>
+      </section>
+
+      {/* Repositorios — os chips continuam sendo dado (a lista real de repos),
+          mas fluem dentro da coluna de leitura em vez de morar num card. */}
+      <section className="w-full px-6 sm:px-12 pt-[var(--section-gap)]">
+        <div className="editorial">
+          <h2 className="mb-5">Source repositories</h2>
+          <div className="flex flex-wrap gap-[var(--spacing-8)] mb-[var(--spacing-20)]">
+            {meta.repos.map((repo) => (
+              <span
+                key={repo}
+                className="inline-flex items-center px-[var(--spacing-12)] py-[var(--spacing-6)] rounded-[var(--radius-badges)] bg-[var(--surface-card)] border border-[var(--border)] text-[var(--text-caption)] font-medium text-[var(--color-ink-black)]"
+              >
+                {REPO_LABELS[repo] || repo}
+              </span>
+            ))}
+          </div>
+          <p>
+            Merged PRs across {meta.languages.length} languages ({meta.languages.join(', ')}). Same
+            set, same golden comments, for every model, so the comparison is fair even when the
+            result isn&apos;t flattering.
+          </p>
+        </div>
+      </section>
+
+      {/* Mini leaderboard — DADO. Fica como tabela, dentro de um card branco
+          com o glow ring: e o "product screenshot inside a device frame" que o
+          proprio Portal descreve como o unico visual permitido fora do hero.
+          Largura de pagina, nao de leitura: coluna alinhada e o ponto dela. */}
+      <section className="w-full max-w-[var(--page-max-width)] mx-auto px-6 sm:px-12 pt-[var(--section-gap)]">
+        <div className="mb-[var(--spacing-36)]">
+          <span className="eyebrow block mb-4">Rankings</span>
+          <h2 className="font-display text-[var(--text-heading)] text-[var(--color-ink-black)]">Global leaderboard</h2>
         </div>
 
-        <div className="card-hairline overflow-hidden">
+        <div className="card-hairline overflow-hidden glow-ring">
           <div className="overflow-x-auto custom-scrollbar relative">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-[var(--border)]">
                   {['#', 'Model', 'F1', 'Precision', 'Recall', 'Cost/PR'].map((h) => (
-                    <th key={h} className="px-5 py-3 text-xs font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">
+                    <th key={h} className="px-5 py-3 text-[var(--text-micro)] font-mono text-[var(--muted-dim)] uppercase tracking-widest font-bold">
                       {h}
                     </th>
                   ))}
@@ -267,7 +220,7 @@ export default function Home() {
                     className={cn('border-b border-[var(--border)] last:border-b-0 transition-colors hover:bg-[var(--surface-2)]')}
                   >
                     <td className="px-5 py-4">
-                      <span className={cn('text-sm font-mono tabular-nums', idx === 0 ? 'text-[var(--accent)] font-bold' : 'text-[var(--muted)]')}>
+                      <span className={cn('text-[var(--text-body-sm)] font-mono tabular-nums', idx === 0 ? 'text-[var(--accent)] font-bold' : 'text-[var(--muted)]')}>
                         {(idx + 1).toString().padStart(2, '0')}
                       </span>
                     </td>
@@ -275,26 +228,26 @@ export default function Home() {
                       <Link href={`/model/${modelSlug(e.modelId)}`} className="group/link flex items-center gap-2.5">
                         <ProviderLogo provider={providerOf(e.modelId)} />
                         <span className="flex flex-col gap-0.5">
-                          <span className="text-sm font-semibold tracking-tight transition-colors group-hover/link:text-[var(--accent)] text-[var(--foreground)]">
+                          <span className="text-[var(--text-body-sm)] font-semibold transition-colors group-hover/link:text-[var(--accent)] text-[var(--foreground)]">
                             {displayNameOf(e.modelId)}
                           </span>
-                          <span className="text-xs text-[var(--muted-dim)] font-mono uppercase tracking-widest">{providerOf(e.modelId)}</span>
+                          <span className="text-[var(--text-micro)] text-[var(--muted-dim)] font-mono uppercase tracking-widest">{providerOf(e.modelId)}</span>
                         </span>
                       </Link>
                     </td>
                     <td className="px-5 py-4">
-                      <span className={cn('text-base tabular-nums font-mono font-bold', idx === 0 ? 'text-[var(--accent)]' : 'text-[var(--foreground)]')}>
+                      <span className={cn('text-[var(--text-body)] tabular-nums font-mono font-bold', idx === 0 ? 'text-[var(--accent)]' : 'text-[var(--foreground)]')}>
                         {e.f1.toFixed(1)}
                       </span>
                     </td>
                     <td className="px-5 py-4">
-                      <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{formatScore(e.precision)}</span>
+                      <span className="text-[var(--text-body-sm)] tabular-nums font-mono text-[var(--muted)]">{formatScore(e.precision)}</span>
                     </td>
                     <td className="px-5 py-4">
-                      <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{formatScore(e.score)}</span>
+                      <span className="text-[var(--text-body-sm)] tabular-nums font-mono text-[var(--muted)]">{formatScore(e.score)}</span>
                     </td>
                     <td className="px-5 py-4">
-                      <span className="text-sm tabular-nums font-mono text-[var(--muted)]">{formatMoney(e.costPerPR, 3)}</span>
+                      <span className="text-[var(--text-body-sm)] tabular-nums font-mono text-[var(--muted)]">{formatMoney(e.costPerPR, 3)}</span>
                     </td>
                   </tr>
                 ))}
@@ -302,32 +255,54 @@ export default function Home() {
             </table>
           </div>
         </div>
+
+        <div className="mt-[var(--spacing-24)]">
+          <Link
+            href="/leaderboard"
+            className="inline-flex items-center gap-2 text-[var(--text-body-sm)] text-[var(--accent)] hover:underline font-medium group"
+          >
+            Full ranking <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
       </section>
 
-      {/* Explainer — unequal spans, icon inline with heading, not a 3-up icon-tile grid */}
-      <section className="w-full max-w-[1400px] mx-auto px-6 sm:px-12 py-24 border-t border-[var(--border)]">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr_0.9fr] gap-6">
-          <div className="card-hairline p-7 flex flex-col gap-3">
-            <div className="flex items-center gap-2.5 relative">
-              <Bug className="size-4 text-[var(--muted)]" />
-              <h3 className="text-[15px] font-semibold text-[var(--foreground)]">No model finds even half</h3>
-            </div>
-            <p className="text-sm text-[var(--foreground-2)] leading-[1.75] relative">The best recall in this benchmark is under 45%. Code review has a lot of headroom left.</p>
-          </div>
-          <div className="card-hairline p-7 flex flex-col gap-3">
-            <div className="flex items-center gap-2.5 relative">
-              <Scale className="size-4 text-[var(--accent)]" />
-              <h3 className="text-[15px] font-semibold text-[var(--foreground)]">Precision and recall trade off</h3>
-            </div>
-            <p className="text-sm text-[var(--foreground-2)] leading-[1.75] relative">The model that talks the least is often the most precise — different products, not different quality.</p>
-          </div>
-          <div className="card-hairline p-7 flex flex-col gap-3">
-            <div className="flex items-center gap-2.5 relative">
-              <GitPullRequest className="size-4 text-[var(--muted)]" />
-              <h3 className="text-[15px] font-semibold text-[var(--foreground)]">Bring your own harness</h3>
-            </div>
-            <p className="text-sm text-[var(--foreground-2)] leading-[1.75] relative">Submissions are a documented JSON contract. Submit a PR against the same cases.</p>
-          </div>
+      {/* Leituras — eram tres cards 3-up, agora blocos empilhados. */}
+      <section className="w-full px-6 sm:px-12 pt-[var(--section-gap)]">
+        <div className="editorial">
+          <h2 className="mb-5">What the results say so far</h2>
+          <p>
+            <span className="text-[var(--color-ink-black)] font-semibold">No model finds even half.</span>{' '}
+            The best recall in this benchmark is under 45%. Code review has a lot of headroom left.
+          </p>
+          <p>
+            <span className="text-[var(--color-ink-black)] font-semibold">Precision and recall trade off.</span>{' '}
+            The model that talks the least is often the most precise. Different products, not
+            different quality.
+          </p>
+          <p>
+            <span className="text-[var(--color-ink-black)] font-semibold">Bring your own harness.</span>{' '}
+            Submissions are a documented JSON contract. Submit a PR against the same cases.
+          </p>
+        </div>
+      </section>
+
+      {/* Quem publica — encerra a coluna editorial antes do rodape. */}
+      <section className="w-full px-6 sm:px-12 pt-[var(--section-gap)] pb-[var(--section-gap)]">
+        <div className="editorial">
+          <a href="https://kodus.io" target="_blank" rel="noopener noreferrer" className="inline-block mb-[var(--spacing-16)] opacity-80 hover:opacity-100 transition-opacity">
+            <span className="brand-mark" style={{ ['--brand-h' as string]: '24px' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/kodus-logo.webp" alt="Kodus" />
+            </span>
+          </a>
+          <p>
+            This benchmark is run and published by
+            <a href="https://kodus.io" target="_blank" rel="noopener noreferrer" className="text-[var(--color-ink-black)] hover:text-[var(--accent)] transition-colors mx-1 font-medium">Kodus</a>,
+            an AI code review company, on Kodus&apos;s own harness. It measures models, not review
+            products. See the
+            <Link href="/leaderboard" className="text-[var(--accent)] hover:underline mx-1">leaderboard</Link>
+            for the full disclosure.
+          </p>
         </div>
       </section>
     </div>

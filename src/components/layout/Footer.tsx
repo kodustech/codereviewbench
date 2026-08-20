@@ -15,7 +15,7 @@ export default function Footer() {
       {/* Ft5 Statement, extended with a condensed real link row — this is an
           open benchmark that wants contributions, so "minimal links only"
           would drop the links that actually matter (see design.md). */}
-      <div className="max-w-[1400px] mx-auto px-6 sm:px-12 py-16 sm:py-20">
+      <div className="max-w-[var(--page-max-width)] mx-auto px-6 sm:px-12 py-16 sm:py-20">
         <p className="font-display text-2xl sm:text-4xl text-[var(--foreground)] leading-[1.1] max-w-2xl mb-10 lowercase">
           if your harness can review a diff, it can be&nbsp;<span className="verb-landmark">measured</span>.
         </p>

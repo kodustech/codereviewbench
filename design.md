@@ -30,6 +30,27 @@
 >    do gradiente. Seria ilustracao decorativa inventada, que o proprio Portal
 >    proibe em "Imagery". A transicao pro canvas faz o papel.
 >
+> **Conformidade fechada em 2026-08-20 (2a passada)**: escala de tipo do spec
+> (display 48px / heading 36px, line-height 1.0), tracking -0.02em global na
+> Inter (mono e tabela isentas — apertar mono quebra alinhamento de coluna),
+> page max-width 1200px em TODAS as paginas, os 6 shadows, glow ring na pilha
+> de recibos (o "Device Mockup Card" do spec), e os nomes de token do spec como
+> fonte de verdade com os nomes semanticos do site virando alias.
+>
+> **Home reestruturada pro Portal literal**: as tres grades de card (metrics
+> 2-up, repos 3/2, explainer 3-up) viraram blocos editoriais empilhados em
+> coluna de 680px com gap de 100px. O hero segue em duas colunas — o spec
+> permite exatamente um visual competindo com o texto ali. A tabela do mini
+> leaderboard fica em largura de pagina, dentro de card com glow ring, que e o
+> tratamento que o proprio Portal da pra "product screenshot inside a device
+> frame". Leaderboard/compare/model seguem densos.
+>
+> **Desvio novo**: a capsula da nav ganhou backdrop-blur em vez do #ffffff
+> solido do spec. Ela tem quase a largura da coluna de leitura (615 vs 680px),
+> entao todo texto da pagina passa exatamente por tras dela; solida, cortava a
+> frase no meio e lia como bug. Frosted e coerente com a propria linguagem do
+> Portal, que descreve o glow ring como emprestado do visionOS.
+>
 > **Removido junto**: o grain overlay e o `blueprint-grid` (tecnicas de tema
 > escuro), o `paper-emit` (wash interno dos cards) e ~120 linhas de CSS morto
 > do apparatus/meter, que ja nao eram usadas antes desta branch.

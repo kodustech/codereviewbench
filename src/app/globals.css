@@ -26,45 +26,86 @@
 
 @layer base {
   :root {
-    /* ── Portal · twilight serif editorial ──────────────────────────────
-       Achromatico + exatamente um azul funcional (#007aff). Ver design.md. */
+    /* ── Portal · tokens do spec (fonte de verdade) ──────────────────── */
+    --color-signal-blue: #007aff;
+    --color-ink-black: #000000;
+    --color-graphite: #3e3e3e;
+    --color-smoke: #636363;
+    --color-paper-white: #ffffff;
+    --color-ash-mist: #f7f7f7;
+    --gradient-dusk: linear-gradient(180deg, #4a7ff2 0%, #7b7ed8 30%, #c98ab5 65%, #e8a87c 100%);
 
-    /* Superficies */
-    --background: #f7f7f7;   /* page canvas */
-    --surface: #ffffff;      /* card */
-    --surface-2: #f2f2f2;    /* hover / linha zebrada */
+    --surface-page-canvas: var(--color-ash-mist);
+    --surface-card: var(--color-paper-white);
+    --surface-nav-pill: var(--color-paper-white);
 
-    /* Texto */
-    --foreground: #000000;   /* headings, so */
-    --foreground-2: #3e3e3e; /* corpo */
-    --muted: #636363;        /* metadata */
-    --muted-dim: #8e8e8e;    /* rotulos fracos */
+    /* Escala de tipo do spec */
+    --text-micro: 10px;      --leading-micro: 1.2;      --tracking-micro: -0.2px;
+    --text-caption: 12px;    --leading-caption: 1.2;    --tracking-caption: -0.24px;
+    --text-body-sm: 14px;    --leading-body-sm: 1.3;    --tracking-body-sm: -0.28px;
+    --text-body: 16px;       --leading-body: 1.35;      --tracking-body: -0.32px;
+    --text-heading-sm: 18px; --leading-heading-sm: 1.35; --tracking-heading-sm: -0.36px;
+    --text-heading: 36px;    --leading-heading: 1;
+    --text-display: 48px;    --leading-display: 1;
 
-    /* Acento funcional unico */
-    --accent: #007aff;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+
+    /* Escala de espacamento do spec (px) */
+    --spacing-4: 4px;    --spacing-5: 5px;    --spacing-6: 6px;    --spacing-8: 8px;
+    --spacing-10: 10px;  --spacing-12: 12px;  --spacing-14: 14px;  --spacing-16: 16px;
+    --spacing-20: 20px;  --spacing-24: 24px;  --spacing-36: 36px;  --spacing-40: 40px;
+    --spacing-45: 45px;  --spacing-60: 60px;  --spacing-80: 80px;  --spacing-100: 100px;
+
+    /* Layout */
+    --page-max-width: 1200px;
+    --reading-width: 680px;   /* dentro da faixa 640-720 do spec */
+    --section-gap: 100px;     /* dentro da faixa 80-120 do spec */
+    --card-padding: 20px;
+
+    /* Raios nomeados */
+    --radius-nav: 22px;
+    --radius-cards: 22px;
+    --radius-badges: 50px;
+    --radius-images: 30px;
+    --radius-buttons: 50px;
+
+    /* Os 6 shadows do spec */
+    --shadow-subtle: rgb(247, 247, 247) 0px 0px 0px 5px;
+    --shadow-subtle-2: rgba(255, 255, 255, 0.6) 0px 0.5px 0px 0.5px inset, rgba(255, 255, 255, 0.4) 0px 0px 30px 0px inset, rgba(255, 255, 255, 0.8) 0px 0px 12px 0px inset;
+    --shadow-subtle-3: rgba(255, 255, 255, 0.6) 0px 0.5px 0px 0.5px inset;
+    --shadow-subtle-4: rgb(247, 247, 247) 0px 0px 0px 1px;
+    --shadow-subtle-5: rgb(255, 255, 255) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.06) 0px 3px 2px 0px;
+    --shadow-subtle-6: rgb(140, 194, 255) 0px 1px 0px 1px inset;
+
+    /* ── Aliases semanticos do site ──────────────────────────────────────
+       O TSX inteiro ja fala --foreground/--surface/--accent. Apontar esses
+       nomes pros tokens do Portal aplica o sistema sem reescrever cada
+       arquivo, e mantem um lugar so pra trocar de tema. */
+    --background: var(--surface-page-canvas);
+    --surface: var(--surface-card);
+    --surface-2: #f2f2f2;
+    --foreground: var(--color-ink-black);
+    --foreground-2: var(--color-graphite);
+    --muted: var(--color-smoke);
+    --muted-dim: #8e8e8e;
+    --accent: var(--color-signal-blue);
     --accent-dim: rgba(0, 122, 255, 0.10);
-    --on-accent: #ffffff;
-    --focus: #007aff;
-
-    /* Bordas. Portal descreve "1px outline" + "5px glow ring #f7f7f7". O ring
-       some quando o card esta sobre o proprio canvas #f7f7f7, entao no plano
-       existe hairline; o ring fica pro que flutua sobre o gradiente. */
+    --on-accent: var(--color-paper-white);
+    --focus: var(--color-signal-blue);
     --border: rgba(0, 0, 0, 0.09);
     --border-bright: rgba(0, 0, 0, 0.16);
-    --glow-ring: #f7f7f7;
+    --glow-ring: var(--color-ash-mist);
+    --dusk: var(--gradient-dusk);
 
-    /* Gradiente do hero — o unico momento cromatico do sistema. */
-    --dusk: linear-gradient(180deg, #4a7ff2 0%, #7b7ed8 30%, #c98ab5 65%, #e8a87c 100%);
-
-    /* Paleta SEMANTICA (dado, nao decoracao). Portal pede um acento so, e essa
-       regra vale pro chrome. Estes tres codificam significado que o leitor tem
-       que distinguir sem ler o rotulo: achou/nao achou, severidade, delta. */
+    /* Paleta SEMANTICA (dado, nao decoracao) — ver design.md. */
     --success: #1a7f45;
     --danger:  #c0362c;
-    --info:    #007aff;
-    --accent-2: #b06f1e;   /* severidade alta / lado B do compare */
+    --info:    var(--color-signal-blue);
+    --accent-2: #b06f1e;
 
-    /* 4pt spacing scale */
+    /* 4pt scale interna, mantida: o TSX usa --space-* em varios lugares. */
     --space-3xs: 0.125rem;
     --space-2xs: 0.25rem;
     --space-xs: 0.5rem;
@@ -95,12 +136,24 @@ body {
   color: var(--foreground);
   font-variant-numeric: tabular-nums;
   overflow-x: clip;
+  /* Portal: Inter com tracking apertado em TODO texto de UI e corpo. E o que
+     da o "refined iOS-native feel" do spec; sem isso a Inter fica com o
+     espacamento default e a pagina le como bootstrap. */
+  letter-spacing: -0.02em;
+}
+/* Mono e tabela numerica nao levam o tracking da Inter — apertar mono quebra
+   o alinhamento de coluna, que e o unico motivo dela existir aqui. */
+code, pre, .font-mono, [class*="font-mono"], table {
+  letter-spacing: normal;
 }
 
 /* Display type — Instrument Serif, roman only. Italic is retired. */
 .font-display {
   font-family: var(--font-display), Georgia, serif;
   font-style: normal;
+  /* Spec: display e heading a line-height 1.0, tracking normal. */
+  line-height: var(--leading-display);
+  letter-spacing: normal;
 }
 
 /* Verb landmark: exactly one accent-2 word per hero headline, never italic —
@@ -420,4 +473,46 @@ body {
   max-width: none;
   object-fit: cover;
   object-position: left center;
+}
+
+/* Botao preenchido — elevacao do spec (inset highlight + hairline + sombra
+   curta). E a unica sombra "real" que o Portal permite, e so em botao. */
+.btn-filled {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: var(--radius-buttons);
+  box-shadow: var(--shadow-subtle-5);
+}
+
+/* Coluna editorial do Portal: 640-720px, texto corrido. */
+.editorial {
+  max-width: var(--reading-width);
+  margin-inline: auto;
+}
+.editorial h2 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--text-heading);
+  line-height: var(--leading-heading);
+  letter-spacing: normal;
+  color: var(--color-ink-black);
+}
+.editorial h3 {
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-ink-black);
+}
+.editorial p {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  color: var(--color-graphite);
+}
+.editorial p + p { margin-top: var(--spacing-20); }
+
+/* "Device Mockup Card" do spec: a carta da frente ganha o glow ring de 5px.
+   So a da frente — anel nas de tras viraria trilho branco duplicado. */
+.stack--ringed .stack__item:first-child .receipt {
+  box-shadow: var(--shadow-subtle);
 }
