@@ -455,3 +455,49 @@ body {
   text-transform: uppercase;
   white-space: nowrap;
 }
+
+/* Pilha de recibos. Empilha pra CIMA: o nome do modelo fica no topo do
+   recibo, entao recuar as de tras pra cima mantem os tres nomes legiveis.
+   As de tras nao recebem pointer-events — so a da frente e interativa. */
+.stack {
+  position: relative;
+  /* Reserva o alcance MAXIMO (estado hover): a carta do fundo sobe
+     2 x (peek + shift). Sem isso ela era cortada no topo — e so no hover,
+     que e pior: o corte aparecia no meio da animacao. */
+  padding-top: calc((var(--stack-peek) + var(--stack-shift-max)) * 2 + 8px);
+  --stack-shift-max: 14px;
+  /* O scale com origem embaixo puxa o topo pra baixo e come parte do
+     deslocamento: com peek 22 e scale .965 sobravam so 11px visiveis entre
+     uma carta e outra. Peek maior + scale mais suave da ~26px reais. */
+  --stack-peek: 34px;
+  --stack-shift: 0px;
+}
+.stack__item {
+  transform:
+    translateY(calc(var(--i) * (var(--stack-peek) + var(--stack-shift)) * -1))
+    scale(calc(1 - var(--i) * 0.022));
+  transform-origin: bottom center;
+  transition: transform var(--dur-long) var(--ease-out);
+  position: relative;
+  z-index: calc(10 - var(--i));
+}
+/* Carta da frente e a unica no fluxo; as de tras saem dele e se posicionam
+   por cima, senao a pilha ocuparia a altura das tres somadas. */
+.stack__item:not(:first-child) {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+/* As de tras escurecem pra criar profundidade sem sombra colorida (o Lumen
+   reserva emissao pro apparatus, nao pra cards). */
+.stack__item:not(:first-child) .receipt {
+  filter: brightness(calc(1 - var(--i) * 0.18));
+}
+.stack:hover {
+  --stack-shift: var(--stack-shift-max);
+}
+@media (prefers-reduced-motion: reduce) {
+  .stack__item { transition: none; }
+  .stack:hover { --stack-shift: 0px; }
+}

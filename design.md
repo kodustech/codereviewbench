@@ -90,7 +90,19 @@ comunicar um RESULTADO:
    maioria", que e tensao direta com o produto da Kodus e nao era a tese
    escolhida. Tambem enquadrava humano-vs-IA, comparacao que o bench nao faz.
 
-**O que ficou (`Scorecard.tsx`):** um scorecard real renderizado como recibo —
+**O que ficou (`ScorecardStack.tsx` + `Scorecard.tsx`):** tres scorecards reais
+empilhados como recibos. Um so provava que UM numero pode ser conferido; tres
+dizem que isso existe pra todo modelo medido. A pilha recua pra CIMA porque o
+nome do modelo fica no topo de cada recibo — assim os tres nomes ficam
+legiveis. No hover ela abre (`--stack-shift`), so com transform, easing
+nomeado, e colapsa em `prefers-reduced-motion`.
+
+Nota de calibragem: o `scale` com `transform-origin: bottom` come parte do
+deslocamento (com peek 22 e scale .965 sobravam 11px reais entre cartas). O
+padding-top reserva o alcance do estado HOVER, nao o de repouso — senao a
+carta do fundo era cortada no meio da animacao.
+
+Cada recibo mostra —
 configuracao da rodada em cima (harness, judge, execution, PRs, bugs), numeros
 medidos embaixo, caminho do arquivo versionado no pe. O rastro de auditoria E
 o visual. Casa com a referencia-padrinho do proprio spec do Lumen: "Modal

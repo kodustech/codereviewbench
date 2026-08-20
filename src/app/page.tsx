@@ -6,14 +6,13 @@ import type { LeaderboardData } from '@/lib/types';
 import { displayNameOf, providerOf, modelSlug, REPO_LABELS } from '@/lib/constants';
 import { formatScore, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
-import Scorecard from '@/components/hero/Scorecard';
+import ScorecardStack from '@/components/hero/ScorecardStack';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 
 const lb = leaderboardData as unknown as LeaderboardData;
 
 export default function Home() {
   const topEntries = [...lb.entries].sort((a, b) => b.f1 - a.f1).slice(0, 5);
-  const bestRecall = [...lb.entries].sort((a, b) => b.score - a.score)[0];
 
 
   return (
@@ -67,18 +66,7 @@ export default function Home() {
             </div>
 
             <div className="reveal" style={{ ['--i' as string]: 1 }}>
-              <Scorecard
-                modelName={displayNameOf(bestRecall.modelId)}
-                harness={bestRecall.harness}
-                judge={bestRecall.judge}
-                executionMode={bestRecall.executionMode}
-                cases={bestRecall.cases}
-                goldensTotal={bestRecall.goldensTotal}
-                goldensMatched={bestRecall.goldensMatched}
-                recall={bestRecall.score}
-                precision={bestRecall.precision}
-                artifactPath={`scorecards/${modelSlug(bestRecall.modelId)}.json`}
-              />
+              <ScorecardStack entries={topEntries.slice(0, 3)} />
             </div>
           </div>
         </div>
