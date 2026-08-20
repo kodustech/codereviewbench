@@ -17,6 +17,7 @@ export const DISPLAY_NAMES: Record<string, { name: string; provider: string }> =
   // fica no id (e no scorecard), mas o nome exibido e do MODELO, nao da rota.
   // A rota aparece no campo `harness`/nota de custo, nao no nome.
   'glm-5.2@fireworks': { name: 'GLM-5.2', provider: 'Zhipu' },
+  'minimax-m3@fireworks': { name: 'MiniMax M3', provider: 'MiniMax' },
 };
 
 /** modelId → segmento de URL seguro.

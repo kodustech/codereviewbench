@@ -123,7 +123,6 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
             </span>
             <span className="flex items-center gap-2">
               <Badge variant="default">{provider}</Badge>
-              <Badge variant={entry.tier === 1 ? 'success' : 'default'}>Tier {entry.tier}</Badge>
             </span>
           </div>
           <p className="text-[color:var(--muted)] font-mono text-sm">

@@ -20,7 +20,6 @@ export interface Meta {
   judges: string[];
   totalCases: number;
   totalGoldens: number;
-  tiers: number;
   varianceCaveat: VarianceCaveat;
   generatedAt: string;
 }
@@ -59,7 +58,7 @@ export interface LeaderboardEntry {
   judge: string | null;
   runAt: string | null;
 
-  /** Recall micro (headline, usado para ranking e tier). */
+  /** Recall micro (headline, usado para ranking). */
   score: number;
   recallMacro: number;
   /** Precisão micro — TP/(TP+FP) agregado no bench inteiro. */
@@ -100,7 +99,6 @@ export interface LeaderboardEntry {
   runToRunVariance: RunToRunVariance | null;
 
   rank: number;
-  tier: number;
 }
 
 export interface VarianceStat {

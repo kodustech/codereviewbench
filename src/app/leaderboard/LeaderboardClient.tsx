@@ -329,7 +329,7 @@ export default function LeaderboardClient() {
             </div>
             <div className="text-left">
               <span className="text-sm font-semibold text-[color:var(--foreground)]">How to read this table</span>
-              <span className="text-xs text-[color:var(--muted-dim)] block">What F1/precision/recall mean here, tiers, and what this benchmark doesn&apos;t measure</span>
+              <span className="text-xs text-[color:var(--muted-dim)] block">What F1/precision/recall mean here, and what this benchmark doesn&apos;t measure</span>
             </div>
           </div>
           <ChevronDown className={cn('size-4 text-[color:var(--muted)] transition-transform', methodologyOpen && 'rotate-180')} />
@@ -349,7 +349,7 @@ export default function LeaderboardClient() {
                   <p><span className="text-[color:var(--foreground)] font-medium">Recall</span> — <span className="text-[color:var(--muted)]">golden bugs the model actually found</span></p>
                   <p><span className="text-[color:var(--foreground)] font-medium">Precision</span> — <span className="text-[color:var(--muted)]">of what it reported, how much was real</span></p>
                   <p><span className="text-[color:var(--foreground)] font-medium">F1</span> — <span className="text-[color:var(--muted)]">harmonic mean of both, equal weight</span></p>
-                  <p><span className="text-[color:var(--foreground)] font-medium">Tier</span> — <span className="text-[color:var(--muted)]">models the benchmark cannot separate from the tier leader on the same PRs</span></p>
+                  <p><span className="text-[color:var(--foreground)] font-medium">95% CI</span> — <span className="text-[color:var(--muted)]">how much recall would move on a different sample of 30 PRs. Where two intervals overlap this much, the gap between those models is not something this benchmark can measure.</span></p>
                 </div>
               </div>
               <div>
@@ -389,8 +389,7 @@ export default function LeaderboardClient() {
               </thead>
               <tbody>
                 {entries.map((e: LeaderboardEntry, idx) => {
-                  const showTierDivider = !isFiltered && idx > 0 && entries[idx - 1].tier !== e.tier;
-                  const provider = providerOf(e.modelId);
+                                  const provider = providerOf(e.modelId);
                   const f = filteredByKey.get(e.key);
                   const f1 = isFiltered ? f?.f1 ?? null : e.f1;
                   const precision = isFiltered ? f?.precision ?? null : e.precision;
@@ -400,13 +399,6 @@ export default function LeaderboardClient() {
                   const isTop = idx === 0 && (!isFiltered || (f?.n ?? 0) > 0);
                   return (
                     <Fragment key={e.key}>
-                      {showTierDivider && (
-                        <tr key={`tier-${e.tier}`} className="bg-[var(--background)]">
-                          <td colSpan={8} className="px-5 py-1.5 text-[10px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest">
-                            Tier {e.tier} — not statistically distinguishable from the entries above within this group
-                          </td>
-                        </tr>
-                      )}
                       {/* viewTransitionName precisa ser custom-ident: a chave
                           do modelo tem ponto, barra e @, entao e higienizada.
                           E o que deixa o browser parear a linha antes/depois e

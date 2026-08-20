@@ -531,45 +531,38 @@ for (const e of entries) {
     // meia-largura efetiva usada no agrupamento em faixas
     e.ciHalfWidthBootstrap = b.lo != null ? (b.hi - b.lo) / 2 : e.ciHalfWidth;
 }
-entries.sort((a, b) => b.score - a.score);
+// Ordena e numera por F1, que e o ranking que o site publica ("Ranked by F1").
+// Antes ordenava por recall, entao a coluna "#" saia fora de ordem ao lado de
+// uma tabela ordenada por F1 (01, 05, 04, 07...) — o numero dizia uma coisa e
+// a posicao dizia outra.
+entries.sort((a, b) => b.f1 - a.f1);
 entries.forEach((e, i) => (e.rank = i + 1));
 
-// ── Faixas ──────────────────────────────────────────────────────────────────
+// ── Comparacao pareada contra o topo ────────────────────────────────────────
 //
-// Agrupa quem não é estatisticamente separável do líder da faixa.
+// As FAIXAS (tiers) foram removidas da publicacao em 2026-08-20. O calculo
+// estava correto, o conceito e que nao se sustentava: o criterio comparava
+// cada modelo com o LIDER da faixa, e "nao separa" NAO e transitivo. Isso
+// produzia fronteira falsa — minimax-m3 caiu em T2 e qwen3.8-27b ficou em T1
+// sendo que os dois nao separam entre si (p=0,108). O site afirmava uma
+// diferenca que o bench nao mede.
 //
-// O critério anterior era `gap > max(meia-largura dos dois)` — uma heurística
-// sobre os intervalos MARGINAIS, que ignora o fato de todo modelo rodar os
-// MESMOS PRs. Isso a tornava conservadora demais nos dois sentidos: larga
-// porque desperdiça o pareamento, e sem qualquer controle para o número de
-// comparações feitas.
+// Nao ha regra limpa: comparar com o VIZINHO em vez do lider inverte o erro
+// (juntaria na mesma faixa deepseek-v4-pro e minimax-m3, que separam).
+// Enquanto nao houver n suficiente pra que isso deixe de ser ambiguo, o site
+// publica o intervalo de confianca e nao agrupa.
 //
-// Agora: bootstrap pareado da diferença contra o líder da faixa, com correção
-// de Holm-Bonferroni sobre a família de comparações daquele líder. Holm em vez
-// de Bonferroni puro porque é uniformemente mais poderoso e igualmente válido.
-//
-// Ordem importa: sem correção, testar 8 modelos a 95% produz ~0,4 falso
-// positivo esperado só por acaso, e um falso positivo aqui QUEBRA uma faixa —
-// afirma diferença onde não há. O viés fica deliberadamente para o lado de
-// declarar empate.
+// O teste pareado continua sendo calculado e gravado: e informacao real, e e
+// o que permite retomar o agrupamento quando fizer sentido. Ver a emenda em
+// docs/adr-conservative-calibration.md.
 const ALPHA = 0.05;
-let tier = 0;
-let idx = 0;
-while (idx < entries.length) {
-    tier += 1;
-    const leader = entries[idx];
-    leader.tier = tier;
-    const rest = entries.slice(idx + 1);
-    if (!rest.length) break;
-
-    const leaderCases = scorecardCases.get(leader.key) || [];
-    const tests = rest.map((e) => ({
+const top = entries[0];
+if (top) {
+    const topCases = scorecardCases.get(top.key) || [];
+    const tests = entries.slice(1).map((e) => ({
         e,
-        r: pairedDiff(leaderCases, scorecardCases.get(e.key) || []),
+        r: pairedDiff(topCases, scorecardCases.get(e.key) || []),
     }));
-
-    // Holm: ordena p crescente; rejeita enquanto p_(i) <= alpha/(m-i); no
-    // primeiro que falha, para — os seguintes ficam todos sem rejeitar.
     const m = tests.length;
     const ordered = [...tests].filter((t) => t.r).sort((a, b) => a.r.p - b.r.p);
     const separated = new Set();
@@ -577,22 +570,18 @@ while (idx < entries.length) {
         if (ordered[i].r.p <= ALPHA / (m - i)) separated.add(ordered[i].e.key);
         else break;
     }
-
     for (const t of tests) {
-        t.e.pairedVsTierLeader = t.r
-            ? { diff: +t.r.observed.toFixed(2), lo: +t.r.lo.toFixed(2), hi: +t.r.hi.toFixed(2), p: +t.r.p.toFixed(4), n: t.r.n }
+        t.e.pairedVsTop = t.r
+            ? {
+                  diff: +t.r.observed.toFixed(2),
+                  lo: +t.r.lo.toFixed(2),
+                  hi: +t.r.hi.toFixed(2),
+                  p: +t.r.p.toFixed(4),
+                  n: t.r.n,
+                  separatesFromTop: separated.has(t.e.key),
+              }
             : null;
     }
-
-    // O próximo líder é o primeiro (maior recall) que separou. Quem não
-    // separou entra nesta faixa.
-    const nextIdx = rest.findIndex((e) => separated.has(e.key));
-    if (nextIdx === -1) {
-        for (const e of rest) e.tier = tier;
-        break;
-    }
-    for (let k = 0; k < nextIdx; k++) rest[k].tier = tier;
-    idx = idx + 1 + nextIdx;
 }
 
 const leaderboard = round2({
@@ -617,15 +606,13 @@ const meta = {
     judges: [...new Set(entries.map((e) => e.judge).filter(Boolean))].sort(),
     totalCases: Math.max(...entries.map((e) => e.cases)),
     totalGoldens: Math.max(...entries.map((e) => e.goldensTotal)),
-    tiers: tier,
-    // Como a faixa e decidida — fica no meta pra o site poder citar sem
-    // reescrever a regra a mao em dois lugares.
-    tierMethod: {
-        test: 'bootstrap pareado da diferenca de recall contra o lider da faixa, nos mesmos PRs',
+    // Faixas removidas da publicacao (ver comentario no bloco de comparacao).
+    pairwiseMethod: {
+        test: 'bootstrap pareado da diferenca de recall contra o 1o colocado, nos mesmos PRs',
         iterations: 4000,
         alpha: 0.05,
-        correction: 'Holm-Bonferroni sobre as comparacoes contra cada lider de faixa',
-        note: 'Pareado porque todo modelo roda os MESMOS PRs: a dificuldade do caso cancela na diferenca, o que estreita o intervalo em ~40% frente aos marginais. A correcao existe porque testar 8 modelos a 95% produz ~0,4 falso positivo esperado, e um falso positivo aqui QUEBRA uma faixa, afirmando diferenca onde nao ha.',
+        correction: 'Holm-Bonferroni sobre as comparacoes contra o 1o colocado',
+        note: 'Pareado porque todo modelo roda os MESMOS PRs: a dificuldade do caso cancela na diferenca, o que estreita o intervalo em ~40% frente aos marginais. A correcao existe porque testar N modelos a 95% produz falso positivo por acaso. NAO usar isto para agrupar em faixas: "nao separa" nao e transitivo.',
     },
     // Rótulo obrigatório: dois tipos de variância, dois status diferentes.
     varianceCaveat: {
@@ -644,7 +631,7 @@ fs.writeFileSync(path.join(OUT_DIR, 'leaderboard.json'), JSON.stringify(leaderbo
 fs.writeFileSync(path.join(OUT_DIR, 'samples.json'), JSON.stringify(round2(allSamples)));
 fs.writeFileSync(path.join(OUT_DIR, 'case-index.json'), JSON.stringify(caseIndex));
 
-console.log(`✅ ${entries.length} entrada(s) · ${allSamples.length} amostras · ${tier} faixa(s)`);
+console.log(`✅ ${entries.length} entrada(s) · ${allSamples.length} amostras`);
 for (const e of entries) {
     const money =
         e.costPerPR != null
@@ -652,7 +639,7 @@ for (const e of entries) {
               (e.costPerBugFound != null ? ` · $${e.costPerBugFound.toFixed(2)}/bug` : '')
             : `custo n/a (${e.costBasis})`;
     console.log(
-        `   #${e.rank} [T${e.tier}] ${e.harness}/${e.modelId || 'bundled'} ` +
+        `   #${e.rank} ${e.harness}/${e.modelId || 'bundled'} ` +
             `${e.score.toFixed(1)}% [${(e.ciLow??0).toFixed(1)}–${(e.ciHigh??0).toFixed(1)}] ` +
             `(${e.goldensMatched}/${e.goldensTotal}) ${e.accessPath}/${e.executionMode} · ${money}`,
     );

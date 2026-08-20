@@ -173,467 +173,7 @@
       "ciLow": 32.32,
       "ciHigh": 56.31,
       "ciHalfWidthBootstrap": 11.99,
-      "rank": 1,
-      "tier": 1
-    },
-    {
-      "key": "kodus::kimi-k3",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "kimi-k3",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": 757542,
-      "finishReasons": {
-        "stopped": 20,
-        "completed": 10
-      },
-      "maxFindingsInCase": 10,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-05T18:33:49.036Z",
-      "score": 41.05,
-      "recallMacro": 41.72,
-      "precision": 38.71,
-      "precisionMacro": 47.5,
-      "f1": 39.85,
-      "fairRecall": 43.5,
-      "loopFidelity": 82.31,
-      "goldensTotal": 95,
-      "goldensMatched": 39,
-      "cases": 30,
-      "usage": {
-        "inputTokens": 11174498,
-        "outputTokens": 1008266
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 17.65,
-          "precision": 22.78,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 56.52,
-          "precision": 53.1,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 50,
-          "precision": 49.76,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 35,
-          "precision": 33.89,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 42.11,
-          "precision": 78.33,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 17.65,
-          "precision": 22.78,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 56.52,
-          "precision": 53.1,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 50,
-          "precision": 49.76,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 35,
-          "precision": 33.89,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 42.11,
-          "precision": 78.33,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 37.04,
-          "precision": 42.04,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 41.18,
-          "precision": 39.8,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
-          "recall": 55,
-          "precision": 56.25,
-          "goldens": 20,
-          "count": 8
-        },
-        "XS": {
-          "recall": 25,
-          "precision": 100,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 29,
-        "medium": 49,
-        "high": 33,
-        "critical": 5
-      },
-      "findingsByCategory": {
-        "bug": 112,
-        "performance": 5,
-        "security": 4,
-        "other": 3
-      },
-      "costTotal": 48.65,
-      "costPerPR": 1.62,
-      "costPerBugFound": 1.25,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 9.89,
-      "ciLow": 32.29,
-      "ciHigh": 50.46,
-      "ciHalfWidthBootstrap": 9.08,
-      "rank": 2,
-      "pairedVsTierLeader": {
-        "diff": 3.16,
-        "lo": -5.49,
-        "hi": 12.38,
-        "p": 0.55,
-        "n": 30
-      },
-      "tier": 1
-    },
-    {
-      "key": "kodus::muse-spark-1.2",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "muse-spark-1.2",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": 931289,
-      "finishReasons": {
-        "completed": 18,
-        "stopped": 12
-      },
-      "maxFindingsInCase": 13,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-06T13:13:32.659Z",
-      "score": 41.05,
-      "recallMacro": 43.61,
-      "precision": 35.04,
-      "precisionMacro": 40.7,
-      "f1": 37.81,
-      "fairRecall": 45.39,
-      "loopFidelity": 89.38,
-      "goldensTotal": 95,
-      "goldensMatched": 39,
-      "cases": 30,
-      "usage": {
-        "inputTokens": 8025659,
-        "outputTokens": 1081681
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 11.76,
-          "precision": 20,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 39.13,
-          "precision": 45,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 68.75,
-          "precision": 49.19,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 50,
-          "precision": 49.86,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 36.84,
-          "precision": 39.44,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 11.76,
-          "precision": 20,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 39.13,
-          "precision": 45,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 68.75,
-          "precision": 49.19,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 50,
-          "precision": 49.86,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 36.84,
-          "precision": 39.44,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 35.19,
-          "precision": 32.92,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 41.18,
-          "precision": 28.08,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
-          "recall": 50,
-          "precision": 55.21,
-          "goldens": 20,
-          "count": 8
-        },
-        "XS": {
-          "recall": 75,
-          "precision": 75,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 2,
-        "medium": 55,
-        "high": 49,
-        "critical": 4
-      },
-      "findingsByCategory": {
-        "bug": 110,
-        "performance": 0,
-        "security": 0,
-        "other": 7
-      },
-      "costTotal": 14.63,
-      "costPerPR": 0.49,
-      "costPerBugFound": 0.38,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 9.89,
-      "ciLow": 31.25,
-      "ciHigh": 52,
-      "ciHalfWidthBootstrap": 10.38,
-      "rank": 3,
-      "pairedVsTierLeader": {
-        "diff": 3.16,
-        "lo": -5.21,
-        "hi": 11.34,
-        "p": 0.54,
-        "n": 30
-      },
-      "tier": 1
-    },
-    {
-      "key": "kodus::qwen3.8-max",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "qwen3.8-max",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": 978947,
-      "finishReasons": {
-        "stopped": 20,
-        "completed": 10
-      },
-      "maxFindingsInCase": 14,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-06T20:57:10.581Z",
-      "score": 41.05,
-      "recallMacro": 40.72,
-      "precision": 43.93,
-      "precisionMacro": 47.05,
-      "f1": 42.44,
-      "fairRecall": 40.72,
-      "loopFidelity": 80.06,
-      "goldensTotal": 95,
-      "goldensMatched": 39,
-      "cases": 30,
-      "usage": {
-        "inputTokens": 14600182,
-        "outputTokens": 1177820
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 11.76,
-          "precision": 30,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 56.52,
-          "precision": 44.11,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 68.75,
-          "precision": 81.35,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 35,
-          "precision": 22.78,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 31.58,
-          "precision": 54.17,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 11.76,
-          "precision": 30,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 56.52,
-          "precision": 44.11,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 68.75,
-          "precision": 81.35,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 35,
-          "precision": 22.78,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 31.58,
-          "precision": 54.17,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 37.04,
-          "precision": 32.59,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 41.18,
-          "precision": 65.24,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
-          "recall": 55,
-          "precision": 52.08,
-          "goldens": 20,
-          "count": 8
-        },
-        "XS": {
-          "recall": 25,
-          "precision": 100,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 24,
-        "medium": 49,
-        "high": 20,
-        "critical": 4
-      },
-      "findingsByCategory": {
-        "bug": 104,
-        "performance": 1,
-        "security": 1,
-        "other": 1
-      },
-      "costTotal": 36.27,
-      "costPerPR": 1.21,
-      "costPerBugFound": 0.93,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 9.89,
-      "ciLow": 29.55,
-      "ciHigh": 53.75,
-      "ciHalfWidthBootstrap": 12.1,
-      "rank": 4,
-      "pairedVsTierLeader": {
-        "diff": 3.16,
-        "lo": -4.12,
-        "hi": 10.84,
-        "p": 0.46,
-        "n": 30
-      },
-      "tier": 1
+      "rank": 1
     },
     {
       "key": "kodus::kimi-k2.7-code",
@@ -806,15 +346,474 @@
       "ciLow": 28.13,
       "ciHigh": 48.68,
       "ciHalfWidthBootstrap": 10.28,
-      "rank": 5,
-      "pairedVsTierLeader": {
+      "rank": 2,
+      "pairedVsTop": {
         "diff": 6.32,
         "lo": -2.11,
         "hi": 14.43,
         "p": 0.17,
-        "n": 30
+        "n": 30,
+        "separatesFromTop": false
+      }
+    },
+    {
+      "key": "kodus::qwen3.8-max",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "modelId": "qwen3.8-max",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "executionMode": "replay",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "reasoningTokens": 978947,
+      "finishReasons": {
+        "stopped": 20,
+        "completed": 10
       },
-      "tier": 1
+      "maxFindingsInCase": 14,
+      "judge": "claude-haiku-4-5",
+      "runAt": "2026-08-06T20:57:10.581Z",
+      "score": 41.05,
+      "recallMacro": 40.72,
+      "precision": 43.93,
+      "precisionMacro": 47.05,
+      "f1": 42.44,
+      "fairRecall": 40.72,
+      "loopFidelity": 80.06,
+      "goldensTotal": 95,
+      "goldensMatched": 39,
+      "cases": 30,
+      "usage": {
+        "inputTokens": 14600182,
+        "outputTokens": 1177820
+      },
+      "byLanguage": {
+        "java": {
+          "recall": 11.76,
+          "precision": 30,
+          "goldens": 17,
+          "count": 6
+        },
+        "typescript": {
+          "recall": 56.52,
+          "precision": 44.11,
+          "goldens": 23,
+          "count": 6
+        },
+        "go": {
+          "recall": 68.75,
+          "precision": 81.35,
+          "goldens": 16,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 35,
+          "precision": 22.78,
+          "goldens": 20,
+          "count": 6
+        },
+        "python": {
+          "recall": 31.58,
+          "precision": 54.17,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "keycloak": {
+          "recall": 11.76,
+          "precision": 30,
+          "goldens": 17,
+          "count": 6
+        },
+        "cal.com": {
+          "recall": 56.52,
+          "precision": 44.11,
+          "goldens": 23,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 68.75,
+          "precision": 81.35,
+          "goldens": 16,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 35,
+          "precision": 22.78,
+          "goldens": 20,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 31.58,
+          "precision": 54.17,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "M": {
+          "recall": 37.04,
+          "precision": 32.59,
+          "goldens": 54,
+          "count": 14
+        },
+        "L": {
+          "recall": 41.18,
+          "precision": 65.24,
+          "goldens": 17,
+          "count": 6
+        },
+        "S": {
+          "recall": 55,
+          "precision": 52.08,
+          "goldens": 20,
+          "count": 8
+        },
+        "XS": {
+          "recall": 25,
+          "precision": 100,
+          "goldens": 4,
+          "count": 2
+        }
+      },
+      "findingsBySeverity": {
+        "low": 24,
+        "medium": 49,
+        "high": 20,
+        "critical": 4
+      },
+      "findingsByCategory": {
+        "bug": 104,
+        "performance": 1,
+        "security": 1,
+        "other": 1
+      },
+      "costTotal": 36.27,
+      "costPerPR": 1.21,
+      "costPerBugFound": 0.93,
+      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
+      "ciHalfWidth": 9.89,
+      "ciLow": 29.55,
+      "ciHigh": 53.75,
+      "ciHalfWidthBootstrap": 12.1,
+      "rank": 3,
+      "pairedVsTop": {
+        "diff": 3.16,
+        "lo": -4.12,
+        "hi": 10.84,
+        "p": 0.46,
+        "n": 30,
+        "separatesFromTop": false
+      }
+    },
+    {
+      "key": "kodus::glm-5.2@fireworks",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "modelId": "glm-5.2@fireworks",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "executionMode": "replay",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "reasoningTokens": null,
+      "finishReasons": {
+        "stopped": 28,
+        "budget-exhausted": 1
+      },
+      "maxFindingsInCase": 7,
+      "judge": "claude-haiku-4-5",
+      "runAt": "2026-08-19T18:02:18.951Z",
+      "score": 35.16,
+      "recallMacro": 35.63,
+      "precision": 46.99,
+      "precisionMacro": 52.96,
+      "f1": 40.23,
+      "fairRecall": 35.63,
+      "loopFidelity": 82.33,
+      "goldensTotal": 91,
+      "goldensMatched": 32,
+      "cases": 29,
+      "usage": {
+        "inputTokens": 13969695,
+        "outputTokens": 1333750
+      },
+      "byLanguage": {
+        "java": {
+          "recall": 7.69,
+          "precision": 20,
+          "goldens": 13,
+          "count": 5
+        },
+        "typescript": {
+          "recall": 34.78,
+          "precision": 43.65,
+          "goldens": 23,
+          "count": 6
+        },
+        "go": {
+          "recall": 68.75,
+          "precision": 66.67,
+          "goldens": 16,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 35,
+          "precision": 51.39,
+          "goldens": 20,
+          "count": 6
+        },
+        "python": {
+          "recall": 26.32,
+          "precision": 61.11,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "keycloak": {
+          "recall": 7.69,
+          "precision": 20,
+          "goldens": 13,
+          "count": 5
+        },
+        "cal.com": {
+          "recall": 34.78,
+          "precision": 43.65,
+          "goldens": 23,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 68.75,
+          "precision": 66.67,
+          "goldens": 16,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 35,
+          "precision": 51.39,
+          "goldens": 20,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 26.32,
+          "precision": 61.11,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "M": {
+          "recall": 32,
+          "precision": 46.13,
+          "goldens": 50,
+          "count": 13
+        },
+        "L": {
+          "recall": 41.18,
+          "precision": 40,
+          "goldens": 17,
+          "count": 6
+        },
+        "S": {
+          "recall": 35,
+          "precision": 76.19,
+          "goldens": 20,
+          "count": 8
+        },
+        "XS": {
+          "recall": 50,
+          "precision": 50,
+          "goldens": 4,
+          "count": 2
+        }
+      },
+      "findingsBySeverity": {
+        "low": 12,
+        "medium": 33,
+        "high": 19,
+        "critical": 4
+      },
+      "findingsByCategory": {
+        "bug": 66,
+        "performance": 3,
+        "security": 3,
+        "other": 11
+      },
+      "costTotal": 25.43,
+      "costPerPR": 0.88,
+      "costPerBugFound": 0.79,
+      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
+      "ciHalfWidth": 9.81,
+      "ciLow": 24.72,
+      "ciHigh": 47.06,
+      "ciHalfWidthBootstrap": 11.17,
+      "rank": 4,
+      "pairedVsTop": {
+        "diff": 10.99,
+        "lo": 3,
+        "hi": 19.79,
+        "p": 0.01,
+        "n": 29,
+        "separatesFromTop": false
+      }
+    },
+    {
+      "key": "kodus::kimi-k3",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "modelId": "kimi-k3",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "executionMode": "replay",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "reasoningTokens": 757542,
+      "finishReasons": {
+        "stopped": 20,
+        "completed": 10
+      },
+      "maxFindingsInCase": 10,
+      "judge": "claude-haiku-4-5",
+      "runAt": "2026-08-05T18:33:49.036Z",
+      "score": 41.05,
+      "recallMacro": 41.72,
+      "precision": 38.71,
+      "precisionMacro": 47.5,
+      "f1": 39.85,
+      "fairRecall": 43.5,
+      "loopFidelity": 82.31,
+      "goldensTotal": 95,
+      "goldensMatched": 39,
+      "cases": 30,
+      "usage": {
+        "inputTokens": 11174498,
+        "outputTokens": 1008266
+      },
+      "byLanguage": {
+        "java": {
+          "recall": 17.65,
+          "precision": 22.78,
+          "goldens": 17,
+          "count": 6
+        },
+        "typescript": {
+          "recall": 56.52,
+          "precision": 53.1,
+          "goldens": 23,
+          "count": 6
+        },
+        "go": {
+          "recall": 50,
+          "precision": 49.76,
+          "goldens": 16,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 35,
+          "precision": 33.89,
+          "goldens": 20,
+          "count": 6
+        },
+        "python": {
+          "recall": 42.11,
+          "precision": 78.33,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "keycloak": {
+          "recall": 17.65,
+          "precision": 22.78,
+          "goldens": 17,
+          "count": 6
+        },
+        "cal.com": {
+          "recall": 56.52,
+          "precision": 53.1,
+          "goldens": 23,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 50,
+          "precision": 49.76,
+          "goldens": 16,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 35,
+          "precision": 33.89,
+          "goldens": 20,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 42.11,
+          "precision": 78.33,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "M": {
+          "recall": 37.04,
+          "precision": 42.04,
+          "goldens": 54,
+          "count": 14
+        },
+        "L": {
+          "recall": 41.18,
+          "precision": 39.8,
+          "goldens": 17,
+          "count": 6
+        },
+        "S": {
+          "recall": 55,
+          "precision": 56.25,
+          "goldens": 20,
+          "count": 8
+        },
+        "XS": {
+          "recall": 25,
+          "precision": 100,
+          "goldens": 4,
+          "count": 2
+        }
+      },
+      "findingsBySeverity": {
+        "low": 29,
+        "medium": 49,
+        "high": 33,
+        "critical": 5
+      },
+      "findingsByCategory": {
+        "bug": 112,
+        "performance": 5,
+        "security": 4,
+        "other": 3
+      },
+      "costTotal": 48.65,
+      "costPerPR": 1.62,
+      "costPerBugFound": 1.25,
+      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
+      "ciHalfWidth": 9.89,
+      "ciLow": 32.29,
+      "ciHigh": 50.46,
+      "ciHalfWidthBootstrap": 9.08,
+      "rank": 5,
+      "pairedVsTop": {
+        "diff": 3.16,
+        "lo": -5.49,
+        "hi": 12.38,
+        "p": 0.55,
+        "n": 30,
+        "separatesFromTop": false
+      }
     },
     {
       "key": "kodus::deepseek-v4-flash",
@@ -988,167 +987,167 @@
       "ciHigh": 47.87,
       "ciHalfWidthBootstrap": 10.75,
       "rank": 6,
-      "pairedVsTierLeader": {
+      "pairedVsTop": {
         "diff": 7.37,
         "lo": -1.85,
         "hi": 16.67,
         "p": 0.15,
-        "n": 30
-      },
-      "tier": 1
+        "n": 30,
+        "separatesFromTop": false
+      }
     },
     {
-      "key": "kodus::glm-5.2@fireworks",
+      "key": "kodus::muse-spark-1.2",
       "harness": "kodus",
       "harnessVersion": "dev",
-      "modelId": "glm-5.2@fireworks",
+      "modelId": "muse-spark-1.2",
       "provider": "openai_compatible",
       "accessPath": "api",
       "executionMode": "replay",
       "reasoningConfig": "vendor-default",
       "reasoningEffort": null,
-      "reasoningTokens": null,
+      "reasoningTokens": 931289,
       "finishReasons": {
-        "stopped": 28,
-        "budget-exhausted": 1
+        "completed": 18,
+        "stopped": 12
       },
-      "maxFindingsInCase": 7,
+      "maxFindingsInCase": 13,
       "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-19T18:02:18.951Z",
-      "score": 35.16,
-      "recallMacro": 35.63,
-      "precision": 46.99,
-      "precisionMacro": 52.96,
-      "f1": 40.23,
-      "fairRecall": 35.63,
-      "loopFidelity": 82.33,
-      "goldensTotal": 91,
-      "goldensMatched": 32,
-      "cases": 29,
+      "runAt": "2026-08-06T13:13:32.659Z",
+      "score": 41.05,
+      "recallMacro": 43.61,
+      "precision": 35.04,
+      "precisionMacro": 40.7,
+      "f1": 37.81,
+      "fairRecall": 45.39,
+      "loopFidelity": 89.38,
+      "goldensTotal": 95,
+      "goldensMatched": 39,
+      "cases": 30,
       "usage": {
-        "inputTokens": 13969695,
-        "outputTokens": 1333750
+        "inputTokens": 8025659,
+        "outputTokens": 1081681
       },
       "byLanguage": {
         "java": {
-          "recall": 7.69,
+          "recall": 11.76,
           "precision": 20,
-          "goldens": 13,
-          "count": 5
+          "goldens": 17,
+          "count": 6
         },
         "typescript": {
-          "recall": 34.78,
-          "precision": 43.65,
+          "recall": 39.13,
+          "precision": 45,
           "goldens": 23,
           "count": 6
         },
         "go": {
           "recall": 68.75,
-          "precision": 66.67,
+          "precision": 49.19,
           "goldens": 16,
           "count": 6
         },
         "ruby": {
-          "recall": 35,
-          "precision": 51.39,
+          "recall": 50,
+          "precision": 49.86,
           "goldens": 20,
           "count": 6
         },
         "python": {
-          "recall": 26.32,
-          "precision": 61.11,
+          "recall": 36.84,
+          "precision": 39.44,
           "goldens": 19,
           "count": 6
         }
       },
       "byRepo": {
         "keycloak": {
-          "recall": 7.69,
+          "recall": 11.76,
           "precision": 20,
-          "goldens": 13,
-          "count": 5
+          "goldens": 17,
+          "count": 6
         },
         "cal.com": {
-          "recall": 34.78,
-          "precision": 43.65,
+          "recall": 39.13,
+          "precision": 45,
           "goldens": 23,
           "count": 6
         },
         "grafana": {
           "recall": 68.75,
-          "precision": 66.67,
+          "precision": 49.19,
           "goldens": 16,
           "count": 6
         },
         "discourse": {
-          "recall": 35,
-          "precision": 51.39,
+          "recall": 50,
+          "precision": 49.86,
           "goldens": 20,
           "count": 6
         },
         "sentry": {
-          "recall": 26.32,
-          "precision": 61.11,
+          "recall": 36.84,
+          "precision": 39.44,
           "goldens": 19,
           "count": 6
         }
       },
       "bySize": {
         "M": {
-          "recall": 32,
-          "precision": 46.13,
-          "goldens": 50,
-          "count": 13
+          "recall": 35.19,
+          "precision": 32.92,
+          "goldens": 54,
+          "count": 14
         },
         "L": {
           "recall": 41.18,
-          "precision": 40,
+          "precision": 28.08,
           "goldens": 17,
           "count": 6
         },
         "S": {
-          "recall": 35,
-          "precision": 76.19,
+          "recall": 50,
+          "precision": 55.21,
           "goldens": 20,
           "count": 8
         },
         "XS": {
-          "recall": 50,
-          "precision": 50,
+          "recall": 75,
+          "precision": 75,
           "goldens": 4,
           "count": 2
         }
       },
       "findingsBySeverity": {
-        "low": 12,
-        "medium": 33,
-        "high": 19,
+        "low": 2,
+        "medium": 55,
+        "high": 49,
         "critical": 4
       },
       "findingsByCategory": {
-        "bug": 66,
-        "performance": 3,
-        "security": 3,
-        "other": 11
+        "bug": 110,
+        "performance": 0,
+        "security": 0,
+        "other": 7
       },
-      "costTotal": 25.43,
-      "costPerPR": 0.88,
-      "costPerBugFound": 0.79,
+      "costTotal": 14.63,
+      "costPerPR": 0.49,
+      "costPerBugFound": 0.38,
       "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
       "runToRunVariance": null,
-      "ciHalfWidth": 9.81,
-      "ciLow": 24.72,
-      "ciHigh": 47.06,
-      "ciHalfWidthBootstrap": 11.17,
+      "ciHalfWidth": 9.89,
+      "ciLow": 31.25,
+      "ciHigh": 52,
+      "ciHalfWidthBootstrap": 10.38,
       "rank": 7,
-      "pairedVsTierLeader": {
-        "diff": 10.99,
-        "lo": 3,
-        "hi": 19.79,
-        "p": 0.01,
-        "n": 29
-      },
-      "tier": 1
+      "pairedVsTop": {
+        "diff": 3.16,
+        "lo": -5.21,
+        "hi": 11.34,
+        "p": 0.54,
+        "n": 30,
+        "separatesFromTop": false
+      }
     },
     {
       "key": "kodus::qwen3.8-27b",
@@ -1294,14 +1293,167 @@
       "ciHigh": 45.36,
       "ciHalfWidthBootstrap": 10.66,
       "rank": 8,
-      "pairedVsTierLeader": {
+      "pairedVsTop": {
         "diff": 9.68,
         "lo": 2.08,
         "hi": 18.28,
         "p": 0.02,
-        "n": 29
+        "n": 29,
+        "separatesFromTop": false
+      }
+    },
+    {
+      "key": "kodus::minimax-m3@fireworks",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "modelId": "minimax-m3@fireworks",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "executionMode": "replay",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "reasoningTokens": null,
+      "finishReasons": {
+        "completed": 6,
+        "stopped": 24
       },
-      "tier": 1
+      "maxFindingsInCase": 13,
+      "judge": "claude-haiku-4-5",
+      "runAt": "2026-08-20T17:47:53.145Z",
+      "score": 25.26,
+      "recallMacro": 29.33,
+      "precision": 35.58,
+      "precisionMacro": 41.79,
+      "f1": 29.55,
+      "fairRecall": 29.33,
+      "loopFidelity": 80.11,
+      "goldensTotal": 95,
+      "goldensMatched": 24,
+      "cases": 30,
+      "usage": {
+        "inputTokens": 13550602,
+        "outputTokens": 761279
+      },
+      "byLanguage": {
+        "java": {
+          "recall": 11.76,
+          "precision": 25,
+          "goldens": 17,
+          "count": 6
+        },
+        "typescript": {
+          "recall": 21.74,
+          "precision": 33.33,
+          "goldens": 23,
+          "count": 6
+        },
+        "go": {
+          "recall": 50,
+          "precision": 49.21,
+          "goldens": 16,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 35,
+          "precision": 61.11,
+          "goldens": 20,
+          "count": 6
+        },
+        "python": {
+          "recall": 10.53,
+          "precision": 40,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "keycloak": {
+          "recall": 11.76,
+          "precision": 25,
+          "goldens": 17,
+          "count": 6
+        },
+        "cal.com": {
+          "recall": 21.74,
+          "precision": 33.33,
+          "goldens": 23,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 50,
+          "precision": 49.21,
+          "goldens": 16,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 35,
+          "precision": 61.11,
+          "goldens": 20,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 10.53,
+          "precision": 40,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "M": {
+          "recall": 14.81,
+          "precision": 31.79,
+          "goldens": 54,
+          "count": 14
+        },
+        "L": {
+          "recall": 29.41,
+          "precision": 41.67,
+          "goldens": 17,
+          "count": 6
+        },
+        "S": {
+          "recall": 45,
+          "precision": 66.25,
+          "goldens": 20,
+          "count": 8
+        },
+        "XS": {
+          "recall": 50,
+          "precision": 14.29,
+          "goldens": 4,
+          "count": 2
+        }
+      },
+      "findingsBySeverity": {
+        "low": 13,
+        "medium": 32,
+        "high": 26,
+        "critical": 4
+      },
+      "findingsByCategory": {
+        "bug": 65,
+        "performance": 2,
+        "security": 0,
+        "other": 37
+      },
+      "costTotal": 4.98,
+      "costPerPR": 0.17,
+      "costPerBugFound": 0.21,
+      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
+      "ciHalfWidth": 8.74,
+      "ciLow": 16.48,
+      "ciHigh": 36.36,
+      "ciHalfWidthBootstrap": 9.94,
+      "rank": 9,
+      "pairedVsTop": {
+        "diff": 18.95,
+        "lo": 8.91,
+        "hi": 29.17,
+        "p": 0,
+        "n": 30,
+        "separatesFromTop": true
+      }
     },
     {
       "key": "kodus::gemini-3.7-flash",
@@ -1475,20 +1627,20 @@
       "ciLow": 5.95,
       "ciHigh": 18.28,
       "ciHalfWidthBootstrap": 6.16,
-      "rank": 9,
-      "pairedVsTierLeader": {
+      "rank": 10,
+      "pairedVsTop": {
         "diff": 32.63,
         "lo": 21.78,
         "hi": 43.48,
         "p": 0,
-        "n": 30
-      },
-      "tier": 2
+        "n": 30,
+        "separatesFromTop": true
+      }
     }
   ],
   "averages": {
-    "score": 35.92,
-    "precision": 45.82,
-    "f1": 38.09
+    "score": 34.85,
+    "precision": 44.8,
+    "f1": 37.24
   }
 }

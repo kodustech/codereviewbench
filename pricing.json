@@ -152,6 +152,13 @@
       "cacheRead": 0.05,
       "provider": "alibaba",
       "note": "rodado via Akash Chat API (gateway), nao API direta da Alibaba — preco do catalogo Akash, pode divergir do preco oficial do fornecedor"
+    },
+    "minimax-m3@fireworks": {
+      "input": 0.3,
+      "output": 1.2,
+      "cacheRead": 0.059,
+      "provider": "fireworks",
+      "note": "MiniMax M3 via Fireworks (gateway), nao pela API nativa da MiniMax. Preco do catalogo Fireworks, verificado em 2026-08-20 na pagina do modelo (fireworks.ai/models/fireworks/minimax-m3). NAO usar OpenRouter pra este bench: la o mesmo modelo e distribuido entre 12 backends com quantizacoes diferentes (fp4/fp8/unknown), o que tornaria o numero nao atribuivel a um serving especifico."
     }
   }
 }

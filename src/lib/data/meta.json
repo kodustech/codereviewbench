@@ -1,5 +1,5 @@
 {
-  "totalEntries": 9,
+  "totalEntries": 10,
   "harnesses": [
     "kodus"
   ],
@@ -10,6 +10,7 @@
     "glm-5.2@fireworks",
     "kimi-k2.7-code",
     "kimi-k3",
+    "minimax-m3@fireworks",
     "muse-spark-1.2",
     "qwen3.8-27b",
     "qwen3.8-max"
@@ -45,20 +46,19 @@
   ],
   "totalCases": 30,
   "totalGoldens": 95,
-  "tiers": 2,
-  "tierMethod": {
-    "test": "bootstrap pareado da diferenca de recall contra o lider da faixa, nos mesmos PRs",
+  "pairwiseMethod": {
+    "test": "bootstrap pareado da diferenca de recall contra o 1o colocado, nos mesmos PRs",
     "iterations": 4000,
     "alpha": 0.05,
-    "correction": "Holm-Bonferroni sobre as comparacoes contra cada lider de faixa",
-    "note": "Pareado porque todo modelo roda os MESMOS PRs: a dificuldade do caso cancela na diferenca, o que estreita o intervalo em ~40% frente aos marginais. A correcao existe porque testar 8 modelos a 95% produz ~0,4 falso positivo esperado, e um falso positivo aqui QUEBRA uma faixa, afirmando diferenca onde nao ha."
+    "correction": "Holm-Bonferroni sobre as comparacoes contra o 1o colocado",
+    "note": "Pareado porque todo modelo roda os MESMOS PRs: a dificuldade do caso cancela na diferenca, o que estreita o intervalo em ~40% frente aos marginais. A correcao existe porque testar N modelos a 95% produz falso positivo por acaso. NAO usar isto para agrupar em faixas: \"nao separa\" nao e transitivo."
   },
   "varianceCaveat": {
     "measured": "case-sampling (bootstrap 2000x) e judge run-to-run (3 rodadas do mesmo judge sobre a mesma submission, onde disponível)",
     "notMeasured": "model run-to-run (rodar o MESMO modelo de novo do zero — 1 passada por entrada)",
     "runsPerEntry": 1,
     "judgeRunsAvailable": 4,
-    "judgeRunsTotal": 9
+    "judgeRunsTotal": 10
   },
-  "generatedAt": "2026-08-20T13:39:50.543Z"
+  "generatedAt": "2026-08-20T18:02:32.207Z"
 }
