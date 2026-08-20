@@ -75,41 +75,33 @@ Google le o DOM, nao o font-size. O statement de fechamento do rodape
 ("if your harness can review a diff, it can be measured.") NAO muda — e outro
 momento, fala com quem vai submeter, nao com quem esta escolhendo.
 
-## Hero apparatus: grade de bugs (emenda, 2026-08-19)
+## Hero: o scorecard como recibo (emenda, 2026-08-20)
 
-Duas versoes anteriores foram descartadas, pelo mesmo motivo nas duas vezes:
+Decisao de posicionamento tomada com o usuario: **o ativo do site e a
+auditabilidade, nao o numero**. O objetivo e ser o benchmark confiavel da
+categoria — a fonte que alguem cita — nao provocar com o teto de 44%.
 
-1. **Grafo de topologia** (judge no centro, 5 repos em volta, callouts com
-   contagem). Mostrava o INSUMO do bench — quais repos formam o corpus. Custava
-   40% da largura do hero pra dizer "sao 5 repos", e as linhas do grafo
-   cruzavam os proprios labels.
-2. **Escala de recall** (0-100%, 9 modelos plotados, faixa hachurada). Melhor,
-   mas ainda exigia o vocabulario do projeto: "recall", "never reached" (por
-   quem?), 9 riscos sem nome.
+Isso descartou tres tentativas anteriores de visual de hero, todas focadas em
+comunicar um RESULTADO:
 
-O padrao: os dois eram instrumentos ABSTRATOS. Exigiam que o leitor ja
-soubesse o que estava vendo. Ajustar densidade, fonte e contraste melhorou a
-legibilidade sem resolver a compreensao.
+1. Grafo de topologia (judge + 5 repos) — mostrava o insumo, ilegivel.
+2. Escala de recall (0-100%, 9 modelos) — exigia o jargao do projeto.
+3. Grade de 95 bugs (42 acesos) — clara, mas liderava com "a IA erra a
+   maioria", que e tensao direta com o produto da Kodus e nao era a tese
+   escolhida. Tambem enquadrava humano-vs-IA, comparacao que o bench nao faz.
 
-**O que ficou (`BugsFound.tsx`):** uma frase em ingles simples — "Human
-reviewers caught 95 real bugs in these pull requests. The best AI model found
-42." — seguida de 95 pontos, 42 acesos e 53 apagados. Cada ponto E um bug.
-Nao tem jargao, nao precisa de legenda: a proporcao de apagados se le sozinha.
+**O que ficou (`Scorecard.tsx`):** um scorecard real renderizado como recibo —
+configuracao da rodada em cima (harness, judge, execution, PRs, bugs), numeros
+medidos embaixo, caminho do arquivo versionado no pe. O rastro de auditoria E
+o visual. Casa com a referencia-padrinho do proprio spec do Lumen: "Modal
+homepage rate sheet — the receipt is the artwork".
 
-Consequencias registradas:
+Headline: "every number here can be **checked**." (verb landmark em "checked").
 
-- **Meter strip removido.** A grade ja carrega a comparacao; dois instrumentos
-  na mesma pagina violam o spec do Lumen ("never two apparatus objects").
-- **Three-stat row removido do hero.** Duplicava o numero (44% aparecia no
-  stat row e no readout). A legenda da grade (42 found / 53 missed / best
-  model) cobre o mesmo papel, integrada ao instrumento.
-- Visivel em mobile: a grade reflowa por auto-fill, a contagem de pontos nunca
-  muda.
+CTA secundario ("check the artifacts", aponta pro repo) fecha a promessa do
+paragrafo — sem ele o "re-score it yourself" ficava solto.
 
-Nota de tensao com o spec do Lumen: o tema pede um "hand-engineered apparatus"
-com callouts em mono micro-type e leader lines. A grade e mais simples que
-isso de proposito. Clareza ganhou do registro do tema — decisao do usuario,
-repetida tres vezes.
+Todos os campos derivam do leaderboard.json.
 
 ## Macrostructure family
 

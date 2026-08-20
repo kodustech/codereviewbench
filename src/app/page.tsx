@@ -2,16 +2,14 @@ import Link from 'next/link';
 import { ArrowRight, FlaskConical, Layers, Scale, GitPullRequest, Bug, FileCode2, Cpu, ShieldCheck } from 'lucide-react';
 import meta from '@/lib/data/meta.json';
 import leaderboardData from '@/lib/data/leaderboard.json';
-import caseIndexData from '@/lib/data/case-index.json';
-import type { LeaderboardData, CaseIndexRow } from '@/lib/types';
-import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import type { LeaderboardData } from '@/lib/types';
+import { displayNameOf, providerOf, modelSlug, REPO_LABELS } from '@/lib/constants';
 import { formatScore, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
-import BugsFound from '@/components/hero/BugsFound';
+import Scorecard from '@/components/hero/Scorecard';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 
 const lb = leaderboardData as unknown as LeaderboardData;
-const caseIndex = caseIndexData as unknown as CaseIndexRow[];
 
 export default function Home() {
   const topEntries = [...lb.entries].sort((a, b) => b.f1 - a.f1).slice(0, 5);
@@ -34,31 +32,52 @@ export default function Home() {
               </h1>
 
               <p className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-[var(--foreground)] leading-[1.08] mb-7 max-w-2xl lowercase">
-                which <span className="normal-case">AI</span> reviewer actually&nbsp;<span className="verb-landmark">catches</span> bugs?
+                every number here can be&nbsp;<span className="verb-landmark">checked</span>.
               </p>
 
               <p className="text-lg text-[var(--foreground-2)] max-w-xl leading-relaxed mb-12">
-                An open AI code review benchmark: we run real review agents against real merged
-                pull requests from production open-source projects, and measure how many of the
-                known bugs in them each model actually finds. No synthetic regressions, no
-                cherry-picking.
+                An open AI code review benchmark built on real merged pull requests from
+                production open-source projects — not synthetic regressions. Every submission and
+                scorecard is versioned in the repo, the judge is named, and the harness is the
+                same for every model. Re-score it yourself.
               </p>
 
 
-              <Link
-                href="/leaderboard"
-                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-full bg-[var(--accent)] text-[var(--background)] hover:brightness-110 transition-[filter]"
-              >
-                View rankings
-                <ArrowRight className="size-4" />
-              </Link>
+              {/* O texto promete "re-score it yourself" — sem o link pro repo
+                  a promessa fica solta. CTA secundario e o que fecha a tese
+                  de auditabilidade. */}
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  href="/leaderboard"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-full bg-[var(--accent)] text-[var(--background)] hover:brightness-110 transition-[filter]"
+                >
+                  View rankings
+                  <ArrowRight className="size-4" />
+                </Link>
+                <a
+                  href="https://github.com/kodustech/codereviewbench"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-full border border-[var(--border-bright)] text-[var(--foreground-2)] hover:text-[var(--foreground)] hover:border-[var(--accent)] transition-colors"
+                >
+                  <GitPullRequest className="size-4" />
+                  Check the artifacts
+                </a>
+              </div>
             </div>
 
             <div className="reveal" style={{ ['--i' as string]: 1 }}>
-              <BugsFound
-                total={bestRecall.goldensTotal}
-                found={bestRecall.goldensMatched}
+              <Scorecard
                 modelName={displayNameOf(bestRecall.modelId)}
+                harness={bestRecall.harness}
+                judge={bestRecall.judge}
+                executionMode={bestRecall.executionMode}
+                cases={bestRecall.cases}
+                goldensTotal={bestRecall.goldensTotal}
+                goldensMatched={bestRecall.goldensMatched}
+                recall={bestRecall.score}
+                precision={bestRecall.precision}
+                artifactPath={`scorecards/${modelSlug(bestRecall.modelId)}.json`}
               />
             </div>
           </div>

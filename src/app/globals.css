@@ -351,66 +351,107 @@ body {
   .apparatus__core-emit { animation: none; }
 }
 
-/* Grade de bugs — cada ponto e um bug real que um humano pegou.
-   Aceso = o melhor modelo achou. Apagado = passou batido. A proporcao de
-   apagados e a informacao; nao precisa de legenda pra ler. */
-.bugs {
+/* Scorecard como recibo — o rastro de auditoria E o visual do hero.
+   Referencia do spec do Lumen: "the receipt is the artwork". */
+.receipt {
   margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--surface);
+  overflow: hidden;
+  max-width: 27rem;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  position: relative;
+}
+.receipt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120% 100% at 20% 0%, var(--paper-emit), transparent 70%);
+  pointer-events: none;
+}
+.receipt__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.receipt__kind {
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-dim);
+}
+.receipt__subject {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--foreground);
+}
+.receipt__rows {
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: 6px;
+  position: relative;
 }
-.bugs__lede {
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  color: var(--muted);
-  max-width: 34ch;
+/* Os numeros medidos ficam em bloco separado, com regua tracejada em cima —
+   e a divisao de um recibo: configuracao acima, resultado abaixo. */
+.receipt__rows--measured {
+  border-top: 1px dashed var(--border-bright);
 }
-.bugs__lede strong {
-  color: var(--foreground);
-  font-weight: 500;
-}
-.bugs__grid {
-  display: grid;
-  /* auto-fill mantem os pontos no mesmo tamanho e deixa a grade reflowar —
-     o numero de colunas muda com a largura, a contagem de pontos nunca. */
-  grid-template-columns: repeat(auto-fill, minmax(0, 14px));
-  gap: 7px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.bugs__dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  border: 1px solid var(--border-bright);
-}
-.bugs__dot[data-found] {
-  background: var(--accent);
-  border-color: var(--accent);
-  box-shadow: 0 0 8px 0 var(--glow);
-}
-.bugs__dot--legend {
-  display: inline-block;
-  flex-shrink: 0;
-}
-.bugs__key {
+.receipt__row {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-sm) var(--space-md);
-  font-family: var(--font-mono);
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+.receipt__row dt {
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+/* Pontilhado ligando rotulo e valor, como linha de recibo. */
+.receipt__row::before {
+  content: '';
+  flex: 1;
+  order: 1;
+  border-bottom: 1px dotted var(--border-bright);
+  transform: translateY(-3px);
+  min-width: var(--space-sm);
+}
+.receipt__row dd {
+  order: 2;
+  margin: 0;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+.receipt__rows--measured dd {
+  color: var(--accent);
+}
+.receipt__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-md) var(--space-sm);
+  border-top: 1px solid var(--border);
   font-size: 10.5px;
+  position: relative;
+}
+.receipt__path {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.receipt__note {
+  color: var(--muted-dim);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--muted);
-}
-.bugs__key-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-.bugs__key-model {
-  color: var(--muted-dim);
+  white-space: nowrap;
 }
