@@ -52,6 +52,14 @@ export const PROVIDER_COLORS: Record<string, string> = {
   Meta: '#805ad5',
   OpenAI: '#c53030',
   Google: '#0987a0',
+  // MiniMax (2026-08-20): escolhida rodando simulação de protanopia,
+  //   deuteranopia e tritanopia (Brettel/Viénot) contra as 8 cores já em uso.
+  //   Pior caso ΔE = 15,8 — a melhor separação da paleta inteira.
+  // ACHADO ao fazer isso: o "ΔE ≥ 8" prometido no comentário acima vale para
+  //   VISÃO NORMAL, não sob daltonismo. Sob CVD a paleta atual não cumpre o
+  //   próprio critério — Meta (#805ad5) e xAI (#71717a) ficam a ΔE 3,2 um do
+  //   outro, praticamente indistinguíveis. Vale revisar esses dois.
+  MiniMax: '#883848',
   // não validadas:
   xAI: '#71717a',
   Zhipu: '#b45309',
