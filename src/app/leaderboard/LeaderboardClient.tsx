@@ -266,23 +266,7 @@ export default function LeaderboardClient() {
 
       {/* Controls */}
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-4 pb-8 border-b border-[var(--border)]">
-        {/* Os tres primeiros sao METADADO do run, nao controle. Tinham a
-            mesma caixa com borda do botao de Filters, entao nada indicava qual
-            dos quatro era clicavel. Viraram texto corrido com separador; o
-            unico elemento com forma de botao na linha e o que e botao. */}
         <div className="flex flex-wrap gap-x-3 gap-y-2 items-center">
-          <span className="text-[length:var(--text-caption)] font-mono text-[color:var(--muted)]">
-            {meta.repos.length} repos
-          </span>
-          <span className="text-[color:var(--muted-dim)]" aria-hidden>&middot;</span>
-          <span className="text-[length:var(--text-caption)] font-mono text-[color:var(--muted)]">
-            harness: {meta.harnesses.join(', ')}
-          </span>
-          <span className="text-[color:var(--muted-dim)]" aria-hidden>&middot;</span>
-          <span className="text-[length:var(--text-caption)] font-mono text-[color:var(--muted)]">
-            1 run per model
-          </span>
-
           {/* Ghost Pill do spec quando em repouso, preenchido de azul quando ha
               filtro. O contador diz QUANTOS, que e o que a pessoa quer saber
               sem reabrir o painel. */}
@@ -290,7 +274,7 @@ export default function LeaderboardClient() {
             onClick={() => setFiltersOpen((v) => !v)}
             aria-expanded={filtersOpen}
             className={cn(
-              'ml-1 inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-buttons)] text-[length:var(--text-body-sm)] font-semibold transition-colors',
+              'inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-buttons)] text-[length:var(--text-body-sm)] font-semibold transition-colors',
               isFiltered
                 ? 'bg-[var(--accent)] text-[color:var(--on-accent)] border-[1.5px] border-[var(--accent)]'
                 : 'border-[1.5px] border-[var(--color-ink-black)] text-[color:var(--color-ink-black)] hover:bg-[var(--color-ink-black)] hover:text-white',
