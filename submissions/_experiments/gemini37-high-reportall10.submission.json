@@ -1,0 +1,294 @@
+{
+  "benchmarkVersion": "custom-v1",
+  "run": {
+    "harness": {
+      "name": "kodus",
+      "version": "dev"
+    },
+    "model": {
+      "id": "gemini-3.7-flash",
+      "provider": "google",
+      "accessPath": "api"
+    },
+    "executionMode": "replay",
+    "heavy": false,
+    "reasoning": {
+      "config": "vendor-default",
+      "effortRequested": null
+    },
+    "runAt": "2026-08-13T19:00:37.601Z"
+  },
+  "results": [
+    {
+      "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 441822,
+        "outputTokens": 3201,
+        "reasoningTokens": 1947,
+        "cacheReadTokens": 268877
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 18,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+      "findings": [
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+          "startLine": 216,
+          "endLine": 224,
+          "severity": "high",
+          "category": "bug",
+          "description": "Missing null guard on resource returned by getResourceTypeResource can cause a NullPointerException — WHAT: `resource` is used without checking if `AdminPermissionsSchema.SCHEMA.getResourceTypeResource(...)` returned `null`.\nWHY: If the `Clients` resource type resource does not exist in the resource server, `getResourceTypeResource` returns `null`, causing a `NullPointerException` when calling `authz.getStoreFactory().getPolicyStore().findByResource(server, resource)` or `resource.getScopes()`.\nHOW: Add a `null` check on `resource` before querying policies by resource."
+        }
+      ],
+      "usage": {
+        "inputTokens": 605610,
+        "outputTokens": 8739,
+        "reasoningTokens": 6882,
+        "cacheReadTokens": 407673
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 20,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 46,
+          "endLine": 49,
+          "severity": "high",
+          "category": "bug",
+          "description": "Logical AND (`&&`) is used instead of logical OR (`||`) when determining `isTeamAdminOrOwner`. — WHAT: Logical AND (`&&`) is used instead of logical OR (`||`) when checking team membership permissions in `isTeamAdminOrOwner`.\nWHY: Team members hold distinct roles (`ADMIN` or `OWNER`), so requiring both checks to return true causes `isTeamAdminOrOwner` to evaluate to `false`, incorrectly rejecting team owners and team admins with a FORBIDDEN error.\nHOW: Change the `&&` operator to `||` so that either team admins or team owners are authorized."
+        }
+      ],
+      "usage": {
+        "inputTokens": 310653,
+        "outputTokens": 3604,
+        "reasoningTokens": 2524,
+        "cacheReadTokens": 73197
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 7,
+        "replayCalls": 21,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+      "findings": [
+        {
+          "path": "misc/theme-verifier/src/main/java/org/keycloak/themeverifier/VerifyMessageProperties.java",
+          "startLine": 73,
+          "endLine": 76,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Unescaped hyphen range in regex matches path separators and corrupts englishFile path when directory names contain underscores — WHAT: The regex character class `[a-zA-Z-_]` contains an unescaped range `-_` (ASCII 45 to ASCII 95), which includes path separators (`/`) and dots.\n\nWHY: If `file.getAbsolutePath()` contains an underscore in any parent directory name (such as common CI workspace paths like `_work`), the regex matches across path separators and strips the directory structure, resulting in an invalid path and a `FileNotFoundException` when opening the English properties file.\n\nHOW: Place the hyphen at the end of the character class or escape it (`[a-zA-Z_\\\\-]`) to prevent it from forming a range that matches `/`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 419454,
+        "outputTokens": 8949,
+        "reasoningTokens": 7383,
+        "cacheReadTokens": 313900
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 7,
+        "replayCalls": 15,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/services/anonymous/anonimpl/impl.go",
+          "startLine": 87,
+          "endLine": 98,
+          "severity": "high",
+          "category": "bug",
+          "description": "Device key is cached before CreateOrUpdateDevice succeeds, causing subsequent requests from a blocked device to bypass the device limit. — WHAT: `tagDeviceUI` caches the device key in `localCache` before verifying or updating the device in `CreateOrUpdateDevice`.\nWHY: When `CreateOrUpdateDevice` fails with `ErrDeviceLimitReached`, the device key remains in `localCache`, causing subsequent requests for that device within the cache TTL to hit the cache, return `nil`, and bypass the configured anonymous device limit.\nHOW: Populate `localCache` with `a.localCache.SetDefault(key, struct{}{})` only after `s.anonStore.CreateOrUpdateDevice(ctx, device)` completes successfully."
+        },
+        {
+          "path": "pkg/services/anonymous/anonimpl/impl.go",
+          "startLine": null,
+          "endLine": null,
+          "severity": "high",
+          "category": "bug",
+          "description": "Premature cache insertion on error in tagDeviceUI allows subsequent requests to bypass device limit checks. — Fix tagDeviceUI caching behavior to prevent premature cache insertion on error, which allows subsequent requests to bypass device limit checks."
+        }
+      ],
+      "usage": {
+        "inputTokens": 547500,
+        "outputTokens": 14518,
+        "reasoningTokens": 12383,
+        "cacheReadTokens": 322214
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 29,
+        "unexpectedToolCalls": 5
+      }
+    },
+    {
+      "caseId": "dual-storage-architecture-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 41,
+          "endLine": 48,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Storage.Create failure incorrectly records metrics via recordLegacyDuration instead of recordStorageDuration — WHAT: recordLegacyDuration is invoked when d.Storage.Create fails.\nWHY: Storage failure metrics are recorded against the legacy storage histogram instead of the unified storage histogram, corrupting metrics and alerting.\nHOW: Change the call on line 45 to d.recordStorageDuration(true, mode3Str, options.Kind, method, startStorage)."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 100,
+          "endLine": 107,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Delete passes the object name instead of options.Kind as the kind label to recordStorageDuration — WHAT: The resource instance name is passed instead of options.Kind as the kind label argument to recordStorageDuration.\nWHY: Passing object instances names corrupts metric label dimensionality and causes cardinality explosion in Prometheus for the 'kind' label.\nHOW: Pass options.Kind instead of name to recordStorageDuration on line 106."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 126,
+          "endLine": 132,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Storage.Update failure incorrectly records metrics via recordLegacyDuration instead of recordStorageDuration — WHAT: recordLegacyDuration is invoked when d.Storage.Update fails.\nWHY: Unified storage update failures are recorded as legacy storage metrics, masking unified storage errors and polluting legacy error metrics.\nHOW: Change the call on line 129 to d.recordStorageDuration(true, mode3Str, options.Kind, method, startStorage)."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 161,
+          "endLine": 168,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Legacy DeleteCollection asynchronous execution incorrectly calls recordStorageDuration instead of recordLegacyDuration — WHAT: recordStorageDuration is called inside the async Legacy.DeleteCollection goroutine instead of recordLegacyDuration.\nWHY: Legacy delete-collection duration and error metrics are recorded into the unified storage metric series instead of the legacy storage series.\nHOW: Change line 166 to call d.recordLegacyDuration(err != nil, mode3Str, options.Kind, method, startLegacy)."
+        }
+      ],
+      "usage": {
+        "inputTokens": 779492,
+        "outputTokens": 11004,
+        "reasoningTokens": 7572,
+        "cacheReadTokens": 559510
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 27,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/jobs/scheduled/poll_feed.rb",
+          "startLine": 34,
+          "endLine": 37,
+          "severity": "high",
+          "category": "bug",
+          "description": "Unchecked call to `i.content.scrub` raises `NoMethodError` when RSS feed items do not contain a `<content>` element. — WHAT: `i.content.scrub` is called without guarding against `nil` or falling back to `i.description`.\nWHY: In standard RSS feeds that use `<description>` rather than `<content>` / `<content:encoded>`, `i.content` returns `nil`, raising `NoMethodError: undefined method 'scrub' for nil:NilClass` and aborting feed polling.\nHOW: Fall back to `i.description` when `i.content` is blank, and ensure the string is present before calling `.scrub`."
+        },
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 12,
+          "endLine": 14,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Mutating `contents` in-place with `<<` raises `NoMethodError` if `contents` is `nil`. — WHAT: `contents << ...` mutates `contents` in-place with `<<` without verifying it is a non-nil string.\nWHY: When `import_remote` is called and readability fails to extract content (`doc.content` is `nil`), `contents << ...` raises `NoMethodError: undefined method '<<' for nil:NilClass`.\nHOW: Use string interpolation `contents = \"#{contents}\\n...\"` or ensure `contents` is initialized as a string."
+        }
+      ],
+      "usage": {
+        "inputTokens": 306456,
+        "outputTokens": 9628,
+        "reasoningTokens": 7676,
+        "cacheReadTokens": 73053
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 25,
+        "unexpectedToolCalls": 5
+      }
+    },
+    {
+      "caseId": "feat-2fa-backup-codes-cal-com",
+      "findings": [],
+      "usage": {
+        "inputTokens": 530768,
+        "outputTokens": 10495,
+        "reasoningTokens": 9127,
+        "cacheReadTokens": 358870
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 18,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+      "findings": [],
+      "usage": {
+        "inputTokens": 389134,
+        "outputTokens": 8399,
+        "reasoningTokens": 7284,
+        "cacheReadTokens": 207777
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 13,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/integrations/services/assignment_source.py",
+          "startLine": 15,
+          "endLine": 18,
+          "severity": "medium",
+          "category": "bug",
+          "description": "`AssignmentSource.queued` evaluates `timezone.now()` at class definition time instead of per-instance instantiation. — WHAT: The `queued` field default is evaluated once at module load time (`timezone.now()`) rather than per-instance creation.\nWHY: All `AssignmentSource` instances created using the default value receive the stale timestamp of module import time rather than when the assignment was queued.\nHOW: Use `field(default_factory=timezone.now)` so `timezone.now()` is invoked dynamically whenever a new `AssignmentSource` is instantiated."
+        },
+        {
+          "path": "src/sentry/integrations/services/assignment_source.py",
+          "startLine": 15,
+          "endLine": 19,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Dataclass default for `queued` is evaluated at class definition time rather than instance creation. — WHAT: The `queued` field default is evaluated once at module import time (`timezone.now()`) rather than per-instance creation.\nWHY: Every `AssignmentSource` instance created without specifying `queued` will share the same stale timestamp from when the module was imported.\nHOW: Use `field(default_factory=timezone.now)` from `dataclasses` so `timezone.now()` is called dynamically when an instance is instantiated."
+        }
+      ],
+      "usage": {
+        "inputTokens": 485543,
+        "outputTokens": 10483,
+        "reasoningTokens": 8044,
+        "cacheReadTokens": 272677
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 20,
+        "unexpectedToolCalls": 1
+      }
+    }
+  ]
+}

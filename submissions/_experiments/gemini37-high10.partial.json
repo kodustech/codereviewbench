@@ -1,0 +1,286 @@
+{
+  "benchmarkVersion": "custom-v1",
+  "run": {
+    "harness": {
+      "name": "kodus",
+      "version": "dev"
+    },
+    "model": {
+      "id": "gemini-3.7-flash",
+      "provider": "google",
+      "accessPath": "api"
+    },
+    "executionMode": "replay",
+    "heavy": false,
+    "reasoning": {
+      "config": "vendor-default",
+      "effortRequested": null
+    },
+    "runAt": "2026-08-13T18:52:37.760Z"
+  },
+  "partial": true,
+  "completedCases": 9,
+  "results": [
+    {
+      "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 476488,
+        "outputTokens": 9316,
+        "reasoningTokens": 7522,
+        "cacheReadTokens": 268682
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 18,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 513713,
+        "outputTokens": 3164,
+        "reasoningTokens": 2135,
+        "cacheReadTokens": 334354
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 18,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 46,
+          "endLine": 49,
+          "severity": "high",
+          "category": "bug",
+          "description": "Logical AND is used instead of logical OR when verifying team admin or owner permissions. — WHAT: Logical AND (`&&`) is used instead of logical OR (`||`) when checking `isTeamAdminOrOwner`.\nWHY: A user who is either a team admin or a team owner (but not simultaneously both) evaluates to `false`, causing authorized team admins or owners to be denied access with a FORBIDDEN error.\nHOW: Replace `&&` with `||` so that having either the admin or owner role grants permission."
+        }
+      ],
+      "usage": {
+        "inputTokens": 367314,
+        "outputTokens": 4368,
+        "reasoningTokens": 3198,
+        "cacheReadTokens": 126300
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 7,
+        "replayCalls": 21,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+      "findings": [
+        {
+          "path": "misc/theme-verifier/src/main/java/org/keycloak/themeverifier/VerifyMessageProperties.java",
+          "startLine": 74,
+          "endLine": 76,
+          "severity": "high",
+          "category": "bug",
+          "description": "Unescaped hyphen in `[a-zA-Z-_]` creates an ASCII range matching path separators, causing directory corruption on paths with underscores. — WHAT: The character class `[a-zA-Z-_]` treats `-_` as a character range from `-` (ASCII 45) to `_` (ASCII 95), which matches path separators (`/` and `\\`) and is not anchored to the end of the path.\nWHY: If any directory in the absolute file path contains an underscore (e.g., `/workspace/keycloak_dev/...`), `replaceAll` matches from that directory's underscore across path separators up to `.properties`, replacing the entire tail with `_en.properties` and causing a runtime `FileNotFoundException`.\nHOW: Escape the hyphen or place it at the end of the character class (e.g. `[a-zA-Z_\\\\-]`) and anchor the match to the end of the string with `$`."
+        },
+        {
+          "path": "misc/theme-verifier/src/main/java/org/keycloak/themeverifier/VerifyMessageProperties.java",
+          "startLine": 101,
+          "endLine": 112,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Unbounded `end` calculation can cause `start + end > length`, throwing `StringIndexOutOfBoundsException` during diff formatting. — WHAT: The `end` matching loop does not bound `end` by `sanitized.length() - start` and `value.length() - start`.\nWHY: When `value` and `sanitized` share identical characters at both the start and end (for example repeated tags like `<br><br>` sanitized to `<br>`), `start + end` can exceed the length of the string, causing `sanitized.length() - end < start` and throwing a `StringIndexOutOfBoundsException` from `substring(start, length - end)`.\nHOW: Bound the `end` loop condition with `end < sanitized.length() - start && end < value.length() - start`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 405427,
+        "outputTokens": 21539,
+        "reasoningTokens": 19017,
+        "cacheReadTokens": 297712
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 13,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "feat-2fa-backup-codes-cal-com",
+      "findings": [],
+      "usage": {
+        "inputTokens": 537709,
+        "outputTokens": 8272,
+        "reasoningTokens": 6876,
+        "cacheReadTokens": 350588
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 18,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/services/anonymous/anonimpl/impl.go",
+          "startLine": 144,
+          "endLine": 149,
+          "severity": "high",
+          "category": "bug",
+          "description": "localCache caches failed device tagging attempts, allowing rejected anonymous devices to bypass the device limit on subsequent requests — WHAT: tagDeviceUI caches the device key in localCache before calling CreateOrUpdateDevice, leaving failed or rejected device tags cached.\nWHY: When CreateOrUpdateDevice returns ErrDeviceLimitReached, the request is rejected, but the device key remains cached in localCache for 29 minutes; any subsequent request with the same device ID hits the cache, returns nil from TagDevice, and successfully authenticates as anonymous, completely bypassing the device limit.\nHOW: Move localCache.SetDefault(key, struct{}{}) in tagDeviceUI so it is only called after anonStore.CreateOrUpdateDevice succeeds, or delete the key from localCache if CreateOrUpdateDevice returns an error."
+        },
+        {
+          "path": "pkg/services/anonymous/anonimpl/impl.go",
+          "startLine": 144,
+          "endLine": 148,
+          "severity": "high",
+          "category": "bug",
+          "description": "Rejected anonymous devices remain cached in localCache, bypassing the device limit on subsequent requests. — WHAT: `tagDeviceUI` inserts the device cache key into `localCache` before calling `CreateOrUpdateDevice`, without evicting the key if `CreateOrUpdateDevice` returns an error.\nWHY: When a device exceeds the limit and `CreateOrUpdateDevice` returns `ErrDeviceLimitReached`, the device key remains cached for 29 minutes, causing all subsequent requests from that device to hit `localCache.Get`, return `nil`, and bypass the device limit check.\nHOW: Update `tagDeviceUI` to set `localCache.SetDefault(key, struct{}{})` only after `a.anonStore.CreateOrUpdateDevice(ctx, device)` returns successfully (or delete the key from `localCache` on error)."
+        }
+      ],
+      "usage": {
+        "inputTokens": 477474,
+        "outputTokens": 22709,
+        "reasoningTokens": 20131,
+        "cacheReadTokens": 236501
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 21,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/jobs/scheduled/poll_feed.rb",
+          "startLine": 35,
+          "endLine": 36,
+          "severity": "high",
+          "category": "bug",
+          "description": "Calling scrub on i.content raises NoMethodError when polling RSS feeds that do not have a content tag — WHAT: Calling `i.content.scrub` throws `NoMethodError: undefined method 'scrub' for nil:NilClass` when polling feeds where `i.content` is nil.\nWHY: SimpleRSS maps `<description>` to `i.description` and standard RSS 2.0 feeds do not have `<content>` tags, causing the scheduled `PollFeed` job to crash immediately on any RSS 2.0 feed.\nHOW: Fall back to `i.description` (or `i.content_encoded`) if `i.content` is nil, and guard against nil before calling `.scrub`."
+        },
+        {
+          "path": "lib/topic_retriever.rb",
+          "startLine": 48,
+          "endLine": 51,
+          "severity": "medium",
+          "category": "bug",
+          "description": "SiteSetting.embed_by_username.downcase raises NoMethodError if the setting is blank — WHAT: `SiteSetting.embed_by_username.downcase` is called without guarding against `embed_by_username` being nil or blank.\nWHY: If the `embed_by_username` site setting is not configured, attempting to retrieve topics will crash with `NoMethodError: undefined method 'downcase' for nil:NilClass`.\nHOW: Check `SiteSetting.embed_by_username.present?` before calling `.downcase`."
+        },
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 13,
+          "endLine": 13,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Mutating contents in-place with `<<` raises NoMethodError if contents is nil — WHAT: `contents << ...` mutates `contents` in place without guarding against `contents` being nil.\nWHY: When `import_remote` fails to parse a document's content, `doc.content` can be `nil`, causing `contents << ...` to raise `NoMethodError: undefined method '<<' for nil:NilClass`.\nHOW: Reassign `contents` using string interpolation instead of in-place mutation."
+        }
+      ],
+      "usage": {
+        "inputTokens": 279476,
+        "outputTokens": 15775,
+        "reasoningTokens": 13475,
+        "cacheReadTokens": 65082
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 7,
+        "replayCalls": 26,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+      "findings": [],
+      "usage": {
+        "inputTokens": 283370,
+        "outputTokens": 2411,
+        "reasoningTokens": 1840,
+        "cacheReadTokens": 109889
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 5,
+        "replayCalls": 13,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "dual-storage-architecture-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 42,
+          "endLine": 47,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Storage creation failure records legacy duration metrics instead of storage duration metrics. — WHAT: recordLegacyDuration is called when d.Storage.Create fails.\nWHY: Storage failure metrics are attributed to Legacy storage duration metrics, causing misleading metric reporting and concealing unified store error rates.\nHOW: Change d.recordLegacyDuration to d.recordStorageDuration."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 126,
+          "endLine": 131,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Storage update failure records legacy duration metrics instead of storage duration metrics. — WHAT: recordLegacyDuration is called when d.Storage.Update fails.\nWHY: Storage failure metrics are attributed to Legacy storage duration metrics, corrupting metric dashboards and alerting for update operations.\nHOW: Change d.recordLegacyDuration to d.recordStorageDuration."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 161,
+          "endLine": 168,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Legacy delete collection records storage duration metrics instead of legacy duration metrics. — WHAT: recordStorageDuration is called to record the asynchronous Legacy delete collection operation duration.\nWHY: Legacy delete-collection execution times and errors are recorded under the unified Storage metrics instead of Legacy metrics.\nHOW: Change d.recordStorageDuration to d.recordLegacyDuration."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 106,
+          "endLine": 106,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Delete operation records object name instead of resource kind as metric label. — WHAT: The object name parameter is passed as the kind label argument to recordStorageDuration.\nWHY: Using unique resource names instead of resource kinds leads to unbounded metric label cardinality in Prometheus and inconsistent metric series.\nHOW: Pass options.Kind instead of name to recordStorageDuration."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 96,
+          "endLine": 98,
+          "severity": "low",
+          "category": "bug",
+          "description": "Delete method sets un-annotated logger on context instead of contextual logger. — WHAT: d.Log is passed to klog.NewContext instead of log.\nWHY: Downstream storage calls extracting the logger from ctx will lack the structured name, kind, and method attributes attached to log.\nHOW: Pass log instead of d.Log to klog.NewContext(ctx, log)."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 50,
+          "endLine": 58,
+          "severity": "high",
+          "category": "bug",
+          "description": "Asynchronous legacy operations use request context directly and get cancelled when HTTP request completes. — WHAT: Asynchronous goroutines derive their timeout context directly from the incoming request ctx.\nWHY: When the parent HTTP request handler finishes and returns the response, the request context is cancelled, causing the asynchronous legacy storage write to be immediately aborted.\nHOW: Detach context cancellation from the parent request context (e.g., using context.WithoutCancel(ctx)) before applying the 10-second timeout."
+        }
+      ],
+      "usage": {
+        "inputTokens": 782540,
+        "outputTokens": 16952,
+        "reasoningTokens": 12331,
+        "cacheReadTokens": 493908
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 31,
+        "unexpectedToolCalls": 2
+      }
+    }
+  ]
+}

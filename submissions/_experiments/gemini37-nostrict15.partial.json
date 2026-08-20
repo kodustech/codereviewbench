@@ -1,0 +1,367 @@
+{
+  "benchmarkVersion": "custom-v1",
+  "run": {
+    "harness": {
+      "name": "kodus",
+      "version": "dev"
+    },
+    "model": {
+      "id": "gemini-3.7-flash",
+      "provider": "google",
+      "accessPath": "api"
+    },
+    "executionMode": "replay",
+    "heavy": false,
+    "reasoning": {
+      "config": "vendor-default",
+      "effortRequested": null
+    },
+    "runAt": "2026-08-13T22:13:17.373Z"
+  },
+  "partial": true,
+  "completedCases": 13,
+  "results": [
+    {
+      "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 361120,
+        "outputTokens": 2199,
+        "reasoningTokens": 1535,
+        "cacheReadTokens": 285497
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 12,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 488048,
+        "outputTokens": 3704,
+        "reasoningTokens": 2815,
+        "cacheReadTokens": 346490
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 18,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 473584,
+        "outputTokens": 4366,
+        "reasoningTokens": 2917,
+        "cacheReadTokens": 248367
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 19,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 46,
+          "endLine": 49,
+          "severity": "medium",
+          "category": "bug",
+          "description": "isTeamAdminOrOwner uses logical AND instead of OR, preventing team admins and owners from adding guests. — WHAT: `isTeamAdminOrOwner` uses the `&&` operator instead of `||` to combine `isTeamAdmin` and `isTeamOwner`.\nWHY: Because a team member cannot be both an admin and an owner at the same time, this condition will always evaluate to `false`, wrongly throwing a `FORBIDDEN` error when a team admin or owner tries to add guests.\nHOW: Replace `&&` with `||` so the check succeeds if the user is either a team admin or a team owner."
+        }
+      ],
+      "usage": {
+        "inputTokens": 365285,
+        "outputTokens": 3093,
+        "reasoningTokens": 1823,
+        "cacheReadTokens": 150458
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 22,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/jobs/scheduled/poll_feed.rb",
+          "startLine": 35,
+          "endLine": 36,
+          "severity": "high",
+          "category": "bug",
+          "description": "Calling .scrub on i.content without checking for nil causes NoMethodError on RSS feeds that only provide description tags. — WHAT: `i.content.scrub` is called on SimpleRSS items without a fallback or nil guard.\nWHY: In standard RSS 2.0 feeds, post bodies are often placed in `<description>` rather than `<content>`, causing `i.content` to be `nil` and raising `NoMethodError: undefined method 'scrub' for nil:NilClass`, crashing the feed poll job.\nHOW: Fall back to `i.description` if `i.content` is blank and guard against `nil` before calling `scrub` and `CGI.unescapeHTML`."
+        },
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 44,
+          "endLine": 46,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Missing require 'open-uri' in TopicEmbed causes open(url) to treat HTTP URLs as local filenames and fail. — WHAT: `open(url)` is used to fetch remote web pages in `import_remote` without requiring `open-uri`.\nWHY: When `import_remote` is called directly (such as via `TopicRetriever` before `Jobs::PollFeed` runs), `Kernel#open` is not monkey-patched by `open-uri` and attempts to open the URL as a local file path, raising `Errno::ENOENT`.\nHOW: Add `require 'open-uri'` before calling `open(url)`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 244782,
+        "outputTokens": 6054,
+        "reasoningTokens": 4235,
+        "cacheReadTokens": 32498
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 7,
+        "replayCalls": 20,
+        "unexpectedToolCalls": 4
+      }
+    },
+    {
+      "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/services/anonymous/anonimpl/impl.go",
+          "startLine": 87,
+          "endLine": 98,
+          "severity": "high",
+          "category": "bug",
+          "description": "Device ID is cached in localCache before CreateOrUpdateDevice succeeds, causing subsequent requests from rejected devices to bypass the device limit. — WHAT: `tagDeviceUI` caches the device key in `localCache` before `CreateOrUpdateDevice` executes and succeeds.\nWHY: When `CreateOrUpdateDevice` fails with `ErrDeviceLimitReached` (or a database error), the error is returned to `Authenticate` and the request is rejected once, but the device key remains in `localCache` for 29 minutes; subsequent requests with the same `X-Grafana-Device-Id` will hit the cache, return `nil`, and allow unauthorized anonymous access past the device limit.\nHOW: Move `a.localCache.SetDefault(key, struct{}{})` to only run after `a.anonStore.CreateOrUpdateDevice(ctx, device)` completes without error."
+        },
+        {
+          "path": "pkg/services/anonymous/anonimpl/impl.go",
+          "startLine": 144,
+          "endLine": 149,
+          "severity": "high",
+          "category": "bug",
+          "description": "Device key is stored in localCache before CreateOrUpdateDevice succeeds, causing subsequent requests from rejected devices to bypass the device limit. — WHAT: `tagDeviceUI` populates `localCache` before `CreateOrUpdateDevice` succeeds, leaving the device ID cached when `CreateOrUpdateDevice` fails with `ErrDeviceLimitReached`.\nWHY: A device that exceeds the limit is rejected on its first request, but subsequent requests within the 29-minute cache window hit `localCache.Get` and return `nil`, bypassing the device limit entirely.\nHOW: Update `tagDeviceUI` to set the key in `localCache` only after `CreateOrUpdateDevice` succeeds (or remove the key from `localCache` if `CreateOrUpdateDevice` returns an error)."
+        }
+      ],
+      "usage": {
+        "inputTokens": 401780,
+        "outputTokens": 16429,
+        "reasoningTokens": 14002,
+        "cacheReadTokens": 208052
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 9,
+        "replayCalls": 19,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "feat-2fa-backup-codes-cal-com",
+      "findings": [],
+      "usage": {
+        "inputTokens": 510174,
+        "outputTokens": 3983,
+        "reasoningTokens": 2988,
+        "cacheReadTokens": 330167
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 18,
+        "unexpectedToolCalls": 5
+      }
+    },
+    {
+      "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
+      "findings": [],
+      "usage": {
+        "inputTokens": 250453,
+        "outputTokens": 1882,
+        "reasoningTokens": 1233,
+        "cacheReadTokens": 40697
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 6,
+        "replayCalls": 14,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+      "findings": [],
+      "usage": {
+        "inputTokens": 208240,
+        "outputTokens": 6114,
+        "reasoningTokens": 5147,
+        "cacheReadTokens": 85500
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 9,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "dual-storage-architecture-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 41,
+          "endLine": 47,
+          "severity": "medium",
+          "category": "bug",
+          "description": "DualWriterMode3.Create records legacy storage duration metric instead of storage duration metric when storage create fails — WHAT: `d.Storage.Create` failure invokes `d.recordLegacyDuration` instead of `d.recordStorageDuration`.\nWHY: Skews legacy metrics with failures and durations originating from the unified storage operation.\nHOW: Replace `d.recordLegacyDuration` with `d.recordStorageDuration`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 94,
+          "endLine": 107,
+          "severity": "medium",
+          "category": null,
+          "description": "DualWriterMode3.Delete uses wrong context logger and passes resource name instead of kind to recordStorageDuration — WHAT: `DualWriterMode3.Delete` attaches `d.Log` instead of `log` to the context and passes `name` instead of `options.Kind` to `recordStorageDuration`.\nWHY: Context logger loses the decorated structured fields (`name`, `kind`, `method`), and Prometheus metrics record high-cardinality resource names in the `kind` metric label dimension.\nHOW: Pass `log` to `klog.NewContext` and `options.Kind` to `d.recordStorageDuration`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 125,
+          "endLine": 131,
+          "severity": "medium",
+          "category": "bug",
+          "description": "DualWriterMode3.Update records legacy storage duration metric instead of storage duration metric when storage update fails — WHAT: `d.Storage.Update` failure calls `d.recordLegacyDuration` instead of `d.recordStorageDuration`.\nWHY: Incorrectly attributes unified store update errors and latency to the legacy store metric stream.\nHOW: Call `d.recordStorageDuration(true, mode3Str, options.Kind, method, startStorage)`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 161,
+          "endLine": 168,
+          "severity": "medium",
+          "category": "bug",
+          "description": "DualWriterMode3.DeleteCollection records storage duration instead of legacy duration for legacy delete operation — WHAT: In the asynchronous goroutine for legacy `DeleteCollection`, `d.recordStorageDuration` is called instead of `d.recordLegacyDuration`.\nWHY: Legacy delete collection metrics are recorded into the unified store duration metric collector rather than the legacy store metric collector.\nHOW: Change `d.recordStorageDuration` to `d.recordLegacyDuration`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 42,
+          "endLine": 47,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Record storage duration instead of legacy duration when Storage.Create fails — WHAT: `d.Storage.Create` failure invokes `d.recordLegacyDuration` instead of `d.recordStorageDuration`.\nWHY: Incorrectly records unified store failures and latencies against legacy store metrics, distorting observability and alerts.\nHOW: Replace `d.recordLegacyDuration` with `d.recordStorageDuration`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 96,
+          "endLine": 107,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Use contextual logger in Delete context and pass options.Kind to recordStorageDuration — WHAT: `DualWriterMode3.Delete` attaches `d.Log` instead of `log` to the context and passes `name` instead of `options.Kind` to `recordStorageDuration`.\nWHY: Downstream storage calls lose contextual logger values (`name`, `kind`, `method`) and Prometheus metrics record the resource instance name under the `kind` metric label, creating cardinality explosion.\nHOW: Pass `log` to `klog.NewContext` and `options.Kind` to `d.recordStorageDuration`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 126,
+          "endLine": 131,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Record storage duration instead of legacy duration when Storage.Update fails — WHAT: `d.Storage.Update` failure calls `d.recordLegacyDuration` instead of `d.recordStorageDuration`.\nWHY: Incorrectly attributes unified store update errors and latency to legacy store metrics.\nHOW: Call `d.recordStorageDuration` with `options.Kind` on unified storage error."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 161,
+          "endLine": 168,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Record legacy duration instead of storage duration for async Legacy.DeleteCollection — WHAT: In the asynchronous goroutine for legacy `DeleteCollection`, `d.recordStorageDuration` is called instead of `d.recordLegacyDuration`.\nWHY: Asynchronous legacy delete-collection operations report duration and error status to the unified storage metric series instead of the legacy metric series.\nHOW: Call `d.recordLegacyDuration` inside the legacy cleanup goroutine."
+        }
+      ],
+      "usage": {
+        "inputTokens": 732951,
+        "outputTokens": 16494,
+        "reasoningTokens": 10252,
+        "cacheReadTokens": 441034
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 24,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/integrations/tasks/sync_assignee_outbound.py",
+          "startLine": 59,
+          "endLine": 61,
+          "severity": "critical",
+          "category": "bug",
+          "description": "Calling sync_assignee_outbound with assignment_source raises TypeError because integration implementations do not accept this argument. — WHAT: `installation.sync_assignee_outbound` is invoked with the unexpected keyword argument `assignment_source`.\nWHY: `IssueSyncIntegration.sync_assignee_outbound` and its concrete subclasses (`JiraIntegration`, `VstsIntegration`, `ExampleIntegration`) only accept `(self, external_issue, user, assign=True)` without `**kwargs` or `assignment_source`, which causes a `TypeError` and crashes the outbound sync task whenever assignee sync runs.\nHOW: Either remove `assignment_source` from the call to `installation.sync_assignee_outbound` (since `should_sync` already performs the source check) or update the `sync_assignee_outbound` method signatures on `IssueSyncIntegration` and all integration subclasses to accept `assignment_source=None, **kwargs`."
+        },
+        {
+          "path": "src/sentry/integrations/services/assignment_source.py",
+          "startLine": 15,
+          "endLine": 18,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Default value for queued is evaluated at module import time instead of instantiation time. — WHAT: `queued: datetime = timezone.now()` evaluates `timezone.now()` once at module import time rather than at dataclass instantiation.\nWHY: Every `AssignmentSource` instance created using the default value receives the fixed timestamp from when the module was loaded rather than the current time when the assignment was queued.\nHOW: Use `field(default_factory=timezone.now)` so that `timezone.now()` is called afresh each time an instance is instantiated."
+        }
+      ],
+      "usage": {
+        "inputTokens": 420354,
+        "outputTokens": 6500,
+        "reasoningTokens": 4337,
+        "cacheReadTokens": 203454
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 21,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/optimized_image.rb",
+          "startLine": 145,
+          "endLine": 152,
+          "severity": "critical",
+          "category": "bug",
+          "description": "Duplicate method definition for `downsize` overwrites the multi-argument version and breaks existing callers. — WHAT: Defining `self.downsize` twice in succession overwrites the first definition with `(from, to, dimensions, opts={})`.\nWHY: Callers expecting the 4/5 argument signature (such as `Jobs::ResizeEmoji` calling `OptimizedImage.downsize(path, path, 100, 100, opts)`) will fail with an `ArgumentError` or `TypeError` at runtime.\nHOW: Combine both argument styles into a single method that checks the types of the parameters and formats `dimensions` accordingly."
+        }
+      ],
+      "usage": {
+        "inputTokens": 360343,
+        "outputTokens": 8251,
+        "reasoningTokens": 6284,
+        "cacheReadTokens": 162707
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 10,
+        "replayCalls": 20,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
+      "findings": [],
+      "usage": {
+        "inputTokens": 189560,
+        "outputTokens": 4414,
+        "reasoningTokens": 3785,
+        "cacheReadTokens": 20256
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 11,
+        "unexpectedToolCalls": 0
+      }
+    }
+  ]
+}

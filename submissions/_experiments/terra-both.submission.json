@@ -1,0 +1,521 @@
+{
+  "benchmarkVersion": "custom-v1",
+  "run": {
+    "harness": {
+      "name": "kodus",
+      "version": "dev"
+    },
+    "model": {
+      "id": "gpt-5.6-terra",
+      "provider": "codex_subscription",
+      "accessPath": "subscription"
+    },
+    "executionMode": "replay",
+    "heavy": false,
+    "reasoning": {
+      "config": "vendor-default",
+      "effortRequested": null
+    },
+    "runAt": "2026-08-14T11:57:06.418Z"
+  },
+  "results": [
+    {
+      "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 363339,
+        "outputTokens": 8462,
+        "reasoningTokens": 5965,
+        "cacheReadTokens": 254976
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 37,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+      "findings": [
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+          "startLine": 214,
+          "endLine": 214,
+          "severity": "high",
+          "category": "bug",
+          "description": "V2 permission evaluation looks up resources with an owner different from the owner used when creating them. — WHAT: Client and all-clients resource lookups filter by `server.getId()` even though schema-created resources use `resourceServer.getClientId()` as their owner. WHY: When the resource-server ID and client ID differ, the evaluator cannot find an existing grant; per-client checks fall back to the all-clients resource and global checks return false, denying configured V2 client permissions. HOW: Use the same owner value used by `AdminPermissionsSchema.getOrCreateResource` (`server.getClientId()`), or use the owner-independent two-argument lookup consistently."
+        },
+        {
+          "path": "server-spi-private/src/main/java/org/keycloak/authorization/AdminPermissionsSchema.java",
+          "startLine": 93,
+          "endLine": 94,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Client resources are not tagged with the type used by the new permission enumeration query. — WHAT: The new Clients branch creates per-client resources through the shared creation path without assigning `CLIENTS_RESOURCE_TYPE` as the resource type. WHY: `ClientPermissionsV2.getClientsWithPermission` exclusively calls `findByType(..., \"Clients\", ...)`, so clients whose authorization resource was created by this branch are never returned and role-mapping permission filtering treats their grants as absent. HOW: Set the created resource's type to `CLIENTS_RESOURCE_TYPE` in the Clients creation path before storing its scopes."
+        }
+      ],
+      "usage": {
+        "inputTokens": 441614,
+        "outputTokens": 8660,
+        "reasoningTokens": 4169,
+        "cacheReadTokens": 297984
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 66,
+        "unexpectedToolCalls": 11
+      }
+    },
+    {
+      "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 46,
+          "endLine": 48,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Team admins are incorrectly denied unless they are also owners. — WHAT: The team authorization requires the requester to be both an administrator and an owner. WHY: A team administrator who is not the owner reaches the FORBIDDEN branch and cannot add guests, although the variable and feature contract are admin-or-owner. HOW: Combine the checks with `||` (and evaluate them for the actual team id)."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 74,
+          "endLine": 78,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Repeated guest addresses in one request are persisted multiple times. — WHAT: `uniqueGuests` removes emails already present on the booking but does not deduplicate repeated emails within the request. WHY: A request such as `[\"guest@example.com\", \"guest@example.com\"]` creates two attendee rows and duplicates calendar attendees/notifications. HOW: Deduplicate normalized input emails before building `guestsFullDetails`."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 168,
+          "endLine": 168,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Excluded guest addresses are still notified. — WHAT: The email dispatch receives the unfiltered request array instead of the guests that were actually created. WHY: If a request contains an existing or blacklisted address plus one valid new address, the excluded address still receives the added-guests meeting email even though it was not added. HOW: Pass `uniqueGuests` to `sendAddGuestsEmails`."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 158,
+          "endLine": 163,
+          "severity": "high",
+          "category": "bug",
+          "description": "Guest-initiated additions use the wrong calendar account. — WHAT: Calendar updates are executed with the credentials of whichever authorized user made the request, including an attendee, rather than the booking organizer. WHY: When an attendee adds a guest, `getUsersCredentials(ctx.user)` supplies the attendee's credentials, so the organizer's connected calendar is not updated (and the update may fail if the attendee has no matching credential). HOW: Construct EventManager with the booking organizer and that organizer's credentials; the already included `booking.user.credentials` can supply them if it matches the required credential shape."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 83,
+          "endLine": 92,
+          "severity": "medium",
+          "category": "bug",
+          "description": "The new mutation bypasses the event type's disable-guests setting. — WHAT: The handler adds attendee records without checking `booking.eventType?.disableGuests`. WHY: Any authorized organizer, attendee, or team member can call the new RPC to add guests to an event type whose configuration explicitly disables guests. HOW: Reject the mutation when the associated event type has `disableGuests` enabled before creating attendees."
+        }
+      ],
+      "usage": {
+        "inputTokens": 297418,
+        "outputTokens": 10234,
+        "reasoningTokens": 4729,
+        "cacheReadTokens": 162816
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 80,
+        "unexpectedToolCalls": 15
+      }
+    },
+    {
+      "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+      "findings": [
+        {
+          "path": "misc/theme-verifier/src/main/java/org/keycloak/themeverifier/VerifyMessageProperties.java",
+          "startLine": 74,
+          "endLine": 75,
+          "severity": "high",
+          "category": "bug",
+          "description": "The verifier resolves an English bundle filename that is absent from the theme tree. — WHAT: The English counterpart is hard-coded as a locale-suffixed `*_en.properties` file even though no such message bundle exists under `themes`; the English source bundles use the root `messages.properties` name. WHY: Verifying any `resources-community/.../messages_<locale>.properties` file constructs a nonexistent `resources/.../messages_en.properties` path and throws `RuntimeException`, aborting theme verification instead of reporting validation messages. HOW: Resolve the base bundle as `messages.properties` (or use `ResourceBundle` lookup) when comparing translations."
+        },
+        {
+          "path": "misc/theme-verifier/src/main/java/org/keycloak/themeverifier/VerifyMessageProperties.java",
+          "startLine": 20,
+          "endLine": 20,
+          "severity": "high",
+          "category": "bug",
+          "description": "The newly imported HTML sanitizer is not declared as a project dependency. — WHAT: The new code imports and instantiates OWASP Java HTML Sanitizer types, but no build descriptor in the repository declares that library. WHY: The theme-verifier module cannot compile because `org.owasp.html.PolicyFactory` and `HtmlPolicyBuilder` are unresolved. HOW: Add the OWASP Java HTML Sanitizer artifact to the module's build dependencies (and dependency management if required)."
+        }
+      ],
+      "usage": {
+        "inputTokens": 414049,
+        "outputTokens": 6535,
+        "reasoningTokens": 3160,
+        "cacheReadTokens": 285696
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 9,
+        "replayCalls": 53,
+        "unexpectedToolCalls": 15
+      }
+    },
+    {
+      "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
+          "startLine": 110,
+          "endLine": 117,
+          "severity": "high",
+          "category": "bug",
+          "description": "Concurrent device registrations can exceed the configured limit. — WHAT: The device-limit check counts rows and then inserts/updates in separate database sessions without an atomic capacity guard. WHY: Concurrent requests carrying distinct device IDs can both observe a count below deviceLimit and both insert, permanently exceeding the configured limit. HOW: Enforce the admission and insert in one transaction with appropriate serialization/locking, or use a database-side atomic constraint/admission mechanism."
+        },
+        {
+          "path": "pkg/services/anonymous/anonimpl/client.go",
+          "startLine": 44,
+          "endLine": 47,
+          "severity": "high",
+          "category": "bug",
+          "description": "The local cache lets a rejected device authenticate on retry. — WHAT: Returning ErrDeviceLimitReached from Authenticate only rejects the first request for a newly over-limit device because TagDevice has already cached that device before the failed store operation. WHY: A retry with the same X-Grafana-Device-Id hits tagDeviceUI's cache, returns nil without rechecking the limit, and Authenticate creates an anonymous identity, bypassing the configured device limit for 29 minutes. HOW: Cache a device only after CreateOrUpdateDevice succeeds, or cache the limit-rejection state and continue denying it until it is revalidated."
+        }
+      ],
+      "usage": {
+        "inputTokens": 300910,
+        "outputTokens": 8465,
+        "reasoningTokens": 4524,
+        "cacheReadTokens": 188416
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 7,
+        "replayCalls": 54,
+        "unexpectedToolCalls": 11
+      }
+    },
+    {
+      "caseId": "dual-storage-architecture-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 51,
+          "endLine": 51,
+          "severity": "high",
+          "category": "bug",
+          "description": "Background legacy replication is canceled with its completed HTTP request. — WHAT: The asynchronous legacy create uses the request context as its parent context. WHY: Once the API request completes or the client disconnects, that parent is canceled and the legacy write is canceled immediately rather than receiving the intended 10-second best-effort window, leaving legacy storage unsynchronized. HOW: Detach cancellation before applying the timeout, e.g. `context.WithTimeoutCause(context.WithoutCancel(ctx), 10*time.Second, ...)`, and apply the same change to the other asynchronous legacy operations."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 139,
+          "endLine": 139,
+          "severity": "high",
+          "category": "bug",
+          "description": "The delayed legacy update no longer receives the object successfully persisted in unified storage. — WHAT: Update passes the original `objInfo` to both stores instead of passing the unified-store result to the legacy write. WHY: `UpdatedObjectInfo` is evaluated independently against each store's old object after the refactor, so the delayed legacy update can compute a different object or fail preconditions when the stores have differing resource versions; the previous implementation explicitly wrapped the unified result before updating legacy. HOW: Evaluate/wrap the object for the unified update and pass a wrapper containing `res` to the legacy update, as the prior implementation did."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 45,
+          "endLine": 45,
+          "severity": "low",
+          "category": "bug",
+          "description": "Create storage failures are attributed to legacy metrics. — WHAT: A unified-storage create failure is recorded in the legacy-duration histogram. WHY: Storage failures are absent from the storage error metric and appear as legacy failures, making mode-3 failure monitoring and alerting report the wrong backend. HOW: Record this branch with `recordStorageDuration`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 166,
+          "endLine": 166,
+          "severity": "low",
+          "category": "bug",
+          "description": "DeleteCollection legacy metrics are sent to the storage histogram. — WHAT: The legacy DeleteCollection call is recorded in the storage-duration histogram. WHY: Legacy delete-collection failures and latency are reported as unified-storage metrics, so operational telemetry cannot identify legacy replication failures. HOW: Replace this with `recordLegacyDuration`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 106,
+          "endLine": 106,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Delete success metrics label object names as kinds. — WHAT: Successful deletes use the object name where the histogram's `kind` label is required. WHY: The metric creates a separate time series per object name instead of aggregating by kind, producing incorrect dashboards and unbounded label cardinality as objects are created. HOW: Pass `options.Kind` as in the error branch and the other operations."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 50,
+          "endLine": 57,
+          "severity": "high",
+          "category": "bug",
+          "description": "Unordered asynchronous replication can leave legacy storage permanently stale after rapid successive writes. — WHAT: Legacy writes are spawned as independent goroutines with no per-resource ordering, so later mutations can reach legacy before earlier successful mutations. WHY: A create followed immediately by an update/delete can run the update/delete against a not-yet-created legacy object (and its error is discarded), after which the delayed create leaves legacy with stale state while mode 3 reads unified storage. HOW: Serialize legacy replication per resource (or use a durable ordered work queue/version check) so mutations are applied in the same order as their successful unified writes."
+        }
+      ],
+      "usage": {
+        "inputTokens": 631355,
+        "outputTokens": 11198,
+        "reasoningTokens": 4724,
+        "cacheReadTokens": 346112
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 73,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/post.rb",
+          "startLine": 133,
+          "endLine": 133,
+          "severity": "high",
+          "category": "bug",
+          "description": "Externally supplied feed HTML is rendered without sanitization. — WHAT: `cook` returns imported `raw_html` verbatim, bypassing the sanitizer/cooking pipeline. WHY: RSS content reaches `app/views/embed/best.html.erb` via `raw post.cooked`, so script-capable markup supplied by a feed/article is emitted as executable HTML in the Discourse iframe. HOW: sanitize the imported HTML with the same allowlist used by normal cooking before storing/rendering it, or do not bypass `post_analyzer.cook` for externally sourced content."
+        },
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 15,
+          "endLine": 16,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Concurrent imports can create duplicate embedded topics. — WHAT: embed lookup and creation are a non-atomic check-then-create sequence with no uniqueness validation or database constraint on `embed_url`. WHY: concurrent retrieval jobs can both see no row at line 15 and each create a topic/post/embed, leaving duplicate discussion topics for one external URL. HOW: add a unique database index on `topic_embeds.embed_url` and create/find the embed under a lock or handle the unique-constraint conflict before creating the post."
+        },
+        {
+          "path": "app/models/post.rb",
+          "startLine": 63,
+          "endLine": 65,
+          "severity": "high",
+          "category": "bug",
+          "description": "The new cook-method enum has no backing Post attribute. — WHAT: the new `cook_method` reader is used as if it were a persisted Post attribute, but no accessor, migration, or schema declaration for it exists anywhere in the searched repository. WHY: reading `cook_method` on a Post without that column/method raises `NoMethodError` when a post is cooked, and passing it from `TopicEmbed.import` can also fail as an unknown creation attribute. HOW: add the `cook_method` column/default migration (or explicitly define and persist the attribute) together with this enum."
+        },
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 64,
+          "endLine": 71,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Document-relative URLs in imported content resolve against Discourse instead of the source page. — WHAT: `absolutize_urls` only rewrites root-relative `href` and `src` values, leaving ordinary document-relative URLs unchanged. WHY: imported markup such as `<img src=\"images/photo.jpg\">` is rendered in the Discourse embed page and resolves relative to that page rather than the source article, so article links and images break. HOW: resolve relative URL values against `url` (for example with `URI.join`) while preserving fragment-only and already-schemed URLs."
+        }
+      ],
+      "usage": {
+        "inputTokens": 216788,
+        "outputTokens": 9585,
+        "reasoningTokens": 4107,
+        "cacheReadTokens": 126464
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 75,
+        "unexpectedToolCalls": 23
+      }
+    },
+    {
+      "caseId": "feat-2fa-backup-codes-cal-com",
+      "findings": [
+        {
+          "path": "packages/features/auth/lib/next-auth-options.ts",
+          "startLine": 139,
+          "endLine": 156,
+          "severity": "high",
+          "category": "bug",
+          "description": "Concurrent requests can reuse a supposedly single-use backup code. — WHAT: Backup-code consumption is a non-atomic read/validate/write sequence. WHY: Two concurrent credential requests with the same valid backup code can both read the unconsumed encrypted array, both pass `indexOf`, and both receive authenticated sessions before their competing updates complete, violating the single-use recovery-code invariant. HOW: Consume the code in a transaction with a row lock or store each code as a separately unique/conditionally-deleted record so validation and consumption are atomic."
+        },
+        {
+          "path": "apps/web/components/settings/EnableTwoFactorModal.tsx",
+          "startLine": 134,
+          "endLine": 136,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Closing the post-enable backup-code dialog can skip the parent enable notification. — WHAT: The success path no longer calls `onEnable`; it only enters a backup-code step that can be dismissed through the Dialog's `onOpenChange` path. WHY: If the user closes the modal with Escape, the backdrop, or the dialog close control after TOTP verification, 2FA has already been enabled by the API but the parent is never notified, breaking the documented callback contract and leaving parent settings state stale. HOW: Call `onEnable()` immediately after the successful enable response, or ensure every dialog-dismissal path from this step invokes it exactly once."
+        },
+        {
+          "path": "packages/prisma/schema.prisma",
+          "startLine": 203,
+          "endLine": 205,
+          "severity": "high",
+          "category": "bug",
+          "description": "The new persisted field requires a database migration. — WHAT: The new `backupCodes` column is added to the Prisma model without a corresponding database migration in the supplied changes. WHY: Deployments that apply migrations rather than schema-push retain a User table without this column, while the changed setup/login/disable code reads and writes it, causing database query failures. HOW: Add and ship a migration that adds nullable `backupCodes` to the User table alongside this schema change."
+        }
+      ],
+      "usage": {
+        "inputTokens": 420922,
+        "outputTokens": 8226,
+        "reasoningTokens": 3669,
+        "cacheReadTokens": 260096
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 67,
+        "unexpectedToolCalls": 15
+      }
+    },
+    {
+      "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+      "findings": [],
+      "usage": {
+        "inputTokens": 194077,
+        "outputTokens": 4433,
+        "reasoningTokens": 2231,
+        "cacheReadTokens": 124928
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 7,
+        "replayCalls": 33,
+        "unexpectedToolCalls": 6
+      }
+    },
+    {
+      "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+      "findings": [],
+      "usage": {
+        "inputTokens": 433239,
+        "outputTokens": 8850,
+        "reasoningTokens": 5098,
+        "cacheReadTokens": 303616
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 9,
+        "replayCalls": 65,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/incidents/grouptype.py",
+          "startLine": 11,
+          "endLine": 12,
+          "severity": "high",
+          "category": "bug",
+          "description": "The newly registered metric-alert handler cannot be instantiated because it does not implement the abstract stateful-handler contract. — WHAT: `MetricAlertDetectorHandler` is registered as a detector handler but remains abstract after inheriting `StatefulDetectorHandler`, because it implements none of `counter_names`, `get_dedupe_value`, `get_group_key_values`, or `build_occurrence_and_event_data`. WHY: `Detector.detector_handler` instantiates the registered handler, so processing a detector with type `metric_alert_fire` raises `TypeError: Can't instantiate abstract class MetricAlertDetectorHandler` rather than evaluating it. HOW: implement the required stateful-detector methods before registering this class, or keep this placeholder on a non-abstract handler until its stateful implementation exists."
+        }
+      ],
+      "usage": {
+        "inputTokens": 284116,
+        "outputTokens": 5174,
+        "reasoningTokens": 1595,
+        "cacheReadTokens": 203776
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 51,
+        "unexpectedToolCalls": 4
+      }
+    },
+    {
+      "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/optimized_image.rb",
+          "startLine": 149,
+          "endLine": 151,
+          "severity": "high",
+          "category": "bug",
+          "description": "The added overload breaks the existing five-argument emoji-resize call. — WHAT: The new four-argument `downsize` definition replaces, rather than overloads, the existing five-argument Ruby method. WHY: `Jobs::ResizeEmoji` still calls `OptimizedImage.downsize(path, path, 100, 100, opts)`, which now raises `ArgumentError` and prevents emoji resizing. HOW: Use one method that accepts both dimension forms (for example `def self.downsize(from, to, width_or_dimensions, height_or_opts = nil, opts = {})`) and normalize them before calling `optimize`, or update every caller to the new signature."
+        },
+        {
+          "path": "app/assets/javascripts/discourse/lib/utilities.js",
+          "startLine": 182,
+          "endLine": 182,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Hard-coding 10 MB breaks configured browser upload limits. — WHAT: Client-side upload validation now ignores the configured per-type maximum and always rejects files over 10 MB. WHY: `validateUploadedFiles` derives `type` as `image` or `attachment` before calling this function, so a site configured to allow a larger image or attachment can no longer upload valid files through the browser. HOW: Preserve the type-specific setting, while applying any intended absolute transport cap separately for images that can be downsized."
+        },
+        {
+          "path": "app/controllers/uploads_controller.rb",
+          "startLine": 55,
+          "endLine": 55,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Remote images over 10 MB are truncated before automatic downsizing. — WHAT: URL uploads are downloaded with a fixed 10 MB cap before the image can be downsized. WHY: FileHelper.download returns a partially written tempfile once the cap is crossed, so an API image larger than 10 MB is converted/uploaded as corrupt input instead of being automatically reduced. HOW: Reject an over-cap remote source explicitly, or download a complete source subject to a separate input-size policy that supports the downsizing feature."
+        }
+      ],
+      "usage": {
+        "inputTokens": 267062,
+        "outputTokens": 8018,
+        "reasoningTokens": 3579,
+        "cacheReadTokens": 177152
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 64,
+        "unexpectedToolCalls": 11
+      }
+    },
+    {
+      "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/controllers/admin/embeddable_hosts_controller.rb",
+          "startLine": 10,
+          "endLine": 16,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Unknown embeddable-host IDs crash the admin update/delete endpoints. — WHAT: `update` and `destroy` dereference the result of `.first` without handling an unknown host ID. WHY: a staff request targeting a deleted or nonexistent record passes `nil` to `save_host` or calls `nil.destroy`, producing a 500 instead of a not-found response. HOW: load with a bang finder (or explicitly return a 404) before updating or destroying."
+        },
+        {
+          "path": "app/models/embeddable_host.rb",
+          "startLine": 14,
+          "endLine": 17,
+          "severity": "high",
+          "category": "bug",
+          "description": "Port-qualified configured hosts cannot be found by the new authorization/category lookup. — WHAT: `record_for_host` compares `URI(host).host`, which omits the port, against the persisted `host` string even though the model accepts and stores `host:port`. WHY: a configured value such as `example.com:8080` can never match a referer or imported URL because the lookup searches for `example.com`, so valid embeds are rejected and imports lose the configured category. HOW: normalize stored host values to hostname-only, or compare against a canonical hostname-plus-port value on both sides."
+        },
+        {
+          "path": "app/models/embeddable_host.rb",
+          "startLine": 5,
+          "endLine": 8,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Missing host input crashes the new admin host endpoint during validation. — WHAT: The before-validation callback calls `sub!` on `host` without handling a nil value. WHY: creating or updating a host with `embeddable_host[host]` omitted assigns nil in `save_host` and raises `NoMethodError` during `save`, returning a 500 instead of a validation error. HOW: Guard the normalization (`self.host = host.to_s...`) and add a presence validation for `host`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 201067,
+        "outputTokens": 8343,
+        "reasoningTokens": 3405,
+        "cacheReadTokens": 121856
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 70,
+        "unexpectedToolCalls": 21
+      }
+    },
+    {
+      "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
+      "findings": [],
+      "usage": {
+        "inputTokens": 161051,
+        "outputTokens": 4855,
+        "reasoningTokens": 2255,
+        "cacheReadTokens": 120320
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 7,
+        "replayCalls": 43,
+        "unexpectedToolCalls": 12
+      }
+    },
+    {
+      "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 122641,
+        "outputTokens": 3124,
+        "reasoningTokens": 1132,
+        "cacheReadTokens": 87040
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 7,
+        "replayCalls": 31,
+        "unexpectedToolCalls": 3
+      }
+    }
+  ]
+}

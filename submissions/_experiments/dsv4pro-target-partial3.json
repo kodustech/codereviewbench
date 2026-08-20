@@ -1,0 +1,188 @@
+{
+  "benchmarkVersion": "custom-v1",
+  "run": {
+    "harness": {
+      "name": "kodus",
+      "version": "dev"
+    },
+    "model": {
+      "id": "deepseek-v4-pro",
+      "provider": "openai_compatible",
+      "accessPath": "api"
+    },
+    "executionMode": "replay",
+    "heavy": false,
+    "reasoning": {
+      "config": "vendor-default",
+      "effortRequested": null
+    },
+    "runAt": "2026-08-13T23:11:47.269Z"
+  },
+  "partial": true,
+  "completedCases": 3,
+  "results": [
+    {
+      "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+      "findings": [
+        {
+          "path": "server-spi/src/main/java/org/keycloak/models/IdentityProviderStorageProvider.java",
+          "startLine": 252,
+          "endLine": 256,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Private org-linked idps are cached by getForLogin but skipped by login-cache invalidation, leaking hideOnLogin/linkOnly idps onto the login page. — WHAT: getLoginPredicate() defines an org-linked identity provider as a 'login idp' only when BROKER_PUBLIC=true, but getForLogin(ALL, organizationId) (and ORG_ONLY with an org id) includes org-linked idps based solely on ORGANIZATION_ID=organizationId, so private org idps are cached yet never invalidated when they change. WHY: a private org idp updated to hideOnLogin=true or linkOnly=true stays in the login cache (registerIDPLoginInvalidationOnUpdate returns early because the predicate is false for both original and updated), and OrganizationAwareIdentityProviderBean only re-checks isEnabled(), so the hidden/link-only idp is still returned and rendered on the login page. HOW: make invalidation cover any idp that can appear in a getForLogin result (e.g. also invalidate for org-linked idps regardless of BROKER_PUBLIC, or simply always invalidate the login caches on update/remove), and/or defensively re-check hideOnLogin/linkOnly in the bean filter."
+        },
+        {
+          "path": "model/infinispan/src/main/java/org/keycloak/models/cache/infinispan/idp/InfinispanIdentityProviderStorageProvider.java",
+          "startLine": 226,
+          "endLine": 241,
+          "severity": "low",
+          "category": "performance",
+          "description": "Login list cache accumulates one entry per organizationId inside a single cache object, growing memory with org count. — WHAT: the getForLogin cache key is (realm, FetchMode) only, and each distinct organizationId queried adds a new entry to IdentityProviderListQuery.searchKeys (via the else branch that copies the previous query and appends the new searchKey), with each ALL-mode entry duplicating the full realm-level idp set. WHY: in a realm with many organizations, a single cached IdentityProviderListQuery object grows to O(orgs x idps) and the per-org entries are recomputed/copied on every miss, unlike getByOrganization which uses a separate cache key per org id. HOW: consider keying the login cache by organizationId as well, or accept the bounded-but-growing map and document the memory bound."
+        }
+      ],
+      "usage": {
+        "inputTokens": 745259,
+        "outputTokens": 65818,
+        "reasoningTokens": 58334,
+        "cacheReadTokens": 588032
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 11,
+        "replayCalls": 47,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+      "findings": [
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/AdminPermissions.java",
+          "startLine": 77,
+          "endLine": 95,
+          "severity": "high",
+          "category": "bug",
+          "description": "Removing a client/role/group throws UnsupportedOperationException when V1 and V2 fine-grained-authz flags are both enabled. — WHAT: The removal-event listener is gated on the V1 feature flag (ADMIN_FINE_GRAINED_AUTHZ) but the management() factory it calls returns MgmtPermissionsV2 whenever the V2 flag (ADMIN_FINE_GRAINED_AUTHZ_V2) is enabled, and ClientPermissionsV2.setPermissionsEnabled/roles().setPermissionsEnabled throw UnsupportedOperationException. WHY: When both flags are enabled (they are independent — MgmtPermissions constructor ORs them), removing any client, role, or group fires the event, dispatches to V2, and throws UnsupportedOperationException mid-transaction, aborting the removal. HOW: Skip the legacy cleanup when V2 is active, e.g. gate on `ADMIN_FINE_GRAINED_AUTHZ && !ADMIN_FINE_GRAINED_AUTHZ_V2` (or otherwise ensure the listener dispatches to the same V1/V2 path it is gated on)."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+          "startLine": 207,
+          "endLine": 247,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Owner-filtered resource lookups use server.getId() while resources are created/retrieved with getClientId()/no owner, so permission evaluation can silently fail. — WHAT: hasPermission(ClientModel, scope) looks up the per-client resource with findByName(server, client.getId(), server.getId()) and hasPermission(String scope) looks up the 'Clients' resource-type resource with findByName(server, CLIENTS_RESOURCE_TYPE, server.getId()), but resources are created in AdminPermissionsSchema.getOrCreateResource with owner = resourceServer.getClientId() and the resource-type resource is located by getResourceTypeResource via the owner-less findByName(resourceServer, type.getType()). WHY: If the ResourceServer id differs from the owning client id, these owner-filtered lookups return null and every per-client / all-clients permission check silently evaluates as false (denial of legitimate access), even though the equivalent Users code path uses the owner-less overload. HOW: Use the owner-less findByName(server, name) overload (matching UserPermissionsV2 and getResourceTypeResource), or pass server.getClientId() as the owner to match the create() call."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+          "startLine": 125,
+          "endLine": 145,
+          "severity": "medium",
+          "category": "bug",
+          "description": "findByType('Clients') may match no resources because client resources are created without a type attribute. — WHAT: getClientsWithPermission enumerates per-client resources via resourceStore.findByType(server, AdminPermissionsSchema.CLIENTS_RESOURCE_TYPE, ...), which matches on the resource's `type` attribute, but per-client resources are created in AdminPermissionsSchema.getOrCreateResource via resourceStore.create(resourceServer, name, resourceServer.getClientId()) without setting a type. WHY: If client resources carry no type='Clients' attribute, findByType returns nothing and getClientsWithPermission returns an empty set, breaking the 'list clients the user can map roles to' flow. HOW: Set the resource type to CLIENTS_RESOURCE_TYPE when creating the resource in getOrCreateResource (or enumerate resources by another attribute that is actually populated)."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+          "startLine": 214,
+          "endLine": 214,
+          "severity": "high",
+          "category": "bug",
+          "description": "findByName uses server.getId() as ownerId but V2 client resources are owned by server.getClientId(), so per-client permission lookups always miss. — WHAT: hasPermission(ClientModel, scope) looks up the per-client resource with `findByName(server, client.getId(), server.getId())`, using the resource server's internal id as the ownerId, but V2 client resources are created with owner = `resourceServer.getClientId()` (AdminPermissionsSchema.getOrCreateResource line 342). WHY: the owner filter never matches, so the lookup always returns null and per-client permissions are never evaluated — hasPermission(client, …) silently falls through to the all-clients type resource, breaking every V2 per-client permission check (the same ownerId mismatch on line 244 breaks hasPermission(String) for the \"Clients\" type resource). HOW: match the 2-arg lookup used elsewhere for V2 (e.g. `resourceStore.findByName(server, client.getId())`, as UserPermissionsV2 does), or pass the stored owner `server.getClientId()`."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+          "startLine": 138,
+          "endLine": 144,
+          "severity": "medium",
+          "category": "bug",
+          "description": "V2 client resources are created without a resource type, so findByType(\"Clients\") in getClientsWithPermission never returns them. — WHAT: getClientsWithPermission enumerates client resources with `resourceStore.findByType(server, AdminPermissionsSchema.CLIENTS_RESOURCE_TYPE, …)`, but per-client resources created for the new CLIENTS type via AdminPermissionsSchema.getOrCreateResource are never assigned a resource type (no `resource.setType(...)`; V1's ClientPermissions.initialize sets `resource.setType(\"Client\")` explicitly). WHY: findByType on \"Clients\" returns no per-client resources, so getClientsWithPermission always yields an empty/incorrect set and any client-list filtering by granted scope silently shows nothing. HOW: set the resource type when creating V2 client resources (e.g. `resource.setType(resourceType)` in getOrCreateResource) so findByType can enumerate them."
+        },
+        {
+          "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/AdminPermissions.java",
+          "startLine": 77,
+          "endLine": 95,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Removal cleanup listener is gated on the V1 feature flag, so V2 mode never cleans up authorization resources for removed roles/clients/groups. — WHAT: the RoleRemoved/ClientRemoved/GroupRemoved cleanup listener is gated on `Profile.isFeatureEnabled(Profile.Feature.ADMIN_FINE_GRAINED_AUTHZ)` (the V1 flag), while this PR adds the Client resource type to the V2 authorization schema. WHY: when ADMIN_FINE_GRAINED_AUTHZ_V2 is enabled (V1 flag disabled), the listener never fires, so `setPermissionsEnabled(..., false)` cleanup is skipped and authorization resources/policies for removed roles, clients, and groups are orphaned in V2 mode. HOW: also run the cleanup when the V2 feature flag is enabled and use a V2-compatible cleanup (ClientPermissionsV2.setPermissionsEnabled throws UnsupportedOperationException, so the cleanup must delete the resource rather than call that method)."
+        }
+      ],
+      "usage": {
+        "inputTokens": 855989,
+        "outputTokens": 60984,
+        "reasoningTokens": 48911,
+        "cacheReadTokens": 711808
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 100,
+        "unexpectedToolCalls": 21
+      }
+    },
+    {
+      "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 46,
+          "endLine": 48,
+          "severity": "high",
+          "category": "bug",
+          "description": "Team admin/owner check uses && instead of ||, denying legitimate admins/owners. — WHAT: `isTeamAdminOrOwner` is computed with `&&` instead of `||`, so a user must be both a team admin AND a team owner to pass. WHY: `isTeamAdmin` and `isTeamOwner` check distinct membership roles, so team admins (or owners) who hold only one role are rejected with FORBIDDEN, breaking the intended authorization gate. HOW: use `||`."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 158,
+          "endLine": 163,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Calendar update uses the acting user's credentials instead of the organizer's. — WHAT: EventManager is constructed from the acting user (`...user`) and their credentials (`getUsersCredentials(ctx.user)`) even though `evt.destinationCalendar` points at the organizer's calendar and `booking.user.credentials` were fetched but never used. WHY: when an attendee or team admin (not the organizer) adds guests, `updateCalendarAttendees` runs against the organizer's destination calendar using the actor's credentials, so the calendar update fails or targets the wrong calendar. HOW: build EventManager with the organizer (or `booking.user`) and the organizer's credentials, not `ctx.user`."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 58,
+          "endLine": 61,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Null booking.userId becomes id:0 and crashes findFirstOrThrow. — WHAT: `findFirstOrThrow` is called with `id: booking.userId || 0`, so a booking with a null `userId` (collective/team bookings without an assigned host) resolves to `id: 0`. WHY: `findFirstOrThrow` throws when no user has id 0, crashing the mutation for valid team bookings. HOW: guard against a null `booking.userId` (e.g., derive organizer from `booking.user` or throw a clear error) before the lookup."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 74,
+          "endLine": 78,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Duplicate guest emails in input create duplicate attendee records. — WHAT: The `guests` input is filtered against existing attendees and the blacklist but not deduplicated against itself, and the schema (`z.array(z.string().email())`) permits duplicate emails. WHY: passing the same email twice inserts duplicate Attendee rows via `createMany`, contradicting the `emails_must_be_unique_valid` error intent. HOW: deduplicate and lowercase the input before filtering (e.g., `Array.from(new Set(guests.map((g) => g.toLowerCase())))`)."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 70,
+          "endLine": 78,
+          "severity": "low",
+          "category": "bug",
+          "description": "Case-sensitive blacklist/attendee comparison lets mixed-case emails bypass the filter. — WHAT: The blacklist is lowercased (line 71) but `guest` is compared without lowercasing (line 77), and the existing-attendee check (line 76) also compares case-sensitively. WHY: a blacklisted email with mixed casing bypasses the blacklist and is added as a guest, and an existing attendee with different casing is added as a duplicate. HOW: lowercase `guest` (and the attendee email) before comparison."
+        },
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 168,
+          "endLine": 168,
+          "severity": "low",
+          "category": "bug",
+          "description": "Add-guest emails are sent using the unfiltered guests list. — WHAT: `sendAddGuestsEmails(evt, guests)` is called with the raw `guests` input instead of `uniqueGuests`. WHY: `sendAddGuestsEmails` (email-manager.ts:541) emails every attendee whose email is in `newGuests`, so guests filtered out as already-existing attendees still receive a 'you were added as a guest' email even though they were not added. HOW: pass `uniqueGuests` instead."
+        }
+      ],
+      "usage": {
+        "inputTokens": 581583,
+        "outputTokens": 40841,
+        "reasoningTokens": 30440,
+        "cacheReadTokens": 513152
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 10,
+        "replayCalls": 69,
+        "unexpectedToolCalls": 9
+      }
+    }
+  ]
+}

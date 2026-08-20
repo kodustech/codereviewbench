@@ -1,0 +1,393 @@
+{
+  "benchmarkVersion": "custom-v1",
+  "run": {
+    "harness": {
+      "name": "kodus",
+      "version": "dev"
+    },
+    "model": {
+      "id": "gemini-3.7-flash",
+      "provider": "google",
+      "accessPath": "api"
+    },
+    "executionMode": "replay",
+    "heavy": false,
+    "reasoning": {
+      "config": "vendor-default",
+      "effortRequested": null
+    },
+    "runAt": "2026-08-13T21:29:41.301Z"
+  },
+  "partial": true,
+  "completedCases": 14,
+  "results": [
+    {
+      "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 329918,
+        "outputTokens": 2327,
+        "reasoningTokens": 1377,
+        "cacheReadTokens": 162922
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 6,
+        "replayCalls": 15,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 565313,
+        "outputTokens": 3182,
+        "reasoningTokens": 2185,
+        "cacheReadTokens": 407732
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 10,
+        "replayCalls": 19,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+      "findings": [],
+      "usage": {
+        "inputTokens": 412337,
+        "outputTokens": 4262,
+        "reasoningTokens": 3434,
+        "cacheReadTokens": 301770
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 13,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+      "findings": [
+        {
+          "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+          "startLine": 46,
+          "endLine": 49,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Authorization check uses logical AND instead of logical OR when checking if the user is a team admin or owner. — WHAT: `isTeamAdminOrOwner` is computed using logical `&&` instead of `||` between `isTeamAdmin` and `isTeamOwner`.\nWHY: Team admins and team owners are distinct membership roles; using `&&` prevents team admins and team owners from adding guests to team bookings unless they somehow satisfy both checks simultaneously.\nHOW: Replace `&&` with `||` so that either team admins or team owners are permitted."
+        }
+      ],
+      "usage": {
+        "inputTokens": 319037,
+        "outputTokens": 2532,
+        "reasoningTokens": 1475,
+        "cacheReadTokens": 113928
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 7,
+        "replayCalls": 16,
+        "unexpectedToolCalls": 2
+      }
+    },
+    {
+      "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/services/anonymous/anonimpl/impl.go",
+          "startLine": 144,
+          "endLine": 148,
+          "severity": "high",
+          "category": "bug",
+          "description": "Failed device tagging leaves the device cached in localCache, bypassing the device limit on subsequent requests. — WHAT: `tagDeviceUI` sets the device key in `localCache` before `CreateOrUpdateDevice` completes, leaving the entry cached when `ErrDeviceLimitReached` (or any DB error) occurs.\nWHY: When a new device is rejected because the device limit is reached, subsequent requests with the same device ID hit `localCache.Get(key)` and return `nil`, bypassing authentication rejection and defeating the device limit.\nHOW: Update `tagDeviceUI` to only store the key in `localCache` after `a.anonStore.CreateOrUpdateDevice` succeeds, or explicitly remove the key from `localCache` if `CreateOrUpdateDevice` returns an error."
+        }
+      ],
+      "usage": {
+        "inputTokens": 356708,
+        "outputTokens": 11166,
+        "reasoningTokens": 9783,
+        "cacheReadTokens": 195869
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 8,
+        "replayCalls": 18,
+        "unexpectedToolCalls": 3
+      }
+    },
+    {
+      "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/jobs/scheduled/poll_feed.rb",
+          "startLine": 35,
+          "endLine": 36,
+          "severity": "high",
+          "category": "bug",
+          "description": "Feed polling crashes when RSS feed items use `<description>` or lack `<content>` because `i.content` is nil. — WHAT: `i.content.scrub` is called on `SimpleRSS` items without checking if `i.content` is nil or falling back to `i.description`.\nWHY: Standard RSS 2.0 feeds without `<content>` tags return `nil` for `i.content`, causing a `NoMethodError: undefined method 'scrub' for nil:NilClass` that crashes the entire `PollFeed` job.\nHOW: Fall back to `i.description` (or empty string) and guard against nil before calling `.scrub`."
+        },
+        {
+          "path": "app/models/topic_embed.rb",
+          "startLine": 44,
+          "endLine": 49,
+          "severity": "high",
+          "category": "bug",
+          "description": "`TopicEmbed.import_remote` calls `open(url)` without requiring `open-uri`. — WHAT: `open(url)` is invoked in `TopicEmbed.import_remote` without ensuring `open-uri` is required.\nWHY: When `TopicEmbed.import_remote` is executed in a context where `open-uri` has not been loaded (e.g., via `RetrieveTopic` background job when feed polling is disabled), Ruby's default `Kernel#open` will treat the HTTP URL as a local file path and raise `Errno::ENOENT`.\nHOW: Add `require 'open-uri'` at the top of `app/models/topic_embed.rb` or within `import_remote`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 263699,
+        "outputTokens": 7818,
+        "reasoningTokens": 5985,
+        "cacheReadTokens": 32456
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 18,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "feat-2fa-backup-codes-cal-com",
+      "findings": [
+        {
+          "path": "apps/web/components/settings/DisableTwoFactorModal.tsx",
+          "startLine": 113,
+          "endLine": 124,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Missing type=\"button\" on 'Lost access' and 'Cancel' buttons causes unwanted form submission in DisableTwoFactorModal. — WHAT: The 'Lost access' and 'Cancel' buttons inside `<Form form={form} handleSubmit={handleDisable}>` lack `type=\"button\"` and do not call `e.preventDefault()`.\nWHY: In HTML forms, buttons default to `type=\"submit\"`, so clicking 'Lost access' or 'Cancel' triggers form validation and submission via `handleDisable` instead of simply switching the view or canceling.\nHOW: Add `type=\"button\"` to the 'Lost access' and 'Cancel' `<Button>` elements."
+        },
+        {
+          "path": "apps/web/components/settings/DisableTwoFactorModal.tsx",
+          "startLine": 113,
+          "endLine": 122,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Add explicit type=\"button\" to the 'lost_access' button to prevent triggering form submission. — WHAT: The 'lost access' toggle button inside `<Form>` lacks `type=\"button\"`.\nWHY: Buttons inside a `<form>` element default to `type=\"submit\"`, which causes clicking 'lost access' / 'go back' to trigger form submission (`handleDisable`) and validation errors instead of simply toggling the input mode.\nHOW: Add `type=\"button\"` to the `<Button>` component so clicking it does not submit the form."
+        }
+      ],
+      "usage": {
+        "inputTokens": 535134,
+        "outputTokens": 8402,
+        "reasoningTokens": 6281,
+        "cacheReadTokens": 338550
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 26,
+        "unexpectedToolCalls": 7
+      }
+    },
+    {
+      "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+      "findings": [],
+      "usage": {
+        "inputTokens": 297304,
+        "outputTokens": 4437,
+        "reasoningTokens": 3647,
+        "cacheReadTokens": 126260
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 12,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
+      "findings": [],
+      "usage": {
+        "inputTokens": 243718,
+        "outputTokens": 2159,
+        "reasoningTokens": 1530,
+        "cacheReadTokens": 61016
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 6,
+        "replayCalls": 15,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "dual-storage-architecture-grafana-codex",
+      "findings": [
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 41,
+          "endLine": 48,
+          "severity": "medium",
+          "category": "bug",
+          "description": "recordLegacyDuration is mistakenly called instead of recordStorageDuration when Storage.Create fails. — WHAT: `recordLegacyDuration` is called when `d.Storage.Create` returns an error.\nWHY: Storage failure metrics are recorded into legacy storage metrics instead of unified storage metrics, skewing operational metrics and alerting.\nHOW: Change `d.recordLegacyDuration(true, ...)` to `d.recordStorageDuration(true, ...)`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 125,
+          "endLine": 132,
+          "severity": "medium",
+          "category": "bug",
+          "description": "recordLegacyDuration is mistakenly called instead of recordStorageDuration when Storage.Update fails. — WHAT: `recordLegacyDuration` is called when `d.Storage.Update` fails.\nWHY: Unified storage update errors are incorrectly recorded under legacy duration metrics.\nHOW: Replace `d.recordLegacyDuration(true, ...)` with `d.recordStorageDuration(true, ...)`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 161,
+          "endLine": 168,
+          "severity": "medium",
+          "category": "bug",
+          "description": "recordStorageDuration is mistakenly called instead of recordLegacyDuration for asynchronous legacy DeleteCollection. — WHAT: `recordStorageDuration` is called inside the legacy delete collection goroutine instead of `recordLegacyDuration`.\nWHY: Legacy collection deletion metrics are erroneously attributed to the primary unified storage metric counters.\nHOW: Call `d.recordLegacyDuration(err != nil, mode3Str, options.Kind, method, startLegacy)`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 99,
+          "endLine": 107,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Object name is passed as kind label to recordStorageDuration on successful Delete. — WHAT: `name` is passed as the `kind` parameter in `d.recordStorageDuration(false, mode3Str, name, method, startStorage)`.\nWHY: It populates Prometheus metrics with high-cardinality object names instead of the resource kind, inflating metric series cardinality and corrupting per-kind duration tracking.\nHOW: Pass `options.Kind` instead of `name`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 41,
+          "endLine": 47,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Record storage duration instead of legacy duration when unified storage Create fails. — WHAT: `recordLegacyDuration` is called when `d.Storage.Create` returns an error.\nWHY: Failures when creating objects in unified storage are misattributed to legacy storage metrics instead of unified storage metrics.\nHOW: Replace `d.recordLegacyDuration(true, mode3Str, options.Kind, method, startStorage)` with `d.recordStorageDuration(true, mode3Str, options.Kind, method, startStorage)`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 105,
+          "endLine": 107,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Pass options.Kind instead of name to recordStorageDuration in Delete. — WHAT: `name` is passed as the `kind` parameter in `recordStorageDuration` for Delete.\nWHY: Sets the Prometheus metric `kind` label to the object's instance name rather than its resource kind, corrupting metric dimensions and causing high cardinality.\nHOW: Pass `options.Kind` instead of `name` to `d.recordStorageDuration`."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 126,
+          "endLine": 133,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Record storage duration instead of legacy duration when unified storage Update fails. — WHAT: `recordLegacyDuration` is called when `d.Storage.Update` fails.\nWHY: Unified storage update errors are incorrectly recorded under legacy storage duration metrics.\nHOW: Call `d.recordStorageDuration(true, mode3Str, options.Kind, method, startStorage)` instead."
+        },
+        {
+          "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+          "startLine": 165,
+          "endLine": 168,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Record legacy duration instead of storage duration when deleting collections from legacy storage. — WHAT: `recordStorageDuration` is called inside the legacy delete collection goroutine instead of `recordLegacyDuration`.\nWHY: Asynchronous legacy delete collection durations and error statuses are recorded into storage metrics instead of legacy metrics.\nHOW: Change `d.recordStorageDuration` to `d.recordLegacyDuration` inside the goroutine."
+        }
+      ],
+      "usage": {
+        "inputTokens": 664512,
+        "outputTokens": 11697,
+        "reasoningTokens": 6135,
+        "cacheReadTokens": 392028
+      },
+      "trace": {
+        "finishReason": "stopped",
+        "steps": 11,
+        "replayCalls": 22,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+      "findings": [
+        {
+          "path": "src/sentry/integrations/services/assignment_source.py",
+          "startLine": 15,
+          "endLine": 20,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Use default_factory for dataclass timestamp default instead of evaluating timezone.now() at module load time. — WHAT: `queued: datetime = timezone.now()` is evaluated once when the module is imported rather than dynamically when an `AssignmentSource` instance is created.\nWHY: Every `AssignmentSource` instance initialized without an explicit `queued` value will share the same stale timestamp from module load time, producing incorrect timestamps when tracking when assignments were queued.\nHOW: Use `field(default_factory=timezone.now)` from the `dataclasses` module to evaluate `timezone.now()` upon each instantiation."
+        }
+      ],
+      "usage": {
+        "inputTokens": 297814,
+        "outputTokens": 3793,
+        "reasoningTokens": 2561,
+        "cacheReadTokens": 130197
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 13,
+        "unexpectedToolCalls": 1
+      }
+    },
+    {
+      "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/optimized_image.rb",
+          "startLine": 145,
+          "endLine": 152,
+          "severity": "high",
+          "category": "bug",
+          "description": "Duplicate `self.downsize` method definition overwrites the 4/5-argument overload and breaks callers passing width and height. — WHAT: Duplicate `def self.downsize` definition overwrites the 4/5-argument overload (`from, to, max_width, max_height, opts={}`).\nWHY: In Ruby, defining a method with the same name replaces the prior definition; callers passing width and height as separate arguments (such as `Jobs::ResizeEmoji` calling `OptimizedImage.downsize(path, path, 100, 100, opts)`) will fail at runtime with an `ArgumentError` or corrupted options.\nHOW: Consolidate `self.downsize` into a single method that checks argument types to handle both dimension strings and `max_width`/`max_height` arguments."
+        }
+      ],
+      "usage": {
+        "inputTokens": 164578,
+        "outputTokens": 4379,
+        "reasoningTokens": 3028,
+        "cacheReadTokens": 20354
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 5,
+        "replayCalls": 9,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
+      "findings": [],
+      "usage": {
+        "inputTokens": 195588,
+        "outputTokens": 4588,
+        "reasoningTokens": 4009,
+        "cacheReadTokens": 12177
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 9,
+        "replayCalls": 13,
+        "unexpectedToolCalls": 0
+      }
+    },
+    {
+      "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
+      "findings": [
+        {
+          "path": "app/models/embeddable_host.rb",
+          "startLine": 5,
+          "endLine": 18,
+          "severity": "medium",
+          "category": "bug",
+          "description": "Guard against nil host in before_validation and downcase host in SQL query. — WHAT: `before_validation` calls `sub!` on `self.host` without guarding against `nil`, and `record_for_host` queries `lower(host) = ?` without downcasing the input host parameter. WHY: Validating a record with a nil host crashes with `NoMethodError` instead of producing model validation errors, and URLs containing uppercase hostnames fail the database lookup due to case sensitivity. HOW: Add a `self.host.present?` guard in `before_validation` and pass `host.downcase` to `where(\"lower(host) = ?\", host.downcase)`."
+        }
+      ],
+      "usage": {
+        "inputTokens": 177671,
+        "outputTokens": 5896,
+        "reasoningTokens": 4597,
+        "cacheReadTokens": 12196
+      },
+      "trace": {
+        "finishReason": "completed",
+        "steps": 7,
+        "replayCalls": 13,
+        "unexpectedToolCalls": 1
+      }
+    }
+  ]
+}
