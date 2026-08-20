@@ -422,6 +422,56 @@ function bootstrapCI(cases, iterations = 2000, seed = 42) {
     return { lo: at(0.025), hi: at(0.975) };
 }
 
+
+// ── comparacao pareada entre dois modelos ───────────────────────────────────
+//
+// Por que pareado: os dois modelos rodam os MESMOS PRs. Comparar os dois
+// intervalos marginais joga fora essa informacao — se um PR e dificil, ele e
+// dificil para os dois, e essa dificuldade comum cancela na diferenca. Na
+// pratica o intervalo da diferenca sai ~40% mais estreito que os marginais,
+// entao o teste marginal declarava empate em casos que o pareado separa.
+//
+// Reamostra os caseIds uma vez por iteracao e calcula os DOIS recalls sobre o
+// MESMO conjunto reamostrado. Devolve a diferenca observada, o IC da diferenca
+// e o p bilateral do bootstrap.
+function pairedDiff(casesA, casesB, iterations = 4000, seed = 42) {
+    const mapA = new Map(casesA.map((c) => [c.caseId, c.metrics]));
+    const mapB = new Map(casesB.map((c) => [c.caseId, c.metrics]));
+    // so casos que os dois rodaram — sem isso a diferenca compara conjuntos
+    // distintos e deixa de ser pareada
+    const ids = [...mapA.keys()].filter((id) => mapB.has(id));
+    if (ids.length < 2) return null;
+
+    let s = seed;
+    const rnd = () => {
+        s |= 0; s = (s + 0x6d2b79f5) | 0;
+        let t = Math.imul(s ^ (s >>> 15), 1 | s);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    const recallOf = (map, sample) => {
+        let m = 0, g = 0;
+        for (const id of sample) { const x = map.get(id); m += x.matched; g += x.goldens; }
+        return g ? (m / g) * 100 : 0;
+    };
+
+    const observed = recallOf(mapA, ids) - recallOf(mapB, ids);
+    const diffs = [];
+    for (let i = 0; i < iterations; i++) {
+        const sample = new Array(ids.length);
+        for (let j = 0; j < ids.length; j++) sample[j] = ids[(rnd() * ids.length) | 0];
+        diffs.push(recallOf(mapA, sample) - recallOf(mapB, sample));
+    }
+    diffs.sort((a, b) => a - b);
+    const at = (q) => diffs[Math.min(diffs.length - 1, Math.floor(q * diffs.length))];
+
+    // p bilateral do bootstrap: duas vezes a menor cauda em relacao a zero.
+    const below = diffs.filter((d) => d <= 0).length / diffs.length;
+    const p = Math.min(1, 2 * Math.min(below, 1 - below));
+
+    return { observed, lo: at(0.025), hi: at(0.975), p, n: ids.length };
+}
+
 function mean(xs) {
     return xs.reduce((a, b) => a + b, 0) / xs.length;
 }
@@ -484,18 +534,65 @@ for (const e of entries) {
 entries.sort((a, b) => b.score - a.score);
 entries.forEach((e, i) => (e.rank = i + 1));
 
-// Faixa: agrupa quem não é estatisticamente separável do líder da faixa.
+// ── Faixas ──────────────────────────────────────────────────────────────────
+//
+// Agrupa quem não é estatisticamente separável do líder da faixa.
+//
+// O critério anterior era `gap > max(meia-largura dos dois)` — uma heurística
+// sobre os intervalos MARGINAIS, que ignora o fato de todo modelo rodar os
+// MESMOS PRs. Isso a tornava conservadora demais nos dois sentidos: larga
+// porque desperdiça o pareamento, e sem qualquer controle para o número de
+// comparações feitas.
+//
+// Agora: bootstrap pareado da diferença contra o líder da faixa, com correção
+// de Holm-Bonferroni sobre a família de comparações daquele líder. Holm em vez
+// de Bonferroni puro porque é uniformemente mais poderoso e igualmente válido.
+//
+// Ordem importa: sem correção, testar 8 modelos a 95% produz ~0,4 falso
+// positivo esperado só por acaso, e um falso positivo aqui QUEBRA uma faixa —
+// afirma diferença onde não há. O viés fica deliberadamente para o lado de
+// declarar empate.
+const ALPHA = 0.05;
 let tier = 0;
-let tierLeader = null;
-for (const e of entries) {
-    if (
-        !tierLeader ||
-        tierLeader.score - e.score > Math.max(tierLeader.ciHalfWidthBootstrap, e.ciHalfWidthBootstrap)
-    ) {
-        tier += 1;
-        tierLeader = e;
+let idx = 0;
+while (idx < entries.length) {
+    tier += 1;
+    const leader = entries[idx];
+    leader.tier = tier;
+    const rest = entries.slice(idx + 1);
+    if (!rest.length) break;
+
+    const leaderCases = scorecardCases.get(leader.key) || [];
+    const tests = rest.map((e) => ({
+        e,
+        r: pairedDiff(leaderCases, scorecardCases.get(e.key) || []),
+    }));
+
+    // Holm: ordena p crescente; rejeita enquanto p_(i) <= alpha/(m-i); no
+    // primeiro que falha, para — os seguintes ficam todos sem rejeitar.
+    const m = tests.length;
+    const ordered = [...tests].filter((t) => t.r).sort((a, b) => a.r.p - b.r.p);
+    const separated = new Set();
+    for (let i = 0; i < ordered.length; i++) {
+        if (ordered[i].r.p <= ALPHA / (m - i)) separated.add(ordered[i].e.key);
+        else break;
     }
-    e.tier = tier;
+
+    for (const t of tests) {
+        t.e.pairedVsTierLeader = t.r
+            ? { diff: +t.r.observed.toFixed(2), lo: +t.r.lo.toFixed(2), hi: +t.r.hi.toFixed(2), p: +t.r.p.toFixed(4), n: t.r.n }
+            : null;
+    }
+
+    // O próximo líder é o primeiro (maior recall) que separou. Quem não
+    // separou entra nesta faixa.
+    const nextIdx = rest.findIndex((e) => separated.has(e.key));
+    if (nextIdx === -1) {
+        for (const e of rest) e.tier = tier;
+        break;
+    }
+    for (let k = 0; k < nextIdx; k++) rest[k].tier = tier;
+    idx = idx + 1 + nextIdx;
 }
 
 const leaderboard = round2({
@@ -521,6 +618,15 @@ const meta = {
     totalCases: Math.max(...entries.map((e) => e.cases)),
     totalGoldens: Math.max(...entries.map((e) => e.goldensTotal)),
     tiers: tier,
+    // Como a faixa e decidida — fica no meta pra o site poder citar sem
+    // reescrever a regra a mao em dois lugares.
+    tierMethod: {
+        test: 'bootstrap pareado da diferenca de recall contra o lider da faixa, nos mesmos PRs',
+        iterations: 4000,
+        alpha: 0.05,
+        correction: 'Holm-Bonferroni sobre as comparacoes contra cada lider de faixa',
+        note: 'Pareado porque todo modelo roda os MESMOS PRs: a dificuldade do caso cancela na diferenca, o que estreita o intervalo em ~40% frente aos marginais. A correcao existe porque testar 8 modelos a 95% produz ~0,4 falso positivo esperado, e um falso positivo aqui QUEBRA uma faixa, afirmando diferenca onde nao ha.',
+    },
     // Rótulo obrigatório: dois tipos de variância, dois status diferentes.
     varianceCaveat: {
         measured: 'case-sampling (bootstrap 2000x) e judge run-to-run (3 rodadas do mesmo judge sobre a mesma submission, onde disponível)',

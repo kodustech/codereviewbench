@@ -1361,3 +1361,65 @@ Método: `curl` + `pdftotext -layout` + grep case-insensitive com fronteira de p
 Este documento é **coleta e transcrição de fontes primárias**, compilado em **2026-08-13**. As citações estão no idioma original, com link direto e data, justamente para que a leitura seja feita sobre o texto e não sobre o resumo. **Ausência de evidência não é evidência de ausência** — vários "NÃO ENCONTRADO" acima refletem um campo que simplesmente ainda não fez o experimento, não um resultado negativo.
 
 A área muda rápido: três das fontes mais citadas aqui (CriticGPT 2024, GPT-4 Technical Report 2023, Calibration and Correctness 2024) são anteriores à geração de modelos que medimos e estão marcadas como tal no texto. Revalidar antes de qualquer uso externo.
+
+---
+
+## Emenda 2026-08-20 — o teste de faixa era o teste errado
+
+**Contexto.** Perguntaram se o agrupamento por faixa era realmente válido. Não era.
+
+**O que existia.** A faixa quebrava quando
+
+```js
+tierLeader.score - e.score > Math.max(tierLeader.ciHalfWidthBootstrap, e.ciHalfWidthBootstrap)
+```
+
+ou seja: "o gap é maior que a maior das duas meias-larguras". Isso não é um
+teste de hipótese, é uma heurística sobre intervalos **marginais**, e tem dois
+defeitos independentes:
+
+1. **Ignora o pareamento.** Todo modelo roda os MESMOS 30 PRs. Se um PR é
+   difícil, é difícil para os dois, e essa dificuldade comum cancela quando se
+   olha a diferença. Comparar dois intervalos marginais joga essa informação
+   fora e infla a incerteza.
+2. **Nenhum controle de comparações múltiplas.** São 8 comparações contra o
+   líder; a 95% isso dá ~0,4 falso positivo esperado só por acaso. E um falso
+   positivo aqui **quebra uma faixa**, que é o erro mais caro possível: afirma
+   diferença onde não há.
+
+**O que passou a valer.** Bootstrap pareado da diferença de recall contra o
+líder da faixa (4000 iterações, mesmos caseIds reamostrados para os dois
+modelos, PRNG determinístico), com **Holm-Bonferroni** sobre a família de
+comparações de cada líder. Holm em vez de Bonferroni puro por ser
+uniformemente mais poderoso e igualmente válido.
+
+**Efeito medido.** O intervalo da diferença sai ~40% mais estreito que os
+marginais (ex.: contra qwen3.8-max, `[-4,1 .. 10,8]` = 15pp, contra ~24pp de
+cada intervalo marginal). Ou seja: o teste novo é **mais** sensível, não menos.
+
+**As faixas publicadas não mudaram** (8 no T1, gemini-3.7-flash no T2). Isso é
+o resultado certo, e vale registrar por quê:
+
+| vs líder | diff | IC95 da diferença | p | limiar Holm | separa |
+|---|---:|---|---:|---:|---|
+| kimi-k3 | 3,2pp | [-5,5 .. 12,4] | 0,5500 | 0,0500 | não |
+| muse-spark-1.2 | 3,2pp | [-5,2 .. 11,3] | 0,5400 | 0,0250 | não |
+| qwen3.8-max | 3,2pp | [-4,1 .. 10,8] | 0,4600 | 0,0167 | não |
+| kimi-k2.7-code | 6,3pp | [-2,1 .. 14,4] | 0,1700 | 0,0125 | não |
+| deepseek-v4-flash | 7,4pp | [-1,9 .. 16,7] | 0,1500 | 0,0100 | não |
+| glm-5.2@fireworks | 11,0pp | [3,0 .. 19,8] | 0,0100 | 0,0071 | não |
+| qwen3.8-27b | 9,7pp | [2,1 .. 18,3] | 0,0200 | 0,0083 | não |
+| gemini-3.7-flash | 32,6pp | [21,8 .. 43,5] | 0,0000 | 0,0063 | **sim** |
+
+`glm-5.2` (p=0,0100) e `qwen3.8-27b` (p=0,0200) passariam num teste solto a
+0,05 e **falham** no Holm. É exatamente o caso que a correção existe para
+pegar: sem ela o site teria quebrado a faixa em cima de ruído.
+
+**O que isto ainda NÃO cobre.** O bootstrap mede só a variância de quais PRs
+caíram no set. Não cobre variância run-to-run do modelo (1 passada por
+entrada) nem o ruído do judge. A incerteza real é maior que a publicada, e as
+faixas seguem sendo o limite inferior do que dá para afirmar.
+
+**Onde está.** `pairedDiff()` e o bloco de faixas em `process-scorecards.js`.
+O método fica gravado em `meta.tierMethod`, e cada entrada carrega o resultado
+do seu teste em `pairedVsTierLeader`.

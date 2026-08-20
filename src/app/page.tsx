@@ -146,7 +146,7 @@ export default function Home() {
             { metric: 'Recall', desc: 'How many of the known bugs the model actually found.' },
             { metric: 'Precision', desc: 'Of what it reported, how much was real. A model that talks more finds more but also misfires more.' },
             { metric: 'F1', desc: 'Harmonic mean of both, equal weight. What the leaderboard ranks by, so talking more is never free.' },
-            { metric: 'Tier', desc: 'Models whose recall confidence interval overlaps the tier leader’s. The exact rank inside a tier is noise, not signal.' },
+            { metric: 'Tier', desc: 'Models the benchmark cannot tell apart from the tier leader, tested on the same PRs. The exact rank inside a tier is noise, not signal.' },
           ].map((m) => (
             <p key={m.metric}>
               <span className="text-[color:var(--color-ink-black)] font-semibold">{m.metric}.</span>{' '}

@@ -46,6 +46,13 @@
   "totalCases": 30,
   "totalGoldens": 95,
   "tiers": 2,
+  "tierMethod": {
+    "test": "bootstrap pareado da diferenca de recall contra o lider da faixa, nos mesmos PRs",
+    "iterations": 4000,
+    "alpha": 0.05,
+    "correction": "Holm-Bonferroni sobre as comparacoes contra cada lider de faixa",
+    "note": "Pareado porque todo modelo roda os MESMOS PRs: a dificuldade do caso cancela na diferenca, o que estreita o intervalo em ~40% frente aos marginais. A correcao existe porque testar 8 modelos a 95% produz ~0,4 falso positivo esperado, e um falso positivo aqui QUEBRA uma faixa, afirmando diferenca onde nao ha."
+  },
   "varianceCaveat": {
     "measured": "case-sampling (bootstrap 2000x) e judge run-to-run (3 rodadas do mesmo judge sobre a mesma submission, onde disponível)",
     "notMeasured": "model run-to-run (rodar o MESMO modelo de novo do zero — 1 passada por entrada)",
@@ -53,5 +60,5 @@
     "judgeRunsAvailable": 4,
     "judgeRunsTotal": 9
   },
-  "generatedAt": "2026-08-19T18:05:36.240Z"
+  "generatedAt": "2026-08-20T13:39:50.543Z"
 }

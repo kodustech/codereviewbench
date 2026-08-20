@@ -349,7 +349,7 @@ export default function LeaderboardClient() {
                   <p><span className="text-[color:var(--foreground)] font-medium">Recall</span> — <span className="text-[color:var(--muted)]">golden bugs the model actually found</span></p>
                   <p><span className="text-[color:var(--foreground)] font-medium">Precision</span> — <span className="text-[color:var(--muted)]">of what it reported, how much was real</span></p>
                   <p><span className="text-[color:var(--foreground)] font-medium">F1</span> — <span className="text-[color:var(--muted)]">harmonic mean of both, equal weight</span></p>
-                  <p><span className="text-[color:var(--foreground)] font-medium">Tier</span> — <span className="text-[color:var(--muted)]">models whose recall confidence intervals overlap the tier leader&apos;s</span></p>
+                  <p><span className="text-[color:var(--foreground)] font-medium">Tier</span> — <span className="text-[color:var(--muted)]">models the benchmark cannot separate from the tier leader on the same PRs</span></p>
                 </div>
               </div>
               <div>

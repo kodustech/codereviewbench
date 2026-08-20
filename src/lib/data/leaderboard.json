@@ -320,6 +320,13 @@
       "ciHigh": 50.46,
       "ciHalfWidthBootstrap": 9.08,
       "rank": 2,
+      "pairedVsTierLeader": {
+        "diff": 3.16,
+        "lo": -5.49,
+        "hi": 12.38,
+        "p": 0.55,
+        "n": 30
+      },
       "tier": 1
     },
     {
@@ -466,6 +473,13 @@
       "ciHigh": 52,
       "ciHalfWidthBootstrap": 10.38,
       "rank": 3,
+      "pairedVsTierLeader": {
+        "diff": 3.16,
+        "lo": -5.21,
+        "hi": 11.34,
+        "p": 0.54,
+        "n": 30
+      },
       "tier": 1
     },
     {
@@ -612,6 +626,13 @@
       "ciHigh": 53.75,
       "ciHalfWidthBootstrap": 12.1,
       "rank": 4,
+      "pairedVsTierLeader": {
+        "diff": 3.16,
+        "lo": -4.12,
+        "hi": 10.84,
+        "p": 0.46,
+        "n": 30
+      },
       "tier": 1
     },
     {
@@ -786,6 +807,13 @@
       "ciHigh": 48.68,
       "ciHalfWidthBootstrap": 10.28,
       "rank": 5,
+      "pairedVsTierLeader": {
+        "diff": 6.32,
+        "lo": -2.11,
+        "hi": 14.43,
+        "p": 0.17,
+        "n": 30
+      },
       "tier": 1
     },
     {
@@ -960,6 +988,13 @@
       "ciHigh": 47.87,
       "ciHalfWidthBootstrap": 10.75,
       "rank": 6,
+      "pairedVsTierLeader": {
+        "diff": 7.37,
+        "lo": -1.85,
+        "hi": 16.67,
+        "p": 0.15,
+        "n": 30
+      },
       "tier": 1
     },
     {
@@ -1106,6 +1141,13 @@
       "ciHigh": 47.06,
       "ciHalfWidthBootstrap": 11.17,
       "rank": 7,
+      "pairedVsTierLeader": {
+        "diff": 10.99,
+        "lo": 3,
+        "hi": 19.79,
+        "p": 0.01,
+        "n": 29
+      },
       "tier": 1
     },
     {
@@ -1252,6 +1294,13 @@
       "ciHigh": 45.36,
       "ciHalfWidthBootstrap": 10.66,
       "rank": 8,
+      "pairedVsTierLeader": {
+        "diff": 9.68,
+        "lo": 2.08,
+        "hi": 18.28,
+        "p": 0.02,
+        "n": 29
+      },
       "tier": 1
     },
     {
@@ -1427,6 +1476,13 @@
       "ciHigh": 18.28,
       "ciHalfWidthBootstrap": 6.16,
       "rank": 9,
+      "pairedVsTierLeader": {
+        "diff": 32.63,
+        "lo": 21.78,
+        "hi": 43.48,
+        "p": 0,
+        "n": 30
+      },
       "tier": 2
     }
   ],
