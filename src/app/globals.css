@@ -511,3 +511,13 @@ code, pre, .font-mono, [class*="font-mono"], table {
 .stack--ringed .stack__item:first-child .receipt {
   box-shadow: var(--shadow-subtle);
 }
+
+/* View transition das linhas da leaderboard. Substitui o `layout` do
+   framer-motion (46kB gz) pelo FLIP nativo do browser. */
+::view-transition-group(*) {
+  animation-duration: 320ms;
+  animation-timing-function: var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) { animation-duration: 1ms; }
+}

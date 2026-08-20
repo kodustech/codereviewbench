@@ -1,6 +1,6 @@
 import leaderboardData from '@/lib/data/leaderboard.json';
 import samplesData from '@/lib/data/samples.json';
-import type { LeaderboardData, CaseSample } from '@/lib/types';
+import type { LeaderboardData, CaseSample, CompareCase } from '@/lib/types';
 import CompareClient from './CompareClient';
 
 const lb = leaderboardData as unknown as LeaderboardData;
@@ -28,8 +28,15 @@ export default async function ComparePage({
   // nunca deixa A e B iguais mesmo se a URL pedir isso.
   const entryB = byF1.find((e) => e.modelId === b && e.modelId !== entryA.modelId) || byF1.find((e) => e.modelId !== entryA.modelId) || byF1[1];
 
-  const casesA = allSamples.filter((s) => s.entryKey === entryA.key);
-  const casesB = allSamples.filter((s) => s.entryKey === entryB.key);
+  // Fatia antes de virar prop: o que nao for lido pelo cliente nao precisa
+  // atravessar o payload RSC. `findings` sozinho e 66% do samples.json.
+  const slim = (c: CaseSample): CompareCase => {
+    const { findings: _f, missedGoldens: _m, usage: _u, latencyMs: _l, ...rest } = c;
+    void _f; void _m; void _u; void _l;
+    return rest;
+  };
+  const casesA = allSamples.filter((s) => s.entryKey === entryA.key).map(slim);
+  const casesB = allSamples.filter((s) => s.entryKey === entryB.key).map(slim);
 
   return (
     <CompareClient

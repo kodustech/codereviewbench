@@ -1,7 +1,7 @@
 import leaderboardData from '@/lib/data/leaderboard.json';
 import samplesData from '@/lib/data/samples.json';
 import { displayNameOf, modelSlug } from '@/lib/constants';
-import type { LeaderboardData, CaseSample } from '@/lib/types';
+import type { LeaderboardData, CaseSample, ModelDetailCase } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import ModelDetailClient from './ModelDetailClient';
 
@@ -32,9 +32,15 @@ export default async function ModelDetailPage({ params }: { params: Promise<{ id
   const entry = lb.entries.find((e) => modelSlug(e.modelId) === id);
   if (!entry) notFound();
 
-  const cases = allCases
+  // Fatia antes de virar prop — esta pagina le `findings` e `missedGoldens`,
+  // mas nunca `goldensDetail` (19% do samples.json) nem `usage`.
+  const cases: ModelDetailCase[] = allCases
     .filter((c) => c.entryKey === entry.key)
-    .sort((a, b) => a.caseId.localeCompare(b.caseId));
+    .sort((a, b) => a.caseId.localeCompare(b.caseId))
+    .map(({ goldensDetail: _g, usage: _u, ...rest }: CaseSample) => {
+      void _g; void _u;
+      return rest;
+    });
 
   return (
     <ModelDetailClient

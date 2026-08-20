@@ -190,3 +190,15 @@ export interface CaseSample {
   usage: Usage | null;
   latencyMs: number | null;
 }
+
+/**
+ * Recortes de CaseSample por pagina.
+ *
+ * O samples.json tem 1,1MB e `findings` sozinho e 66% dele. Passar o objeto
+ * inteiro como prop joga tudo no payload RSC mesmo quando a pagina nao le o
+ * campo: /compare mandava `findings` (que nao usa) e /model mandava
+ * `goldensDetail` (que nao usa). Estes tipos existem pra que a fatia feita no
+ * servidor seja verificada pelo compilador, e nao um cast otimista.
+ */
+export type CompareCase = Omit<CaseSample, 'findings' | 'missedGoldens' | 'usage' | 'latencyMs'>;
+export type ModelDetailCase = Omit<CaseSample, 'goldensDetail' | 'usage'>;

@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney, formatCI, formatDelta } from '@/lib/format';
 import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
-import type { LeaderboardEntry, LeaderboardAverages, CaseSample } from '@/lib/types';
+import type { LeaderboardEntry, LeaderboardAverages, ModelDetailCase } from '@/lib/types';
 import StatsCard from '@/components/shared/StatsCard';
 import Badge from '@/components/shared/Badge';
 import ProviderLogo from '@/components/shared/ProviderLogo';
@@ -15,7 +15,7 @@ interface ModelDetailClientProps {
   entry: LeaderboardEntry;
   averages: LeaderboardAverages;
   allEntries: LeaderboardEntry[];
-  cases: CaseSample[];
+  cases: ModelDetailCase[];
 }
 
 function classificationLabel(c: string): { label: string; variant: 'default' | 'amber' | 'error' } {
@@ -162,13 +162,13 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
           <h3 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Confidence</h3>
           <p className="text-sm text-[color:var(--foreground-2)] leading-relaxed relative mb-3">
             95% bootstrap interval on recall (2000 resamples over the {entry.cases} PRs):
-            <span className="text-[color:var(--foreground)] font-mono font-semibold mx-1">{formatCI(entry.ciLow, entry.ciHigh)}</span>
+            <span className="text-[color:var(--foreground)] font-mono font-bold mx-1">{formatCI(entry.ciLow, entry.ciHigh)}</span>
             points. This measures sampling variance from which PRs are in the set.
           </p>
           {entry.runToRunVariance ? (
             <p className="text-sm text-[color:var(--foreground-2)] leading-relaxed relative mb-3">
               Judge noise (same submission, {entry.runToRunVariance.runs} independent re-scores): recall
-              <span className="text-[color:var(--foreground)] font-mono font-semibold mx-1">
+              <span className="text-[color:var(--foreground)] font-mono font-bold mx-1">
                 {entry.runToRunVariance.recall.mean.toFixed(1)} ± {entry.runToRunVariance.recall.stdev?.toFixed(1) ?? '—'}
               </span>
               pts (n={entry.runToRunVariance.runs}). This is the judge alone — the exact same findings, scored again.

@@ -19,7 +19,7 @@ const displaySerif = DM_Serif_Display({ subsets: ["latin"], variable: "--font-di
 // Desvio: o Portal nao tem mono. Este site tem caminho de arquivo, id de
 // modelo e coluna numerica — sem mono a tabela perde alinhamento e o recibo
 // deixa de parecer recibo. Mantido, registrado no design.md.
-const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", weight: ["400", "700"] });
 
 export const metadata: Metadata = {
   // metadataBase e obrigatorio pra OG/canonical resolverem em URL absoluta —

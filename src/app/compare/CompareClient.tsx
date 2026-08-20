@@ -7,15 +7,15 @@ import { ArrowLeftRight, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney } from '@/lib/format';
 import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
-import type { LeaderboardEntry, CaseSample } from '@/lib/types';
+import type { LeaderboardEntry, CompareCase } from '@/lib/types';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 
 interface Props {
   entries: LeaderboardEntry[];
   entryA: LeaderboardEntry;
   entryB: LeaderboardEntry;
-  casesA: CaseSample[];
-  casesB: CaseSample[];
+  casesA: CompareCase[];
+  casesB: CompareCase[];
 }
 
 interface GoldenRow {

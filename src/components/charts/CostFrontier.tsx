@@ -77,7 +77,7 @@ function FrontierTooltip({ active, payload }: FrontierTooltipProps) {
   const d: FrontierPoint = payload[0].payload;
   return (
     <div className="bg-[var(--surface-2)] border border-[var(--border-bright)] p-4 rounded-xl shadow-2xl text-sm">
-      <p className="font-bold text-[color:var(--foreground)] mb-2">{d.name}</p>
+      <p className="font-semibold text-[color:var(--foreground)] mb-2">{d.name}</p>
       <p className="text-[color:var(--muted)]">
         recall{' '}
         <span className="text-[color:var(--foreground)] font-mono">

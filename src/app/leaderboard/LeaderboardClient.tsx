@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, Fragment } from 'react';
-import { motion } from 'framer-motion';
+import { flushSync } from 'react-dom';
 import Link from 'next/link';
 import leaderboardData from '@/lib/data/leaderboard.json';
 import caseIndexData from '@/lib/data/case-index.json';
@@ -10,7 +10,17 @@ import { cn } from '@/lib/utils';
 import { formatScore, formatMoney, formatCI } from '@/lib/format';
 import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS, SIZE_LABELS } from '@/lib/constants';
 import { bootstrapCI } from '@/lib/bootstrap';
-import CostFrontier, { type FrontierPoint } from '@/components/charts/CostFrontier';
+import dynamic from 'next/dynamic';
+import type { FrontierPoint } from '@/components/charts/CostFrontier';
+
+// O recharts so e usado na aba "Pareto Frontier", que e opt-in — mas o import
+// estatico fazia TODO visitante da leaderboard baixar a biblioteca inteira.
+// Carregado sob demanda, ele sai do bundle inicial. ssr:false porque o grafico
+// mede o container pra desenhar; nao ha nada util pra renderizar no servidor.
+const CostFrontier = dynamic(() => import('@/components/charts/CostFrontier'), {
+  ssr: false,
+  loading: () => <div className="h-[560px] rounded-[22px] bg-[var(--surface-2)] animate-pulse" aria-hidden />,
+});
 import { UPCOMING_MODELS } from '@/lib/upcoming';
 import ViewSwitcher from '@/components/shared/ViewSwitcher';
 import ProviderLogo from '@/components/shared/ProviderLogo';
@@ -187,11 +197,28 @@ export default function LeaderboardClient() {
   }, [sortKey, sortDir, filteredByKey, isFiltered]);
 
   const toggleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    const apply = () => {
+      if (sortKey === key) {
+        setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+      } else {
+        setSortKey(key);
+        setSortDir(key === 'rank' ? 'asc' : 'desc');
+      }
+    };
+    // Reordenar DESLIZANDO a linha ate a nova posicao carrega informacao (da
+    // pra ver quem subiu e quem desceu). Isso vinha do `layout` do
+    // framer-motion, que custava 46kB gz so por isso. A View Transitions API
+    // faz o mesmo FLIP nativamente, a custo zero de bundle. Onde nao houver
+    // suporte, a tabela so reordena na hora — degrada pro comportamento sem
+    // animacao, nunca pra tela quebrada.
+    const doc = document as Document & {
+      startViewTransition?: (cb: () => void) => unknown;
+    };
+    if (typeof doc.startViewTransition === 'function' &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      doc.startViewTransition(() => flushSync(apply));
     } else {
-      setSortKey(key);
-      setSortDir(key === 'rank' ? 'asc' : 'desc');
+      apply();
     }
   };
 
@@ -252,7 +279,7 @@ export default function LeaderboardClient() {
           >
             <SlidersHorizontal className="size-3" />
             Filters
-            {isFiltered && <span className="font-bold">· active</span>}
+            {isFiltered && <span className="font-semibold">· active</span>}
           </button>
         </div>
         <ViewSwitcher views={VIEWS} active={view} onChange={setView} />
@@ -373,14 +400,13 @@ export default function LeaderboardClient() {
                           </td>
                         </tr>
                       )}
-                      {/* layout: ao reordenar (clique no cabecalho), a linha
-                          DESLIZA ate a nova posicao em vez de pular. Isso
-                          carrega informacao — da pra ver quem subiu e quem
-                          desceu — nao e enfeite. */}
-                      <motion.tr
+                      {/* viewTransitionName precisa ser custom-ident: a chave
+                          do modelo tem ponto, barra e @, entao e higienizada.
+                          E o que deixa o browser parear a linha antes/depois e
+                          desliza-la ate a nova posicao. */}
+                      <tr
                         key={e.key}
-                        layout
-                        transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ viewTransitionName: `row-${e.key.replace(/[^a-zA-Z0-9]/g, '-')}` }}
                         className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface-2)] transition-colors group"
                       >
                         <td className="px-5 py-4">
@@ -426,7 +452,7 @@ export default function LeaderboardClient() {
                         <td className="px-5 py-4 text-right">
                           <span className="text-sm tabular-nums font-mono text-[color:var(--muted)]">{formatMoney(e.costPerBugFound, 2)}</span>
                         </td>
-                      </motion.tr>
+                      </tr>
                     </Fragment>
                   );
                 })}
