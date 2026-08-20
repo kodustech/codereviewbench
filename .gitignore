@@ -45,3 +45,6 @@ next-env.d.ts
 
 # claude code
 .claude/
+
+# saida do playwright-mcp (snapshots/console de sessao de debug)
+.playwright-mcp/

@@ -26,19 +26,24 @@ export default function Home() {
                   marca continua sendo o elemento visual dominante logo abaixo.
                   Antes o H1 era so o statement e nao tinha nenhuma das
                   palavras-alvo. Desvio registrado no design.md. */}
-              <h1 className="font-mono text-xs sm:text-sm text-[var(--accent)] uppercase tracking-[0.2em] font-bold mb-4">
-                AI Code Review Benchmark
+              {/* Eyebrow carrega a ESCALA em registro de label de maquina.
+                  Substitui o stat row de tres celulas (padrao templado); a
+                  mesma informacao cabe numa linha. Numeros do meta.json. */}
+              <span className="eyebrow block mb-4">
+                {meta.models.length} models &middot; {meta.totalCases} real PRs &middot; {meta.totalGoldens} confirmed bugs
+              </span>
+
+              {/* H1 = o nome da coisa. Num site de benchmark a categoria E a
+                  oferta, e e o termo que a pessoa busca. Sem verb landmark
+                  porque nao ha verbo — desvio registrado no design.md. */}
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-[var(--foreground)] leading-[1.08] mb-7 max-w-2xl lowercase">
+                <span className="normal-case">AI</span> code review benchmark
               </h1>
 
-              <p className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-[var(--foreground)] leading-[1.08] mb-7 max-w-2xl lowercase">
-                every number here can be&nbsp;<span className="verb-landmark">checked</span>.
-              </p>
-
               <p className="text-lg text-[var(--foreground-2)] max-w-xl leading-relaxed mb-12">
-                An open AI code review benchmark built on real merged pull requests from
-                production open-source projects — not synthetic regressions. Every submission and
-                scorecard is versioned in the repo, the judge is named, and the harness is the
-                same for every model. Re-score it yourself.
+                Which models actually catch real bugs, measured on merged pull requests from
+                production open-source projects. Every run is versioned in the repo, so you can
+                check the numbers or re-score them yourself.
               </p>
 
 

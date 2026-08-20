@@ -465,17 +465,19 @@ body {
      2 x (peek + shift). Sem isso ela era cortada no topo — e so no hover,
      que e pior: o corte aparecia no meio da animacao. */
   padding-top: calc((var(--stack-peek) + var(--stack-shift-max)) * 2 + 8px);
-  --stack-shift-max: 14px;
-  /* O scale com origem embaixo puxa o topo pra baixo e come parte do
-     deslocamento: com peek 22 e scale .965 sobravam so 11px visiveis entre
-     uma carta e outra. Peek maior + scale mais suave da ~26px reais. */
-  --stack-peek: 34px;
+  --stack-shift-max: 10px;
+  /* O reveal tem que caber o HEADER INTEIRO do recibo (~55px), senao o nome do
+     modelo corta no meio do glifo e a pilha le como bug de render, nao como
+     pilha. O scale com origem embaixo come parte do deslocamento (altura da
+     carta x fator), entao peek e maior que o reveal real:
+       reveal = peek - (altura ~325px x 0.012) ~= 60 - 4 = 56px. */
+  --stack-peek: 60px;
   --stack-shift: 0px;
 }
 .stack__item {
   transform:
     translateY(calc(var(--i) * (var(--stack-peek) + var(--stack-shift)) * -1))
-    scale(calc(1 - var(--i) * 0.022));
+    scale(calc(1 - var(--i) * 0.012));
   transform-origin: bottom center;
   transition: transform var(--dur-long) var(--ease-out);
   position: relative;

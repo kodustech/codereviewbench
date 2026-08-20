@@ -50,6 +50,10 @@ strict spec — both are considered, content-driven exceptions, not drift.
 
 ## Hero: H1 vs. statement de marca (emenda, 2026-08-19)
 
+> **Superada** pela emenda de 2026-08-20 (tarde), mais abaixo. Mantida aqui
+> pelo registro do raciocinio; o arranjo de hero descrito nesta secao nao e
+> mais o que esta no ar.
+
 O hero tinha UM elemento no topo: o statement lowercase com verb-landmark,
 marcado como `<h1>`. Duas coisas quebravam com isso:
 
@@ -76,6 +80,10 @@ Google le o DOM, nao o font-size. O statement de fechamento do rodape
 momento, fala com quem vai submeter, nao com quem esta escolhendo.
 
 ## Hero: o scorecard como recibo (emenda, 2026-08-20)
+
+> **Parcialmente emendada** pela secao de 2026-08-20 (tarde), mais abaixo: a
+> pilha de recibos continua sendo o apparatus do hero, mas o headline citado
+> no fim desta secao e os numeros de calibragem da pilha foram substituidos.
 
 Decisao de posicionamento tomada com o usuario: **o ativo do site e a
 auditabilidade, nao o numero**. O objetivo e ser o benchmark confiavel da
@@ -114,6 +122,57 @@ CTA secundario ("check the artifacts", aponta pro repo) fecha a promessa do
 paragrafo — sem ele o "re-score it yourself" ficava solto.
 
 Todos os campos derivam do leaderboard.json.
+
+## Hero: H1 dominante, sem verb-landmark (emenda, 2026-08-20, tarde)
+
+Substitui a emenda de 2026-08-19 ("H1 pequeno tratado como eyebrow"). Escrita
+com as skills de PMM do repo `/growth` (`homepage-hero-pmm`), que puxam
+`context/company/positioning.md` e o guia markepear "who to address on the dev
+tool homepage".
+
+O que mudou e por que:
+
+- **`<h1>` = "AI code review benchmark", em display size.** O arranjo anterior
+  (H1 mono/uppercase pequeno + statement grande logo abaixo em `<p>`) fazia o
+  leitor processar duas frases concorrentes antes de saber onde estava. A
+  frase-alvo de busca e tambem a descricao literal do que a pagina e: nao ha
+  ganho em esconde-la num elemento secundario. Um elemento no topo, nao dois.
+- **A escala virou eyebrow, nao headline.** `9 models · 30 real PRs ·
+  95 confirmed bugs` — dado de maquina, mono/uppercase, no lugar onde o resto
+  do site ja poe rotulos ordinais. Qualifica o H1 sem competir com ele.
+- **Subhead fala com o champion, nao com o buyer.** Staff/platform engineer
+  escolhendo o que usar: o que se mede, em cima do que, e como conferir.
+
+### Desvio consciente: nao ha verb-landmark no H1
+
+O spec do Lumen pede um verbo em cor de accent no headline. "AI code review
+benchmark" e um sintagma nominal — nao tem verbo pra marcar, e inventar um
+("benchmark" como verbo, "see", "compare") sacrificaria a frase-alvo exata,
+que e o unico motivo do H1 existir nessa forma.
+
+O verb-landmark **nao sumiu do site**: continua no statement de fechamento do
+rodape ("if your harness can review a diff, it can be **measured**."). Um por
+pagina, como o spec quer — so nao no topo.
+
+Regra da voz Kodus (de `/growth`), que vale pra toda copy do site: **sem
+travessao (em dash)**, sem lista-de-tres retorica, e a lista de palavras
+proibidas do positioning. Os travessoes que restam em `page.tsx` estao todos
+em comentario de codigo, nunca em texto renderizado.
+
+### Recalibragem da pilha de recibos
+
+O reveal entre cartas era 27px e o header do recibo tem 55px: o nome do modelo
+cortava no meio do glifo, e a pilha lia como bug de render, nao como pilha.
+Corrigido pelos dois knobs de uma vez —
+
+- `--stack-peek: 34px → 60px`
+- `scale` por nivel: `0.022 → 0.012`
+
+O scale com `transform-origin: bottom` come `altura_da_carta x fator` do
+deslocamento, entao peek e sempre maior que o reveal real:
+`60 - (325 x 0.012) ≈ 56px`, que cobre o header de 55px inteiro. Se o header
+mudar de altura, os dois valores tem que ser refeitos juntos. `--stack-shift-max`
+caiu pra 10px pra manter a carta de tras longe da nav no hover.
 
 ## Macrostructure family
 
