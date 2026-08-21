@@ -1,7 +1,7 @@
 import leaderboardData from '@/lib/data/leaderboard.json';
 import samplesData from '@/lib/data/samples.json';
 import type { LeaderboardData, LeaderboardEntry, CaseSample, GoldenDetail } from '@/lib/types';
-import { modelSlug, displayNameOf } from '@/lib/constants';
+import { modelSlug } from '@/lib/constants';
 import { PAIR_SEPARATOR, canonicalPair, pairSlug } from '@/lib/pair-slug';
 
 export { PAIR_SEPARATOR, canonicalPair, pairSlug };
@@ -121,6 +121,3 @@ export function pairDiff(a: LeaderboardEntry, b: LeaderboardEntry): PairDiff {
     return { onlyA, onlyB, both, neither, sharedCases, uncoveredCases };
 }
 
-export function pairTitle(a: LeaderboardEntry, b: LeaderboardEntry): string {
-    return `${displayNameOf(a.modelId)} vs ${displayNameOf(b.modelId)}`;
-}
