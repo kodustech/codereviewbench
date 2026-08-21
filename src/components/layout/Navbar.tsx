@@ -9,7 +9,10 @@ import { useState } from 'react';
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
   { href: '/leaderboard', label: 'Leaderboard' },
+  // O active state usa startsWith, entao /compare/<a>-vs-<b> (as 45 paginas de
+  // par) e /blog/<slug> ja acendem o item pai sem precisar de entrada propria.
   { href: '/compare', label: 'Compare' },
+  { href: '/blog', label: 'Blog' },
 ];
 
 export default function Navbar() {
