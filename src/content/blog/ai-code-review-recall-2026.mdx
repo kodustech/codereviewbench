@@ -6,13 +6,12 @@ keywords:
   - ai code review
   - ai code review benchmark
   - best ai code review tool
-draft: true
 ---
 
 Every AI code review tool demos well. You paste a diff with an off-by-one error,
 the model finds the off-by-one error, and you conclude the thing works. That
 demo tells you almost nothing, because the hard part of code review is not
-recognising a bug you were pointed at — it is noticing the one nobody mentioned.
+recognising a bug you were pointed at. It is noticing the one nobody mentioned.
 
 So we measured that instead. Ten models, thirty merged pull requests from
 open-source projects, and one question: of the bugs a human reviewer flagged on
@@ -40,7 +39,7 @@ more often than you are right.
 ## Recall and precision pull in opposite directions
 
 Look at the last row. Gemini 3.7 Flash has the best precision on the board by a
-wide margin — when it says something is a bug, it is usually right. It also has
+wide margin. When it says something is a bug, it is usually right. It also has
 the worst recall by a wide margin, finding one bug in nine.
 
 That is not a defect. It is a posture. A model that comments rarely and

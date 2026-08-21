@@ -271,6 +271,61 @@ caiu pra 10px pra manter a carta de tras longe da nav no hover.
   these pages do (rank badges, stat cards, a ranked table). No apparatus, no
   hero marquee — the table and the Pareto chart carry the page.
 
+## Content pages — familia nova (emenda, 2026-08-21)
+
+O sistema definia familia de macroestrutura para paginas de **marketing** e de
+**app**, e nenhuma para **conteudo**. O blog entrou nessa lacuna e a primeira
+versao saiu fora do padrao — nao por escolha, mas por nao haver padrao a seguir.
+Registrado aqui pra a proxima pagina de conteudo nascer certa.
+
+- **Indice (`/blog`)**: *Catalogue*. Hero com o gradiente (conteudo ancorado no
+  topo, branco puro), depois **lista em fio dentro da coluna de leitura de
+  680px** — `border-t`/`border-b` hairline entre entradas, nunca card. Portal
+  proibe grade de card em secao editorial e a regra vale aqui: o indice E uma
+  secao editorial. Cada entrada: data em mono/tabular, titulo em DM Serif no
+  passo `--text-heading`, descricao em `--text-body`.
+- **Artigo (`/blog/[slug]`)**: *Long Document*. Hero igual ao do indice, corpo
+  em coluna unica de 680px. O ritmo vem do espaco entre blocos do MDX
+  (`src/mdx-components.tsx`), nao de divisoria.
+
+### Regras que valem aqui e foram violadas na primeira tentativa
+
+1. **Sem landmark no H1.** A emenda "H1 dominante, sem verb-landmark" nao e so
+   da home — vale pro topo de qualquer pagina. O landmark fica no statement do
+   rodape, um por pagina. Pintar a palavra de `--accent` (azul #007aff) EM CIMA
+   do gradiente azul-violeta ainda some com ela e le como link quebrado.
+2. **Branco puro sobre o gradiente**, sem opacidade e sem cor de accent — e a
+   mitigacao de contraste medida no desvio 7. Vale pro hero de conteudo tambem.
+3. **Sem lista-de-tres retorica e sem travessao** em texto renderizado (regra de
+   voz Kodus). Vale pra copy de post, nao so pra chrome.
+4. **`.stack` NAO e empilhamento vertical generico.** E o componente da pilha de
+   recibos, com `--stack-peek`, hover 3D e escala por nivel. Usar em lista de
+   post quebra o layout e o significado.
+5. **Escala de tipo por token.** display 48 / heading 36 / heading-sm 18 /
+   body 16 / caption 12, com `--leading-display` e `--leading-heading` em 1.
+   Nada de `text-4xl`/`text-2xl` do Tailwind.
+
+### Pipeline MDX — dois plugins obrigatorios
+
+`@next/mdx` sozinho nao serve pra este formato de post:
+
+- **`remark-frontmatter`** — sem ele o bloco `---` do topo vira `<hr>` e o
+  YAML (title/description/date/keywords) e despejado no corpo do artigo como
+  texto. O `gray-matter` le os metadados no servidor e nao resolve isso: quem
+  precisa ignorar o bloco e o compilador MDX.
+- **`remark-gfm`** — tabela em markdown e GFM, nao CommonMark. Sem ele o bloco
+  de pipes sai como paragrafo cru e os componentes `table`/`th`/`td` nunca sao
+  chamados.
+
+Os dois vao como **string** em `next.config.ts`, nunca como funcao importada:
+o loader exige options serializaveis e uma funcao quebra o build com
+"does not have serializable options".
+
+### Enriquecimento
+
+**Nenhum.** As "per-page allowances" reservam o apparatus a home; paginas de
+conteudo sao tipografia e fio, como leaderboard e model detail.
+
 ## Theme tokens (Lumen · Night Foundry)
 
 **Naming note:** implemented under the project's existing token names

@@ -1,5 +1,16 @@
 [
   {
+    "date": "2026-08-21",
+    "scope": "content pages (/blog, /blog/[slug])",
+    "genre": "editorial",
+    "theme": "portal",
+    "macrostructure": "Catalogue (indice) / Long Document (artigo)",
+    "nav": "N5 (herdado)",
+    "footer": "Ft5-extended (herdado)",
+    "enrichment": "none — tipografia apenas",
+    "brief": "blog fora do padrao Portal; familia Content pages nao existia no design.md"
+  },
+  {
     "date": "2026-08-17",
     "scope": "app",
     "genre": "atmospheric",
