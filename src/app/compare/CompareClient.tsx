@@ -7,6 +7,7 @@ import { ArrowLeftRight, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney } from '@/lib/format';
 import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import { pairSlug } from '@/lib/pair-slug';
 import type { LeaderboardEntry, CompareCase } from '@/lib/types';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 
@@ -71,7 +72,12 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
   const router = useRouter();
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  const setModels = (a: string, b: string) => router.push(`/compare?a=${a}&b=${b}`);
+  // Navega pra rota canonica do par, nao pra ?a=&b=. As duas renderizavam a
+  // mesma comparacao, mas a de query param declara canonical /compare — ou
+  // seja, e a versao que o Google ignora e que nao tem title proprio. Quem
+  // escolhia dois modelos e copiava a URL compartilhava justamente essa.
+  const setModels = (a: string, b: string) =>
+    router.push(`/compare/${pairSlug(modelSlug(a), modelSlug(b))}`);
 
   const providerA = providerOf(entryA.modelId);
   const providerB = providerOf(entryB.modelId);

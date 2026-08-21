@@ -2,31 +2,15 @@ import leaderboardData from '@/lib/data/leaderboard.json';
 import samplesData from '@/lib/data/samples.json';
 import type { LeaderboardData, LeaderboardEntry, CaseSample, GoldenDetail } from '@/lib/types';
 import { modelSlug, displayNameOf } from '@/lib/constants';
+import { PAIR_SEPARATOR, canonicalPair, pairSlug } from '@/lib/pair-slug';
+
+export { PAIR_SEPARATOR, canonicalPair, pairSlug };
 
 const lb = leaderboardData as unknown as LeaderboardData;
 const allSamples = samplesData as unknown as CaseSample[];
 
-/** Separador do slug de par. Verificado em 2026-08-21: nenhum dos 10 slugs de
- *  modelo contem `-vs-`, entao ele nao colide. Se um modelo futuro contiver,
- *  `parsePairSlug` ainda acerta — ele nao faz split cego, casa contra o
- *  conjunto conhecido de pares. */
-export const PAIR_SEPARATOR = '-vs-';
 
-/**
- * Ordem canonica do par: alfabetica por slug, NAO por ranking.
- *
- * Ranking muda quando entra modelo novo ou os dados sao reprocessados; se a URL
- * dependesse dele, `/compare/a-vs-b` viraria `/compare/b-vs-a` num deploy e
- * todo link externo apontaria pra um redirect. Alfabetico e estavel pra sempre.
- */
-export function canonicalPair(slugA: string, slugB: string): [string, string] {
-    return slugA < slugB ? [slugA, slugB] : [slugB, slugA];
-}
 
-export function pairSlug(slugA: string, slugB: string): string {
-    const [a, b] = canonicalPair(slugA, slugB);
-    return `${a}${PAIR_SEPARATOR}${b}`;
-}
 
 /** Os 45 pares (C(10,2)) em ordem canonica. Fonte do generateStaticParams e do
  *  sitemap — os dois LEEM daqui pra nao divergirem. */
