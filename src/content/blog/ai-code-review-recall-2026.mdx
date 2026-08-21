@@ -1,0 +1,78 @@
+---
+title: The best AI code reviewer finds fewer than half the bugs
+description: We ran ten models over the same thirty merged pull requests, scoring them against bugs that human reviewers actually flagged. The top scorer found 44% of them. None broke 50%.
+date: '2026-08-21'
+keywords:
+  - ai code review
+  - ai code review benchmark
+  - best ai code review tool
+draft: true
+---
+
+Every AI code review tool demos well. You paste a diff with an off-by-one error,
+the model finds the off-by-one error, and you conclude the thing works. That
+demo tells you almost nothing, because the hard part of code review is not
+recognising a bug you were pointed at — it is noticing the one nobody mentioned.
+
+So we measured that instead. Ten models, thirty merged pull requests from
+open-source projects, and one question: of the bugs a human reviewer flagged on
+those PRs before they merged, how many does the model find on its own?
+
+## The short answer
+
+The best model found 44.2% of them.
+
+| Model | Recall | Precision | Cost per PR |
+| --- | --- | --- | --- |
+| DeepSeek V4 Pro | 44.2% | 43.6% | $0.30 |
+| Qwen3.8 Max | 41.0% | 43.9% | $1.21 |
+| Kimi K3 | 41.0% | 38.7% | $1.62 |
+| Kimi K2.7 Code | 37.9% | 50.0% | $0.55 |
+| DeepSeek V4 Flash | 36.8% | 42.1% | $0.10 |
+| GLM 5.2 | 35.2% | 47.0% | $0.88 |
+| MiniMax M3 | 25.3% | 35.6% | $0.17 |
+| Gemini 3.7 Flash | 11.6% | 73.9% | $0.27 |
+
+Nobody crossed 50%. The median model found roughly a third. If you deploy one of
+these as a gate and assume a clean pass means the PR is clean, you are wrong
+more often than you are right.
+
+## Recall and precision pull in opposite directions
+
+Look at the last row. Gemini 3.7 Flash has the best precision on the board by a
+wide margin — when it says something is a bug, it is usually right. It also has
+the worst recall by a wide margin, finding one bug in nine.
+
+That is not a defect. It is a posture. A model that comments rarely and
+confidently produces less noise, and reviewers stop ignoring it. A model that
+comments constantly finds more real problems and buries them among false ones.
+
+Which posture you want depends on what the review is for. Blocking a merge
+demands precision, because a wrong block costs a developer twenty minutes and
+some goodwill. Catching a security regression demands recall, because the miss
+is what costs you. The single "which model is best" question does not survive
+contact with that distinction.
+
+## What this does not measure
+
+The corpus is thirty pull requests across Go, Java, Python, Ruby and TypeScript,
+drawn from projects like Grafana, Sentry, Keycloak and cal.com. It is real code,
+but it is not your code.
+
+The ground truth is what human reviewers caught. That is the honest bar, and it
+is also a ceiling: bugs that shipped because nobody noticed them are not in the
+dataset, so no model can get credit for finding one. Recall here means "found
+what the humans found", not "found everything that was wrong".
+
+And a single run of thirty cases carries real variance. Treat a three-point gap
+between two models as noise unless you have seen it hold across runs.
+
+## Why we published the misses
+
+The per-model pages list every bug each model failed to find, with the reviewer's
+own description. That is the part we would want to read before trusting a tool,
+and the part vendors never show you.
+
+If a model missed a race condition in cache invalidation, you should be able to
+read the race condition and decide for yourself whether that miss matters for
+your codebase. A single aggregate score cannot tell you that.
