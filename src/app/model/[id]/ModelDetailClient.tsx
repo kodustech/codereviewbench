@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney, formatCI, formatDelta } from '@/lib/format';
 import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import { pairSlug } from '@/lib/pair-slug';
 import type { LeaderboardEntry, LeaderboardAverages, ModelDetailCase } from '@/lib/types';
 import StatsCard from '@/components/shared/StatsCard';
 import Badge from '@/components/shared/Badge';
@@ -158,7 +159,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
       {/* Regime + CI */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
         <div className="card-hairline p-6">
-          <h3 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Confidence</h3>
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Confidence</h2>
           <p className="text-sm text-[color:var(--foreground-2)] leading-relaxed relative mb-3">
             95% bootstrap interval on recall (2000 resamples over the {entry.cases} PRs):
             <span className="text-[color:var(--foreground)] font-mono font-bold mx-1">{formatCI(entry.ciLow, entry.ciHigh)}</span>
@@ -180,7 +181,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
           </p>
         </div>
         <div className="card-hairline p-6">
-          <h3 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Run configuration</h3>
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Run configuration</h2>
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm relative">
             <span className="text-[color:var(--muted)]">Harness</span>
             <span className="text-[color:var(--foreground)] font-mono">{entry.harness}</span>
@@ -201,7 +202,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
       {/* Severity/category mix */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
         <div className="card-hairline p-6">
-          <h3 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-1 relative">Severity mix</h3>
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-1 relative">Severity mix</h2>
           <p className="text-xs text-[color:var(--muted-dim)] mb-4 relative">
             What the model called its own findings — not recall by severity, goldens aren&apos;t severity-tagged.
           </p>
@@ -228,7 +229,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
           )}
         </div>
         <div className="card-hairline p-6">
-          <h3 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-1 relative">Category mix</h3>
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-1 relative">Category mix</h2>
           <p className="text-xs text-[color:var(--muted-dim)] mb-4 relative">
             Only bug/performance/security are consistent across models — the rest is free text, bucketed as other.
           </p>
@@ -245,7 +246,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
 
       {/* By repo */}
       <div className="mb-12">
-        <h3 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">By repository</h3>
+        <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">By repository</h2>
         <div className="card-hairline overflow-hidden">
           <div className="overflow-x-auto custom-scrollbar relative">
             <table className="w-full text-left border-collapse whitespace-nowrap">
@@ -276,9 +277,9 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
 
       {/* Per-PR breakdown */}
       <div className="mb-8">
-        <h3 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
+        <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
           Per-PR breakdown ({cases.length})
-        </h3>
+        </h2>
         <div className="flex flex-col gap-2">
           {cases.map((c) => {
             const isOpen = expandedCase === c.id;
@@ -351,6 +352,30 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
           {cases.length === 0 && (
             <p className={cn('text-[color:var(--muted)] text-center py-12 font-mono text-sm')}>No case data available for this model.</p>
           )}
+        </div>
+
+        {/* Link pras rotas de par. Sem isto as 45 paginas /compare/<a>-vs-<b> ficam
+            orfas: existem no sitemap e nenhum link interno aponta pra elas, o que
+            significa rastreio raro e autoridade proxima de zero. Daqui cada modelo
+            alcanca os outros 9, cobrindo os 45 pares. */}
+        <div className="mt-16 pt-10 border-t border-[var(--border)]">
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-5">
+            Compare {displayNameOf(entry.modelId)} with
+          </h2>
+          <ul className="flex flex-wrap gap-2">
+            {allEntries
+              .filter((e) => e.modelId !== entry.modelId)
+              .map((e) => (
+                <li key={e.key}>
+                  <Link
+                    href={`/compare/${pairSlug(modelSlug(entry.modelId), modelSlug(e.modelId))}`}
+                    className="inline-block card-hairline px-3.5 py-2 text-sm text-[color:var(--foreground)] hover:text-[color:var(--accent)] transition-colors"
+                  >
+                    {displayNameOf(e.modelId)}
+                  </Link>
+                </li>
+              ))}
+          </ul>
         </div>
       </div>
     </div>

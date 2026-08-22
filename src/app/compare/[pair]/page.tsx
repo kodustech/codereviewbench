@@ -31,11 +31,11 @@ export async function generateMetadata({ params }: { params: Promise<{ pair: str
     // que o outro perdeu. Nunca o mesmo texto em duas paginas.
     return {
         title: `${na} vs ${nb} for Code Review`,
+        // ~150 chars: a versao anterior tinha 230 e era cortada antes de chegar
+        // no numero de bugs exclusivos, que e o gancho da pagina.
         description:
-            `${na} and ${nb} reviewed the same ${d.sharedCases} merged pull requests. ` +
-            `${na} found ${a.score.toFixed(1)}% of known bugs at ${a.precision.toFixed(1)}% precision; ` +
-            `${nb} found ${b.score.toFixed(1)}% at ${b.precision.toFixed(1)}%. ` +
-            `${d.onlyA.length} real bugs were caught only by ${na}, ${d.onlyB.length} only by ${nb}.`,
+            `${na} ${a.score.toFixed(0)}% recall vs ${nb} ${b.score.toFixed(0)}%, on the same ${d.sharedCases} merged PRs. ` +
+            `${d.onlyA.length} bugs only ${na} caught, ${d.onlyB.length} only ${nb}.`,
         alternates: { canonical: `/compare/${r.canonicalSlug}` },
     };
 }

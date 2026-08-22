@@ -7,7 +7,8 @@ import { SITE_TAGLINE } from '@/lib/site';
 // agora herdava o metadata do layout e nao tinha titulo/descricao proprios.
 export const metadata = {
   title: `${SITE_TAGLINE} Leaderboard`,
-  description: `Which AI model finds the most real bugs in code review? ${meta.totalEntries} models ranked on ${meta.totalCases} real merged pull requests from ${meta.repos.length} production OSS repos, scored against ${meta.totalGoldens} human-reported bugs. Recall, precision, F1 and cost per bug found.`,
+  // Cortada pra caber nos ~155 chars que o Google exibe.
+  description: `Which AI model finds the most real bugs? ${meta.totalEntries} models ranked on ${meta.totalCases} merged pull requests, scored against ${meta.totalGoldens} human-reported bugs.`,
   alternates: { canonical: '/leaderboard' },
 };
 

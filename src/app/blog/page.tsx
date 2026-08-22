@@ -2,10 +2,15 @@ import Link from 'next/link';
 import { publishedPosts } from '@/lib/blog';
 
 export const metadata = {
-    title: 'Blog',
+    // "Blog" sozinho nao carrega termo de busca nenhum.
+    title: 'AI Code Review Research',
     description:
-        'Original research on how well AI models actually review code, from the CodeReviewBench dataset: recall, precision, cost, and the bugs the models miss.',
-    alternates: { canonical: '/blog' },
+        'Original research on how well AI models actually review code: recall, precision, cost, and the bugs they miss.',
+    alternates: {
+        canonical: '/blog',
+        // Sem isto o feed existe mas nenhum leitor o descobre a partir da pagina.
+        types: { 'application/rss+xml': '/blog/rss.xml' },
+    },
 };
 
 const MONTHS = [

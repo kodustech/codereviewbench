@@ -1,6 +1,5 @@
 'use client';
-
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeftRight, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
@@ -10,7 +9,6 @@ import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } fr
 import { pairSlug } from '@/lib/pair-slug';
 import type { LeaderboardEntry, CompareCase } from '@/lib/types';
 import ProviderLogo from '@/components/shared/ProviderLogo';
-
 interface Props {
   entries: LeaderboardEntry[];
   entryA: LeaderboardEntry;
@@ -18,14 +16,12 @@ interface Props {
   casesA: CompareCase[];
   casesB: CompareCase[];
 }
-
 interface GoldenRow {
   text: string;
   severity: string | null;
   foundA: boolean;
   foundB: boolean;
 }
-
 function ModelPicker({
   entries,
   value,
@@ -51,7 +47,6 @@ function ModelPicker({
     </select>
   );
 }
-
 function StatRow({ label, a, b, fmt, higherIsBetter = true }: { label: string; a: number | null; b: number | null; fmt: (v: number) => string; higherIsBetter?: boolean }) {
   const aWins = a != null && b != null && a !== b && (higherIsBetter ? a > b : a < b);
   const bWins = a != null && b != null && a !== b && (higherIsBetter ? b > a : b < a);
@@ -67,21 +62,16 @@ function StatRow({ label, a, b, fmt, higherIsBetter = true }: { label: string; a
     </div>
   );
 }
-
 export default function CompareClient({ entries, entryA, entryB, casesA, casesB }: Props) {
   const router = useRouter();
-  const [expanded, setExpanded] = useState<string | null>(null);
-
   // Navega pra rota canonica do par, nao pra ?a=&b=. As duas renderizavam a
   // mesma comparacao, mas a de query param declara canonical /compare — ou
   // seja, e a versao que o Google ignora e que nao tem title proprio. Quem
   // escolhia dois modelos e copiava a URL compartilhava justamente essa.
   const setModels = (a: string, b: string) =>
     router.push(`/compare/${pairSlug(modelSlug(a), modelSlug(b))}`);
-
   const providerA = providerOf(entryA.modelId);
   const providerB = providerOf(entryB.modelId);
-
   // Um golden por PR, com o veredito dos dois modelos — zipado por texto (a
   // mesma lista de goldens do dataset, dois runs diferentes por cima dela).
   const perCase = useMemo(() => {
@@ -102,7 +92,6 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
       })
       .filter((x): x is NonNullable<typeof x> => x !== null);
   }, [casesA, casesB]);
-
   const tally = useMemo(() => {
     let both = 0, onlyA = 0, onlyB = 0, neither = 0;
     for (const { goldens } of perCase) {
@@ -115,7 +104,6 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
     }
     return { both, onlyA, onlyB, neither, total: both + onlyA + onlyB + neither };
   }, [perCase]);
-
   return (
     <div className="max-w-[1200px] mx-auto w-full px-6 sm:px-12 py-12">
       <div className="mb-10">
@@ -125,7 +113,6 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
           Same {perCase.length} PRs, same goldens — which bugs did one find that the other missed?
         </p>
       </div>
-
       {/* Picker */}
       <div className="flex flex-col sm:grid sm:grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-4 mb-10">
         <div className="flex items-center gap-3 w-full">
@@ -144,7 +131,6 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
           <ProviderLogo provider={providerB} className="size-4" />
         </div>
       </div>
-
       {/* Stats */}
       <div className="card-hairline p-6 mb-6">
         <div className="grid grid-cols-[1fr_auto_1fr] gap-4 mb-2">
@@ -161,7 +147,6 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
         <StatRow label="Precision" a={entryA.precision} b={entryB.precision} fmt={formatScore} />
         <StatRow label="Cost / PR" a={entryA.costPerPR} b={entryB.costPerPR} fmt={(v) => formatMoney(v, 3)} higherIsBetter={false} />
       </div>
-
       {/* Golden tally */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
         <div className="card-hairline p-4 text-center">
@@ -181,18 +166,21 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
           <span className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest">neither found</span>
         </div>
       </div>
-
       {/* Per-PR diff */}
-      <h3 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Per-PR diff ({perCase.length})</h3>
+      {/* h2, nao h3: a pagina saltava de h1 direto pra h3. */}
+      <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Per-PR diff ({perCase.length})</h2>
       <div className="flex flex-col gap-2">
         {perCase.map(({ caseId, repo, language, goldens }) => {
-          const isOpen = expanded === caseId;
           const diffCount = goldens.filter((g) => g.foundA !== g.foundB).length;
           return (
-            <div key={caseId} className="card-hairline overflow-hidden">
-              <button
-                onClick={() => setExpanded(isOpen ? null : caseId)}
-                className="relative w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-5 py-3.5 hover:bg-[var(--surface-2)] transition-colors text-left"
+            // <details> nativo, nao {isOpen && ...}: com o render condicional o
+            // texto dos goldens — a UNICA coisa que diferencia uma pagina de par da
+            // outra — so entrava no DOM depois do clique. Medido: 99% de texto
+            // identico entre pares, 1 palavra exclusiva por pagina. Com <details> o
+            // conteudo fica no DOM sempre, escondido por CSS, e o crawler le.
+            <details key={caseId} className="card-hairline overflow-hidden group">
+              <summary
+                className="relative w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-5 py-3.5 hover:bg-[var(--surface-2)] transition-colors text-left cursor-pointer list-none [&::-webkit-details-marker]:hidden"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <span className="text-[11px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest shrink-0">
@@ -204,32 +192,44 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
                   <span className="text-xs font-mono text-[color:var(--muted)]">
                     {diffCount > 0 ? <span className="text-[color:var(--accent)]">{diffCount} disagree</span> : 'agree'} · {goldens.length} goldens
                   </span>
-                  {isOpen ? <ChevronUp className="size-4 text-[color:var(--muted)]" /> : <ChevronDown className="size-4 text-[color:var(--muted)]" />}
+                  <ChevronDown className="size-4 text-[color:var(--muted)] group-open:hidden" />
+                  <ChevronUp className="size-4 text-[color:var(--muted)] hidden group-open:block" />
                 </div>
-              </button>
-              {isOpen && (
-                <div className="border-t border-[var(--border)] px-5 py-4 panel-in">
+              </summary>
+              <div className="border-t border-[var(--border)] px-5 py-4">
                   {goldens.length === 0 ? (
                     <p className="text-sm text-[color:var(--muted-dim)]">No golden detail for this PR.</p>
                   ) : (
                     <div className="flex flex-col gap-2">
                       {goldens.map((g, i) => (
                         <div key={i} className="flex items-start gap-3 text-sm bg-[var(--background)] border border-[var(--border)] rounded-md p-3">
-                          <div className="flex items-center gap-1.5 shrink-0 pt-0.5">
+                          {/* aria-hidden nos icones + rotulo em texto ao lado.
+                              Os goldens sao os MESMOS bugs em todos os modelos: o
+                              que diferencia uma pagina de par da outra e quem achou
+                              o que, e isso so existia como Check/X. Icone nao e lido
+                              por crawler nem por leitor de tela, e sem ele as 45
+                              paginas ficam com texto identico (medido: 99%). O
+                              rotulo tambem tira a ambiguidade de qual coluna e qual
+                              modelo, que hoje o usuario tem que adivinhar. */}
+                          <div className="flex items-center gap-1.5 shrink-0 pt-0.5" aria-hidden="true">
                             {g.foundA ? <Check className="size-4 text-[color:var(--success)]" /> : <X className="size-4 text-[color:var(--muted-dim)]" />}
                             {g.foundB ? <Check className="size-4 text-[color:var(--success)]" /> : <X className="size-4 text-[color:var(--muted-dim)]" />}
                           </div>
                           <div className="min-w-0">
                             {g.severity && <span className="text-[10px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest block mb-1">{g.severity}</span>}
                             <span className="text-[color:var(--foreground-2)] leading-relaxed">{g.text}</span>
-                          </div>
+                            <span className="block mt-1.5 text-[11px] font-mono text-[color:var(--muted-dim)]">
+                              {displayNameOf(entryA.modelId)} {g.foundA ? 'found it' : 'missed it'}
+                              {' · '}
+                              {displayNameOf(entryB.modelId)} {g.foundB ? 'found it' : 'missed it'}
+                            </span>
+                        </div>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
-              )}
-            </div>
+            </details>
           );
         })}
       </div>
