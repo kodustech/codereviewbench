@@ -121,3 +121,52 @@ export function pairDiff(a: LeaderboardEntry, b: LeaderboardEntry): PairDiff {
     return { onlyA, onlyB, both, neither, sharedCases, uncoveredCases };
 }
 
+
+export interface GoldenRow {
+    text: string;
+    severity: string | null;
+    foundA: boolean;
+    foundB: boolean;
+}
+
+export interface PerCaseRow {
+    caseId: string;
+    repo: string;
+    language: string;
+    goldens: GoldenRow[];
+}
+
+/**
+ * Zip dos dois lados feito NO SERVIDOR.
+ *
+ * Antes o /compare mandava `casesA` e `casesB` inteiros como prop e o cliente
+ * zipava. Como o texto de cada golden existe nos dois lados, ele atravessava o
+ * payload RSC DUAS vezes (medido: 3 ocorrencias do mesmo texto por resposta —
+ * 1 no HTML renderizado, 2 no payload). O cliente so precisa do resultado do
+ * zip: `ca` e `cb` eram devolvidos no objeto e nunca lidos.
+ */
+export function buildPerCase(a: LeaderboardEntry, b: LeaderboardEntry): PerCaseRow[] {
+    const byCaseB = new Map<string, CaseSample>();
+    for (const s of allSamples) if (s.entryKey === b.key) byCaseB.set(s.caseId, s);
+
+    const out: PerCaseRow[] = [];
+    for (const ca of allSamples) {
+        if (ca.entryKey !== a.key) continue;
+        const cb = byCaseB.get(ca.caseId);
+        if (!cb) continue;
+        const goldens: GoldenRow[] = [];
+        if (ca.goldensDetail && cb.goldensDetail) {
+            const byTextB = new Map(cb.goldensDetail.map((g) => [g.text, g]));
+            for (const ga of ca.goldensDetail) {
+                goldens.push({
+                    text: ga.text,
+                    severity: ga.severity,
+                    foundA: ga.matched,
+                    foundB: byTextB.get(ga.text)?.matched ?? false,
+                });
+            }
+        }
+        out.push({ caseId: ca.caseId, repo: ca.repo, language: ca.language, goldens });
+    }
+    return out;
+}

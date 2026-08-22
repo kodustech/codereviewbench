@@ -18,6 +18,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/leaderboard`, priority: 0.9, changeFrequency: 'weekly' as const },
     { url: `${SITE_URL}/compare`, priority: 0.6, changeFrequency: 'weekly' as const },
     { url: `${SITE_URL}/blog`, priority: 0.7, changeFrequency: 'weekly' as const },
+    // O dado bruto numa URL propria: e o que um motor generativo consegue citar
+    // com precisao, e o Dataset schema agora aponta pra ele.
+    { url: `${SITE_URL}/api/leaderboard.json`, priority: 0.5, changeFrequency: 'weekly' as const },
   ];
 
   const modelRoutes = lb.entries.map((e) => ({

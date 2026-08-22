@@ -1,13 +1,11 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import leaderboardData from '@/lib/data/leaderboard.json';
-import samplesData from '@/lib/data/samples.json';
-import type { LeaderboardData, CaseSample, CompareCase } from '@/lib/types';
-import { allPairs, parsePairSlug, pairDiff } from '@/lib/compare';
+import type { LeaderboardData } from '@/lib/types';
+import { allPairs, parsePairSlug, pairDiff, buildPerCase } from '@/lib/compare';
 import { displayNameOf } from '@/lib/constants';
 import CompareClient from '../CompareClient';
 
 const lb = leaderboardData as unknown as LeaderboardData;
-const allSamples = samplesData as unknown as CaseSample[];
 
 export function generateStaticParams() {
     return allPairs().map((p) => ({ pair: p.slug }));
@@ -56,21 +54,13 @@ export default async function PairPage({ params }: { params: Promise<{ pair: str
     // `b-vs-a` resolve pro mesmo par mas duplicaria conteudo — 308 pro canonico.
     if (!r.canonical) permanentRedirect(`/compare/${r.canonicalSlug}`);
 
-    // Mesma fatia da /compare: `findings` sozinho e 66% do samples.json e o
-    // cliente nao le. Sem isso o dataset inteiro atravessa o payload RSC.
-    const slim = (c: CaseSample): CompareCase => {
-        const { findings: _f, missedGoldens: _m, usage: _u, latencyMs: _l, ...rest } = c;
-        void _f; void _m; void _u; void _l;
-        return rest;
-    };
 
     return (
         <CompareClient
             entries={lb.entries}
             entryA={r.a}
             entryB={r.b}
-            casesA={allSamples.filter((s) => s.entryKey === r.a.key).map(slim)}
-            casesB={allSamples.filter((s) => s.entryKey === r.b.key).map(slim)}
+            perCase={buildPerCase(r.a, r.b)}
         />
     );
 }

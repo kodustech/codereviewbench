@@ -7,20 +7,16 @@ import { cn } from '@/lib/utils';
 import { formatScore, formatMoney } from '@/lib/format';
 import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
 import { pairSlug } from '@/lib/pair-slug';
-import type { LeaderboardEntry, CompareCase } from '@/lib/types';
+import type { LeaderboardEntry } from '@/lib/types';
+import type { PerCaseRow } from '@/lib/compare';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 interface Props {
   entries: LeaderboardEntry[];
   entryA: LeaderboardEntry;
   entryB: LeaderboardEntry;
-  casesA: CompareCase[];
-  casesB: CompareCase[];
-}
-interface GoldenRow {
-  text: string;
-  severity: string | null;
-  foundA: boolean;
-  foundB: boolean;
+  // Zip ja feito no servidor (buildPerCase): mandar casesA/casesB inteiros
+  // fazia o texto de cada golden atravessar o payload RSC duas vezes.
+  perCase: PerCaseRow[];
 }
 function ModelPicker({
   entries,
@@ -62,7 +58,7 @@ function StatRow({ label, a, b, fmt, higherIsBetter = true }: { label: string; a
     </div>
   );
 }
-export default function CompareClient({ entries, entryA, entryB, casesA, casesB }: Props) {
+export default function CompareClient({ entries, entryA, entryB, perCase }: Props) {
   const router = useRouter();
   // Navega pra rota canonica do par, nao pra ?a=&b=. As duas renderizavam a
   // mesma comparacao, mas a de query param declara canonical /compare — ou
@@ -74,24 +70,6 @@ export default function CompareClient({ entries, entryA, entryB, casesA, casesB 
   const providerB = providerOf(entryB.modelId);
   // Um golden por PR, com o veredito dos dois modelos — zipado por texto (a
   // mesma lista de goldens do dataset, dois runs diferentes por cima dela).
-  const perCase = useMemo(() => {
-    const byCaseB = new Map(casesB.map((c) => [c.caseId, c]));
-    return casesA
-      .map((ca) => {
-        const cb = byCaseB.get(ca.caseId);
-        if (!cb) return null;
-        const goldens: GoldenRow[] = [];
-        if (ca.goldensDetail && cb.goldensDetail) {
-          const byTextB = new Map(cb.goldensDetail.map((g) => [g.text, g]));
-          for (const ga of ca.goldensDetail) {
-            const gb = byTextB.get(ga.text);
-            goldens.push({ text: ga.text, severity: ga.severity, foundA: ga.matched, foundB: gb?.matched ?? false });
-          }
-        }
-        return { caseId: ca.caseId, repo: ca.repo, language: ca.language, ca, cb, goldens };
-      })
-      .filter((x): x is NonNullable<typeof x> => x !== null);
-  }, [casesA, casesB]);
   const tally = useMemo(() => {
     let both = 0, onlyA = 0, onlyB = 0, neither = 0;
     for (const { goldens } of perCase) {

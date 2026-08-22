@@ -48,6 +48,14 @@ export default function JsonLd() {
         {
           '@type': 'DataDownload',
           encodingFormat: 'application/json',
+          // Apontava pro repo no GitHub, que devolve text/html: quem seguisse o
+          // link atras do JSON declarado recebia uma pagina HTML. Agora aponta
+          // pro endpoint que serve o dado de verdade.
+          contentUrl: `${SITE_URL}/api/leaderboard.json`,
+        },
+        {
+          '@type': 'DataDownload',
+          encodingFormat: 'text/html',
           contentUrl: 'https://github.com/kodustech/codereviewbench',
         },
       ],
