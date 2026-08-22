@@ -1,0 +1,67 @@
+---
+title: One model on our board is right 74% of the time and finds 12% of the bugs
+description: Gemini 3.7 Flash has the best precision we measured and the worst recall. That is not a defect, it is a posture, and which posture you want depends on what the review is for.
+date: '2026-08-22'
+keywords:
+  - ai code review precision
+  - ai code review false positives
+  - precision vs recall code review
+draft: true
+---
+
+Gemini 3.7 Flash finds 11.6% of the bugs human reviewers caught. When it does
+report something, it is right 73.9% of the time. Both numbers are the extreme of
+the board: the lowest recall we measured and the highest precision, by a wide
+margin on each.
+
+Read as a ranking, that model is last. Read as a posture, it is doing something
+the others are not.
+
+## Two ways to be wrong
+
+A code reviewer can fail in two directions. It can stay quiet about a real
+problem, or it can raise something that is not one. Recall measures the first,
+precision the second, and no model on this board is good at both.
+
+| Model | Recall | Precision |
+| --- | --- | --- |
+| DeepSeek V4 Pro | 44.2% | 43.6% |
+| Kimi K2.7 Code | 37.9% | 50.0% |
+| GLM 5.2 | 35.2% | 47.0% |
+| Muse Spark 1.2 | 41.0% | 35.0% |
+| Gemini 3.7 Flash | 11.6% | 73.9% |
+
+The model with the best recall is close to the middle on precision. The model
+with the best precision is last on recall. That trade is the shape of the whole
+board.
+
+## Which one you want is not a preference
+
+It depends on what happens when the review fires.
+
+If the review blocks a merge, precision is the cost that lands on people. A wrong
+block costs a developer twenty minutes and some goodwill, and it happens on every
+false positive. A team that stops trusting the gate routes around it, and then
+recall stops mattering because nobody is reading the output.
+
+If the review is advisory, running beside a human who reads the diff anyway, the
+calculus flips. A missed security regression is the expensive outcome, and a
+noisy suggestion costs a scroll.
+
+## Why one number cannot carry this
+
+F1 combines the two into a single figure, and we publish it because ranking needs
+a scalar. It also hides exactly the distinction above. Gemini 3.7 Flash has an F1
+of 20.0, which reads as "bad", when what it actually is is "extremely
+conservative".
+
+Nothing in the aggregate tells you whether a model is quiet and accurate or loud
+and thorough. The precision column does, and it is the one to read second.
+
+## The measurement caveat
+
+Precision here is scored against the same golden set as recall: a finding counts
+as correct if it matches a bug a human reviewer reported on that pull request. A
+model that finds a genuine problem the humans did not mention is scored as a
+false positive. That penalises thorough models and flatters conservative ones,
+and it is a known limitation of using human review as ground truth.

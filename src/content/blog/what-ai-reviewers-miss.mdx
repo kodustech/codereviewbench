@@ -1,0 +1,67 @@
+---
+title: When an AI reviewer misses a bug, the code was usually right there
+description: We classified 615 missed bugs across ten models. 80% were real misses, where the relevant code was available and the model did not find the problem. Only 5% were artifacts of the test setup.
+date: '2026-08-22'
+keywords:
+  - ai code review false negatives
+  - ai code review accuracy
+  - why ai code review misses bugs
+draft: true
+---
+
+It would be comforting if the misses were the benchmark's fault. They are not.
+
+Every bug a model failed to find gets classified. Either the code needed to spot
+it was served to the model and it still missed, or the bug points at code outside
+what the replay corpus could serve, or we cannot tell. Across all ten models and
+every pull request, the split is:
+
+| Classification | Count | Share |
+| --- | --- | --- |
+| Real miss | 490 | 80% |
+| Untestable | 96 | 16% |
+| Not in corpus | 29 | 5% |
+
+**Four out of five misses are real.** The model had access to the code, asked for
+the files it wanted, produced its findings, and the bug a human caught was not
+among them.
+
+## Why this classification exists at all
+
+A replay benchmark serves files from a snapshot. If a reviewer flagged something
+that depends on a file the snapshot never captured, scoring the model for missing
+it would be measuring our corpus, not the model. That is the "not in corpus"
+bucket, and at 5% it is small enough not to move any ranking.
+
+"Untestable" covers cases where we cannot establish whether the code was
+reachable. At 16% it is not nothing, and we exclude it from the fair-recall
+figure on each model page for that reason.
+
+What is left is the number that matters.
+
+## What models do report
+
+The severity mix of the findings models actually produce, across all ten:
+
+| Severity | Share of findings |
+| --- | --- |
+| Critical | 4% |
+| High | 29% |
+| Medium | 48% |
+| Low | 20% |
+
+Nearly half of everything these models say is graded medium by the model itself.
+Only 4% is called critical. That shapes the reading experience more than any
+recall number: a reviewer opening a pull request sees a wall of moderate
+observations, and the severe findings are rare enough to be easy to miss inside
+it.
+
+## The uncomfortable reading
+
+If you deploy one of these as a gate, the base rate is that it misses most real
+bugs, and when it misses, it is not because the tooling failed it. That is worth
+knowing before the tool becomes the reason a human stops reading the diff.
+
+Every miss is published. The per-model pages list them with the original
+reviewer's description, so you can judge for yourself which kinds of bugs a given
+model walks past.

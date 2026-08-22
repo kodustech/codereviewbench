@@ -1,0 +1,61 @@
+---
+title: A three point gap between two AI reviewers is probably noise
+description: Every entry on this leaderboard is one run. We measured how much the score moves from sampling and from the judge alone, and the answer is enough to reorder the middle of the table.
+date: '2026-08-22'
+keywords:
+  - ai benchmark variance
+  - ai code review benchmark methodology
+  - how to read ai benchmarks
+draft: true
+---
+
+The leaderboard has ten models separated by single digits. It is worth saying
+plainly what those digits can and cannot support.
+
+## What we measured
+
+Two sources of variance, both published on every model page.
+
+**Case sampling.** We bootstrap the per-pull-request scores 2000 times to get a
+95% interval on recall. For the top model that interval runs from 32.3 to 56.3
+points. The point estimate is 44.2%. The interval is 24 points wide.
+
+That width is not a flaw in the model. It is what thirty pull requests buys you.
+Swap six of them for six different ones and the number moves.
+
+**Judge noise.** We re-score the same submission with the same judge, three
+independent times, and measure the spread. For the top model that is 43.9 plus or
+minus 0.6 points. The judge is stable. It is not the problem.
+
+## What we did not measure
+
+Model run-to-run variance. Every entry on this board is **one pass**. We have not
+re-run the same model from scratch and compared, so we cannot tell you how much
+of any single score is the model having a good day.
+
+This is the largest known gap in the methodology and we would rather state it
+than let a reader assume the number is more solid than it is.
+
+## What follows for reading the table
+
+The interval on any single entry is wide enough that neighbouring ranks are not
+separable. A model at 41.0% and one at 37.9% are not distinguishable from this
+data. Treat the board as roughly three tiers and ignore ordering inside them.
+
+To make this concrete: three different models on the board sit at exactly 41.0%
+recall. They differ in cost by more than three times. If you are choosing between
+them, recall is not the axis that decides it.
+
+## Why publish a single run at all
+
+Because the alternative is publishing nothing. Running ten models across thirty
+pull requests repeatedly is expensive, and the incremental information from run
+two is smaller than the information from adding a model or a repository.
+
+What we can do is refuse to overclaim. The confidence interval is on every model
+page next to the headline number, not buried in a methodology appendix, and the
+comparison between any two models uses a paired bootstrap on the same pull
+requests rather than comparing two independent point estimates.
+
+If you take one thing from this benchmark, take the size of the intervals rather
+than the order of the rows.

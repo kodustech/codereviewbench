@@ -1,0 +1,65 @@
+---
+title: AI reviewers are four times worse at Java than at Go
+description: The same ten models, the same harness, the same scoring. Mean recall on Go pull requests is 57.5%. On Java it is 13.1%. Every model shows the gap.
+date: '2026-08-22'
+keywords:
+  - ai code review java
+  - ai code review go
+  - ai code review by language
+draft: true
+---
+
+We expected models to vary. We did not expect the language to matter more than
+the model.
+
+Across the ten models on the leaderboard, mean recall on Go pull requests is
+**57.5%**. On Java it is **13.1%**. That is not one model struggling. It is every
+model in the set, scored by the same judge, on pull requests drawn from the same
+kind of production repository.
+
+## The spread
+
+| Language | Mean recall | Best model | Worst model |
+| --- | --- | --- | --- |
+| Go | 57.5% | 75.0% | 18.8% |
+| TypeScript | 39.1% | 56.5% | 13.0% |
+| Ruby | 36.3% | 50.0% | 15.0% |
+| Python | 27.9% | 47.4% | 5.3% |
+| Java | 13.1% | 17.6% | 5.9% |
+
+The best Java score in the whole set, 17.6%, is worse than the *worst* Go score
+of any model that cleared 20%. A model that looks competent on your Go services
+can be close to useless on your Java ones.
+
+## What we can and cannot say about why
+
+The honest answer is that this benchmark measures the gap without explaining it.
+Three candidate explanations we cannot separate with the current data:
+
+The Java pull requests in the corpus come from Keycloak, which is a large,
+old, framework-heavy codebase. The bugs human reviewers flagged there lean on
+contracts declared far from the diff, like a Javadoc promise that a method never
+returns null. Finding those requires reading code the diff does not touch.
+
+Java as a language pushes behaviour into inheritance and annotation, so the
+relevant code is often several files away. The replay harness serves files on
+request, and a model that does not think to ask does not get them.
+
+And it may simply be training distribution. We have no way to measure that from
+the outside.
+
+## What to do with this
+
+If you are choosing a reviewer for a polyglot codebase, a single aggregate score
+hides this completely. A model at 40% overall could be at 60% on the half of
+your code written in one language and 15% on the other half.
+
+The per-model pages break recall down by language, and the numbers above come
+from the same data. Check the language you actually write.
+
+## The caveat that matters
+
+Thirty pull requests split across five languages means roughly six per language.
+That is a small sample, and the confidence interval on any single language cell
+is wide. The Go-versus-Java gap is large enough to survive that, at 4.4 times,
+but do not read the difference between Ruby and TypeScript as real.

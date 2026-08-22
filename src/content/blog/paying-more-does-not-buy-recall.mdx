@@ -1,0 +1,58 @@
+---
+title: The cheapest model on the board finds more bugs per dollar than the most expensive
+description: Cost per pull request ranges from $0.10 to $1.62 across ten models. Recall does not follow. The cheapest option costs $0.08 per bug found; the most expensive costs $1.25.
+date: '2026-08-22'
+keywords:
+  - ai code review cost
+  - cheapest ai code review
+  - ai code review pricing
+draft: true
+---
+
+Sixteen times the price. Four points of recall.
+
+That is the summary of the cost axis on this benchmark. The most expensive model
+we measured costs **$1.62 per pull request** and finds 41.0% of known bugs. The
+cheapest costs **$0.10** and finds 36.8%.
+
+## Cost per bug actually found
+
+Cost per pull request is the number vendors quote. Cost per bug found is the one
+that decides whether the tool pays for itself.
+
+| Model | Cost / PR | Cost / bug found | Recall |
+| --- | --- | --- | --- |
+| DeepSeek V4 Flash | $0.10 | $0.08 | 36.8% |
+| MiniMax M3 | $0.17 | $0.21 | 25.3% |
+| DeepSeek V4 Pro | $0.30 | $0.21 | 44.2% |
+| Qwen3.8 27B | $0.34 | $0.31 | 34.4% |
+| Muse Spark 1.2 | $0.49 | $0.38 | 41.0% |
+| Kimi K2.7 Code | $0.55 | $0.46 | 37.9% |
+| GLM 5.2 | $0.88 | $0.79 | 35.2% |
+| Qwen3.8 Max | $1.21 | $0.93 | 41.0% |
+| Kimi K3 | $1.62 | $1.25 | 41.0% |
+
+Three models sit at exactly 41.0% recall and cost $0.49, $1.21 and $1.62 per
+pull request. If recall is what you are buying, two of those three are strictly
+worse deals.
+
+## The one that breaks the pattern
+
+Gemini 3.7 Flash costs $0.27 per pull request, which is cheap, and $0.75 per bug
+found, which is not. It has the lowest recall on the board at 11.6%, so the few
+bugs it does find carry the whole cost.
+
+That is the arithmetic of low recall: a model can be cheap to run and expensive
+per unit of value.
+
+## What this does not settle
+
+Price moves. These figures are measured API cost at the time of the run, and a
+provider can change them next week. The ratios between models are the durable
+part; the absolute dollars are a snapshot.
+
+We also measure cost, not total cost of ownership. A model with 35% precision
+generates false positives that a human has to read and dismiss, and that time
+does not appear anywhere in this table. On a team where review attention is the
+scarce resource, a more precise model at twice the API cost can still be the
+cheaper choice.
