@@ -13,39 +13,37 @@ import type { MDXComponents } from 'mdx/types';
  */
 export function useMDXComponents(components: MDXComponents): MDXComponents {
     return {
+        // Escala proporcional ao h1 da pagina (text-3xl/4xl): h2 abaixo dele,
+        // nao igual. Antes o h2 usava --text-heading (36px) e empatava com o
+        // titulo do artigo, achatando a hierarquia.
         h2: ({ children }) => (
-            <h2 className="font-display text-[1.75rem] sm:text-[length:var(--text-heading)] leading-[var(--leading-heading)] mt-20 mb-6 text-[color:var(--color-ink-black)]">
+            <h2 className="text-2xl font-display mt-14 mb-4 text-[color:var(--foreground)]">
                 {children}
             </h2>
         ),
         h3: ({ children }) => (
-            <h3 className="text-[length:var(--text-heading-sm)] font-semibold leading-[var(--leading-heading-sm)] mt-12 mb-4 text-[color:var(--color-ink-black)]">
+            <h3 className="text-lg font-semibold mt-10 mb-3 text-[color:var(--foreground)]">
                 {children}
             </h3>
         ),
         p: ({ children }) => (
-            <p
-                className="text-[length:var(--text-body)] leading-[var(--leading-body)] tracking-[var(--tracking-body)] mb-6"
-                style={{ color: 'var(--color-graphite)' }}
-            >
+            <p className="text-[16px] leading-relaxed text-[color:var(--muted)] mb-5">
                 {children}
             </p>
         ),
         strong: ({ children }) => (
-            <strong className="font-semibold text-[color:var(--color-ink-black)]">{children}</strong>
+            <strong className="font-semibold text-[color:var(--foreground)]">{children}</strong>
         ),
         ul: ({ children }) => (
             <ul
-                className="text-[length:var(--text-body)] leading-[var(--leading-body)] tracking-[var(--tracking-body)] list-disc pl-5 mb-6 space-y-3"
-                style={{ color: 'var(--color-graphite)' }}
+                className="text-[16px] leading-relaxed text-[color:var(--muted)] list-disc pl-5 mb-5 space-y-2"
             >
                 {children}
             </ul>
         ),
         ol: ({ children }) => (
             <ol
-                className="text-[length:var(--text-body)] leading-[var(--leading-body)] tracking-[var(--tracking-body)] list-decimal pl-5 mb-6 space-y-3"
-                style={{ color: 'var(--color-graphite)' }}
+                className="text-[16px] leading-relaxed text-[color:var(--muted)] list-decimal pl-5 mb-5 space-y-2"
             >
                 {children}
             </ol>
@@ -59,7 +57,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
             </a>
         ),
         code: ({ children }) => (
-            <code className="font-mono text-[length:var(--text-body-sm)] text-[color:var(--color-ink-black)]">
+            <code className="font-mono text-[14px] text-[color:var(--foreground)]">
                 {children}
             </code>
         ),
@@ -77,21 +75,19 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         ),
         td: ({ children }) => (
             <td
-                className="text-[length:var(--text-body-sm)] tabular-nums border-b border-[var(--border)] py-3.5 pr-6 whitespace-nowrap"
-                style={{ color: 'var(--color-graphite)' }}
+                className="text-[14px] tabular-nums text-[color:var(--muted)] border-b border-[var(--border)] py-3 pr-6 whitespace-nowrap"
             >
                 {children}
             </td>
         ),
         blockquote: ({ children }) => (
             <blockquote
-                className="border-l-2 border-[color:var(--accent)] pl-6 my-10 text-[length:var(--text-heading-sm)] leading-[var(--leading-heading-sm)]"
-                style={{ color: 'var(--color-ink-black)' }}
+                className="border-l-2 border-[color:var(--accent)] pl-5 my-8 text-[17px] leading-relaxed text-[color:var(--foreground)]"
             >
                 {children}
             </blockquote>
         ),
-        hr: () => <hr className="border-0 border-t border-[var(--border)] my-16" />,
+        hr: () => <hr className="border-0 border-t border-[var(--border)] my-12" />,
         ...components,
     };
 }

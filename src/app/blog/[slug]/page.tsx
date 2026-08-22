@@ -47,52 +47,40 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     const { default: Body } = await import(`@/content/blog/${slug}.mdx`);
 
     return (
-        <main className="flex-1 flex flex-col items-center">
-            <section className="w-full hero-dusk relative">
-                <div className="w-full max-w-[var(--page-max-width)] mx-auto px-6 sm:px-12 pt-16 sm:pt-40 pb-20 sm:pb-28">
-                    {m.draft ? (
-                        <span className="font-mono text-[length:var(--text-caption)] uppercase tracking-[0.1em] text-white/70 block mb-5">
-                            Draft — not published
-                        </span>
-                    ) : null}
-                    <time
-                        dateTime={m.date}
-                        className="font-mono text-[length:var(--text-caption)] tabular-nums text-white/70 block mb-5"
-                    >
-                        {longDate(m.date)}
-                    </time>
-                    {/* H1 do artigo em sentence case: o lowercase estilizado e
-                        reservado ao statement de marca (design.md, desvio 2 de
-                        casing). Titulo de artigo e conteudo, nao statement. */}
-                    <h1 className="font-display text-[2rem] sm:text-[2.5rem] lg:text-[length:var(--text-display)] leading-[var(--leading-display)] text-white max-w-3xl">
-                        {m.title}
-                    </h1>
-                </div>
-            </section>
+        // Mesmo shell das outras paginas de conteudo: container de 1200px, uma
+        // borda esquerda so. Sem `hero-dusk` — o gradiente e da home.
+        <div className="max-w-[var(--page-max-width)] mx-auto w-full px-6 sm:px-12 py-12">
+            <header className="mb-12 max-w-[var(--reading-width)]">
+                {m.draft ? (
+                    <span className="eyebrow block mb-4 text-[color:var(--accent)]">Draft — not published</span>
+                ) : null}
+                <time
+                    dateTime={m.date}
+                    className="font-mono text-[length:var(--text-caption)] tabular-nums text-[color:var(--muted)] block mb-4"
+                >
+                    {longDate(m.date)}
+                </time>
+                <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)] mb-4 leading-[1.1]">
+                    {m.title}
+                </h1>
+                <p className="text-[17px] text-[color:var(--muted)] leading-relaxed">{m.description}</p>
+            </header>
 
-            {/* Long Document: coluna unica de leitura, ritmo dado pelo espaco
-                entre blocos do MDX (ver src/mdx-components.tsx). */}
-            <article className="w-full px-6 sm:px-12 pt-[var(--section-gap)]">
-                <div className="editorial">
-                    <p
-                        className="text-[length:var(--text-heading-sm)] font-semibold leading-[var(--leading-heading-sm)] mb-14 text-[color:var(--color-ink-black)]"
-                    >
-                        {m.description}
-                    </p>
-                    <Body />
-                </div>
+            {/* Coluna de leitura alinhada A ESQUERDA, nao centralizada: `.editorial`
+                usa margin-inline auto e jogava o corpo pro meio, criando uma
+                segunda borda esquerda contra o cabecalho. */}
+            <article className="max-w-[var(--reading-width)] border-t border-[var(--border)] pt-12">
+                <Body />
             </article>
 
-            <section className="w-full px-6 sm:px-12 pt-20 pb-[var(--section-gap)]">
-                <div className="editorial border-t border-[var(--border)] pt-10">
-                    <Link
-                        href="/blog"
-                        className="inline-flex items-center gap-2 text-[length:var(--text-body-sm)] font-semibold text-[color:var(--accent)] hover:underline underline-offset-4"
-                    >
-                        ← All posts
-                    </Link>
-                </div>
-            </section>
-        </main>
+            <div className="max-w-[var(--reading-width)] border-t border-[var(--border)] mt-16 pt-8">
+                <Link
+                    href="/blog"
+                    className="inline-flex items-center gap-2 text-[15px] font-semibold text-[color:var(--accent)] hover:underline underline-offset-4"
+                >
+                    ← All posts
+                </Link>
+            </div>
+        </div>
     );
 }
