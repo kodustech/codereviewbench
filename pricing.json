@@ -159,6 +159,13 @@
       "cacheRead": 0.059,
       "provider": "fireworks",
       "note": "MiniMax M3 via Fireworks (gateway), nao pela API nativa da MiniMax. Preco do catalogo Fireworks, verificado em 2026-08-20 na pagina do modelo (fireworks.ai/models/fireworks/minimax-m3). NAO usar OpenRouter pra este bench: la o mesmo modelo e distribuido entre 12 backends com quantizacoes diferentes (fp4/fp8/unknown), o que tornaria o numero nao atribuivel a um serving especifico."
+    },
+    "glm-5.3-flash": {
+      "input": 0.15,
+      "output": 0.5,
+      "cacheRead": 0.03,
+      "provider": "zhipu",
+      "note": "PRECO CHEIO. A Z.ai lancou o Flash com 50% de desconto promocional (input $0.075, cacheRead $0.015, output $0.25 por 1M), valido ate 2026-09-09 24:00 UTC+8. Registramos o preco cheio de proposito: a leaderboard fica no ar depois da promocao acabar, e publicar o valor promocional faria a tabela de custo mentir a partir de 10/09. Fonte primaria: docs.z.ai/guides/overview/pricing, consultado 2026-08-31."
     }
   }
 }
