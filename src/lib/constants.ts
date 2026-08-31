@@ -13,6 +13,7 @@ export const DISPLAY_NAMES: Record<string, { name: string; provider: string }> =
   'grok-4.5': { name: 'Grok 4.5', provider: 'xAI' },
   'grok-4.6': { name: 'Grok 4.6', provider: 'xAI' },
   'glm-5.2': { name: 'GLM-5.2', provider: 'Zhipu' },
+  'glm-5.3-flash': { name: 'GLM-5.3 Flash', provider: 'Zhipu' },
   // Rodado via Fireworks (gateway), nao pela API nativa da Z.ai — o sufixo
   // fica no id (e no scorecard), mas o nome exibido e do MODELO, nao da rota.
   // A rota aparece no campo `harness`/nota de custo, nao no nome.
