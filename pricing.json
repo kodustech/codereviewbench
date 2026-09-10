@@ -166,6 +166,13 @@
       "cacheRead": 0.03,
       "provider": "zhipu",
       "note": "PRECO CHEIO. A Z.ai lancou o Flash com 50% de desconto promocional (input $0.075, cacheRead $0.015, output $0.25 por 1M), valido ate 2026-09-09 24:00 UTC+8. Registramos o preco cheio de proposito: a leaderboard fica no ar depois da promocao acabar, e publicar o valor promocional faria a tabela de custo mentir a partir de 10/09. Fonte primaria: docs.z.ai/guides/overview/pricing, consultado 2026-08-31."
+    },
+    "deepseek-v4.1-flash@fireworks": {
+      "input": 0.22,
+      "output": 0.66,
+      "cacheRead": 0.007,
+      "provider": "fireworks",
+      "note": "Rodado via Fireworks (gateway), nao pela API nativa da DeepSeek — gateway pode servir quantizacao/config diferente da nativa, mesma ressalva do glm-5.2@fireworks. Tier serverless Standard. Preco nao estava em docs.fireworks.ai/serverless/pricing na data do run (modelo lancado 2026-09-10); valor da pagina do modelo no console da Fireworks, conferido 2026-09-10."
     }
   }
 }

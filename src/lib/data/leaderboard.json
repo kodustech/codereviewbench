@@ -510,6 +510,159 @@
       }
     },
     {
+      "key": "kodus::deepseek-v4.1-flash@fireworks",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "modelId": "deepseek-v4.1-flash@fireworks",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "executionMode": "replay",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "reasoningTokens": 873705,
+      "finishReasons": {
+        "stopped": 12,
+        "completed": 18
+      },
+      "maxFindingsInCase": 7,
+      "judge": "claude-haiku-4-5",
+      "runAt": "2026-09-10T20:05:00.967Z",
+      "score": 35.79,
+      "recallMacro": 35.83,
+      "precision": 49.35,
+      "precisionMacro": 47.38,
+      "f1": 41.49,
+      "fairRecall": 37.5,
+      "loopFidelity": 84.68,
+      "goldensTotal": 95,
+      "goldensMatched": 34,
+      "cases": 30,
+      "usage": {
+        "inputTokens": 15244869,
+        "outputTokens": 1071769
+      },
+      "byLanguage": {
+        "java": {
+          "recall": 17.65,
+          "precision": 26.39,
+          "goldens": 17,
+          "count": 6
+        },
+        "typescript": {
+          "recall": 34.78,
+          "precision": 55.56,
+          "goldens": 23,
+          "count": 6
+        },
+        "go": {
+          "recall": 68.75,
+          "precision": 76.79,
+          "goldens": 16,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 35,
+          "precision": 34.17,
+          "goldens": 20,
+          "count": 6
+        },
+        "python": {
+          "recall": 26.32,
+          "precision": 43.33,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "keycloak": {
+          "recall": 17.65,
+          "precision": 26.39,
+          "goldens": 17,
+          "count": 6
+        },
+        "cal.com": {
+          "recall": 34.78,
+          "precision": 55.56,
+          "goldens": 23,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 68.75,
+          "precision": 76.79,
+          "goldens": 16,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 35,
+          "precision": 34.17,
+          "goldens": 20,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 26.32,
+          "precision": 43.33,
+          "goldens": 19,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "M": {
+          "recall": 33.33,
+          "precision": 40.83,
+          "goldens": 54,
+          "count": 14
+        },
+        "L": {
+          "recall": 41.18,
+          "precision": 40.48,
+          "goldens": 17,
+          "count": 6
+        },
+        "S": {
+          "recall": 35,
+          "precision": 50,
+          "goldens": 20,
+          "count": 8
+        },
+        "XS": {
+          "recall": 50,
+          "precision": 100,
+          "goldens": 4,
+          "count": 2
+        }
+      },
+      "findingsBySeverity": {
+        "low": 20,
+        "medium": 38,
+        "high": 18,
+        "critical": 1
+      },
+      "findingsByCategory": {
+        "bug": 63,
+        "performance": 1,
+        "security": 1,
+        "other": 12
+      },
+      "costTotal": 4.06,
+      "costPerPR": 0.14,
+      "costPerBugFound": 0.12,
+      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
+      "runToRunVariance": null,
+      "ciHalfWidth": 9.64,
+      "ciLow": 24.73,
+      "ciHigh": 49,
+      "ciHalfWidthBootstrap": 12.13,
+      "rank": 4,
+      "pairedVsTop": {
+        "diff": 8.42,
+        "lo": 0,
+        "hi": 17.76,
+        "p": 0.07,
+        "n": 30,
+        "separatesFromTop": false
+      }
+    },
+    {
       "key": "kodus::glm-5.2@fireworks",
       "harness": "kodus",
       "harnessVersion": "dev",
@@ -652,7 +805,7 @@
       "ciLow": 24.72,
       "ciHigh": 47.06,
       "ciHalfWidthBootstrap": 11.17,
-      "rank": 4,
+      "rank": 5,
       "pairedVsTop": {
         "diff": 10.99,
         "lo": 3,
@@ -805,7 +958,7 @@
       "ciLow": 29.13,
       "ciHigh": 49.41,
       "ciHalfWidthBootstrap": 10.14,
-      "rank": 5,
+      "rank": 6,
       "pairedVsTop": {
         "diff": 5.26,
         "lo": -3.9,
@@ -958,7 +1111,7 @@
       "ciLow": 32.29,
       "ciHigh": 50.46,
       "ciHalfWidthBootstrap": 9.08,
-      "rank": 6,
+      "rank": 7,
       "pairedVsTop": {
         "diff": 3.16,
         "lo": -5.49,
@@ -1139,7 +1292,7 @@
       "ciLow": 26.37,
       "ciHigh": 47.87,
       "ciHalfWidthBootstrap": 10.75,
-      "rank": 7,
+      "rank": 8,
       "pairedVsTop": {
         "diff": 7.37,
         "lo": -1.85,
@@ -1292,7 +1445,7 @@
       "ciLow": 31.25,
       "ciHigh": 52,
       "ciHalfWidthBootstrap": 10.38,
-      "rank": 8,
+      "rank": 9,
       "pairedVsTop": {
         "diff": 3.16,
         "lo": -5.21,
@@ -1445,7 +1598,7 @@
       "ciLow": 24.05,
       "ciHigh": 45.36,
       "ciHalfWidthBootstrap": 10.66,
-      "rank": 9,
+      "rank": 10,
       "pairedVsTop": {
         "diff": 9.68,
         "lo": 2.08,
@@ -1598,7 +1751,7 @@
       "ciLow": 16.48,
       "ciHigh": 36.36,
       "ciHalfWidthBootstrap": 9.94,
-      "rank": 10,
+      "rank": 11,
       "pairedVsTop": {
         "diff": 18.95,
         "lo": 8.91,
@@ -1780,7 +1933,7 @@
       "ciLow": 5.95,
       "ciHigh": 18.28,
       "ciHalfWidthBootstrap": 6.16,
-      "rank": 11,
+      "rank": 12,
       "pairedVsTop": {
         "diff": 32.63,
         "lo": 21.78,
@@ -1792,8 +1945,8 @@
     }
   ],
   "averages": {
-    "score": 35.22,
-    "precision": 44.46,
-    "f1": 37.49
+    "score": 35.27,
+    "precision": 44.86,
+    "f1": 37.82
   }
 }

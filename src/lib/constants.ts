@@ -2,6 +2,7 @@
 export const DISPLAY_NAMES: Record<string, { name: string; provider: string }> = {
   'deepseek-v4-pro': { name: 'DeepSeek V4 Pro', provider: 'DeepSeek' },
   'deepseek-v4-flash': { name: 'DeepSeek V4 Flash', provider: 'DeepSeek' },
+  'deepseek-v4.1-flash@fireworks': { name: 'DeepSeek V4.1 Flash', provider: 'DeepSeek' },
   'qwen3.8-max': { name: 'Qwen3.8 Max', provider: 'Alibaba' },
   'qwen3.8-27b': { name: 'Qwen3.8 27B', provider: 'Alibaba' },
   'kimi-k3': { name: 'Kimi K3', provider: 'Moonshot' },

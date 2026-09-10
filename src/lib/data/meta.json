@@ -1,11 +1,12 @@
 {
-  "totalEntries": 11,
+  "totalEntries": 12,
   "harnesses": [
     "kodus"
   ],
   "models": [
     "deepseek-v4-flash",
     "deepseek-v4-pro",
+    "deepseek-v4.1-flash@fireworks",
     "gemini-3.7-flash",
     "glm-5.2@fireworks",
     "glm-5.3-flash",
@@ -59,7 +60,7 @@
     "notMeasured": "model run-to-run (rodar o MESMO modelo de novo do zero — 1 passada por entrada)",
     "runsPerEntry": 1,
     "judgeRunsAvailable": 4,
-    "judgeRunsTotal": 11
+    "judgeRunsTotal": 12
   },
-  "generatedAt": "2026-08-31T23:21:14.517Z"
+  "generatedAt": "2026-09-10T20:07:08.402Z"
 }
