@@ -1,5 +1,5 @@
 {
-  "totalEntries": 12,
+  "totalEntries": 13,
   "harnesses": [
     "kodus"
   ],
@@ -14,6 +14,7 @@
     "kimi-k3",
     "minimax-m3@fireworks",
     "muse-spark-1.2",
+    "muse-spark-1.3",
     "qwen3.8-27b",
     "qwen3.8-max"
   ],
@@ -60,7 +61,7 @@
     "notMeasured": "model run-to-run (rodar o MESMO modelo de novo do zero — 1 passada por entrada)",
     "runsPerEntry": 1,
     "judgeRunsAvailable": 4,
-    "judgeRunsTotal": 12
+    "judgeRunsTotal": 13
   },
-  "generatedAt": "2026-09-10T20:07:08.402Z"
+  "generatedAt": "2026-09-11T18:23:08.195Z"
 }

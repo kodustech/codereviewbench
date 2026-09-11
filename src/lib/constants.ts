@@ -8,6 +8,7 @@ export const DISPLAY_NAMES: Record<string, { name: string; provider: string }> =
   'kimi-k3': { name: 'Kimi K3', provider: 'Moonshot' },
   'kimi-k2.7-code': { name: 'Kimi K2.7 Code', provider: 'Moonshot' },
   'muse-spark-1.2': { name: 'Muse Spark 1.2', provider: 'Meta' },
+  'muse-spark-1.3': { name: 'Muse Spark 1.3', provider: 'Meta' },
   'gemini-3.7-flash': { name: 'Gemini 3.7 Flash', provider: 'Google' },
   'gpt-5.6-luna': { name: 'GPT-5.6 Luna', provider: 'OpenAI' },
   'gpt-5.6-terra': { name: 'GPT-5.6 Terra', provider: 'OpenAI' },
