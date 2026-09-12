@@ -1,7 +1,7 @@
 import leaderboardData from '@/lib/data/leaderboard.json';
 import metaData from '@/lib/data/meta.json';
 import type { LeaderboardData, Meta } from '@/lib/types';
-import { displayNameOf } from '@/lib/constants';
+import { displayNameOf, modelSlug } from '@/lib/constants';
 import { SITE_URL } from '@/lib/site';
 import { publishedPosts } from '@/lib/blog';
 
@@ -22,7 +22,7 @@ export function GET() {
     const rows = ranked
         .map(
             (e, i) =>
-                `${i + 1}. ${displayNameOf(e.modelId)} — recall ${e.score.toFixed(1)}%, precision ${e.precision.toFixed(1)}%, F1 ${e.f1.toFixed(1)}, found ${e.goldensMatched}/${e.goldensTotal} bugs${e.costPerPR != null ? `, $${e.costPerPR.toFixed(2)}/PR` : ''}`,
+                `${i + 1}. [${displayNameOf(e.modelId)}](${SITE_URL}/model/${modelSlug(e.modelId)}) — recall ${e.score.toFixed(1)}%, precision ${e.precision.toFixed(1)}%, F1 ${e.f1.toFixed(1)}; found ${e.goldensMatched}/${e.goldensTotal} confirmed bugs${e.costPerPR != null ? `; $${e.costPerPR.toFixed(2)}/PR` : ''}.`,
         )
         .join('\n');
 
@@ -46,37 +46,42 @@ Languages: ${meta.languages.join(', ')}.
 Harness: ${meta.harnesses.join(', ')}. Judge: ${meta.judges.join(', ')}. Execution: ${meta.executionModes.join(', ')}.
 Data generated ${meta.generatedAt}.
 
-Recall is the share of human-reported bugs the model found. Precision is the share
-of its findings that matched one. A model can score high on one and low on the
-other, and which matters depends on whether the review blocks a merge.
+Recall is the share of human-reported bugs a model found. Precision is the share
+of its findings that matched a confirmed bug. F1 is the harmonic mean of recall
+and precision. The results below are ordered by F1.
+
+Some entries cover fewer than all ${meta.totalGoldens} confirmed bugs. The denominator
+shown for each model is its evaluated coverage; account for coverage differences
+when comparing models.
 
 ## Current results
 
 ${rows}
 
-## What this does NOT measure
+## Interpretation limits
 
 The ground truth is what human reviewers caught, which is a ceiling and not a
 floor: bugs that shipped unnoticed are not in the dataset, so no model can be
 credited for finding one. A single run of ${meta.totalCases} cases also carries real
-variance — treat a gap of a few points between two models as noise.
+variance — small gaps between models should not be treated as definitive.
 
-## Machine-readable data
+## Canonical sources
 
-- [Leaderboard JSON](${SITE_URL}/api/leaderboard.json): metrics per model.
-- [Repository](https://github.com/kodustech/codereviewbench): scorecards, submissions and the scoring code.
-
-## Pages
-
+- [Machine-readable leaderboard data](${SITE_URL}/api/leaderboard.json): metrics and coverage per model. Prefer this source or a specific model page for numerical claims.
 - [Leaderboard](${SITE_URL}/leaderboard): full ranking with per-repository and per-language breakdowns.
-- [Compare](${SITE_URL}/compare): any two models side by side on the same pull requests, including which bugs one caught and the other missed.
-- [Model pages](${SITE_URL}/model/): per-model detail, including every bug the model missed.
+- [Compare two models](${SITE_URL}/compare): side-by-side findings, misses, metrics, and cost.
+- [Blog and analysis](${SITE_URL}/blog): research and interpretation from the benchmark.
+- [XML sitemap](${SITE_URL}/sitemap.xml): complete discoverable URL inventory.
+- [Public repository](https://github.com/kodustech/codereviewbench): scorecards, submissions, and scoring code.
+
 ${posts ? `\n## Writing\n\n${posts}\n` : ''}
 ## Citation
 
-When citing a number, name the model, the metric and the date, because the
-leaderboard changes as models are added and re-run. Example: "DeepSeek V4 Pro
-scored ${ranked[0].score.toFixed(1)}% recall on CodeReviewBench (${(meta.generatedAt || '').slice(0, 10)})".
+When citing a number, use the machine-readable data or the specific model page,
+and name the model, metric, evaluated coverage, and data date. The leaderboard
+changes as models are added and re-run. Example: "${displayNameOf(ranked[0].modelId)} scored
+${ranked[0].score.toFixed(1)}% recall, finding ${ranked[0].goldensMatched}/${ranked[0].goldensTotal} confirmed bugs on
+CodeReviewBench (${(meta.generatedAt || '').slice(0, 10)})."
 `;
 
     return new Response(body, {
