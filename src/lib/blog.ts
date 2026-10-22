@@ -48,3 +48,13 @@ export function publishedPosts(): PostMeta[] {
         .filter((p): p is PostMeta => p !== null && !p.draft)
         .sort((a, b) => (a.date < b.date ? 1 : -1));
 }
+
+/** Corpo em markdown puro do post, sem o frontmatter — usado por llms-full.txt.
+ *  Os posts nao tem import nem componente JSX, entao o corpo ja e markdown
+ *  valido sem precisar passar pelo compilador MDX. */
+export function postBody(slug: string): string | null {
+    const file = path.join(BLOG_DIR, `${slug}.mdx`);
+    if (!fs.existsSync(file)) return null;
+    const { content } = matter(fs.readFileSync(file, 'utf8'));
+    return content.trim();
+}

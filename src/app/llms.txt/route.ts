@@ -73,6 +73,7 @@ variance — small gaps between models should not be treated as definitive.
 - [Blog and analysis](${SITE_URL}/blog): research and interpretation from the benchmark.
 - [XML sitemap](${SITE_URL}/sitemap.xml): complete discoverable URL inventory.
 - [Public repository](https://github.com/kodustech/codereviewbench): scorecards, submissions, and scoring code.
+- [Full site content](${SITE_URL}/llms-full.txt): the leaderboard, every model page, every head-to-head comparison, and every blog post, in one file.
 
 ${posts ? `\n## Writing\n\n${posts}\n` : ''}
 ## Citation
