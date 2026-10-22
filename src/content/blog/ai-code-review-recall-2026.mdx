@@ -1,6 +1,6 @@
 ---
 title: The best AI code reviewer finds fewer than half the bugs
-description: We ran ten models over the same thirty merged pull requests, scoring them against bugs that human reviewers actually flagged. The top scorer found 44% of them. None broke 50%.
+description: We ran thirteen models over the same thirty merged pull requests, scoring them against bugs that human reviewers actually flagged. The top scorer found 44% of them. None broke 50%.
 date: '2026-08-21'
 keywords:
   - ai code review
@@ -13,7 +13,7 @@ the model finds the off-by-one error, and you conclude the thing works. That
 demo tells you almost nothing, because the hard part of code review is not
 recognising a bug you were pointed at. It is noticing the one nobody mentioned.
 
-So we measured that instead. Ten models, thirty merged pull requests from
+So we measured that instead. Thirteen models, thirty merged pull requests from
 open-source projects, and one question: of the bugs a human reviewer flagged on
 those PRs before they merged, how many does the model find on its own?
 
@@ -26,9 +26,14 @@ The best model found 44.2% of them.
 | DeepSeek V4 Pro | 44.2% | 43.6% | $0.30 |
 | Qwen3.8 Max | 41.0% | 43.9% | $1.21 |
 | Kimi K3 | 41.0% | 38.7% | $1.62 |
+| Muse Spark 1.2 | 41.0% | 35.0% | $0.49 |
+| GLM-5.3 Flash | 39.0% | 41.0% | $0.08 |
+| Muse Spark 1.3 | 39.0% | 34.0% | $0.53 |
 | Kimi K2.7 Code | 37.9% | 50.0% | $0.55 |
 | DeepSeek V4 Flash | 36.8% | 42.1% | $0.10 |
-| GLM 5.2 | 35.2% | 47.0% | $0.88 |
+| DeepSeek V4.1 Flash | 35.8% | 49.4% | $0.14 |
+| GLM-5.2 | 35.2% | 47.0% | $0.88 |
+| Qwen3.8 27B | 34.4% | 38.1% | $0.34 |
 | MiniMax M3 | 25.3% | 35.6% | $0.17 |
 | Gemini 3.7 Flash | 11.6% | 73.9% | $0.27 |
 

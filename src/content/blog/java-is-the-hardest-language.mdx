@@ -1,6 +1,6 @@
 ---
 title: AI reviewers are four times worse at Java than at Go
-description: The same ten models, the same harness, the same scoring. Mean recall on Go pull requests is 57.5%. On Java it is 13.1%. Every model shows the gap.
+description: The same thirteen models, the same harness, the same scoring. Mean recall on Go pull requests is 59.1%. On Java it is 15.1%. Every model shows the gap.
 date: '2026-08-22'
 keywords:
   - ai code review java
@@ -11,8 +11,8 @@ keywords:
 We expected models to vary. We did not expect the language to matter more than
 the model.
 
-Across the ten models on the leaderboard, mean recall on Go pull requests is
-**57.5%**. On Java it is **13.1%**. That is not one model struggling. It is every
+Across the thirteen models on the leaderboard, mean recall on Go pull requests is
+**59.1%**. On Java it is **15.1%**. That is not one model struggling. It is every
 model in the set, scored by the same judge, on pull requests drawn from the same
 kind of production repository.
 
@@ -20,15 +20,16 @@ kind of production repository.
 
 | Language | Mean recall | Best model | Worst model |
 | --- | --- | --- | --- |
-| Go | 57.5% | 75.0% | 18.8% |
-| TypeScript | 39.1% | 56.5% | 13.0% |
-| Ruby | 36.3% | 50.0% | 15.0% |
+| Go | 59.1% | 75.0% | 18.8% |
+| TypeScript | 39.8% | 56.5% | 13.0% |
+| Ruby | 36.0% | 50.0% | 15.0% |
 | Python | 27.9% | 47.4% | 5.3% |
-| Java | 13.1% | 17.6% | 5.9% |
+| Java | 15.1% | 23.5% | 5.9% |
 
-The best Java score in the whole set, 17.6%, is worse than the *worst* Go score
-of any model that cleared 20%. A model that looks competent on your Go services
-can be close to useless on your Java ones.
+The best Java score in the whole set, 23.5% (two models tie there), is worse than
+the *worst* Go score of any model that cleared 20% overall, which sits at 50.0%. A
+model that looks competent on your Go services can be close to useless on your
+Java ones.
 
 ## What we can and cannot say about why
 
@@ -60,5 +61,5 @@ from the same data. Check the language you actually write.
 
 Thirty pull requests split across five languages means roughly six per language.
 That is a small sample, and the confidence interval on any single language cell
-is wide. The Go-versus-Java gap is large enough to survive that, at 4.4 times,
+is wide. The Go-versus-Java gap is large enough to survive that, at 3.9 times,
 but do not read the difference between Ruby and TypeScript as real.
