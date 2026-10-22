@@ -66,6 +66,21 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         isAccessibleForFree: true,
     };
 
+    // `m.faq` e a UNICA fonte pra secao visivel abaixo e pro schema: Google
+    // rejeita (ou ignora) FAQPage cujo texto nao bate com o que a pagina
+    // mostra, entao nunca escrever a pergunta/resposta em dois lugares.
+    const faqLd = m.faq?.length
+        ? {
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: m.faq.map((f) => ({
+                  '@type': 'Question',
+                  name: f.q,
+                  acceptedAnswer: { '@type': 'Answer', text: f.a },
+              })),
+          }
+        : null;
+
     return (
         // Mesmo shell das outras paginas de conteudo: container de 1200px, uma
         // borda esquerda so. Sem `hero-dusk` — o gradiente e da home.
@@ -74,6 +89,12 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
             />
+            {faqLd ? (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+                />
+            ) : null}
             <header className="mb-12 max-w-[var(--reading-width)]">
                 {m.draft ? (
                     <span className="eyebrow block mb-4 text-[color:var(--accent)]">Draft — not published</span>
@@ -96,6 +117,19 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             <article className="max-w-[var(--reading-width)] border-t border-[var(--border)] pt-12">
                 <Body />
             </article>
+
+            {/* Texto IDENTICO ao `faqLd` acima — nunca editar um sem o outro. */}
+            {m.faq?.length ? (
+                <section className="max-w-[var(--reading-width)] border-t border-[var(--border)] mt-12 pt-12">
+                    <h2 className="text-2xl font-display mb-6 text-[color:var(--foreground)]">FAQ</h2>
+                    {m.faq.map((f) => (
+                        <div key={f.q} className="mb-8">
+                            <h3 className="text-lg font-semibold mb-2 text-[color:var(--foreground)]">{f.q}</h3>
+                            <p className="text-[16px] leading-relaxed text-[color:var(--muted)]">{f.a}</p>
+                        </div>
+                    ))}
+                </section>
+            ) : null}
 
             <div className="max-w-[var(--reading-width)] border-t border-[var(--border)] mt-16 pt-8">
                 <Link

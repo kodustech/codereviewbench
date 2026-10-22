@@ -2,6 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 
+export interface FAQItem {
+    q: string;
+    a: string;
+}
+
 export interface PostMeta {
     slug: string;
     title: string;
@@ -14,6 +19,10 @@ export interface PostMeta {
     /** `draft: true` some do indice, do sitemap e do RSS, mas a URL direta
      *  continua funcionando pra revisao antes de publicar. */
     draft?: boolean;
+    /** Fonte UNICA pra secao "FAQ" visivel E pro FAQPage JSON-LD — nunca
+     *  escrever a mesma pergunta duas vezes (uma na prosa, outra no schema):
+     *  Google exige que o texto do schema bata com o que a pagina mostra. */
+    faq?: FAQItem[];
 }
 
 const BLOG_DIR = path.join(process.cwd(), 'src', 'content', 'blog');
@@ -38,6 +47,9 @@ export function postMeta(slug: string): PostMeta | null {
         date: String(data.date),
         keywords: Array.isArray(data.keywords) ? data.keywords.map(String) : undefined,
         draft: data.draft === true,
+        faq: Array.isArray(data.faq)
+            ? data.faq.map((f: { q: unknown; a: unknown }) => ({ q: String(f.q), a: String(f.a) }))
+            : undefined,
     };
 }
 

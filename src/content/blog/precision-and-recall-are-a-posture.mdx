@@ -6,6 +6,13 @@ keywords:
   - ai code review precision
   - ai code review false positives
   - precision vs recall code review
+faq:
+  - q: "What's the difference between precision and recall in AI code review?"
+    a: "Recall is the share of real bugs a model finds; precision is the share of its findings that are real bugs. No model on this benchmark is strong at both — the highest-precision model (73.9%) has the lowest recall (11.6%), and vice versa."
+  - q: "Which AI code review model produces the fewest false positives?"
+    a: "Gemini 3.7 Flash, by a wide margin — 73.9% precision, right about three times in four when it reports something. The trade-off is recall: it finds only 11.6% of known bugs."
+  - q: "Should I pick an AI code reviewer with high precision or high recall?"
+    a: "Depends on where it runs. High precision matters when the review blocks a merge, since a false positive costs a developer's time and trust in the gate. High recall matters when the review is advisory, since a missed bug is the expensive failure there, not a noisy comment."
 ---
 
 Gemini 3.7 Flash finds 11.6% of the bugs human reviewers caught. When it does

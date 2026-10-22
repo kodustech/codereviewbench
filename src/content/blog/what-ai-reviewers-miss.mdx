@@ -6,6 +6,13 @@ keywords:
   - ai code review false negatives
   - ai code review accuracy
   - why ai code review misses bugs
+faq:
+  - q: "Why does AI code review miss bugs?"
+    a: "Mostly not for lack of context. Classifying all 792 bugs these models failed to find, 79% are genuine misses — the model already had access to the relevant code and simply didn't flag the problem. Only 5% were missed because a needed file wasn't available in the test setup."
+  - q: "Does a clean pass from an AI code reviewer mean a pull request has no bugs?"
+    a: "No. The base rate here is that these models miss most real bugs, and when they miss, it's usually a genuine miss, not a gap in what they were shown. A clean pass from an AI gate shouldn't be read as evidence the pull request is bug-free."
+  - q: "What severity are the issues AI code reviewers actually flag?"
+    a: "Mostly medium. Across all models, 48% of reported findings are self-rated medium severity and only 3% critical — a wall of moderate comments is the typical output, with severe findings rare enough to get lost in it."
 ---
 
 It would be comforting if the misses were the benchmark's fault. They are not.

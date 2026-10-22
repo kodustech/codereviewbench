@@ -6,6 +6,13 @@ keywords:
   - ai benchmark variance
   - ai code review benchmark methodology
   - how to read ai benchmarks
+faq:
+  - q: "How should you read an AI benchmark leaderboard?"
+    a: "As roughly three tiers, not a strict ranking. The 95% confidence interval on the top model's 44.2% recall spans 32.3 to 56.3 points — wide enough that neighboring ranks on this board aren't statistically distinguishable."
+  - q: "Are AI benchmark scores reliable, or do they vary a lot between runs?"
+    a: "A single run carries real variance. This benchmark measures the sampling variance (a 24-point-wide interval from 30 pull requests), but does not measure model run-to-run variance — every entry is a single pass, the largest acknowledged gap in the methodology."
+  - q: "What causes more variance in an AI code review benchmark: the test cases or the AI judge scoring it?"
+    a: "The test cases, by far. Re-scoring the same output three times with the same judge moves the score ±0.6 points; swapping which pull requests are sampled moves it over 20 points."
 ---
 
 The leaderboard has thirteen models separated by single digits. It is worth saying

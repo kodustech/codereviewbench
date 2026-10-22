@@ -6,6 +6,13 @@ keywords:
   - ai code review java
   - ai code review go
   - ai code review by language
+faq:
+  - q: "Is AI code review as good for Java as for other languages?"
+    a: "No. Java is the weakest language on this benchmark by far — mean recall is 15.1% on Java versus 59.1% on Go, a 3.9x gap that holds across every model tested."
+  - q: "What is the best AI code review model for Java?"
+    a: "The best Java score in the set is 23.5% (a tie between two models) — still worse than the worst Go score among models that cleared 20% overall (50.0%). Check a model's own per-language numbers rather than trusting its overall score for Java."
+  - q: "Which programming language is hardest for AI code review to handle?"
+    a: "Java, on this benchmark. Candidate reasons include Java pushing logic into inheritance and annotations away from the diff, and the Java corpus leaning on contracts declared elsewhere in the codebase — though the data can't fully isolate the cause."
 ---
 
 We expected models to vary. We did not expect the language to matter more than
