@@ -1,0 +1,54 @@
+#!/usr/bin/env node
+// Carimba dateModified sozinho quando um post publicado e reescrito, pra
+// ninguem precisar lembrar de editar a data na mao (e esquecer, como
+// aconteceu nos 6 posts corrigidos em 2026-10-26 — o dateModified ficou
+// preso na data de publicacao mesmo depois dos numeros mudarem).
+//
+// So mexe em arquivos ja existentes (diff-filter=M): um post novo nao tem
+// "reescrita" ainda, entao dateModified comeca igual a date (ver fallback em
+// src/lib/blog.ts). Ativado via `core.hooksPath=.githooks` (rodado pelo
+// script "prepare" do package.json a cada `npm install`).
+
+const { execSync } = require('node:child_process');
+const fs = require('node:fs');
+
+const changed = execSync('git diff --cached --name-only --diff-filter=M -- src/content/blog/*.mdx', {
+    encoding: 'utf8',
+})
+    .split('\n')
+    .filter(Boolean);
+
+if (changed.length === 0) process.exit(0);
+
+function todayISO() {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+}
+
+const today = todayISO();
+
+for (const file of changed) {
+    const original = fs.readFileSync(file, 'utf8');
+    const frontmatterMatch = original.match(/^---\n([\s\S]*?)\n---\n/);
+    if (!frontmatterMatch) continue;
+
+    const frontmatter = frontmatterMatch[1];
+    let updatedFrontmatter;
+    if (/^dateModified:/m.test(frontmatter)) {
+        updatedFrontmatter = frontmatter.replace(/^dateModified:.*$/m, `dateModified: '${today}'`);
+    } else if (/^date:.*$/m.test(frontmatter)) {
+        updatedFrontmatter = frontmatter.replace(/^(date:.*)$/m, `$1\ndateModified: '${today}'`);
+    } else {
+        continue;
+    }
+
+    if (updatedFrontmatter === frontmatter) continue;
+
+    const updated = original.replace(frontmatter, updatedFrontmatter);
+    fs.writeFileSync(file, updated);
+    execSync(`git add ${JSON.stringify(file)}`);
+    console.log(`pre-commit: dateModified -> ${today} em ${file}`);
+}

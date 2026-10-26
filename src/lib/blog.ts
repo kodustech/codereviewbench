@@ -13,6 +13,10 @@ export interface PostMeta {
     description: string;
     /** ISO `YYYY-MM-DD`. Vira <time dateTime> e lastModified do sitemap. */
     date: string;
+    /** ISO `YYYY-MM-DD`. So pro BlogPosting JSON-LD — o pre-commit hook
+     *  (.githooks/pre-commit) carimba isto sozinho quando o corpo do post
+     *  muda, entao nao precisa editar a mao. Cai pro `date` se ausente. */
+    dateModified: string;
     /** Nao entra em <meta keywords> (Google ignora desde 2009) — serve pra eu
      *  saber qual busca cada post mira e nao escrever dois pro mesmo termo. */
     keywords?: string[];
@@ -45,6 +49,7 @@ export function postMeta(slug: string): PostMeta | null {
         title: String(data.title),
         description: String(data.description),
         date: String(data.date),
+        dateModified: data.dateModified ? String(data.dateModified) : String(data.date),
         keywords: Array.isArray(data.keywords) ? data.keywords.map(String) : undefined,
         draft: data.draft === true,
         faq: Array.isArray(data.faq)

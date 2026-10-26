@@ -59,7 +59,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         headline: m.title,
         description: m.description,
         datePublished: m.date,
-        dateModified: m.date,
+        dateModified: m.dateModified,
         author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
         publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
         mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${slug}` },
