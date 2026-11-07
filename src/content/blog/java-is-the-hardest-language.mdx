@@ -2,7 +2,7 @@
 title: AI reviewers are four times worse at Java than at Go
 description: The same thirteen models, the same harness, the same scoring. Mean recall on Go pull requests is 59.1%. On Java it is 15.1%. Every model shows the gap.
 date: '2026-08-22'
-dateModified: '2026-10-26'
+dateModified: '2026-11-07'
 keywords:
   - ai code review java
   - ai code review go
@@ -15,6 +15,10 @@ faq:
   - q: "Which programming language is hardest for AI code review to handle?"
     a: "Java, on this benchmark. Candidate reasons include Java pushing logic into inheritance and annotations away from the diff, and the Java corpus leaning on contracts declared elsewhere in the codebase — though the data can't fully isolate the cause."
 ---
+
+> **Note, 2026-11-07:** the numbers in this post come from the v1 benchmark (Aug–Sep 2026), which used a
+> different gold set, judge and cost method. The benchmark has since been re-run on a re-labelled gold set
+> with two review modes; see the [current leaderboard](/leaderboard) for today's numbers.
 
 We expected models to vary. We did not expect the language to matter more than
 the model.

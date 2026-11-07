@@ -2,7 +2,7 @@
 title: The best AI code reviewer finds fewer than half the bugs
 description: We ran thirteen models over the same thirty merged pull requests, scoring them against bugs that human reviewers actually flagged. The top scorer found 44% of them. None broke 50%.
 date: '2026-08-21'
-dateModified: '2026-10-26'
+dateModified: '2026-11-07'
 keywords:
   - ai code review
   - ai code review benchmark
@@ -15,6 +15,10 @@ faq:
   - q: "Can AI code review replace a human doing final approval on a pull request?"
     a: "Not reliably, based on these results. Since even the top model misses more than half of known bugs, a clean pass from an AI reviewer isn't solid evidence the pull request is bug-free."
 ---
+
+> **Note, 2026-11-07:** the numbers in this post come from the v1 benchmark (Aug–Sep 2026), which used a
+> different gold set, judge and cost method. The benchmark has since been re-run on a re-labelled gold set
+> with two review modes; see the [current leaderboard](/leaderboard) for today's numbers.
 
 Every AI code review tool demos well. You paste a diff with an off-by-one error,
 the model finds the off-by-one error, and you conclude the thing works. That

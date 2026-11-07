@@ -2,7 +2,7 @@
 title: The cheapest model on the board finds more bugs per dollar than the most expensive
 description: Cost per pull request ranges from $0.08 to $1.62 across thirteen models. Recall does not follow. The cheapest option costs $0.07 per bug found; the most expensive costs $1.25.
 date: '2026-08-22'
-dateModified: '2026-10-26'
+dateModified: '2026-11-07'
 keywords:
   - ai code review cost
   - cheapest ai code review
@@ -15,6 +15,10 @@ faq:
   - q: "Does paying more for an AI code reviewer get you better bug detection?"
     a: "Not on this benchmark. The priciest model costs 20x more per pull request than the cheapest ($1.62 vs $0.08) for a 2-point recall difference. Three models even tie at exactly 41.0% recall despite costing up to 3x apart."
 ---
+
+> **Note, 2026-11-07:** the numbers in this post come from the v1 benchmark (Aug–Sep 2026), which used a
+> different gold set, judge and cost method. The benchmark has since been re-run on a re-labelled gold set
+> with two review modes; see the [current leaderboard](/leaderboard) for today's numbers.
 
 Twenty times the price. Two points of recall.
 

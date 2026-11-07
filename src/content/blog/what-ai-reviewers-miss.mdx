@@ -2,7 +2,7 @@
 title: When an AI reviewer misses a bug, the code was usually right there
 description: We classified 792 missed bugs across thirteen models. 79% were real misses, where the relevant code was available and the model did not find the problem. Only 5% were artifacts of the test setup.
 date: '2026-08-22'
-dateModified: '2026-10-26'
+dateModified: '2026-11-07'
 keywords:
   - ai code review false negatives
   - ai code review accuracy
@@ -15,6 +15,10 @@ faq:
   - q: "What severity are the issues AI code reviewers actually flag?"
     a: "Mostly medium. Across all models, 48% of reported findings are self-rated medium severity and only 3% critical — a wall of moderate comments is the typical output, with severe findings rare enough to get lost in it."
 ---
+
+> **Note, 2026-11-07:** the numbers in this post come from the v1 benchmark (Aug–Sep 2026), which used a
+> different gold set, judge and cost method. The benchmark has since been re-run on a re-labelled gold set
+> with two review modes; see the [current leaderboard](/leaderboard) for today's numbers.
 
 It would be comforting if the misses were the benchmark's fault. They are not.
 

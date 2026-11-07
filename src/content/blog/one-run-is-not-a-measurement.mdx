@@ -2,7 +2,7 @@
 title: A three point gap between two AI reviewers is probably noise
 description: Every entry on this leaderboard is one run. We measured how much the score moves from sampling and from the judge alone, and the answer is enough to reorder the middle of the table.
 date: '2026-08-22'
-dateModified: '2026-10-26'
+dateModified: '2026-11-07'
 keywords:
   - ai benchmark variance
   - ai code review benchmark methodology
@@ -15,6 +15,10 @@ faq:
   - q: "What causes more variance in an AI code review benchmark: the test cases or the AI judge scoring it?"
     a: "The test cases, by far. Re-scoring the same output three times with the same judge moves the score ±0.6 points; swapping which pull requests are sampled moves it over 20 points."
 ---
+
+> **Note, 2026-11-07:** the numbers in this post come from the v1 benchmark (Aug–Sep 2026), which used a
+> different gold set, judge and cost method. The benchmark has since been re-run on a re-labelled gold set
+> with two review modes; see the [current leaderboard](/leaderboard) for today's numbers.
 
 The leaderboard has thirteen models separated by single digits. It is worth saying
 plainly what those digits can and cannot support.
