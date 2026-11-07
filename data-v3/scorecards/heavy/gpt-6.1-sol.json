@@ -15,10 +15,10 @@
   "sandbox": "alive",
   "heavy": true,
   "reasoning": {
-   "config": "explicit",
-   "effortRequested": "low"
+   "config": "vendor-default",
+   "effortRequested": null
   },
-  "runAt": "2026-11-07T15:57:36.699Z",
+  "runAt": "2026-11-07T20:57:45.785Z",
   "mode": "heavy"
  },
  "judge": {
@@ -29,23 +29,23 @@
  "aggregate": {
   "cases": 30,
   "casesScored": 30,
-  "recallMicro": 0.5371900826446281,
-  "precisionMicro": 0.5855855855855856,
-  "f1Micro": 0.560344827586207,
-  "f2Micro": 0.546218487394958,
-  "recallMacro": 0.5907004830917874,
-  "precisionMacro": 0.578439615939616,
+  "recallMicro": 0.5537190082644629,
+  "precisionMicro": 0.5537190082644629,
+  "f1Micro": 0.5537190082644629,
+  "f2Micro": 0.5537190082644629,
+  "recallMacro": 0.6344202898550725,
+  "precisionMacro": 0.511019536019536,
   "goldensTotal": 121,
-  "goldensMatched": 65,
-  "comments": 111,
+  "goldensMatched": 67,
+  "comments": 121,
   "usage": {
-   "inputTokens": 23621360,
-   "outputTokens": 287051,
-   "reasoningTokens": 12982,
-   "cacheReadTokens": 1870720,
+   "inputTokens": 26133023,
+   "outputTokens": 386866,
+   "reasoningTokens": 38847,
+   "cacheReadTokens": 2050944,
    "cacheWriteTokens": 0
   },
-  "calls": 763
+  "calls": 778
  },
  "cases": [
   {
@@ -110,25 +110,25 @@
     ]
    },
    "usage": {
-    "inputTokens": 1166027,
-    "outputTokens": 18335,
-    "reasoningTokens": 387,
-    "cacheReadTokens": 81280,
+    "inputTokens": 1498780,
+    "outputTokens": 24566,
+    "reasoningTokens": 1508,
+    "cacheReadTokens": 71296,
     "cacheWriteTokens": 0
    },
-   "calls": 41,
+   "calls": 42,
    "latencyMs": null
   },
   {
    "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
    "status": "scored",
    "metrics": {
-    "recall": 0.625,
-    "precision": 0.8333333333333334,
-    "matched": 5,
+    "recall": 0.75,
+    "precision": 0.8571428571428571,
+    "matched": 6,
     "goldens": 8,
-    "findings": 6,
-    "tpFindings": 5,
+    "findings": 7,
+    "tpFindings": 6,
     "fpFindings": 1,
     "matchedGoldens": [
      {
@@ -152,13 +152,6 @@
       "severity": "medium"
      },
      {
-      "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#08",
-      "text": "EventManager is created with the requesting user's credentials, so when a non-organizer adds guests the organizer's calendar event is not updated (or the wrong account is used) for references without a credentialId.",
-      "severity": "high"
-     }
-    ],
-    "missedGoldens": [
-     {
       "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#16",
       "text": "sendAddGuestsEmails ignores the event type's disableStandardEmails settings, so hosts and attendees receive add-guests emails even when standard emails are disabled.",
       "severity": "medium"
@@ -167,6 +160,13 @@
       "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#e2b-01",
       "text": "The add-guests handler omits booking.iCalUID from the CalendarEvent, so the add-guests emails' .ics attachments use booking.uid as UID and recipients' calendars treat them as a new event rather than an update of the original booking invite.",
       "severity": "medium"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#08",
+      "text": "EventManager is created with the requesting user's credentials, so when a non-organizer adds guests the organizer's calendar event is not updated (or the wrong account is used) for references without a credentialId.",
+      "severity": "high"
      },
      {
       "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#kimi-01",
@@ -176,13 +176,13 @@
     ]
    },
    "usage": {
-    "inputTokens": 781833,
-    "outputTokens": 12761,
-    "reasoningTokens": 478,
-    "cacheReadTokens": 53504,
+    "inputTokens": 962971,
+    "outputTokens": 17057,
+    "reasoningTokens": 1087,
+    "cacheReadTokens": 76288,
     "cacheWriteTokens": 0
    },
-   "calls": 31,
+   "calls": 34,
    "latencyMs": null
   },
   {
@@ -247,13 +247,13 @@
     ]
    },
    "usage": {
-    "inputTokens": 1173882,
-    "outputTokens": 20639,
-    "reasoningTokens": 628,
-    "cacheReadTokens": 91776,
+    "inputTokens": 1674903,
+    "outputTokens": 26892,
+    "reasoningTokens": 2406,
+    "cacheReadTokens": 63744,
     "cacheWriteTokens": 0
    },
-   "calls": 46,
+   "calls": 45,
    "latencyMs": null
   },
   {
@@ -261,12 +261,12 @@
    "status": "scored",
    "metrics": {
     "recall": 0.4,
-    "precision": 1.0,
+    "precision": 0.6666666666666666,
     "matched": 2,
     "goldens": 5,
-    "findings": 2,
+    "findings": 3,
     "tpFindings": 2,
-    "fpFindings": 0,
+    "fpFindings": 1,
     "matchedGoldens": [
      {
       "issueId": "sms-workflow-reminder-retry-count-tracking-cal-com#02",
@@ -298,13 +298,13 @@
     ]
    },
    "usage": {
-    "inputTokens": 284895,
-    "outputTokens": 6407,
-    "reasoningTokens": 272,
-    "cacheReadTokens": 61056,
+    "inputTokens": 294185,
+    "outputTokens": 8444,
+    "reasoningTokens": 936,
+    "cacheReadTokens": 65664,
     "cacheWriteTokens": 0
    },
-   "calls": 23,
+   "calls": 22,
    "latencyMs": null
   },
   {
@@ -328,13 +328,13 @@
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 668465,
-    "outputTokens": 9501,
-    "reasoningTokens": 568,
-    "cacheReadTokens": 64128,
+    "inputTokens": 819586,
+    "outputTokens": 14290,
+    "reasoningTokens": 1475,
+    "cacheReadTokens": 100864,
     "cacheWriteTokens": 0
    },
-   "calls": 28,
+   "calls": 30,
    "latencyMs": null
   },
   {
@@ -368,31 +368,36 @@
     ]
    },
    "usage": {
-    "inputTokens": 332729,
-    "outputTokens": 3220,
-    "reasoningTokens": 85,
-    "cacheReadTokens": 41600,
+    "inputTokens": 368151,
+    "outputTokens": 3843,
+    "reasoningTokens": 202,
+    "cacheReadTokens": 42112,
     "cacheWriteTokens": 0
    },
-   "calls": 12,
+   "calls": 13,
    "latencyMs": null
   },
   {
    "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
    "status": "scored",
    "metrics": {
-    "recall": 0.3333333333333333,
-    "precision": 0.36363636363636365,
-    "matched": 4,
+    "recall": 0.4166666666666667,
+    "precision": 0.5,
+    "matched": 5,
     "goldens": 12,
-    "findings": 11,
-    "tpFindings": 4,
-    "fpFindings": 7,
+    "findings": 10,
+    "tpFindings": 5,
+    "fpFindings": 5,
     "matchedGoldens": [
      {
       "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#06",
       "text": "PollFeed reads i.content.scrub for every feed item, so items without a content element (common in RSS feeds that only have description) raise NoMethodError and abort the import of the remaining items.",
       "severity": "high"
+     },
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#09",
+      "text": "TopicEmbed.import appends a footer that interpolates the URL unescaped into an <a href='...'> tag in raw HTML that is later rendered unsanitized, so a crafted URL can inject markup; it also appends to contents with << without handling nil.",
+      "severity": "critical"
      },
      {
       "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#22",
@@ -415,11 +420,6 @@
       "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#04",
       "text": "The referer and embed_url host checks compare against SiteSetting.embeddable_host case-sensitively, so a host differing only in case is rejected even though hostnames are case-insensitive.",
       "severity": "high"
-     },
-     {
-      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#09",
-      "text": "TopicEmbed.import appends a footer that interpolates the URL unescaped into an <a href='...'> tag in raw HTML that is later rendered unsanitized, so a crafted URL can inject markup; it also appends to contents with << without handling nil.",
-      "severity": "critical"
      },
      {
       "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#18",
@@ -454,31 +454,36 @@
     ]
    },
    "usage": {
-    "inputTokens": 2673509,
-    "outputTokens": 15994,
-    "reasoningTokens": 1337,
-    "cacheReadTokens": 37760,
+    "inputTokens": 1213824,
+    "outputTokens": 20228,
+    "reasoningTokens": 2780,
+    "cacheReadTokens": 82432,
     "cacheWriteTokens": 0
    },
-   "calls": 40,
+   "calls": 38,
    "latencyMs": null
   },
   {
    "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
    "status": "scored",
    "metrics": {
-    "recall": 0.75,
-    "precision": 0.42857142857142855,
-    "matched": 3,
+    "recall": 1.0,
+    "precision": 0.5,
+    "matched": 4,
     "goldens": 4,
-    "findings": 7,
-    "tpFindings": 3,
+    "findings": 8,
+    "tpFindings": 4,
     "fpFindings": 4,
     "matchedGoldens": [
      {
       "issueId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor#07",
       "text": "The migration reads execute(...)[0]['id'] for embed_category without checking for an empty result, so installs without that setting stored crash the migration instead of falling back to the uncategorized category.",
       "severity": "high"
+     },
+     {
+      "issueId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor#11",
+      "text": "After saving a host, the component overwrites its category with findById(categoryId); when no category was chosen this is null even though the server saved the uncategorized category, so the row shows no category until reload.",
+      "severity": "medium"
      },
      {
       "issueId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor#14",
@@ -491,43 +496,36 @@
       "severity": "high"
      }
     ],
-    "missedGoldens": [
-     {
-      "issueId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor#11",
-      "text": "After saving a host, the component overwrites its category with findById(categoryId); when no category was chosen this is null even though the server saved the uncategorized category, so the row shows no category until reload.",
-      "severity": "medium"
-     }
-    ]
+    "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 858044,
-    "outputTokens": 14478,
-    "reasoningTokens": 493,
-    "cacheReadTokens": 129792,
+    "inputTokens": 1062641,
+    "outputTokens": 19353,
+    "reasoningTokens": 2044,
+    "cacheReadTokens": 102784,
     "cacheWriteTokens": 0
    },
-   "calls": 35,
+   "calls": 36,
    "latencyMs": null
   },
   {
    "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
    "status": "scored",
    "metrics": {
-    "recall": 0.2,
-    "precision": 1.0,
-    "matched": 1,
+    "recall": 0.0,
+    "precision": null,
+    "matched": 0,
     "goldens": 5,
-    "findings": 1,
-    "tpFindings": 1,
+    "findings": 0,
+    "tpFindings": 0,
     "fpFindings": 0,
-    "matchedGoldens": [
+    "matchedGoldens": [],
+    "missedGoldens": [
      {
       "issueId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor#01",
       "text": "The flex-item styles target the inner .extra-info-wrapper instead of the component's root div, so in the flexbox header a long topic title keeps its full width and pushes the navigation panel out instead of being truncated.",
       "severity": "medium"
-     }
-    ],
-    "missedGoldens": [
+     },
      {
       "issueId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor#02",
       "text": "The align-items mixin emits no -moz-box-align, so on old Firefox versions using the display:-moz-box fallback the advertised vertical centering is not applied.",
@@ -551,26 +549,26 @@
     ]
    },
    "usage": {
-    "inputTokens": 246263,
-    "outputTokens": 4471,
-    "reasoningTokens": 376,
-    "cacheReadTokens": 48128,
+    "inputTokens": 725616,
+    "outputTokens": 6351,
+    "reasoningTokens": 720,
+    "cacheReadTokens": 52480,
     "cacheWriteTokens": 0
    },
-   "calls": 14,
+   "calls": 15,
    "latencyMs": null
   },
   {
    "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
    "status": "scored",
    "metrics": {
-    "recall": 0.375,
-    "precision": 1.0,
-    "matched": 3,
+    "recall": 0.25,
+    "precision": 0.6666666666666666,
+    "matched": 2,
     "goldens": 8,
     "findings": 3,
-    "tpFindings": 3,
-    "fpFindings": 0,
+    "tpFindings": 2,
+    "fpFindings": 1,
     "matchedGoldens": [
      {
       "issueId": "feature-automatically-downsize-large-images-discourse-cursor#01",
@@ -581,11 +579,6 @@
       "issueId": "feature-automatically-downsize-large-images-discourse-cursor#02",
       "text": "The client-side upload size check hardcodes 10 MB instead of the per-type max_<type>_size_kb setting, so attachment limits diverge from the server: larger allowed attachments are blocked and smaller limits are only enforced server-side.",
       "severity": "high"
-     },
-     {
-      "issueId": "feature-automatically-downsize-large-images-discourse-cursor#sncc-01",
-      "text": "The 413 upload error message states a hard-coded 10 MB maximum that may not match the limit the server or web server actually enforces.",
-      "severity": "medium"
      }
     ],
     "missedGoldens": [
@@ -605,6 +598,11 @@
       "severity": "high"
      },
      {
+      "issueId": "feature-automatically-downsize-large-images-discourse-cursor#sncc-01",
+      "text": "The 413 upload error message states a hard-coded 10 MB maximum that may not match the limit the server or web server actually enforces.",
+      "severity": "medium"
+     },
+     {
       "issueId": "feature-automatically-downsize-large-images-discourse-cursor#opa-01",
       "text": "The upload tempfile path, which for API URL uploads embeds the request-controlled type param, is now passed to OptimizedImage.downsize and run unescaped in a shell via backticks, allowing command injection through type.",
       "severity": "critical"
@@ -617,26 +615,26 @@
     ]
    },
    "usage": {
-    "inputTokens": 629657,
-    "outputTokens": 7063,
-    "reasoningTokens": 448,
-    "cacheReadTokens": 48128,
+    "inputTokens": 372510,
+    "outputTokens": 9562,
+    "reasoningTokens": 1310,
+    "cacheReadTokens": 58112,
     "cacheWriteTokens": 0
    },
-   "calls": 24,
+   "calls": 23,
    "latencyMs": null
   },
   {
    "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
    "status": "scored",
    "metrics": {
-    "recall": 0.4,
-    "precision": 0.8,
-    "matched": 4,
+    "recall": 0.5,
+    "precision": 0.625,
+    "matched": 5,
     "goldens": 10,
-    "findings": 5,
-    "tpFindings": 4,
-    "fpFindings": 1,
+    "findings": 8,
+    "tpFindings": 5,
+    "fpFindings": 3,
     "matchedGoldens": [
      {
       "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#01",
@@ -657,17 +655,17 @@
       "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#10",
       "text": "Removing a member deletes the membership row directly and skips clearing the user's primary_group_id, so a removed user can keep this group as their primary group.",
       "severity": "medium"
+     },
+     {
+      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#opa-01",
+      "text": "Admin add_members pushes every username into group.users without skipping existing members, so adding someone already in the group hits the unique group_users index, returns a 500 and leaves earlier users partially added.",
+      "severity": "medium"
      }
     ],
     "missedGoldens": [
      {
       "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#07",
       "text": "Creating a group ignores the alias_level the admin selected, saving only name and visibility, so new groups keep the default alias level.",
-      "severity": "medium"
-     },
-     {
-      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#opa-01",
-      "text": "Admin add_members pushes every username into group.users without skipping existing members, so adding someone already in the group hits the unique group_users index, returns a 500 and leaves earlier users partially added.",
       "severity": "medium"
      },
      {
@@ -693,45 +691,46 @@
     ]
    },
    "usage": {
-    "inputTokens": 718931,
-    "outputTokens": 13088,
-    "reasoningTokens": 1051,
-    "cacheReadTokens": 47872,
+    "inputTokens": 891977,
+    "outputTokens": 18919,
+    "reasoningTokens": 2304,
+    "cacheReadTokens": 54144,
     "cacheWriteTokens": 0
    },
-   "calls": 29,
+   "calls": 35,
    "latencyMs": null
   },
   {
    "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
    "status": "scored",
    "metrics": {
-    "recall": 1.0,
-    "precision": 1.0,
-    "matched": 2,
+    "recall": 0.5,
+    "precision": 0.5,
+    "matched": 1,
     "goldens": 2,
     "findings": 2,
-    "tpFindings": 2,
-    "fpFindings": 0,
+    "tpFindings": 1,
+    "fpFindings": 1,
     "matchedGoldens": [
-     {
-      "issueId": "feature-localization-fallbacks-server-side-discourse-cursor#01",
-      "text": "Fallback locale catalogs are only loaded in the controller's set_locale filter, while translate loads just the current locale, so translations outside requests (jobs, mailers) cannot fall back to the site default or English.",
-      "severity": "medium"
-     },
      {
       "issueId": "feature-localization-fallbacks-server-side-discourse-cursor#06",
       "text": "The translation cache key does not include the site or its default locale, but fallback results now depend on SiteSetting.default_locale, so multisite processes or a changed default locale serve stale fallback translations.",
       "severity": "medium"
      }
     ],
-    "missedGoldens": []
+    "missedGoldens": [
+     {
+      "issueId": "feature-localization-fallbacks-server-side-discourse-cursor#01",
+      "text": "Fallback locale catalogs are only loaded in the controller's set_locale filter, while translate loads just the current locale, so translations outside requests (jobs, mailers) cannot fall back to the site default or English.",
+      "severity": "medium"
+     }
+    ]
    },
    "usage": {
-    "inputTokens": 229010,
-    "outputTokens": 5148,
-    "reasoningTokens": 238,
-    "cacheReadTokens": 44032,
+    "inputTokens": 510482,
+    "outputTokens": 8112,
+    "reasoningTokens": 1072,
+    "cacheReadTokens": 70784,
     "cacheWriteTokens": 0
    },
    "calls": 17,
@@ -741,36 +740,35 @@
    "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
    "status": "scored",
    "metrics": {
-    "recall": 0.5,
-    "precision": 0.3333333333333333,
-    "matched": 1,
+    "recall": 1.0,
+    "precision": 0.5,
+    "matched": 2,
     "goldens": 2,
-    "findings": 3,
-    "tpFindings": 1,
+    "findings": 4,
+    "tpFindings": 2,
     "fpFindings": 2,
     "matchedGoldens": [
      {
       "issueId": "anonymous-add-configurable-device-limit-grafana-codex#07",
       "text": "tagDeviceUI caches the device key before CreateOrUpdateDevice; when the store returns ErrDeviceLimitReached the entry stays, so the next request from the same device skips the limit check and authenticates for up to 29 minutes.",
       "severity": "high"
-     }
-    ],
-    "missedGoldens": [
+     },
      {
       "issueId": "anonymous-add-configurable-device-limit-grafana-codex#11",
       "text": "The new auth.anonymous device_limit setting has no entry in conf/defaults.ini, so the GF_AUTH_ANONYMOUS_DEVICE_LIMIT environment override is ignored and the limit stays 0.",
       "severity": "high"
      }
-    ]
+    ],
+    "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 388878,
-    "outputTokens": 7407,
-    "reasoningTokens": 274,
-    "cacheReadTokens": 24064,
+    "inputTokens": 640741,
+    "outputTokens": 11364,
+    "reasoningTokens": 1166,
+    "cacheReadTokens": 49152,
     "cacheWriteTokens": 0
    },
-   "calls": 22,
+   "calls": 25,
    "latencyMs": null
   },
   {
@@ -778,23 +776,23 @@
    "status": "scored",
    "metrics": {
     "recall": null,
-    "precision": null,
+    "precision": 0.0,
     "matched": 0,
     "goldens": 0,
-    "findings": 0,
+    "findings": 1,
     "tpFindings": 0,
-    "fpFindings": 0,
+    "fpFindings": 1,
     "matchedGoldens": [],
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 110677,
-    "outputTokens": 2471,
-    "reasoningTokens": 22,
-    "cacheReadTokens": 26496,
+    "inputTokens": 148276,
+    "outputTokens": 3895,
+    "reasoningTokens": 187,
+    "cacheReadTokens": 36096,
     "cacheWriteTokens": 0
    },
-   "calls": 15,
+   "calls": 18,
    "latencyMs": null
   },
   {
@@ -812,10 +810,10 @@
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 426767,
-    "outputTokens": 3420,
-    "reasoningTokens": 47,
-    "cacheReadTokens": 78592,
+    "inputTokens": 499120,
+    "outputTokens": 4446,
+    "reasoningTokens": 431,
+    "cacheReadTokens": 71424,
     "cacheWriteTokens": 0
    },
    "calls": 11,
@@ -825,19 +823,14 @@
    "caseId": "dual-storage-architecture-grafana-codex",
    "status": "scored",
    "metrics": {
-    "recall": 0.7777777777777778,
-    "precision": 1.0,
-    "matched": 7,
+    "recall": 0.6666666666666666,
+    "precision": 0.8571428571428571,
+    "matched": 6,
     "goldens": 9,
     "findings": 7,
-    "tpFindings": 7,
-    "fpFindings": 0,
+    "tpFindings": 6,
+    "fpFindings": 1,
     "matchedGoldens": [
-     {
-      "issueId": "dual-storage-architecture-grafana-codex#02",
-      "text": "The legacy DeleteCollection goroutine records its duration with recordStorageDuration instead of recordLegacyDuration, misattributing legacy latency and errors to the storage metric.",
-      "severity": "medium"
-     },
      {
       "issueId": "dual-storage-architecture-grafana-codex#03",
       "text": "Delete's success path records the storage metric with the object name in the kind label instead of options.Kind, creating per-object series and inconsistent labels.",
@@ -871,6 +864,11 @@
     ],
     "missedGoldens": [
      {
+      "issueId": "dual-storage-architecture-grafana-codex#02",
+      "text": "The legacy DeleteCollection goroutine records its duration with recordStorageDuration instead of recordLegacyDuration, misattributing legacy latency and errors to the storage metric.",
+      "severity": "medium"
+     },
+     {
       "issueId": "dual-storage-architecture-grafana-codex#sncc-01",
       "text": "DualWriterMode3.Delete now returns on any unified-storage error, including NotFound, before deleting from legacy, so objects that exist only in legacy can no longer be deleted.",
       "severity": "high"
@@ -883,25 +881,25 @@
     ]
    },
    "usage": {
-    "inputTokens": 975223,
-    "outputTokens": 14927,
-    "reasoningTokens": 322,
-    "cacheReadTokens": 71552,
+    "inputTokens": 1230609,
+    "outputTokens": 19938,
+    "reasoningTokens": 1416,
+    "cacheReadTokens": 89472,
     "cacheWriteTokens": 0
    },
-   "calls": 39,
+   "calls": 37,
    "latencyMs": null
   },
   {
    "caseId": "unified-storage-performance-optimizations-grafana-codex",
    "status": "scored",
    "metrics": {
-    "recall": 0.6666666666666666,
+    "recall": 1.0,
     "precision": 1.0,
-    "matched": 2,
+    "matched": 3,
     "goldens": 3,
-    "findings": 2,
-    "tpFindings": 2,
+    "findings": 3,
+    "tpFindings": 3,
     "fpFindings": 0,
     "matchedGoldens": [
      {
@@ -913,21 +911,20 @@
       "issueId": "unified-storage-performance-optimizations-grafana-codex#02",
       "text": "The new startup log calls TotalDocs, which iterates the index cache without a lock, after the event goroutine that can add indexes has started, so a concurrent map read and write can crash the process.",
       "severity": "high"
-     }
-    ],
-    "missedGoldens": [
+     },
      {
       "issueId": "unified-storage-performance-optimizations-grafana-codex#sncc-01",
       "text": "The PR skips the storage-server module integration test on postgres instead of fixing the failure, removing coverage of the new eager initialization on postgres.",
       "severity": "medium"
      }
-    ]
+    ],
+    "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 355827,
-    "outputTokens": 5630,
-    "reasoningTokens": 367,
-    "cacheReadTokens": 54144,
+    "inputTokens": 376391,
+    "outputTokens": 8241,
+    "reasoningTokens": 1202,
+    "cacheReadTokens": 65792,
     "cacheWriteTokens": 0
    },
    "calls": 19,
@@ -937,17 +934,22 @@
    "caseId": "notification-rule-processing-engine-grafana-codex",
    "status": "scored",
    "metrics": {
-    "recall": 0.75,
-    "precision": 0.75,
-    "matched": 3,
+    "recall": 1.0,
+    "precision": 0.6666666666666666,
+    "matched": 4,
     "goldens": 4,
-    "findings": 4,
-    "tpFindings": 3,
-    "fpFindings": 1,
+    "findings": 6,
+    "tpFindings": 4,
+    "fpFindings": 2,
     "matchedGoldens": [
      {
       "issueId": "notification-rule-processing-engine-grafana-codex#01",
       "text": "The pause menu item is still gated on a Grafana ruler rule, but the list view now passes only the Prometheus rule, so Pause/Resume disappears for list-view rules even when the user may pause them.",
+      "severity": "high"
+     },
+     {
+      "issueId": "notification-rule-processing-engine-grafana-codex#02",
+      "text": "The Delete menu item still requires a ruler rule, which list-view Grafana rules no longer provide, so users with delete permission lose the Delete action.",
       "severity": "high"
      },
      {
@@ -961,22 +963,16 @@
       "severity": "high"
      }
     ],
-    "missedGoldens": [
-     {
-      "issueId": "notification-rule-processing-engine-grafana-codex#02",
-      "text": "The Delete menu item still requires a ruler rule, which list-view Grafana rules no longer provide, so users with delete permission lose the Delete action.",
-      "severity": "high"
-     }
-    ]
+    "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 1075625,
-    "outputTokens": 12358,
-    "reasoningTokens": 479,
-    "cacheReadTokens": 34048,
+    "inputTokens": 1406807,
+    "outputTokens": 17248,
+    "reasoningTokens": 1553,
+    "cacheReadTokens": 65664,
     "cacheWriteTokens": 0
    },
-   "calls": 28,
+   "calls": 30,
    "latencyMs": null
   },
   {
@@ -994,13 +990,13 @@
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 1090282,
-    "outputTokens": 14772,
-    "reasoningTokens": 291,
-    "cacheReadTokens": 43904,
+    "inputTokens": 1262504,
+    "outputTokens": 18419,
+    "reasoningTokens": 948,
+    "cacheReadTokens": 59008,
     "cacheWriteTokens": 0
    },
-   "calls": 35,
+   "calls": 32,
    "latencyMs": null
   },
   {
@@ -1018,10 +1014,10 @@
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 327649,
-    "outputTokens": 5817,
-    "reasoningTokens": 148,
-    "cacheReadTokens": 38144,
+    "inputTokens": 307734,
+    "outputTokens": 7200,
+    "reasoningTokens": 231,
+    "cacheReadTokens": 42112,
     "cacheWriteTokens": 0
    },
    "calls": 19,
@@ -1031,36 +1027,35 @@
    "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
    "status": "scored",
    "metrics": {
-    "recall": 0.5,
-    "precision": 0.3333333333333333,
-    "matched": 1,
+    "recall": 1.0,
+    "precision": 0.4,
+    "matched": 2,
     "goldens": 2,
-    "findings": 3,
-    "tpFindings": 1,
-    "fpFindings": 2,
+    "findings": 5,
+    "tpFindings": 2,
+    "fpFindings": 3,
     "matchedGoldens": [
      {
       "issueId": "add-html-sanitizer-for-translated-message-resources-keycloak#06",
       "text": "The diff-trimming code computes common prefix and suffix independently, so they can overlap and substring throws StringIndexOutOfBoundsException, crashing the verifier instead of reporting the illegal HTML.",
       "severity": "medium"
-     }
-    ],
-    "missedGoldens": [
+     },
      {
       "issueId": "add-html-sanitizer-for-translated-message-resources-keycloak#10",
       "text": "The account and admin UI bundles now use Java MessageFormat placeholders and choice syntax for error-invalid-multivalued-size, but i18next expects {{n}}, so the UI shows literal {0}/{1}/{2} and the raw choice text.",
       "severity": "medium"
      }
-    ]
+    ],
+    "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 1334098,
-    "outputTokens": 11971,
-    "reasoningTokens": 1698,
-    "cacheReadTokens": 92160,
+    "inputTokens": 1400044,
+    "outputTokens": 17108,
+    "reasoningTokens": 3684,
+    "cacheReadTokens": 51712,
     "cacheWriteTokens": 0
    },
-   "calls": 24,
+   "calls": 28,
    "latencyMs": null
   },
   {
@@ -1120,13 +1115,13 @@
     ]
    },
    "usage": {
-    "inputTokens": 1159202,
-    "outputTokens": 9177,
-    "reasoningTokens": 288,
-    "cacheReadTokens": 37888,
+    "inputTokens": 1339290,
+    "outputTokens": 12768,
+    "reasoningTokens": 1881,
+    "cacheReadTokens": 92672,
     "cacheWriteTokens": 0
    },
-   "calls": 24,
+   "calls": 23,
    "latencyMs": null
   },
   {
@@ -1144,33 +1139,34 @@
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 691962,
-    "outputTokens": 5707,
-    "reasoningTokens": 257,
-    "cacheReadTokens": 111104,
+    "inputTokens": 804135,
+    "outputTokens": 7127,
+    "reasoningTokens": 595,
+    "cacheReadTokens": 106112,
     "cacheWriteTokens": 0
    },
-   "calls": 15,
+   "calls": 14,
    "latencyMs": null
   },
   {
    "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
    "status": "scored",
    "metrics": {
-    "recall": 0.0,
-    "precision": 0.0,
-    "matched": 0,
+    "recall": 0.5,
+    "precision": 0.25,
+    "matched": 1,
     "goldens": 2,
-    "findings": 2,
-    "tpFindings": 0,
-    "fpFindings": 2,
-    "matchedGoldens": [],
-    "missedGoldens": [
+    "findings": 4,
+    "tpFindings": 1,
+    "fpFindings": 3,
+    "matchedGoldens": [
      {
       "issueId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak#02",
       "text": "The test registers cleanup for the literal alias \"alias\" instead of the created IDP aliases, so the created identity providers are never cleaned up.",
       "severity": "low"
-     },
+     }
+    ],
+    "missedGoldens": [
      {
       "issueId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak#opa-01",
       "text": "Adding the organization/BROKER_PUBLIC check to the shared LoginFilter.getLoginPredicate also changes IdentityProviderBean.federatedProviderPredicate, so with organizations disabled a user's linked IdP that has an organizationId but is not public is no longer shown on the login page.",
@@ -1179,35 +1175,30 @@
     ]
    },
    "usage": {
-    "inputTokens": 652980,
-    "outputTokens": 7894,
-    "reasoningTokens": 861,
-    "cacheReadTokens": 74624,
+    "inputTokens": 653267,
+    "outputTokens": 10968,
+    "reasoningTokens": 1485,
+    "cacheReadTokens": 48128,
     "cacheWriteTokens": 0
    },
-   "calls": 19,
+   "calls": 23,
    "latencyMs": null
   },
   {
    "caseId": "replays-self-serve-bulk-delete-system-sentry",
    "status": "scored",
    "metrics": {
-    "recall": 0.6,
+    "recall": 0.4,
     "precision": 1.0,
-    "matched": 6,
+    "matched": 4,
     "goldens": 10,
-    "findings": 6,
-    "tpFindings": 6,
+    "findings": 4,
+    "tpFindings": 4,
     "fpFindings": 0,
     "matchedGoldens": [
      {
       "issueId": "replays-self-serve-bulk-delete-system-sentry#01",
       "text": "The age/timestamp mutual-exclusion validators check truthiness via initial_data.get(), so a zero value is treated as absent and a report carrying both fields passes validation.",
-      "severity": "medium"
-     },
-     {
-      "issueId": "replays-self-serve-bulk-delete-system-sentry#02",
-      "text": "The validation-failure warning logs the entire raw, attacker-controlled browser report instead of a redacted subset.",
       "severity": "medium"
      },
      {
@@ -1224,14 +1215,14 @@
       "issueId": "replays-self-serve-bulk-delete-system-sentry#19",
       "text": "The attribute-keys query key no longer includes the organization slug, so two organizations with the same filters share a cache entry and switching orgs can show the previous org's attribute names.",
       "severity": "medium"
-     },
-     {
-      "issueId": "replays-self-serve-bulk-delete-system-sentry#opa-02",
-      "text": "HIDDEN_ATTRIBUTES is applied only when a search query is present; the no-search early return shows all attributes, so the hidden attributes still appear in the default span attributes view.",
-      "severity": "medium"
      }
     ],
     "missedGoldens": [
+     {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#02",
+      "text": "The validation-failure warning logs the entire raw, attacker-controlled browser report instead of a redacted subset.",
+      "severity": "medium"
+     },
      {
       "issueId": "replays-self-serve-bulk-delete-system-sentry#07",
       "text": "The Snuba replay lookup for error IDs runs even when enable_error_context=false, adding a needless query (and failure point) to opt-out requests.",
@@ -1248,6 +1239,11 @@
       "severity": "medium"
      },
      {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#opa-02",
+      "text": "HIDDEN_ATTRIBUTES is applied only when a search query is present; the no-search early return shows all attributes, so the hidden attributes still appear in the default span attributes view.",
+      "severity": "medium"
+     },
+     {
       "issueId": "replays-self-serve-bulk-delete-system-sentry#opa-03",
       "text": "The bulk delete test sets max_segment_id to None to cover the new guard in _make_recording_filenames, but it mocks delete_matched_rows, so the guard is never executed and removing it would not fail the test.",
       "severity": "medium"
@@ -1255,13 +1251,13 @@
     ]
    },
    "usage": {
-    "inputTokens": 2844864,
-    "outputTokens": 17837,
-    "reasoningTokens": 379,
-    "cacheReadTokens": 173312,
+    "inputTokens": 2938998,
+    "outputTokens": 22932,
+    "reasoningTokens": 1329,
+    "cacheReadTokens": 144256,
     "cacheWriteTokens": 0
    },
-   "calls": 45,
+   "calls": 43,
    "latencyMs": null
   },
   {
@@ -1269,12 +1265,12 @@
    "status": "scored",
    "metrics": {
     "recall": 1.0,
-    "precision": 0.4,
+    "precision": 0.5,
     "matched": 2,
     "goldens": 2,
-    "findings": 5,
+    "findings": 4,
     "tpFindings": 2,
-    "fpFindings": 3,
+    "fpFindings": 2,
     "matchedGoldens": [
      {
       "issueId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry#03",
@@ -1290,13 +1286,13 @@
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 563625,
-    "outputTokens": 9527,
-    "reasoningTokens": 172,
-    "cacheReadTokens": 76288,
+    "inputTokens": 610657,
+    "outputTokens": 12918,
+    "reasoningTokens": 1825,
+    "cacheReadTokens": 65664,
     "cacheWriteTokens": 0
    },
-   "calls": 28,
+   "calls": 26,
    "latencyMs": null
   },
   {
@@ -1307,20 +1303,20 @@
     "precision": 0.0,
     "matched": 0,
     "goldens": 0,
-    "findings": 2,
+    "findings": 3,
     "tpFindings": 0,
-    "fpFindings": 2,
+    "fpFindings": 3,
     "matchedGoldens": [],
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 408479,
-    "outputTokens": 5893,
-    "reasoningTokens": 262,
-    "cacheReadTokens": 44160,
+    "inputTokens": 485130,
+    "outputTokens": 8504,
+    "reasoningTokens": 647,
+    "cacheReadTokens": 69376,
     "cacheWriteTokens": 0
    },
-   "calls": 19,
+   "calls": 21,
    "latencyMs": null
   },
   {
@@ -1344,48 +1340,49 @@
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 563224,
-    "outputTokens": 10536,
-    "reasoningTokens": 478,
-    "cacheReadTokens": 55424,
+    "inputTokens": 636048,
+    "outputTokens": 12904,
+    "reasoningTokens": 1680,
+    "cacheReadTokens": 62336,
     "cacheWriteTokens": 0
    },
-   "calls": 27,
+   "calls": 26,
    "latencyMs": null
   },
   {
    "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
    "status": "scored",
    "metrics": {
-    "recall": 1.0,
+    "recall": 0.5,
     "precision": 1.0,
-    "matched": 2,
+    "matched": 1,
     "goldens": 2,
-    "findings": 2,
-    "tpFindings": 2,
+    "findings": 1,
+    "tpFindings": 1,
     "fpFindings": 0,
     "matchedGoldens": [
      {
       "issueId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry#02",
       "text": "MetricAlertDetectorHandler subclasses StatefulDetectorHandler without implementing its abstract methods, so instantiating it for metric alert detectors raises TypeError where it previously returned an empty-result handler.",
       "severity": "high"
-     },
+     }
+    ],
+    "missedGoldens": [
      {
       "issueId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry#04",
       "text": "The mock occurrence builder ignores its value argument, so tests (e.g. group_2 expected with 6 while the packet carries 10) pass regardless of which value is passed to build_occurrence_and_event_data.",
       "severity": "medium"
      }
-    ],
-    "missedGoldens": []
+    ]
    },
    "usage": {
-    "inputTokens": 560299,
-    "outputTokens": 7432,
-    "reasoningTokens": 264,
-    "cacheReadTokens": 42112,
+    "inputTokens": 633836,
+    "outputTokens": 8840,
+    "reasoningTokens": 683,
+    "cacheReadTokens": 55168,
     "cacheWriteTokens": 0
    },
-   "calls": 22,
+   "calls": 21,
    "latencyMs": null
   },
   {
@@ -1403,10 +1400,10 @@
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 328454,
-    "outputTokens": 3170,
-    "reasoningTokens": 12,
-    "cacheReadTokens": 43648,
+    "inputTokens": 363810,
+    "outputTokens": 4429,
+    "reasoningTokens": 60,
+    "cacheReadTokens": 36096,
     "cacheWriteTokens": 0
    },
    "calls": 12,

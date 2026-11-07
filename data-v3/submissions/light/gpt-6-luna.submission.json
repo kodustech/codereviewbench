@@ -1,0 +1,260 @@
+{
+ "benchmarkVersion": "light-30-gold-v3",
+ "run": {
+  "harness": {
+   "name": "kodus",
+   "version": "dev"
+  },
+  "teamConfig": null,
+  "model": {
+   "id": "gpt-6-luna",
+   "provider": "openai",
+   "accessPath": "subscription"
+  },
+  "executionMode": "live",
+  "sandbox": "alive",
+  "heavy": false,
+  "reasoning": {
+   "config": "vendor-default",
+   "effortRequested": null
+  },
+  "runAt": "2026-11-07T21:08:37.793Z",
+  "mode": "balanced"
+ },
+ "results": [
+  {
+   "caseId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com",
+   "findings": [
+    {
+     "path": "packages/app-store/googlecalendar/lib/CalendarService.ts",
+     "startLine": 254,
+     "endLine": 256,
+     "severity": "high",
+     "category": "bug",
+     "description": "Missing external calendar ID leaves updates without a destination \u2014 Without a selected calendar, updates may target an undefined or unintended calendar ID. Fall back to the destination calendar\u2019s external ID when `externalCalendarId` is absent."
+    },
+    {
+     "path": "packages/core/EventManager.ts",
+     "startLine": 118,
+     "endLine": 119,
+     "severity": "high",
+     "category": "bug",
+     "description": "Missing destination calendar crashes Google Meet fallback \u2014 A Meet booking without a destination calendar crashes during event creation. Optional-chain `mainHostDestinationCalendar` so a missing destination follows the non-Google fallback."
+    }
+   ]
+  },
+  {
+   "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+   "findings": []
+  },
+  {
+   "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
+   "findings": [
+    {
+     "path": "packages/app-store/_utils/oauth/refreshOAuthTokens.ts",
+     "startLine": 8,
+     "endLine": 15,
+     "severity": "high",
+     "category": "bug",
+     "description": "Sync endpoint returns a Fetch Response instead of token data \u2014 Provider callers expect token data, so returning a Fetch `Response` leaves `token.access_token` undefined and breaks refresh. Parse the response and return the provider-shaped result, or update callers to consume a common parsed result."
+    }
+   ]
+  },
+  {
+   "caseId": "sms-workflow-reminder-retry-count-tracking-cal-com",
+   "findings": [
+    {
+     "path": "packages/features/ee/workflows/api/scheduleSMSReminders.ts",
+     "startLine": 38,
+     "endLine": 43,
+     "severity": "high",
+     "category": "bug",
+     "description": "Retry cleanup deletes reminders for non-SMS methods \u2014 Email and other non-SMS reminders can be deleted when their `retryCount` exceeds 1. Restrict this branch to `WorkflowMethods.SMS` as well."
+    }
+   ]
+  },
+  {
+   "caseId": "feat-2fa-backup-codes-cal-com",
+   "findings": []
+  },
+  {
+   "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+   "findings": []
+  },
+  {
+   "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+   "findings": [
+    {
+     "path": "app/assets/javascripts/embed.js",
+     "startLine": 17,
+     "endLine": 17,
+     "severity": "medium",
+     "category": "security",
+     "description": "Substring origin check accepts forged resize messages \u2014 An unrelated origin embedded in `discourseUrl` can send forged `discourse-resize` messages and change the frame height. Compare `e.origin` with the exact parsed origin of `discourseUrl`."
+    }
+   ]
+  },
+  {
+   "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
+   "findings": []
+  },
+  {
+   "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
+   "findings": []
+  },
+  {
+   "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
+   "findings": [
+    {
+     "path": "app/models/optimized_image.rb",
+     "startLine": 149,
+     "endLine": 150,
+     "severity": "high",
+     "category": "bug",
+     "description": "downsize's geometry overload breaks width/height callers \u2014 `ResizeEmoji` still passes width, height, and options, which raises an argument-count error because Ruby replaces the earlier `downsize` definition. Keep one `downsize` method that accepts both call forms, or update all callers to use a geometry string."
+    },
+    {
+     "path": "app/controllers/uploads_controller.rb",
+     "startLine": 67,
+     "endLine": 67,
+     "severity": "high",
+     "category": "bug",
+     "description": "Image downsize geometry does not constrain both dimensions \u2014 The generated `80%>` geometry does not bound both dimensions, so images may remain above the upload-size limit. Pass explicit dimensions or use a supported percentage geometry that constrains both axes."
+    },
+    {
+     "path": "app/controllers/uploads_controller.rb",
+     "startLine": 65,
+     "endLine": 69,
+     "severity": "medium",
+     "category": "performance",
+     "description": "Oversized images trigger repeated identical conversions \u2014 Repeated synchronous ImageMagick conversions consume CPU and delay uploads, even when each conversion leaves the target unchanged. Derive a target that converges in one bounded conversion, or avoid retrying with the same target."
+    }
+   ]
+  },
+  {
+   "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
+   "findings": [
+    {
+     "path": "app/assets/javascripts/admin/controllers/admin-group.js.es6",
+     "startLine": 11,
+     "endLine": 14,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Exact page counts report an extra page \u2014 Exact multiples show an empty extra page. Update `totalPages` to use the ceiling of `user_count / limit`."
+    }
+   ]
+  },
+  {
+   "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
+   "findings": []
+  },
+  {
+   "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+   "findings": [
+    {
+     "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
+     "startLine": 109,
+     "endLine": 116,
+     "severity": "high",
+     "category": "bug",
+     "description": "Concurrent registrations can exceed the device limit \u2014 Make `CountDevices` and the insert atomic, using a transaction with appropriate serialization."
+    }
+   ]
+  },
+  {
+   "caseId": "frontend-asset-optimization-grafana-codex",
+   "findings": []
+  },
+  {
+   "caseId": "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex",
+   "findings": []
+  },
+  {
+   "caseId": "dual-storage-architecture-grafana-codex",
+   "findings": [
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 50,
+     "endLine": 52,
+     "severity": "high",
+     "category": "bug",
+     "description": "Legacy create is canceled when the request context ends \u2014 A client disconnect or completed request can cancel the legacy write, dropping the safety copy for a successful unified write. Derive the bounded context from `context.WithoutCancel(ctx)`."
+    }
+   ]
+  },
+  {
+   "caseId": "unified-storage-performance-optimizations-grafana-codex",
+   "findings": []
+  },
+  {
+   "caseId": "notification-rule-processing-engine-grafana-codex",
+   "findings": []
+  },
+  {
+   "caseId": "implement-access-token-context-encoding-framework-keycloak",
+   "findings": [
+    {
+     "path": "testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/AssertEvents.java",
+     "startLine": 483,
+     "endLine": 484,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Access-token matcher rejects the expected grant shortcut \u2014 Correctly generated token IDs are rejected, while IDs with the wrong grant can pass. Reverse the conditional so only a matching `expectedGrantShortcut` is accepted."
+    }
+   ]
+  },
+  {
+   "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
+   "findings": []
+  },
+  {
+   "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+   "findings": []
+  },
+  {
+   "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+   "findings": []
+  },
+  {
+   "caseId": "fixing-re-authentication-with-passkeys-keycloak",
+   "findings": []
+  },
+  {
+   "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+   "findings": []
+  },
+  {
+   "caseId": "replays-self-serve-bulk-delete-system-sentry",
+   "findings": [
+    {
+     "path": "static/app/views/dashboards/widgetCard/chart.tsx",
+     "startLine": 164,
+     "endLine": 173,
+     "severity": "high",
+     "category": "bug",
+     "description": "Opted-in table widgets receive empty visualization data \u2014 Opted-in dashboard table widgets render blank because `TableWidgetVisualization` receives empty data and metadata. Pass `result.data` and `result.meta`, and derive `columns` from the widget query."
+    }
+   ]
+  },
+  {
+   "caseId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry",
+   "findings": []
+  },
+  {
+   "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+   "findings": []
+  },
+  {
+   "caseId": "github-oauth-security-enhancement-sentry",
+   "findings": []
+  },
+  {
+   "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
+   "findings": []
+  },
+  {
+   "caseId": "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry",
+   "findings": []
+  }
+ ]
+}

@@ -18,7 +18,7 @@
    "config": "vendor-default",
    "effortRequested": null
   },
-  "runAt": "2026-11-07T15:24:07.800Z",
+  "runAt": "2026-11-07T19:12:04.585Z",
   "mode": "heavy"
  },
  "judge": {
@@ -30,22 +30,22 @@
   "cases": 30,
   "casesScored": 30,
   "recallMicro": 0.47107438016528924,
-  "precisionMicro": 0.5327102803738317,
-  "f1Micro": 0.5,
-  "f2Micro": 0.48223350253807096,
+  "precisionMicro": 0.57,
+  "f1Micro": 0.5158371040723982,
+  "f2Micro": 0.488013698630137,
   "recallMacro": 0.5452898550724639,
-  "precisionMacro": 0.5189102564102563,
+  "precisionMacro": 0.5799523809523809,
   "goldensTotal": 121,
   "goldensMatched": 57,
-  "comments": 107,
+  "comments": 100,
   "usage": {
-   "inputTokens": 34919247,
-   "outputTokens": 987937,
-   "reasoningTokens": 274622,
-   "cacheReadTokens": 17361274,
-   "cacheWriteTokens": 11160057
+   "inputTokens": 35328202,
+   "outputTokens": 990562,
+   "reasoningTokens": 276784,
+   "cacheReadTokens": 17667707,
+   "cacheWriteTokens": 11277131
   },
-  "calls": 850
+  "calls": 845
  },
  "cases": [
   {
@@ -631,12 +631,12 @@
    "status": "scored",
    "metrics": {
     "recall": 0.3,
-    "precision": 0.6,
+    "precision": 1.0,
     "matched": 3,
     "goldens": 10,
-    "findings": 5,
+    "findings": 3,
     "tpFindings": 3,
-    "fpFindings": 2,
+    "fpFindings": 0,
     "matchedGoldens": [
      {
       "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#01",
@@ -693,13 +693,13 @@
     ]
    },
    "usage": {
-    "inputTokens": 943241,
-    "outputTokens": 30775,
-    "reasoningTokens": 8768,
-    "cacheReadTokens": 493695,
-    "cacheWriteTokens": 325431
+    "inputTokens": 873534,
+    "outputTokens": 28910,
+    "reasoningTokens": 9575,
+    "cacheReadTokens": 434667,
+    "cacheWriteTokens": 324461
    },
-   "calls": 24,
+   "calls": 25,
    "latencyMs": null
   },
   {
@@ -765,11 +765,11 @@
     ]
    },
    "usage": {
-    "inputTokens": 866784,
-    "outputTokens": 36667,
-    "reasoningTokens": 9703,
-    "cacheReadTokens": 405306,
-    "cacheWriteTokens": 211736
+    "inputTokens": 882793,
+    "outputTokens": 35996,
+    "reasoningTokens": 7937,
+    "cacheReadTokens": 393145,
+    "cacheWriteTokens": 230895
    },
    "calls": 30,
    "latencyMs": null
@@ -827,12 +827,12 @@
    "status": "scored",
    "metrics": {
     "recall": 0.6666666666666666,
-    "precision": 0.75,
+    "precision": 0.8571428571428571,
     "matched": 6,
     "goldens": 9,
-    "findings": 8,
+    "findings": 7,
     "tpFindings": 6,
-    "fpFindings": 2,
+    "fpFindings": 1,
     "matchedGoldens": [
      {
       "issueId": "dual-storage-architecture-grafana-codex#02",
@@ -884,13 +884,13 @@
     ]
    },
    "usage": {
-    "inputTokens": 1312975,
-    "outputTokens": 43498,
-    "reasoningTokens": 9056,
-    "cacheReadTokens": 561089,
-    "cacheWriteTokens": 410063
+    "inputTokens": 1364621,
+    "outputTokens": 40894,
+    "reasoningTokens": 8014,
+    "cacheReadTokens": 610066,
+    "cacheWriteTokens": 460906
    },
-   "calls": 43,
+   "calls": 45,
    "latencyMs": null
   },
   {
@@ -1032,12 +1032,12 @@
    "status": "scored",
    "metrics": {
     "recall": 1.0,
-    "precision": 0.5,
+    "precision": 1.0,
     "matched": 2,
     "goldens": 2,
-    "findings": 4,
+    "findings": 2,
     "tpFindings": 2,
-    "fpFindings": 2,
+    "fpFindings": 0,
     "matchedGoldens": [
      {
       "issueId": "add-html-sanitizer-for-translated-message-resources-keycloak#06",
@@ -1053,13 +1053,13 @@
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 1734261,
-    "outputTokens": 46326,
-    "reasoningTokens": 17199,
-    "cacheReadTokens": 812100,
-    "cacheWriteTokens": 719995
+    "inputTokens": 2221464,
+    "outputTokens": 59396,
+    "reasoningTokens": 23370,
+    "cacheReadTokens": 1134380,
+    "cacheWriteTokens": 788933
    },
-   "calls": 31,
+   "calls": 30,
    "latencyMs": null
   },
   {
@@ -1133,23 +1133,23 @@
    "status": "scored",
    "metrics": {
     "recall": null,
-    "precision": 0.0,
+    "precision": null,
     "matched": 0,
     "goldens": 0,
-    "findings": 2,
+    "findings": 0,
     "tpFindings": 0,
-    "fpFindings": 2,
+    "fpFindings": 0,
     "matchedGoldens": [],
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 1446085,
-    "outputTokens": 28704,
-    "reasoningTokens": 10020,
-    "cacheReadTokens": 682004,
-    "cacheWriteTokens": 437650
+    "inputTokens": 1332266,
+    "outputTokens": 23184,
+    "reasoningTokens": 8714,
+    "cacheReadTokens": 660367,
+    "cacheWriteTokens": 416821
    },
-   "calls": 22,
+   "calls": 14,
    "latencyMs": null
   },
   {
@@ -1343,13 +1343,13 @@
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 805825,
-    "outputTokens": 33140,
-    "reasoningTokens": 8203,
-    "cacheReadTokens": 394393,
-    "cacheWriteTokens": 223523
+    "inputTokens": 843448,
+    "outputTokens": 33355,
+    "reasoningTokens": 7501,
+    "cacheReadTokens": 422395,
+    "cacheWriteTokens": 223456
    },
-   "calls": 30,
+   "calls": 31,
    "latencyMs": null
   },
   {

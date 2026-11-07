@@ -18,7 +18,7 @@
    "config": "vendor-default",
    "effortRequested": null
   },
-  "runAt": "2026-11-07T15:24:07.800Z",
+  "runAt": "2026-11-07T19:12:04.585Z",
   "mode": "heavy"
  },
  "results": [
@@ -504,7 +504,7 @@
      "endLine": 26,
      "severity": "high",
      "category": "bug",
-     "description": "Default `limit` of 50 truncates large groups on the public members page \u2014 Groups with more than 50 members now show only the first 50 on the public page, since it has no pagination UI. Previously non-automatic groups returned everyone and automatic groups up to 200."
+     "description": "Members endpoint now truncates non-automatic groups to 50 by default \u2014 Groups with more than 50 members now show a truncated list on the public members page, which makes one `findMembers()` call and has no paging (see `group/members.hbs`). Add paging there, or apply the default `limit` only to automatic groups.\n\n**Also found in:**\n- `app/assets/javascripts/discourse/routes/group-members.js.es6:8-12`"
     },
     {
      "path": "app/controllers/groups_controller.rb",
@@ -512,23 +512,7 @@
      "endLine": 26,
      "severity": "medium",
      "category": "performance",
-     "description": "Unbounded and negative limit/offset params in group members endpoint \u2014 Any caller who can see a group can request a huge `limit` and force loading and serializing every member, risking memory and CPU exhaustion, while a negative `limit` or `offset` reaches SQL and causes a 500. Clamp `limit` to a maximum such as 200 and keep `offset` at 0 or above."
-    },
-    {
-     "path": "app/assets/javascripts/discourse/models/group.js",
-     "startLine": 20,
-     "endLine": 25,
-     "severity": "medium",
-     "category": "bug",
-     "description": "`findMembers` builds its URL from the editable `name`, breaking reloads after edits \u2014 If an admin edits the name before saving and then pages or adds or removes a member, the reload requests `/groups/<unsaved name>/members.json`, which returns a 404 or the wrong group. Request members by group `id`, or keep the persisted name separate from the editable one."
-    },
-    {
-     "path": "spec/controllers/admin/groups_controller_spec.rb",
-     "startLine": 114,
-     "endLine": 117,
-     "severity": "medium",
-     "category": "bug",
-     "description": "Remove-member spec uses `xhr :put` instead of `xhr :delete` for `remove_member` \u2014 Controller specs ignore the HTTP verb, so this test would still pass even if the route or verb were wrong. The real `remove_member` route is `DELETE /admin/groups/:group_id/members`, so use `xhr :delete` here."
+     "description": "Unbounded limit and negative offset/limit accepted in group members endpoint \u2014 A huge `limit` makes the endpoint load and serialize every member of a large group, and a negative one reaches SQL as an error. Clamp `limit` between 1 and 200 and keep `offset` at 0 or above."
     },
     {
      "path": "app/assets/javascripts/admin/controllers/admin-group.js.es6",
@@ -536,7 +520,7 @@
      "endLine": 14,
      "severity": "medium",
      "category": "bug",
-     "description": "`totalPages` over-counts by one when `user_count` is a multiple of `limit` \u2014 Admins see a phantom empty last page, `showingLast` stays false on the real last page, and `next` fetches an empty page. Use `Math.ceil(user_count / limit)` in `totalPages`, and compute `currentPage` consistently with it."
+     "description": "totalPages overcounts by one when user_count is a multiple of limit \u2014 With `Math.floor(user_count / limit) + 1`, an exact multiple like 50 members at limit 50 shows \"1/2\" and \"next\" loads an empty page. Use `Math.ceil` in `totalPages` instead."
     }
    ]
   },
@@ -557,28 +541,28 @@
    "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
    "findings": [
     {
-     "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
-     "startLine": 108,
-     "endLine": 118,
-     "severity": "high",
-     "category": "bug",
-     "description": "Device limit check and insert are not atomic, allowing limit to be exceeded \u2014 Concurrent requests from new devices can all pass the `CountDevices` check before any insert lands, so the number of devices can exceed `deviceLimit`. Make the count check and the insert atomic with a single conditional insert, a transaction, or a lock."
-    },
-    {
      "path": "pkg/services/anonymous/anonimpl/impl.go",
      "startLine": 144,
      "endLine": 148,
      "severity": "high",
      "category": "bug",
-     "description": "Rejected device stays in local cache after device limit error \u2014 `tagDeviceUI` sets the local cache key before `CreateOrUpdateDevice` runs, so a device rejected with `ErrDeviceLimitReached` is cached. For 29 minutes `TagDevice` then returns nil and it authenticates despite the limit."
+     "description": "Rejected device stays in cache, bypassing device limit on later requests \u2014 In `tagDeviceUI`, set the cache entry only after `CreateOrUpdateDevice` succeeds, or delete it on error."
+    },
+    {
+     "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
+     "startLine": 108,
+     "endLine": 118,
+     "severity": "high",
+     "category": "bug",
+     "description": "Device limit check and insert are not atomic, allowing the limit to be exceeded \u2014 Concurrent requests from new devices can all pass the `CountDevices` check and then insert, exceeding the configured limit, especially across several Grafana instances. Do the count and insert in one transaction, or use a conditional `INSERT ... SELECT` that checks the count."
     },
     {
      "path": "pkg/services/anonymous/anonimpl/client.go",
      "startLine": 44,
      "endLine": 50,
      "severity": "medium",
-     "category": "bug",
-     "description": "Anonymous device tagging now blocks requests and can reject authentication \u2014 Every anonymous request that misses the local cache now blocks on the database count and write, and `Authenticate` can fail with `ErrDeviceLimitReached`. Restore the detached, non-blocking tagging unless rejecting at the limit is intended."
+     "category": "performance",
+     "description": "Synchronous TagDevice blocks every anonymous request on DB with no timeout \u2014 A slow DB delays every anonymous request that misses the local cache, since `TagDevice` runs synchronously in `Authenticate` with only the request context as a bound. Run it in the background, or block only when `deviceLimit > 0`."
     }
    ]
   },
@@ -599,7 +583,7 @@
      "endLine": 57,
      "severity": "high",
      "category": "bug",
-     "description": "Async legacy create goroutine uses request context that gets cancelled \u2014 The goroutines derive their context from the request `ctx`, so once the request ends the legacy `Create`, `Update`, `Delete` and `DeleteCollection` calls get a cancelled context and the writes silently fail. Wrap `ctx` in `context.WithoutCancel` before applying the timeout."
+     "description": "Async legacy create uses request context that is cancelled on handler return \u2014 The request `ctx` is cancelled when the handler returns, so the legacy `Create` (and the Update, Delete and DeleteCollection goroutines) can abort midway and desync the stores. Derive the timeout context from `context.WithoutCancel(ctx)`."
     },
     {
      "path": "pkg/apiserver/rest/dualwriter_mode3.go",
@@ -607,55 +591,47 @@
      "endLine": 141,
      "severity": "high",
      "category": "bug",
-     "description": "Legacy update in mode 3 ignores the object produced by unified storage \u2014 `Legacy.Update` recomputes the update from the original `objInfo` against its own old object, so it can store different data than unified storage and the stores diverge. Pass an `updateWrapper` carrying the object returned by `Storage.Update`."
-    },
-    {
-     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
-     "startLine": 50,
-     "endLine": 59,
-     "severity": "medium",
-     "category": "bug",
-     "description": "Legacy create goroutine shares obj pointer with the response, causing a data race \u2014 `Legacy.Create` may mutate `obj` while the handler serializes `created`, which can be the same object, so this is a data race that can corrupt the response. Pass `obj.DeepCopyObject()` to the goroutine."
+     "description": "Async legacy Update reuses consumed objInfo instead of stored result \u2014 Legacy recomputes the object from its own old state instead of writing what `Storage.Update` produced, so the stores can diverge. Wrap `objInfo` and the stored result `res` in an `updateWrapper` before starting the goroutine."
     },
     {
      "path": "pkg/apiserver/rest/dualwriter_mode3_test.go",
-     "startLine": 28,
-     "endLine": 76,
+     "startLine": 47,
+     "endLine": 77,
      "severity": "medium",
      "category": "bug",
-     "description": "Mode3 Create test never asserts the async Legacy Create call happened \u2014 The legacy write runs in a goroutine the test never waits for, so removing it from `Create` would not fail the test. Wait with `assert.Eventually` and call `m.AssertCalled` for the Legacy `Create`."
-    },
-    {
-     "path": "pkg/apiserver/rest/dualwriter_mode3_test.go",
-     "startLine": 307,
-     "endLine": 355,
-     "severity": "medium",
-     "category": "bug",
-     "description": "Mode3 Update test never verifies the asynchronous Legacy Update call \u2014 The legacy update runs asynchronously and is never awaited or asserted, so dropping it would not fail the test. Wait for the goroutine and assert the Legacy `Update` call happened; the Delete and DeleteCollection tests have the same gap."
+     "description": "Mode3 Create test does not verify the asynchronous legacy write \u2014 The tests still pass if the goroutine calling `Legacy.*` is removed, because they only assert on the storage result. Wait with `assert.Eventually` or a channel signaled from the mock, and register legacy expectations in the Delete and DeleteCollection cases."
     },
     {
      "path": "pkg/apiserver/rest/dualwriter_mode3.go",
-     "startLine": 43,
-     "endLine": 46,
+     "startLine": 96,
+     "endLine": 106,
      "severity": "medium",
      "category": "bug",
-     "description": "Create records storage failure with legacy duration metric \u2014 A `Storage.Create` failure is reported as a legacy error, leaving the storage error metric empty. Call `d.recordStorageDuration(true, ...)` instead of `recordLegacyDuration`; `Update` has the same mistake.\n\n**Also found in:**\n- `pkg/apiserver/rest/dualwriter_mode3.go:129-129`\n- `pkg/apiserver/rest/dualwriter_mode3.go:126-131`"
-    },
-    {
-     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
-     "startLine": 161,
-     "endLine": 167,
-     "severity": "medium",
-     "category": "bug",
-     "description": "Legacy DeleteCollection duration recorded in storage metrics instead of legacy \u2014 Legacy latency and errors get mixed into the storage metrics, and the legacy metrics miss delete-collection entirely. Use `recordLegacyDuration` instead of `recordStorageDuration` in this goroutine."
+     "description": "Delete drops enriched logger from context and labels metric by object name \u2014 The context logger loses the name, kind and method values, and labeling the metric with `name` creates a new series per object. Pass `log` to `klog.NewContext` and use `options.Kind` in `recordStorageDuration`."
     },
     {
      "path": "pkg/apiserver/rest/dualwriter_mode3.go",
      "startLine": 106,
      "endLine": 106,
      "severity": "medium",
+     "category": "performance",
+     "description": "Object name passed as kind label to recordStorageDuration in Delete \u2014 Each distinct object name passed to `recordStorageDuration` creates a new Prometheus series, causing unbounded cardinality and memory growth. Pass `options.Kind`, as the other calls do."
+    },
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 45,
+     "endLine": 45,
+     "severity": "medium",
      "category": "bug",
-     "description": "Delete success metric uses object name instead of kind as label \u2014 Passing `name` creates a high-cardinality metric label that doesn't match the other series, which all use `options.Kind`. Pass `options.Kind` to `recordStorageDuration`."
+     "description": "Create records storage failure with legacy duration metric \u2014 Storage failures in `Create` and `Update` are counted under `recordLegacyDuration`, which skews both metrics and hides storage errors. Use `recordStorageDuration` in both places.\n\n**Also found in:**\n- `pkg/apiserver/rest/dualwriter_mode3.go:126-131`\n- `pkg/apiserver/rest/dualwriter_mode3.go:129-129`"
+    },
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 166,
+     "endLine": 166,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Legacy DeleteCollection duration recorded as storage metric \u2014 Legacy latency and errors from `DeleteCollection` get mixed into the storage metrics. Call `recordLegacyDuration` instead of `recordStorageDuration`."
     }
    ]
   },
@@ -776,31 +752,15 @@
      "endLine": 111,
      "severity": "medium",
      "category": "bug",
-     "description": "Prefix/suffix trimming can overlap and cause StringIndexOutOfBoundsException \u2014 When the sanitizer removes one character from a run of repeats, such as `value=\"aa\"` and `sanitized=\"a\"`, the prefix and suffix loops overlap and `substring` throws `StringIndexOutOfBoundsException`. The verifier then crashes instead of reporting the key."
+     "description": "Overlapping common prefix and suffix cause StringIndexOutOfBoundsException \u2014 When the sanitizer changes markup next to identical characters, `start` and `end` overlap, so the `substring` calls throw `StringIndexOutOfBoundsException` and the verifier crashes instead of reporting the message. Cap the suffix loop at `Math.min(value.length(), sanitized.length()) - start`."
     },
     {
-     "path": "themes/src/main/resources-community/theme/base/account/messages/messages_lt.properties",
-     "startLine": 101,
-     "endLine": 101,
+     "path": "js/apps/account-ui/maven-resources/theme/keycloak.v3/account/messages/messages_en.properties",
+     "startLine": 188,
+     "endLine": 188,
      "severity": "medium",
      "category": "bug",
-     "description": "Lithuanian totpStep1 message replaced with Italian text \u2014 Lithuanian users will see Italian text on the OTP setup page because `totpStep1` holds an Italian sentence. Replace it with a Lithuanian translation, such as the one in the fix."
-    },
-    {
-     "path": "themes/src/main/resources-community/theme/base/login/messages/messages_lt.properties",
-     "startLine": 71,
-     "endLine": 71,
-     "severity": "medium",
-     "category": "bug",
-     "description": "loginTotpStep1 in Lithuanian bundle contains Italian text \u2014 Lithuanian users will see Italian text on the login-time TOTP setup screen because `loginTotpStep1` holds an Italian sentence. Replace it with a Lithuanian translation."
-    },
-    {
-     "path": "js/apps/admin-ui/maven-resources/theme/keycloak.v2/admin/messages/messages_en.properties",
-     "startLine": 3138,
-     "endLine": 3138,
-     "severity": "medium",
-     "category": "bug",
-     "description": "Admin UI message uses MessageFormat syntax instead of i18next placeholders \u2014 If the admin UI renders `error-invalid-multivalued-size` with i18next, the `{0}` placeholders won't be interpolated and the `{2,choice,...}` clause will print literally. Keep i18next-style `{{0}}` placeholders here, or confirm the consumer formats this key with MessageFormat.\n\n**Also found in:**\n- `js/apps/account-ui/maven-resources/theme/keycloak.v3/account/messages/messages_en.properties:188-188`"
+     "description": "Multivalued size message uses MessageFormat syntax in an i18next bundle \u2014 i18next will show the `{0}` placeholders and the `choice` expression literally in the account console, because the bundle and `i18n.ts` use `{{n}}` interpolation. Restore `{{0}}`, `{{1}}` and `{{2}}` in `error-invalid-multivalued-size`, and replace `choice` with neutral wording or i18next plural keys.\n\n**Also found in:**\n- `js/apps/admin-ui/maven-resources/theme/keycloak.v2/admin/messages/messages_en.properties:3138-3138`"
     }
    ]
   },
@@ -843,24 +803,7 @@
   },
   {
    "caseId": "fixing-re-authentication-with-passkeys-keycloak",
-   "findings": [
-    {
-     "path": "services/src/main/java/org/keycloak/authentication/authenticators/browser/PasswordForm.java",
-     "startLine": 62,
-     "endLine": 64,
-     "severity": "high",
-     "category": "bug",
-     "description": "PasswordForm no longer skipped for passkey-only users on themes lacking passkey UI \u2014 Passkey-only users now reach a password page that offers no passkey option under themes inheriting the base `login-password.ftl`, so they cannot finish the step. Add the passkeys macro to that template, or apply the `isConditionalPasskeysEnabled` condition in `configuredFor` only when the theme can render it."
-    },
-    {
-     "path": "services/src/main/java/org/keycloak/authentication/authenticators/browser/PasswordForm.java",
-     "startLine": 51,
-     "endLine": 54,
-     "severity": "medium",
-     "category": "security",
-     "description": "Passkey credential IDs exposed on password form before user is authenticated \u2014 Anyone who knows a username can read that user's passkey credential IDs and learn whether the user has passkeys, because `fillContextForm` runs before the password is verified. Call it only when `USER_SET_BEFORE_USERNAME_PASSWORD_AUTH` is set, and otherwise use discoverable-credential mode without an `allowCredentials` list."
-    }
-   ]
+   "findings": []
   },
   {
    "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
@@ -954,7 +897,7 @@
      "endLine": 482,
      "severity": "high",
      "category": "security",
-     "description": "Installer check skipped when no Integration row exists for installation_id \u2014 Return `error(...)` here instead, or verify the OAuth user against the installation's account or sender from the GitHub API."
+     "description": "First-time GitHub installs skip authenticated-user verification \u2014 A first-time install with any `installation_id` skips the authenticated-user check, so the installation can be bound to the wrong user's session. Don't call `pipeline.next_step()` here without verifying that `github_authenticated_user` matches the installation's account or sender, or reject the request."
     },
     {
      "path": "src/sentry/integrations/github/integration.py",
@@ -962,7 +905,7 @@
      "endLine": 436,
      "severity": "medium",
      "category": "bug",
-     "description": "Token request and `get_user_info` can raise unhandled errors, causing a 500 \u2014 A network failure or non-2xx response from the GitHub token or `/user` endpoints leaves `safe_urlopen` and `get_user_info` (which calls `raise_for_status()`) unhandled, giving a 500 instead of the error page. Wrap both calls in try/except and return `error(request, self.active_organization)`."
+     "description": "Token exchange and user-info lookup in GitHub OAuth step lack error handling \u2014 A network failure, timeout, or GitHub API error raises an unhandled exception and returns a 500 during installation. Move `safe_urlopen` into the try block and wrap `get_user_info` in try/except, returning `error(request, self.active_organization)` on failure."
     },
     {
      "path": "src/sentry/integrations/github/integration.py",
@@ -970,7 +913,7 @@
      "endLine": 413,
      "severity": "medium",
      "category": "security",
-     "description": "OAuth state is a predictable static signature, not a per-flow nonce \u2014 `pipeline.signature` is identical for every user and session, so the OAuth `state` is predictable and gives no CSRF or session binding. An attacker could then bind their own GitHub login to a victim's flow."
+     "description": "OAuth state is a constant pipeline signature, not a per-flow secret \u2014 `pipeline.signature` is a constant, publicly derivable value, so the `state` check gives no CSRF or login-binding protection. Generate a random per-flow nonce, store it with `bind_state`, and compare it using `constant_time_compare` in the callback."
     },
     {
      "path": "tests/sentry/integrations/github/test_integration.py",
@@ -978,15 +921,15 @@
      "endLine": 396,
      "severity": "medium",
      "category": "bug",
-     "description": "test_installation_not_found uses wrong state and asserts generic error text \u2014 The state in `test_installation_not_found` likely differs from the pipeline signature, so the test probably fails at the state check, and the generic \"Invalid installation request.\" text matches every `OAuthLoginView` error. Use the real pipeline signature as `state` and assert on something specific to a missing installation."
+     "description": "test_installation_not_found uses wrong state and asserts only generic message \u2014 The test uses a `state` that differs from the pipeline signature in other tests, so it likely fails at the state check and never reaches the missing-installation branch. Use the correct state and assert on something specific to that case, since the generic message appears on every failure path."
     },
     {
      "path": "src/sentry/integrations/github/integration.py",
      "startLine": 501,
-     "endLine": 504,
+     "endLine": 505,
      "severity": "medium",
      "category": "bug",
-     "description": "KeyError when Integration metadata lacks sender during installation check \u2014 `build_integration` stores `sender` only when `state.get('sender')` is truthy, so an existing `Integration` without it makes `integration.metadata[\"sender\"][\"login\"]` raise `KeyError` and return a 500. Read it with `.get('sender', {}).get('login')` and treat a missing value as a verification failure."
+     "description": "KeyError on missing 'sender' in integration metadata causes 500 during install \u2014 `integration.metadata['sender']['login']` raises `KeyError` when `sender` is absent, since `build_integration` writes it only conditionally, so installation returns a 500 instead of the error page. Read it with `.get()` and fall through to `error()` when it's missing."
     }
    ]
   },

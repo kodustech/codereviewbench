@@ -15,10 +15,10 @@
   "sandbox": "alive",
   "heavy": false,
   "reasoning": {
-   "config": "explicit",
-   "effortRequested": "low"
+   "config": "vendor-default",
+   "effortRequested": null
   },
-  "runAt": "2026-11-07T15:10:12.143Z",
+  "runAt": "2026-11-07T20:03:22.217Z",
   "mode": "balanced"
  },
  "results": [
@@ -27,11 +27,11 @@
    "findings": [
     {
      "path": "packages/core/EventManager.ts",
-     "startLine": 119,
+     "startLine": 118,
      "endLine": 119,
      "severity": "high",
      "category": "bug",
-     "description": "Google Meet booking crashes when no destination calendar is set \u2014 Booking creation aborts instead of falling back to Cal Video because `mainHostDestinationCalendar.integration` dereferences an undefined calendar. Restore optional chaining on `mainHostDestinationCalendar`."
+     "description": "Google Meet bookings crash when destination calendars are empty or absent \u2014 Dereferencing `mainHostDestinationCalendar.integration` prevents the fallback to Cal Video when no destination is available. Restore optional chaining on `mainHostDestinationCalendar` in this condition."
     },
     {
      "path": "packages/core/EventManager.ts",
@@ -39,15 +39,15 @@
      "endLine": 170,
      "severity": "high",
      "category": "bug",
-     "description": "Video booking references lose credential IDs, preventing meeting deletion \u2014 `handleCancelBooking` skips video meeting deletion when the booking reference lacks `credentialId`. Preserve `result.credentialId` for video results as well as calendar results."
+     "description": "Video booking references lose credentials required for cancellation \u2014 Without `credentialId`, `handleCancelBooking` cannot delete dedicated video meetings when bookings are canceled. Preserve `result.credentialId` for video results as well as calendar results."
     },
     {
-     "path": "packages/app-store/office365calendar/lib/CalendarService.ts",
-     "startLine": 73,
-     "endLine": 76,
+     "path": "packages/core/EventManager.ts",
+     "startLine": 370,
+     "endLine": 370,
      "severity": "high",
      "category": "bug",
-     "description": "Collective bookings use the first host's destination calendar for every host \u2014 Other Office365 hosts can fail to create events or target the wrong calendar because `mainHostDestinationCalendar` selects the first destination despite each adapter invocation using different credentials. Select the destination matching the current credential, or pass a per-destination event from `createAllCalendarEvents`."
+     "description": "Secondary hosts use the organizer's destination calendar \u2014 The Office 365, Lark, and base calendar adapters select the first entry in `event.destinationCalendar`, sending secondary hosts' events to the wrong calendar. Pass only the current credential's `destination` in `event.destinationCalendar` when calling `createEvent`."
     },
     {
      "path": "packages/app-store/googlecalendar/lib/CalendarService.ts",
@@ -55,23 +55,7 @@
      "endLine": 256,
      "severity": "high",
      "category": "bug",
-     "description": "Missing external calendar IDs break legacy update and deletion routing \u2014 Legacy references without `externalCalendarId` cannot resolve `selectedCalendar`, while the equivalent deletion path incorrectly uses `primary` despite a configured non-primary destination. Restore a usable destination fallback for updates and deletions when `externalCalendarId` is absent."
-    },
-    {
-     "path": "packages/features/bookings/lib/handleNewBooking.ts",
-     "startLine": 1077,
-     "endLine": 1078,
-     "severity": "high",
-     "category": "bug",
-     "description": "Missing organizer calendar drops collective hosts' destination calendars \u2014 Other collective hosts lose their configured calendar events when the organizer has no destination, because `evt.destinationCalendar?.push` silently skips appending their destinations. Initialize `evt.destinationCalendar` as an array before appending `teamDestinationCalendars`."
-    },
-    {
-     "path": "packages/core/EventManager.ts",
-     "startLine": 208,
-     "endLine": 209,
-     "severity": "high",
-     "category": "bug",
-     "description": "Calendar location updates lose external calendar and credential IDs \u2014 `editLocationHandler` loses metadata needed to route later calendar operations because `CalendarManager.updateEvent` results contain neither `externalId` nor `credentialId`. Propagate the original reference's external calendar ID and credential ID through the update result before consuming them here."
+     "description": "Missing calendar IDs break destination fallback for updates and deletions \u2014 For older references without `externalCalendarId`, the `selectedCalendar` fallback resolves to `primary`, causing updates to fail for events on other calendars. Restore the configured destination fallback in both `updateEvent` and `deleteEvent`."
     },
     {
      "path": "packages/features/bookings/lib/handleCancelBooking.ts",
@@ -79,7 +63,15 @@
      "endLine": 457,
      "severity": "high",
      "category": "bug",
-     "description": "Collective recurring cancellations leave other hosts' calendar events undeleted \u2014 Other hosts' recurring events remain undeleted because `bookingToDelete.user.credentials` limits deletion to the organizer and `updBooking.references.find` repeatedly selects the first calendar reference. Use `calendarCredential` for the current reference and match each updated booking's reference by `credentialId`."
+     "description": "Recurring collective cancellations repeat organizer deletions and skip hosts \u2014 Looping over `bookingToDelete.user.credentials` and selecting the first calendar reference repeats organizer deletions while leaving secondary hosts' events undeleted. Match each occurrence's `bookingRef` to `reference.type` and `credentialId`, then delete it using the already resolved host credential."
+    },
+    {
+     "path": "packages/features/bookings/lib/handleNewBooking.ts",
+     "startLine": 1077,
+     "endLine": 1078,
+     "severity": "high",
+     "category": "bug",
+     "description": "Collective host calendars are dropped when the organizer has no destination \u2014 Optional chaining on a null `evt.destinationCalendar` silently discards every collected secondary-host destination. Initialize `evt.destinationCalendar` to an empty array before appending `teamDestinationCalendars`."
     },
     {
      "path": "packages/trpc/server/routers/viewer/organizations/create.handler.ts",
@@ -87,7 +79,7 @@
      "endLine": 153,
      "severity": "high",
      "category": "bug",
-     "description": "Billing-disabled organization creation no longer saves a slug \u2014 `publishHandler` rejects publication when billing-disabled creation saves neither `slug` nor `metadata.requestedSlug`. Restore the `slug` assignment when `IS_TEAM_BILLING_ENABLED` is false, leaving `requestedSlug` conditional on billing being enabled."
+     "description": "Organization creation loses all slug sources when team billing is disabled \u2014 Without `slug` or `metadata.requestedSlug`, `createTeams` rejects the organization and `publish` has no slug to publish. Invert the `IS_TEAM_BILLING_ENABLED` condition for the direct `slug` assignment so a slug source is always persisted."
     }
    ]
   },
@@ -100,7 +92,7 @@
      "endLine": 48,
      "severity": "high",
      "category": "bug",
-     "description": "Team admins are incorrectly denied permission to add booking guests \u2014 Requiring `isTeamOwner` excludes ADMIN members who are neither the organizer nor an attendee, since it accepts only OWNER memberships. Use `isTeamAdmin` alone because it already accepts both ADMIN and OWNER memberships."
+     "description": "Team administrators are incorrectly forbidden from adding booking guests \u2014 An `ADMIN` who is neither the organizer nor an attendee receives `FORBIDDEN` because `isTeamAdminOrOwner` requires both predicates to pass. Use `isTeamAdmin` directly, since it authorizes both `ADMIN` and `OWNER` memberships, or combine it with `isTeamOwner` using OR."
     },
     {
      "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
@@ -108,15 +100,7 @@
      "endLine": 77,
      "severity": "high",
      "category": "security",
-     "description": "Case-sensitive guest checks allow blocked email addresses \u2014 An authorized attendee can bypass `blacklistedGuestEmails` by changing an address\u2019s letter case. Normalize `guests` before filtering and persisting them, and normalize `attendee.email` for comparison."
-    },
-    {
-     "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
-     "startLine": 158,
-     "endLine": 163,
-     "severity": "high",
-     "category": "bug",
-     "description": "Guest additions use requester credentials for organizer calendar updates \u2014 Calendar updates can fail when someone other than the organizer adds guests: for references without `credentialId`, `EventManager.updateAllCalendarEvents` selects the requester\u2019s credentials by type. Initialize `EventManager` with `booking.user` and their credentials, rejecting bookings without an organizer."
+     "description": "Guest email casing bypasses the blacklist \u2014 An authorized attendee can invite a blocked address by changing its capitalization because `blacklistedGuestEmails.includes(guest)` compares the original casing against lowercase entries. Normalize guest addresses before blacklist comparison and persistence."
     },
     {
      "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
@@ -124,7 +108,23 @@
      "endLine": 78,
      "severity": "medium",
      "category": "bug",
-     "description": "Guest filtering allows duplicate attendees and repeated invitations \u2014 Repeated addresses in `uniqueGuests` can create duplicate attendee rows and invitations; check the server schema and `Attendee` model for missing uniqueness enforcement. Deduplicate normalized addresses before constructing `guestsFullDetails`, and enforce booking/address uniqueness to cover concurrent requests."
+     "description": "Duplicate guest inputs and concurrent requests create duplicate attendees \u2014 Repeated emails in `uniqueGuests` create duplicate attendee rows and invitations; concurrent requests do too because `Attendee` lacks booking/email uniqueness. Deduplicate normalized inputs server-side and enforce booking/email uniqueness atomically during insertion."
+    },
+    {
+     "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+     "startLine": 137,
+     "endLine": 138,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Guest notifications omit the booking's persisted calendar identity \u2014 When `booking.iCalUID` is omitted, `generateIcsString` falls back to `booking.uid`, potentially creating a separate invitation instead of updating the existing calendar event. Preserve `booking.iCalUID` when constructing `evt`."
+    },
+    {
+     "path": "packages/trpc/server/routers/viewer/bookings/addGuests.schema.ts",
+     "startLine": 5,
+     "endLine": 5,
+     "severity": "medium",
+     "category": "performance",
+     "description": "Unbounded guest additions permit quadratic notification work \u2014 An unbounded `guests` array permits large attendee inserts and concurrent notifications, with quadratic aggregate work and attachment volume because each generated ICS includes every attendee. Enforce server-side guest-count and total-attendee limits before insertion and notification fanout."
     }
    ]
   },
@@ -132,12 +132,28 @@
    "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
    "findings": [
     {
+     "path": "apps/web/pages/api/webhook/app-credential.ts",
+     "startLine": 50,
+     "endLine": 50,
+     "severity": "high",
+     "category": "bug",
+     "description": "Metadata lookup by directory key rejects valid app slugs \u2014 Valid apps such as `google-calendar` and `zoom` are rejected because `appStoreMetadata` uses directory keys `googlecalendar` and `zoomvideo`. Find the entry by its `slug`, or select the app's `dirName` and use it as the key."
+    },
+    {
      "path": "packages/app-store/_utils/oauth/refreshOAuthTokens.ts",
-     "startLine": 15,
+     "startLine": 8,
      "endLine": 15,
      "severity": "high",
      "category": "bug",
-     "description": "Synchronized OAuth refresh returns a raw Response instead of token data \u2014 Google and Zoho/Bigin consumers expect `.data`, while HubSpot expects decoded token fields, so returning `response` breaks successful refreshes when synchronization is enabled. Decode it in `refreshOAuthTokens` and adapt it to each consumer, or normalize both branches and update all consumers."
+     "description": "Synchronized OAuth refresh returns a Response instead of token data \u2014 Returning a Fetch `Response` from `refreshOAuthTokens` breaks callers expecting `.data` or direct token properties when synchronization is enabled. Decode the response and adapt it to each caller's expected shape, or normalize both branches and update the callers together."
+    },
+    {
+     "path": "packages/app-store/_utils/oauth/parseRefreshTokenResponse.ts",
+     "startLine": 5,
+     "endLine": 11,
+     "severity": "high",
+     "category": "bug",
+     "description": "Sync token schema strips expiry and provider-specific fields \u2014 The computed keys in `minimumTokenResponseSchema` are literal strings, so expiry fields are stripped, breaking consumers such as Zoom's `newTokens.expires_in` calculation. Define `expires_in` and `expiry_date` explicitly and preserve provider-specific fields."
     },
     {
      "path": "packages/app-store/googlecalendar/lib/CalendarService.ts",
@@ -145,39 +161,39 @@
      "endLine": 100,
      "severity": "high",
      "category": "bug",
-     "description": "Refreshed credentials are stored as a safe-parse result instead of token fields \u2014 Saving `key` persists the safe-parse wrapper from `parseRefreshTokenResponse`, so subsequent `googleCredentialSchema.parse(credential.key)` calls cannot load the refreshed credentials. Check `key.success`, throw `key.error` on failure, and persist `key.data`."
+     "description": "Safe-parse result is persisted instead of Google credential fields \u2014 Persisting the safe-parse wrapper returned by `parseRefreshTokenResponse` prevents `googleCredentialSchema.parse(credential.key)` from loading the credential, even with synchronization disabled. Check `result.success`, throw `result.error` on failure, and persist `result.data` as `key`."
     },
     {
      "path": "packages/app-store/zoho-bigin/lib/CalendarService.ts",
-     "startLine": 93,
+     "startLine": 92,
      "endLine": 93,
      "severity": "high",
      "category": "bug",
-     "description": "OAuth refresh uses credential ID instead of user ID \u2014 Passing `credentialId` as `calcomUserId` makes the sync endpoint look up the wrong user's credentials or reject the request. Pass `credential.userId` from `biginAuth` separately, retaining `credentialId` for database updates."
+     "description": "Zoho Bigin token refresh uses the credential ID as the user ID \u2014 Passing `credentialId` as `calcomUserId` requests tokens for the wrong principal or a nonexistent user. Thread `credential.userId` from `biginAuth` into this call, retaining `credentialId` for database updates."
+    },
+    {
+     "path": "packages/app-store/zoomvideo/lib/VideoApiAdapter.ts",
+     "startLine": 92,
+     "endLine": 92,
+     "severity": "high",
+     "category": "bug",
+     "description": "Zoom token sync uses an unrecognized app slug \u2014 An endpoint resolving `appSlug` cannot find this integration because Zoom's metadata and installed credential use `zoom`, not `zoomvideo`; check `packages/app-store/zoomvideo/_metadata.ts`. Pass `zoom` instead of the directory name."
     },
     {
      "path": "packages/app-store/salesforce/lib/CalendarService.ts",
      "startLine": 96,
-     "endLine": 96,
+     "endLine": 98,
      "severity": "high",
      "category": "bug",
-     "description": "Salesforce initialization references an unimported Prisma client \u2014 The unresolved `prisma` reference prevents compilation or fails at runtime during Salesforce initialization if transpilation proceeds. Import `prisma` from `@calcom/prisma` before calling `prisma.credential.update`."
+     "description": "Undefined Prisma client breaks Salesforce client initialization \u2014 Salesforce client initialization fails because `prisma` is neither imported nor defined in this file. Import the client from `@calcom/prisma` before calling `prisma.credential.update`."
     },
     {
-     "path": "packages/app-store/_utils/oauth/parseRefreshTokenResponse.ts",
-     "startLine": 8,
-     "endLine": 10,
-     "severity": "medium",
+     "path": "packages/app-store/salesforce/lib/CalendarService.ts",
+     "startLine": 75,
+     "endLine": 84,
+     "severity": "high",
      "category": "bug",
-     "description": "Computed schema keys strip real expiry fields from token responses \u2014 Zoom and Office365 lose required expiry values because `z.string().toString()` creates a literal schema key rather than matching fields such as `expires_in`. Define supported expiry fields explicitly or preserve and validate additional fields in `parseRefreshTokenResponse`."
-    },
-    {
-     "path": "apps/web/pages/api/webhook/app-credential.ts",
-     "startLine": 83,
-     "endLine": 89,
-     "severity": "medium",
-     "category": "bug",
-     "description": "Concurrent webhook deliveries can create duplicate app credentials \u2014 Concurrent deliveries can both find no matching credential and call `prisma.credential.create`, producing duplicate rows because `Credential` lacks a user/app uniqueness constraint. Serialize the operation per user/app, or enforce that uniqueness in `Credential` and use an atomic upsert."
+     "description": "Salesforce token refresh bypasses external credential sharing \u2014 Credentials managed by an external platform cannot refresh through this direct `fetch` request when credential sharing and `CALCOM_CREDENTIAL_SYNC_ENDPOINT` are enabled. Route the operation through `refreshOAuthTokens` with the Salesforce slug and `credential.userId`."
     },
     {
      "path": "packages/app-store/salesforce/lib/CalendarService.ts",
@@ -185,7 +201,7 @@
      "endLine": 84,
      "severity": "medium",
      "category": "performance",
-     "description": "Salesforce client construction refreshes tokens and writes credentials unconditionally \u2014 The unconditional token `fetch` and `prisma.credential.update` add an external round trip and database write before every Salesforce service operation, even when the token remains valid. Preserve jsforce's on-demand refresh behavior or refresh only when the current token needs replacement."
+     "description": "Salesforce client refreshes tokens unconditionally but uses stale credentials \u2014 Every Salesforce service construction adds a token request and database update, yet the connection still uses the original `credentialKey` token. Refresh only when required and initialize the connection with the refreshed credentials."
     }
    ]
   },
@@ -198,7 +214,7 @@
      "endLine": 197,
      "severity": "high",
      "category": "bug",
-     "description": "Retry persistence errors abort scheduling for the remaining SMS reminders \u2014 If cancellation deletes a loaded reminder, `prisma.workflowReminder.update` throws and skips the remaining batch. Use `prisma.workflowReminder.updateMany` filtered by `id` with an atomic `retryCount` increment so deletion is a no-op, and catch persistence errors within the per-reminder handler."
+     "description": "Retry bookkeeping failures abort processing of remaining SMS reminders \u2014 If cancellation deletes a loaded reminder, `prisma.workflowReminder.update` throws inside `catch`, returning HTTP 500 and skipping remaining reminders. Use `prisma.workflowReminder.updateMany` to tolerate missing rows, and catch bookkeeping failures within the per-reminder error handler."
     }
    ]
   },
@@ -208,18 +224,18 @@
     {
      "path": "packages/features/auth/lib/next-auth-options.ts",
      "startLine": 131,
-     "endLine": 145,
+     "endLine": 131,
      "severity": "high",
      "category": "security",
-     "description": "Backup-code login bypasses password verification when TOTP is supplied \u2014 A stolen `backupCode` can authenticate without the account password because any nonempty `totpCode` skips the preceding password guards. Require password verification for `IdentityProvider.CAL` backup-code authentication regardless of whether `totpCode` is supplied."
+     "description": "Backup-code login bypasses password verification when a TOTP code is supplied \u2014 A valid `backupCode` paired with any nonempty `totpCode` grants access to a password-based account without its password. Verify `credentials.password` for `IdentityProvider.CAL` accounts regardless of second-factor fields before entering the backup-code branch."
     },
     {
      "path": "packages/features/auth/lib/next-auth-options.ts",
-     "startLine": 148,
+     "startLine": 147,
      "endLine": 155,
      "severity": "high",
      "category": "security",
-     "description": "Concurrent backup-code logins allow reuse and restore consumed codes \u2014 Unconditional writes through `prisma.user.update` break the one-time guarantee of `backupCodes` when requests validate the same stored list. Atomically compare and replace `user.backupCodes`, rejecting or retrying requests whose conditional update affects no rows."
+     "description": "Concurrent logins can reuse or restore single-use backup codes \u2014 Unconditional writes to `backupCodes` let concurrent requests authenticate with the same code or restore another request\u2019s consumed code. Consume codes atomically with a conditional update matching the previously read `user.backupCodes`, and reject or retry if no rows change."
     },
     {
      "path": "apps/web/components/settings/EnableTwoFactorModal.tsx",
@@ -227,7 +243,7 @@
      "endLine": 135,
      "severity": "medium",
      "category": "bug",
-     "description": "Dismissing backup codes leaves the 2FA settings switch disabled \u2014 After successful setup, Escape or an outside click leaves `viewer.me` stale because only the Close button invokes `onEnable`. Handle dismissal of `SetupStep.DisplayBackupCodes` by resetting local state and invoking `onEnable` too."
+     "description": "Dismissing backup codes bypasses 2FA completion and leaves settings stale \u2014 Dismissing `SetupStep.DisplayBackupCodes` with Escape or an outside click skips `onEnable`, leaving `viewer.me` and the settings switch stale after successful enablement. Make dismissal invoke `onEnable` and reset `EnableTwoFactorModal`, or prevent dismissal until the explicit Close action."
     }
    ]
   },
@@ -244,7 +260,15 @@
      "endLine": 22,
      "severity": "critical",
      "category": "security",
-     "description": "Unsanitized feed HTML enables stored XSS in embedded posts \u2014 Feed HTML passed to `PostCreator.new` with `Post.cook_methods[:raw_html]` renders unsanitized on the forum origin, enabling stored XSS. Sanitize imported HTML using the forum's safe HTML policy before storing or rendering it."
+     "description": "Unsanitized feed HTML allows stored XSS in imported posts and revisions \u2014 Feed authors can execute JavaScript in the forum\u2019s origin because `absolutize_urls` preserves scripts and event handlers, while `Post.cook` returns `raw_html` verbatim. Sanitize imported HTML with explicit tag, attribute, and URL-scheme allowlists before storing posts or revisions."
+    },
+    {
+     "path": "app/views/embed/best.html.erb",
+     "startLine": 6,
+     "endLine": 6,
+     "severity": "high",
+     "category": "bug",
+     "description": "Invalid Ruby in embed template prevents existing topics from rendering \u2014 Existing embedded topics fail to display comments because the conditionless `if` makes the template invalid Ruby. Replace `<%- end if %>` with `<%- end %>`."
     },
     {
      "path": "app/jobs/scheduled/poll_feed.rb",
@@ -252,15 +276,7 @@
      "endLine": 35,
      "severity": "high",
      "category": "bug",
-     "description": "Feed entries without content crash polling and block subsequent imports \u2014 Description-only entries have no `i.content`, so calling `scrub` raises and blocks subsequent imports. Fall back to `i.description`, then an empty string, before calling `scrub`."
-    },
-    {
-     "path": "app/views/embed/best.html.erb",
-     "startLine": 6,
-     "endLine": 6,
-     "severity": "medium",
-     "category": "bug",
-     "description": "Incomplete Ruby conditional causes an embed template syntax error \u2014 Rendering an existing embedded topic fails because `end if` leaves an incomplete Ruby modifier conditional. Replace it with `end`."
+     "description": "Feed polling aborts on RSS entries without a content field \u2014 Valid RSS entries can lack `i.content`, causing `scrub` to abort polling before later entries are imported. Fall back to `i.content_encoded` or `i.description` before scrubbing, and explicitly skip entries with no body."
     },
     {
      "path": "app/models/topic_embed.rb",
@@ -268,7 +284,7 @@
      "endLine": 71,
      "severity": "medium",
      "category": "bug",
-     "description": "Link and image URLs are resolved incorrectly against the source article \u2014 In `absolutize_urls`, protocol-relative references become paths on the article host, while document-relative references resolve against the forum. Resolve `href` and `src` against `url` with `URI.join` instead of concatenating `prefix`."
+     "description": "Imported URLs mishandle protocol-relative and path-relative references \u2014 Imported links and images break because `prefix` concatenation misroutes protocol-relative URLs and leaves path-relative URLs unresolved. Resolve `href` and `src` against the full article URL using `URI.join` instead."
     },
     {
      "path": "lib/topic_retriever.rb",
@@ -276,7 +292,7 @@
      "endLine": 42,
      "severity": "medium",
      "category": "performance",
-     "description": "Uncached article requests each synchronously poll the entire feed \u2014 Calling `Jobs::PollFeed.new.execute` for each uncached article multiplies feed downloads and per-entry database work during simultaneous first visits. Share polling throttling or caching across article URLs and worker processes, and reuse the latest feed results."
+     "description": "Cold article requests repeatedly download and process the entire feed \u2014 Concurrent uncached article requests each invoke `Jobs::PollFeed`, multiplying full-feed downloads and per-entry database work despite the hourly schedule. Add a feed-wide cache or lock with a polling interval so different article URLs reuse a recent poll."
     }
    ]
   },
@@ -289,7 +305,7 @@
      "endLine": 11,
      "severity": "high",
      "category": "bug",
-     "description": "Missing embed category causes migration to fail before fallback \u2014 Upgrades without a configured `embed_category` raise an exception because `execute(...)[0]['id']` dereferences a missing row before the fallback runs. Check whether the first row exists before reading its ID, and use the uncategorized fallback when it does not."
+     "description": "Empty embed category lookup aborts migration before fallback \u2014 Installations with an empty `embed_category` setting abort the migration because `execute(...)[0]['id']` accesses a missing result. Check for an empty result before reading `['id']` so the uncategorized fallback can run."
     },
     {
      "path": "db/migrate/20150818190757_create_embeddable_hosts.rb",
@@ -297,7 +313,7 @@
      "endLine": 25,
      "severity": "high",
      "category": "bug",
-     "description": "Migrated host URLs retain schemes and paths that prevent host matching \u2014 Legacy entries such as `https://example.com` stop matching because `record_for_host` compares stored values against `URI(url).host`. Strip schemes and paths from `h` before insertion, matching the normalization in `app/models/embeddable_host.rb`."
+     "description": "Migrated hosts retain schemes and paths that prevent host matching \u2014 Previously allowed hosts stop working after upgrade because `EmbeddableHost.record_for_host` compares hostnames against migrated `h` values that may retain schemes or paths. Strip schemes and paths from `h` before inserting, matching the normalization in `app/models/embeddable_host.rb`."
     },
     {
      "path": "app/models/embeddable_host.rb",
@@ -305,22 +321,21 @@
      "endLine": 2,
      "severity": "high",
      "category": "bug",
-     "description": "Host validation rejects valid TLDs longer than five letters \u2014 Administrators cannot configure embedding for valid domains such as `example.museum` and `example.technology`, which the previous setting accepted. Remove the five-character TLD limit from the `host` validation."
+     "description": "Host validation rejects valid top-level domains longer than five letters \u2014 Valid hosts such as `example.technology` can no longer be added or edited because `validates_format_of :host` caps top-level domains at five letters. Remove the upper length limit."
+    },
+    {
+     "path": "app/models/embeddable_host.rb",
+     "startLine": 17,
+     "endLine": 17,
+     "severity": "high",
+     "category": "bug",
+     "description": "Uppercase URL hostnames fail to match allowed embedding hosts \u2014 URLs with uppercase hostnames are denied during embedding authorization and topic retrieval because `where` lowercases only the stored value. Lowercase `host` before binding it to the query."
     }
    ]
   },
   {
    "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
-   "findings": [
-    {
-     "path": "app/assets/stylesheets/common/base/header.scss",
-     "startLine": 17,
-     "endLine": 18,
-     "severity": "medium",
-     "category": "bug",
-     "description": "Header extra-info flex item cannot shrink around long topic titles \u2014 Long, nonwrapping topic titles can push navigation outside the header because the `header-extra-info` outer div retains `min-width: auto` inside `.contents`. Apply `min-width: 0` and let that flex item consume remaining width; the existing `overflow: hidden` on `.extra-info-wrapper` only affects the nested child."
-    }
-   ]
+   "findings": []
   },
   {
    "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
@@ -331,7 +346,7 @@
      "endLine": 150,
      "severity": "high",
      "category": "bug",
-     "description": "Duplicate downsize definition breaks width-and-height callers \u2014 `Jobs::ResizeEmoji.execute` raises `ArgumentError` when passing five arguments because the second `downsize` definition replaces the width-and-height version. Keep one `downsize` method supporting both argument forms, or give the geometry-based method a distinct name."
+     "description": "Duplicate downsize definition breaks width-and-height callers \u2014 `Jobs::ResizeEmoji.execute` still passes five arguments, so replacing `self.downsize` makes emoji resizing raise `ArgumentError`. Keep one method that accepts both argument forms, or give the geometry-string variant a distinct name."
     },
     {
      "path": "app/assets/javascripts/discourse/lib/utilities.js",
@@ -339,7 +354,7 @@
      "endLine": 182,
      "severity": "high",
      "category": "bug",
-     "description": "Unconditional 10 MB ceiling overrides configured attachment size limit \u2014 Attachments larger than 10 MB are rejected even when `max_attachment_size_kb` permits them. Apply the preprocessing ceiling in `maxSizeKB` only to images and retain the configured limit for attachments."
+     "description": "Fixed 10 MB limit rejects attachments allowed by site settings \u2014 Attachments permitted by `max_attachment_size_kb` can no longer pass client validation because `maxSizeKB` ignores that setting. Apply the new allowance only to images and retain the configured attachment limit."
     },
     {
      "path": "app/controllers/uploads_controller.rb",
@@ -347,7 +362,7 @@
      "endLine": 67,
      "severity": "medium",
      "category": "bug",
-     "description": "Oversized multipart GIF uploads lose animation during downsizing \u2014 Animation is lost despite `allow_animated_thumbnails` because `OptimizedImage.optimize` checks the temporary path\u2019s `.gif` suffix rather than `filename`, otherwise invoking `convert` with `[0]`. Preserve the original extension in a processing tempfile or pass the image format explicitly to animation dispatch."
+     "description": "Oversized animated avatars lose animation under the thumbnail policy \u2014 `OptimizedImage.downsize` discards animation before `Upload.create_for` can apply `allow_animated_avatars` when `allow_animated_thumbnails` is disabled. Select the animation setting by upload type before downsizing."
     }
    ]
   },
@@ -355,12 +370,12 @@
    "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
    "findings": [
     {
-     "path": "app/assets/javascripts/discourse/routes/group-members.js.es6",
-     "startLine": 10,
-     "endLine": 11,
+     "path": "app/controllers/groups_controller.rb",
+     "startLine": 22,
+     "endLine": 26,
      "severity": "high",
      "category": "bug",
-     "description": "Public group members page hides members beyond the first 50 \u2014 Members beyond the first 50 become inaccessible because `findMembers` loads one page and `discourse/templates/group/members.hbs` has no pagination controls. Add public pagination or incremental loading."
+     "description": "Default member limit truncates the public group membership page \u2014 Users cannot reach members beyond the first 50 because the `group-members` route fetches once and its template has no pagination controls. Add pagination to the public page alongside the default `limit` change."
     },
     {
      "path": "app/assets/javascripts/admin/controllers/admin-group.js.es6",
@@ -368,7 +383,7 @@
      "endLine": 13,
      "severity": "medium",
      "category": "bug",
-     "description": "Page count adds an empty page at exact multiples of the member limit \u2014 At every positive multiple of `limit`, `totalPages` enables Next to fetch an empty page. Use `Math.ceil(user_count / limit)` to count pages."
+     "description": "Page count adds an empty page when member count is a multiple of the limit \u2014 With exactly 50 members and a limit of 50, `totalPages` enables Next to an empty page. Use `Math.ceil(user_count / limit)` and preserve the intended zero-member behavior."
     },
     {
      "path": "app/controllers/admin/groups_controller.rb",
@@ -376,7 +391,15 @@
      "endLine": 90,
      "severity": "medium",
      "category": "bug",
-     "description": "Removing a member leaves their primary group reference intact \u2014 Post serialization can still display the removed group because `group.users.delete(user_id)` leaves `primary_group_id` intact; check the previous cleanup in `Group#destroy_deletions`. Clear the removed user's matching `primary_group_id` in the same transaction as the membership deletion."
+     "description": "Removing membership leaves the user's primary group reference intact \u2014 `PostSerializer.primary_group_name` can still identify the user with the removed group because `primary_group_id` remains unchanged. Clear the matching reference when removing membership, preserving the cleanup previously performed by `Group.destroy_deletions`."
+    },
+    {
+     "path": "app/controllers/admin/groups_controller.rb",
+     "startLine": 71,
+     "endLine": 74,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Adding an existing group member violates the unique membership index \u2014 Retrying Add or including an existing member in a batch makes `Group.add` violate the unique `(group_id, user_id)` index. Skip existing memberships before insertion, preserving the set-difference behavior of `usernames=`."
     }
    ]
   },
@@ -389,7 +412,7 @@
      "endLine": 17,
      "severity": "medium",
      "category": "bug",
-     "description": "Translation cache ignores the site's fallback locale \u2014 Sites sharing a process can receive another site's fallback language, and changing `SiteSetting.default_locale` leaves cached translations stale. Include `SiteSetting.default_locale` in the accelerator cache key; check the accelerator's cache-key implementation."
+     "description": "Translation cache ignores site-dependent fallback chains \u2014 Users can receive stale or another site's fallback language because `translate_accelerator.rb` caches no-argument translations without accounting for `SiteSetting.default_locale`. Include the effective fallback chain in the cache key, or partition and invalidate cached translations when the chain changes."
     }
    ]
   },
@@ -402,15 +425,7 @@
      "endLine": 46,
      "severity": "high",
      "category": "security",
-     "description": "Rejected devices bypass the admission limit on subsequent requests \u2014 A rejected device authenticates on retry because `tagDeviceUI` populates `localCache` before `CreateOrUpdateDevice` fails, and cache hits skip admission checks; check `tagDeviceUI` in `pkg/services/anonymous/anonimpl`. Cache devices only after successful persistence, and never treat rejected devices as admitted."
-    },
-    {
-     "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
-     "startLine": 110,
-     "endLine": 117,
-     "severity": "high",
-     "category": "bug",
-     "description": "Concurrent device admissions can exceed the configured limit \u2014 Concurrent requests can each observe a count below `deviceLimit` through `CountDevices` and then insert because counting and insertion use separate sessions without serialization. Make admission atomic across server instances with a database lock or equivalent mechanism around the count-and-write operation."
+     "description": "Rejected devices bypass the limit through premature admission caching \u2014 A rejected device authenticates on retry because `tagDeviceUI` caches its ID before `CreateOrUpdateDevice` returns `ErrDeviceLimitReached`, and cache hits skip admission checks. Cache IDs only after successful persistence, and prevent requests from treating in-flight cache entries as admission."
     },
     {
      "path": "pkg/services/anonymous/anonimpl/client.go",
@@ -418,7 +433,15 @@
      "endLine": 46,
      "severity": "high",
      "category": "security",
-     "description": "Missing device header bypasses anonymous device limit \u2014 Anonymous callers can gain access at capacity by omitting `X-Grafana-Device-Id`: `TagDevice` returns nil without it, so `Authenticate` grants access; check `TagDevice` in `pkg/services/anonymous/anonimpl`. Enforce admission for requests without a device identifier rather than relying on an optional client-supplied header."
+     "description": "Omitting the device ID header bypasses the anonymous device limit \u2014 Anonymous authentication succeeds without a capacity check because `TagDevice` returns nil when `X-Grafana-Device-Id` is absent. When a limit is configured, enforce admission independently of this optional client-supplied header."
+    },
+    {
+     "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
+     "startLine": 109,
+     "endLine": 117,
+     "severity": "high",
+     "category": "bug",
+     "description": "Concurrent device admissions can exceed the configured limit \u2014 Concurrent requests can both observe `deviceLimit - 1` through `CountDevices` and insert distinct devices, exceeding the configured limit. Serialize capacity checks and admissions with a database-level lock or equivalent atomic mechanism that works across Grafana instances."
     }
    ]
   },
@@ -436,10 +459,10 @@
     {
      "path": "pkg/apiserver/rest/dualwriter_mode3.go",
      "startLine": 50,
-     "endLine": 55,
+     "endLine": 51,
      "severity": "high",
      "category": "bug",
-     "description": "Request cancellation can abort background legacy writes \u2014 Returning the response can cancel replication before it finishes because `context.WithTimeoutCause` inherits request cancellation. Derive background timeouts from `context.WithoutCancel(ctx)` in `Create`, `Update`, `Delete`, and `DeleteCollection` to preserve request values without inheriting cancellation."
+     "description": "Request cancellation can interrupt asynchronous legacy writes \u2014 Request cancellation can stop the legacy goroutine's SQL work before replication completes, also affecting `Update`, `Delete`, and `DeleteCollection`. Apply `context.WithoutCancel(ctx)` before `context.WithTimeoutCause` to preserve namespace and requester values while retaining the ten-second timeout."
     },
     {
      "path": "pkg/apiserver/rest/dualwriter_mode3.go",
@@ -447,15 +470,7 @@
      "endLine": 139,
      "severity": "high",
      "category": "bug",
-     "description": "Legacy updates replay patches against potentially stale objects \u2014 Passing `objInfo` to `d.Legacy.Update` recomputes patches against potentially stale legacy data, which can produce divergent records or fail during replay. Pass an `updateWrapper` containing `res` to persist the successful unified result."
-    },
-    {
-     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
-     "startLine": 106,
-     "endLine": 106,
-     "severity": "medium",
-     "category": "performance",
-     "description": "Resource names in delete histogram labels cause unbounded cardinality \u2014 Each distinct `name` creates a permanently retained histogram series, increasing metric memory use and scrape cardinality with deletion history. Pass `options.Kind` instead of `name` to `d.recordStorageDuration`."
+     "description": "Legacy updates replay patches against potentially stale objects \u2014 Passing the original `objInfo` lets `d.Legacy.Update` apply patches to stale data, preserving field values that differ from the successful unified write. Pass an `updateWrapper` containing a deep copy of `res` instead of replaying the original transformation."
     },
     {
      "path": "pkg/apiserver/rest/dualwriter_mode3.go",
@@ -463,15 +478,23 @@
      "endLine": 45,
      "severity": "medium",
      "category": "bug",
-     "description": "Unified Create and Update failures are attributed to legacy storage \u2014 Calling `d.recordLegacyDuration` when legacy storage was never called hides unified errors and inflates legacy error metrics. Use `d.recordStorageDuration` for the unified failure paths in both `Create` and `Update`."
+     "description": "Unified Create and Update failures are attributed to legacy storage metrics \u2014 Calling `recordLegacyDuration` when unified `Create` or `Update` fails blames a backend that was never called and hides the actual failure in storage metrics. Use `recordStorageDuration` for both unified-storage error paths."
     },
     {
      "path": "pkg/apiserver/rest/dualwriter_mode3.go",
-     "startLine": 166,
+     "startLine": 165,
      "endLine": 166,
      "severity": "medium",
      "category": "bug",
-     "description": "Legacy DeleteCollection metrics are attributed to unified storage \u2014 Calling `d.recordStorageDuration` for legacy completion double-counts unified operations and assigns legacy failures to the wrong backend. Use `d.recordLegacyDuration` for the legacy `DeleteCollection` result."
+     "description": "Legacy DeleteCollection metrics are attributed to unified storage \u2014 Using `recordStorageDuration` for the `d.Legacy.DeleteCollection` result duplicates the unified observation, misattributes legacy errors, and leaves legacy collection metrics empty. Record this observation with `recordLegacyDuration`."
+    },
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 106,
+     "endLine": 106,
+     "severity": "medium",
+     "category": "performance",
+     "description": "Resource names cause unbounded delete histogram cardinality \u2014 Using `name` as the histogram's kind label permanently retains a series for each distinct deleted resource, increasing exporter memory and scrape cardinality. Pass `options.Kind` to `recordStorageDuration` instead, matching the other observations."
     }
    ]
   },
@@ -479,20 +502,20 @@
    "caseId": "unified-storage-performance-optimizations-grafana-codex",
    "findings": [
     {
-     "path": "pkg/storage/unified/search/bleve.go",
-     "startLine": 137,
-     "endLine": 139,
-     "severity": "high",
-     "category": "bug",
-     "description": "Concurrent builds can overwrite cached indexes and lose event updates \u2014 A cache miss from `GetIndex` during construction can create competing indexes, losing event updates when one replaces another. Serialize construction per key and recheck the cache after acquiring that key\u2019s lock, while allowing different keys to build concurrently."
-    },
-    {
      "path": "pkg/storage/unified/resource/search.go",
      "startLine": 216,
      "endLine": 216,
      "severity": "high",
      "category": "bug",
-     "description": "Startup document counting races with concurrent index creation \u2014 An event can publish an index while `TotalDocs` traverses the cache, triggering a fatal concurrent map iteration/write. Protect traversal in `bleveBackend.TotalDocs` with `cacheMu.RLock` or take a protected snapshot before counting documents."
+     "description": "TotalDocs can race with index creation and crash the process \u2014 An event can trigger `BuildIndex` while `TotalDocs` iterates the cache, crashing the process with a concurrent map iteration/write error. Protect the cache iteration in `TotalDocs` in `pkg/storage/unified/search/bleve.go` with `cacheMu.RLock`."
+    },
+    {
+     "path": "pkg/storage/unified/search/bleve.go",
+     "startLine": 137,
+     "endLine": 139,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Concurrent builds can overwrite an index containing processed events \u2014 A search and `handleEvent` can build separate indexes when `GetIndex` returns nil during construction, allowing a slower snapshot to replace processed events and leave results stale. Coordinate cache lookup and construction per key so callers reuse one completed index while different keys build in parallel."
     }
    ]
   },
@@ -500,36 +523,52 @@
    "caseId": "notification-rule-processing-engine-grafana-codex",
    "findings": [
     {
+     "path": "public/app/features/alerting/unified/components/rule-viewer/AlertRuleMenu.tsx",
+     "startLine": 85,
+     "endLine": 87,
+     "severity": "high",
+     "category": "bug",
+     "description": "Delete is hidden for Grafana list rows without a ruler DTO \u2014 Users with delete permission lose Delete in grouped and filtered lists because those rows supply only `promRule`, while the menu requires `canDelete && rulerRule`. Render deletion from the editable identifier and group, and update the callback contract to avoid requiring a ruler DTO."
+    },
+    {
+     "path": "public/app/features/alerting/unified/components/rule-viewer/AlertRuleMenu.tsx",
+     "startLine": 81,
+     "endLine": 83,
+     "severity": "high",
+     "category": "bug",
+     "description": "Pause action remains hidden for Grafana list rules without a ruler DTO \u2014 Grafana list users cannot pause rules because the menu still requires `rulerRule` and passes it to `MenuItemPauseRule`, despite the Prometheus pause ability. Update the rendering condition and `MenuItemPauseRule` to accept the Prometheus rule or fetch the ruler DTO on demand."
+    },
+    {
      "path": "public/app/features/alerting/unified/rule-list/GrafanaRuleListItem.tsx",
      "startLine": 47,
      "endLine": 47,
      "severity": "high",
      "category": "bug",
-     "description": "Grafana rules lose Pause and Delete actions without rulerRule \u2014 Update those menu items and their handlers to use the Prometheus rule identifier before removing the `rulerRule` input."
+     "description": "Silence notifications does nothing for Grafana rules with only a Prometheus DTO \u2014 Clicking Silence notifications has no effect because `RuleActionsButtons.V2` requires `rulerRuleType.grafana.alertingRule(rule)` to render the drawer, but only `promRule` is supplied. Update `SilenceGrafanaRuleDrawer` to accept a UID and pass the Prometheus rule UID directly."
     },
     {
-     "path": "public/app/features/alerting/unified/rule-list/components/RuleActionsButtons.V2.tsx",
-     "startLine": 56,
-     "endLine": 59,
+     "path": "public/app/features/alerting/unified/hooks/useAbilities.ts",
+     "startLine": 324,
+     "endLine": 324,
      "severity": "high",
      "category": "bug",
-     "description": "Silence notifications action does not open for Prometheus-only rules \u2014 Clicking Silence notifications only sets `showSilenceDrawer`; the drawer's `rulerRuleType.grafana.alertingRule(rule)` guard fails when `rule` is undefined. Update the drawer wiring to accept the Prometheus rule UID so the action opens the editor."
+     "description": "Export is unavailable for Grafana-managed recording rules \u2014 Grafana-managed recording rules lose Export in the Prometheus-only list because `AlertRuleAction.ModifyExport` uses `isAlertingRule`, unlike the previous ruler-based ability. Use the Grafana rule predicate rather than the alerting-only predicate for export support."
+    },
+    {
+     "path": "public/app/features/alerting/unified/hooks/useAbilities.ts",
+     "startLine": 308,
+     "endLine": 313,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Skipped Grafana rule checks incorrectly grant abilities \u2014 Users with Grafana create permission regain Duplicate for plugin-provided rules because an absent `rule`, including from `skipToken`, grants abilities through the OR merge in `AlertRuleMenu`. Return unsupported abilities when `rule` is absent so skipped Grafana checks cannot enable actions."
     },
     {
      "path": "public/app/features/alerting/unified/hooks/useAbilities.ts",
      "startLine": 227,
      "endLine": 228,
-     "severity": "high",
-     "category": "bug",
-     "description": "CombinedRule abilities no longer enforce federated-group immutability \u2014 Existing `useAlertRuleAbility` consumers can now enable editing federated Mimir rules because `useAllRulerRuleAbilities` hardcodes `isFederated` to false. Preserve the group-level federation restriction when adapting `CombinedRule` abilities."
-    },
-    {
-     "path": "public/app/features/alerting/unified/hooks/useAbilities.ts",
-     "startLine": 401,
-     "endLine": 404,
      "severity": "medium",
      "category": "bug",
-     "description": "Skipped Grafana rule abilities incorrectly enable datasource duplication \u2014 `AlertRuleMenu` combines Grafana and datasource abilities, so `useAllGrafanaPromRuleAbilities` granting Duplicate for an absent rule exposes the action even when datasource duplication is unsupported or denied. Return disabled abilities when `rule` is `skipToken`."
+     "description": "CombinedRule abilities lose the federation guard for immutable rules \u2014 Legacy list buttons now offer Edit for federated Mimir rules because `useAllRulerRuleAbilities` hardcodes `isFederated` to false and no longer receives `rule.group`. Preserve the group's federation state when calculating `CombinedRule` abilities."
     }
    ]
   },
@@ -537,28 +576,20 @@
    "caseId": "implement-access-token-context-encoding-framework-keycloak",
    "findings": [
     {
+     "path": "services/src/main/java/org/keycloak/protocol/oidc/encode/DefaultTokenContextEncoderProvider.java",
+     "startLine": 57,
+     "endLine": 60,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Client-credentials tokens encode an unknown grant type \u2014 Decoding returns unknown instead of `client_credentials` because `ClientCredentialsGrantType.process` calls `generateAccessToken()` without setting `Constants.GRANT_TYPE`, bypassing `createTokenResponse()`. Set `Constants.GRANT_TYPE` on that path before token generation."
+    },
+    {
      "path": "testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/AssertEvents.java",
-     "startLine": 483,
-     "endLine": 483,
+     "startLine": 482,
+     "endLine": 484,
      "severity": "medium",
      "category": "bug",
-     "description": "Access token ID matcher accepts incorrect grant types \u2014 The four event assertions accept incorrect grant types because `substring(3, 5)` checks the wrong offsets and equality triggers rejection. Require a six-character prefix and reject when `substring(4, 6)` differs from `expectedGrantShortcut`."
-    },
-    {
-     "path": "server-spi-private/src/main/java/org/keycloak/protocol/oidc/grants/OAuth2GrantTypeFactory.java",
-     "startLine": 29,
-     "endLine": 33,
-     "severity": "medium",
-     "category": "bug",
-     "description": "Grant shortcut contract recommends a length rejected by token ID decoding \u2014 Custom grants following `getShortcut`'s three-letter recommendation mint IDs that `getTokenContextFromTokenId` rejects because it requires a two-character grant in a six-character prefix. Specify exactly two characters and validate shortcut length during factory initialization before issuing tokens."
-    },
-    {
-     "path": "services/src/main/java/org/keycloak/protocol/oidc/tokenexchange/StandardTokenExchangeProvider.java",
-     "startLine": 237,
-     "endLine": 237,
-     "severity": "medium",
-     "category": "bug",
-     "description": "Nonstandard token exchanges omit the grant type from access token IDs \u2014 V1, federated, and impersonation exchanges through `AbstractTokenExchangeProvider.exchangeClientToOIDCClient` still encode `na` in access token IDs because their grant attribute is unset. Set `Constants.GRANT_TYPE` to `OAuth2Constants.TOKEN_EXCHANGE_GRANT_TYPE` on the shared path's client session context before generating the access token."
+     "description": "Token ID matcher checks the wrong grant characters and inverts equality \u2014 The event expectations cannot detect incorrect grant encoding because the matcher reads the wrong characters and rejects matching grants. Validate that `items[0]` has six characters, then reject when `substring(4, 6)` does not equal `expectedGrantShortcut`."
     }
    ]
   },
@@ -571,7 +602,15 @@
      "endLine": 157,
      "severity": "medium",
      "category": "bug",
-     "description": "Exception assertion can pass before the reader thread finishes \u2014 An in-flight groups request can append an exception to `caughtExceptions` after the test has passed. Keep the reader thread reference and join it after setting `deletedAll` and before asserting `caughtExceptions`."
+     "description": "Exception assertion races with the reader's in-flight request \u2014 The test can miss a concurrent-access error if a pending request adds to `caughtExceptions` after the assertion passes. Retain the reader thread and join it after signaling termination, before inspecting `caughtExceptions`."
+    },
+    {
+     "path": "tests/base/src/test/java/org/keycloak/tests/admin/group/GroupTest.java",
+     "startLine": 152,
+     "endLine": 155,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Group deletion failures leave the non-daemon reader running \u2014 If `remove()` throws, the reader keeps issuing requests, potentially blocking JVM shutdown and interfering with later tests. Put `deletedAll.set(true)` and reader cleanup in a `finally` block around deletion."
     }
    ]
   },
@@ -584,7 +623,15 @@
      "endLine": 111,
      "severity": "medium",
      "category": "bug",
-     "description": "Overlapping prefix and suffix trimming crashes HTML validation \u2014 Sanitizing `<b>x</b></b>` makes `start` exceed `sanitized.length() - end`, causing `StringIndexOutOfBoundsException` and aborting diagnostic aggregation. Bound `end` by each string\u2019s remaining length after `start` so malformed translations produce validation messages instead."
+     "description": "Overlapping prefix and suffix matching crashes HTML validation \u2014 When the sanitizer appends a closing element, overlapping prefix and suffix matches make `substring` throw, preventing the Maven verifier from collecting remaining diagnostics. Bound `end` by each string\u2019s remaining length after subtracting `start`."
+    },
+    {
+     "path": "js/apps/account-ui/maven-resources/theme/keycloak.v3/account/messages/messages_en.properties",
+     "startLine": 188,
+     "endLine": 188,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Java-format placeholders break multivalued-size errors in both UIs \u2014 Users see literal placeholders and ChoiceFormat text because `ThemeResource` returns these strings unchanged and `setUserProfileServerError` uses i18next interpolation. Keep `error-invalid-multivalued-size` compatible with i18next placeholders and supported pluralization in both account and admin UI bundles."
     },
     {
      "path": "misc/theme-verifier/src/main/java/org/keycloak/themeverifier/VerifyMessageProperties.java",
@@ -592,7 +639,7 @@
      "endLine": 126,
      "severity": "medium",
      "category": "security",
-     "description": "Choice normalization hides attacker-controlled HTML from validation \u2014 Replacing entire choice expressions in `value` removes branch text before anchor validation and HTML sanitization, letting attacker-selected links pass unchecked. Change `value.replaceAll` to mask only the `ChoiceFormat` comparison syntax while preserving branch text for validation."
+     "description": "ChoiceFormat normalization hides HTML in translation branches \u2014 Unchecked HTML can reach verification emails through `LinkExpirationFormatterMethod`, and the runtime sanitizer permits external HTTPS links. In `VerifyMessageProperties`, preserve and validate HTML inside ChoiceFormat branches, exempting only numeric choice operators instead of replacing entire expressions."
     },
     {
      "path": "themes/src/main/resources-community/theme/base/login/messages/messages_lt.properties",
@@ -600,7 +647,7 @@
      "endLine": 71,
      "severity": "medium",
      "category": "bug",
-     "description": "Lithuanian OTP enrollment instructions appear in Italian in both bundles \u2014 Lithuanian users receive Italian OTP enrollment instructions from `loginTotpStep1` and the account bundle\u2019s `totpStep1`. Replace both values with Lithuanian translations of the new instruction."
+     "description": "Lithuanian login and account OTP instructions are in Italian \u2014 Lithuanian users receive Italian OTP installation instructions from `loginTotpStep1` and the account bundle\u2019s `totpStep1`. Replace both values with Lithuanian instructions while keeping embedded links removed."
     }
    ]
   },
@@ -609,19 +656,19 @@
    "findings": [
     {
      "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
-     "startLine": 78,
-     "endLine": 82,
+     "startLine": 77,
+     "endLine": 79,
      "severity": "high",
      "category": "security",
-     "description": "All-clients view grant bypasses client-specific policy denial \u2014 Delegated administrators can read explicitly excluded clients through `ClientResource.getClient` because `canView(client)` returns before checking client-specific denials. Replace `canView()` with `canViewClientDefault()` so client-specific policies are evaluated before falling back to all-clients permissions."
+     "description": "Global client view grants bypass client-specific permission denials \u2014 An all-clients `view` grant overrides client-specific denials through `canView(client)` and bypasses object checks in `ClientsResource.getClients()`. Separate global role-based access from policy-based grants, and evaluate object-specific permissions before accepting the all-clients fallback."
     },
     {
      "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
-     "startLine": 138,
-     "endLine": 142,
+     "startLine": 86,
+     "endLine": 87,
      "severity": "high",
      "category": "bug",
-     "description": "Type-filtered lookup omits individually authorized client resources \u2014 `AvailableRoleMappingResource` cannot discover individually authorized clients because `AdminPermissionsSchema.getOrCreateResource` creates their resources without the type required by `resourceStore.findByType`. Assign `AdminPermissionsSchema.CLIENTS_RESOURCE_TYPE` when creating individual client resources."
+     "description": "Global manage permission fails client-scope listing and viewing guards \u2014 Administrators with only all-clients `manage` cannot list client scopes or read realm default scopes, despite authorization by `canManage(ClientScopeModel)` and `canView(ClientScopeModel)`. Update `canView()` so inherited `canListClientScopes()` and `canViewClientScopes()` recognize global `manage` alongside `view`."
     }
    ]
   },
@@ -634,7 +681,7 @@
      "endLine": 63,
      "severity": "high",
      "category": "bug",
-     "description": "Passkey-only users cannot authenticate with the legacy keycloak theme \u2014 Users admitted by `isConditionalPasskeysEnabled(user)` cannot complete authentication with the legacy `keycloak` theme because `base/login/login-password.ftl` lacks WebAuthn controls. Add the passkey macro to that template as well as `keycloak.v2`."
+     "description": "Passkey-only users receive an unusable password challenge in the keycloak theme \u2014 Accepting passkey-only users in `PasswordForm` leaves them unable to authenticate with the `keycloak` theme because `base/login/login-password.ftl` never renders `passkeys.conditionalUIData`. Add the passkeys macro to that base template, not just `keycloak.v2`, so those users can complete authentication."
     }
    ]
   },
@@ -643,11 +690,19 @@
    "findings": [
     {
      "path": "model/infinispan/src/main/java/org/keycloak/models/cache/infinispan/idp/InfinispanIdentityProviderStorageProvider.java",
+     "startLine": 236,
+     "endLine": 240,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Cache expansion republishes invalidated login results under a fresh revision \u2014 Removed login eligibility or organization associations can remain cached if another transaction invalidates `query` before its searches are copied into `IdentityProviderListQuery`. Validate the previous revision before reusing searches, or omit them and pass `startupRevision` to `cache.addRevisioned`."
+    },
+    {
+     "path": "model/infinispan/src/main/java/org/keycloak/models/cache/infinispan/idp/InfinispanIdentityProviderStorageProvider.java",
      "startLine": 405,
      "endLine": 406,
      "severity": "medium",
      "category": "bug",
-     "description": "Organization-aware state leaves hidden providers in the login cache \u2014 A provider hidden while its organization is disabled can reappear after re-enabling because `original` is organization-aware but `updated` is raw. Reload `original` through `idpDelegate.getById()` before evaluating `getLoginPredicate()` so cache invalidation compares persisted models."
+     "description": "Organization-disabled providers can retain stale login cache membership \u2014 Setting `hideOnLogin=true` while an organization is disabled can leave a provider cached and expose it when the organization is re-enabled, because `original.isEnabled()` already returns false. Copy `original` and `updated` into plain `IdentityProviderModel` instances before applying `getLoginPredicate()` to compare persisted eligibility."
     }
    ]
   },
@@ -656,27 +711,35 @@
    "findings": [
     {
      "path": "static/app/views/dashboards/widgetCard/chart.tsx",
-     "startLine": 166,
+     "startLine": 165,
      "endLine": 173,
      "severity": "high",
      "category": "bug",
-     "description": "Enabled table visualization renders empty columns and rows \u2014 Organizations with `use-table-widget-visualization` enabled see empty dashboard tables even when `tableResults` contains results. Populate `tableData` with the current result's data and metadata, and derive `columns` from the widget fields instead of using empty placeholders."
+     "description": "Table visualization receives empty data and columns instead of query results \u2014 Organizations with `use-table-widget-visualization` enabled see an empty table despite populated `tableResults`. Pass the current result\u2019s data and metadata to `TableWidgetVisualization` and derive its columns from the widget fields."
     },
     {
      "path": "static/app/views/explore/hooks/useTraceItemAttributeKeys.tsx",
      "startLine": 39,
-     "endLine": 41,
+     "endLine": 42,
      "severity": "medium",
      "category": "bug",
-     "description": "Attribute query cache is shared across organizations \u2014 Switching organizations with identical project and date selections reuses cached attributes from the previous organization, although `useGetTraceItemAttributeKeys` fetches from an organization-specific endpoint. Include the organization slug in `queryKey` to isolate cached results and in-flight requests."
+     "description": "Attribute query cache key omits organization identity \u2014 Switching organizations with identical projects and date filters can briefly show the previous organization\u2019s attributes because `useGetTraceItemAttributeKeys` fetches organization-specific data. Include the organization slug in `queryKey` to preserve cache isolation."
     },
     {
-     "path": "src/sentry/issues/endpoints/browser_reporting_collector.py",
-     "startLine": 50,
-     "endLine": 59,
+     "path": "static/app/views/performance/newTraceDetails/traceDrawer/details/span/eapSections/attributes.tsx",
+     "startLine": 65,
+     "endLine": 68,
      "severity": "medium",
      "category": "bug",
-     "description": "Truthy checks allow mutually exclusive age and timestamp fields \u2014 Reports containing both `age: 0` and `timestamp: 0` pass validation despite the exclusivity contract. In `validate_timestamp` and `validate_age`, check key membership in `self.initial_data` instead of value truthiness."
+     "description": "Hidden attributes remain visible when the search is empty \u2014 `is_segment`, `project_id`, and `received` remain visible by default because an empty search returns `sorted` before applying `HIDDEN_ATTRIBUTES`. Apply the exclusion before the empty-search return."
+    },
+    {
+     "path": "src/sentry/replays/endpoints/project_replay_summarize_breadcrumbs.py",
+     "startLine": 153,
+     "endLine": 155,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Mismatched timestamp units place errors out of chronological order \u2014 Errors can appear before earlier recording events because `error_events` timestamps use seconds while `event` timestamps use milliseconds. Multiply `error_events[error_idx][\"timestamp\"]` by 1000 before comparing it with `event.get(\"timestamp\", 0)`."
     }
    ]
   },
@@ -689,15 +752,15 @@
      "endLine": 255,
      "severity": "medium",
      "category": "bug",
-     "description": "Process type guard skips killing hung spawn-context workers \u2014 A hung `SpawnProcess` can survive replacement and flush the same shards concurrently because it fails the `isinstance(process, multiprocessing.Process)` check. Check against `multiprocessing.process.BaseProcess` so workers created by `multiprocessing.get_context(\"spawn\").Process` also receive `kill()`."
+     "description": "Process type guard skips hung spawn workers before replacement \u2014 Hung children can resume alongside replacements and process the same shards because the `multiprocessing.Process` guard rejects `SpawnProcess` instances created by `self.mp_context.Process`. Check against `multiprocessing.process.BaseProcess`, then kill and join the old child before replacing its handle."
     },
     {
      "path": "src/sentry/spans/consumers/process/flusher.py",
-     "startLine": 338,
+     "startLine": 337,
      "endLine": 341,
      "severity": "medium",
      "category": "bug",
-     "description": "Expired join deadline skips termination of remaining workers \u2014 Workers blocked in Redis or Kafka can remain alive after shutdown or rebalancing, including every worker if `next_step.join(timeout)` exhausts the budget. When `remaining_time` reaches zero, stop waiting but still run termination cleanup for every worker."
+     "description": "Expired join deadline skips cleanup of remaining flusher processes \u2014 Old flushers can remain running during partition reassignment when `next_step.join(timeout)` or an earlier child exhausts the deadline and `join` skips subsequent children. Apply `remaining_time` only to waiting, and clean up every child even after the deadline expires."
     },
     {
      "path": "src/sentry/spans/consumers/process/flusher.py",
@@ -705,7 +768,7 @@
      "endLine": 301,
      "severity": "medium",
      "category": "performance",
-     "description": "Memory backpressure repeats cluster-wide Redis queries for every worker \u2014 With memory backpressure enabled, each submit synchronously repeats cluster-wide Redis requests because `buffer.get_memory_info()` calls `iter_cluster_memory_usage`, which queries all shards regardless of buffer assignments. Query memory through a single buffer instead of every buffer in `self.buffers`."
+     "description": "Memory backpressure repeats cluster-wide Redis sweeps for every process \u2014 Each submission performs one synchronous cluster-wide Redis sweep per flusher process because `SpansBuffer.get_memory_info()` queries the shared cluster regardless of assigned shards. Fetch memory information from a single buffer instead of querying every buffer in `self.buffers`."
     }
    ]
   },
@@ -713,12 +776,20 @@
    "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
    "findings": [
     {
+     "path": "src/sentry/integrations/mixins/issues.py",
+     "startLine": 390,
+     "endLine": 391,
+     "severity": "high",
+     "category": "bug",
+     "description": "Inbound assignments suppress sync to other issues in the same integration \u2014 An inbound assignment from one Jira issue leaves another linked issue\u2019s assignee stale, even with outbound sync enabled, because `sync_source.integration_id` matches both. Add the originating external issue key or ID to `AssignmentSource` and suppress only that issue\u2019s outbound update."
+    },
+    {
      "path": "src/sentry/integrations/services/assignment_source.py",
      "startLine": 18,
      "endLine": 18,
      "severity": "medium",
      "category": "bug",
-     "description": "AssignmentSource reuses the import-time timestamp for every instance \u2014 Assignments without an explicit `queued` value report the process import time, and `to_dict()` propagates that incorrect timestamp. Use `dataclasses.field(default_factory=timezone.now)` so each `AssignmentSource` gets its own queue timestamp."
+     "description": "AssignmentSource reuses an import-time queued timestamp for every instance \u2014 Every `AssignmentSource` serializes the same import-time `queued` timestamp because `timezone.now()` runs only when the module loads. Use `dataclasses.field(default_factory=timezone.now)` to generate a timestamp for each instance."
     }
    ]
   },
@@ -727,27 +798,19 @@
    "findings": [
     {
      "path": "src/sentry/integrations/github/integration.py",
+     "startLine": 401,
+     "endLine": 412,
+     "severity": "high",
+     "category": "security",
+     "description": "Shared OAuth state allows GitHub identity injection into pending installations \u2014 An attacker can substitute their GitHub identity because `pipeline.signature` hashes only view class names, producing the same OAuth `state` for every user. Generate a cryptographically random nonce per authorization attempt, bind it to pipeline state, and validate the callback against the stored nonce."
+    },
+    {
+     "path": "src/sentry/integrations/github/integration.py",
      "startLine": 501,
-     "endLine": 504,
+     "endLine": 503,
      "severity": "high",
      "category": "bug",
-     "description": "Reconnection crashes when existing integrations lack sender metadata \u2014 Normal setup can omit sender metadata, causing `integration.metadata[\"sender\"][\"login\"]` to raise `KeyError`; check `build_integration` and pipeline completion. Handle missing metadata explicitly and verify installation ownership before allowing reconnection."
-    },
-    {
-     "path": "src/sentry/integrations/github/integration.py",
-     "startLine": 500,
-     "endLine": 505,
-     "severity": "high",
-     "category": "security",
-     "description": "Missing integration rows bypass GitHub installer ownership validation \u2014 A delayed or missing installation webhook lets `Integration.DoesNotExist` bypass ownership validation because `build_integration` accepts valid installation IDs using app credentials. Require verified installer information matching `github_authenticated_user` before completing that branch too."
-    },
-    {
-     "path": "src/sentry/integrations/github/integration.py",
-     "startLine": 401,
-     "endLine": 408,
-     "severity": "medium",
-     "category": "security",
-     "description": "Predictable OAuth state allows GitHub login CSRF \u2014 Every user receives the same state because `pipeline.signature` hashes view class names deterministically; check `Pipeline.__init__`. Generate an unpredictable nonce per pipeline session, persist it in pipeline state, and validate and consume it on callback instead of using `pipeline.signature`."
+     "description": "Reconnecting an installation without sender metadata raises KeyError \u2014 Reconnecting can return HTTP 500 because `build_integration` omits sender metadata and `ensure_integration` replaces stored metadata, leaving `integration.metadata[\"sender\"]` unavailable. Check for missing sender metadata before indexing it and return the installation error."
     }
    ]
   },
@@ -760,7 +823,7 @@
      "endLine": 12,
      "severity": "high",
      "category": "bug",
-     "description": "Metric alert handler is abstract and fails during instantiation \u2014 `Detector.detector_handler` raises `TypeError` when instantiating `MetricAlertDetectorHandler` for `metric_alert_fire`, aborting processing before evaluation. Implement the abstract members required by `StatefulDetectorHandler`, or retain a concrete no-op `DetectorHandler` until the stateful implementation is available."
+     "description": "Metric alert handler is abstract and fails during instantiation \u2014 Accessing `Detector.detector_handler` for `metric_alert_fire` now raises `TypeError` because `MetricAlertDetectorHandler` lacks the abstract methods required by `StatefulDetectorHandler`. Implement `counter_names`, `get_dedupe_value`, `get_group_key_values`, and `build_occurrence_and_event_data`, or retain a concrete `DetectorHandler` whose `evaluate` returns an empty dictionary until those methods are ready."
     }
    ]
   },
