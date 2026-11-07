@@ -1,18 +1,36 @@
 import Link from 'next/link';
 import { ArrowRight, GitPullRequest } from 'lucide-react';
 import meta from '@/lib/data/meta.json';
-import leaderboardData from '@/lib/data/leaderboard.json';
-import type { LeaderboardData } from '@/lib/types';
-import { displayNameOf, providerOf, modelSlug, REPO_LABELS } from '@/lib/constants';
+import { displayNameOf, providerOf, modelSlug, REPO_LABELS, judgeLabel, MODE_DESCRIPTIONS } from '@/lib/constants';
 import { formatScore, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/utils';
+import { entriesOf, entryFor } from '@/lib/entries';
 import ScorecardStack from '@/components/hero/ScorecardStack';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 
-const lb = leaderboardData as unknown as LeaderboardData;
+/** What heavy mode changes, over the models that have both modes. Null until
+ *  at least one model has both. */
+function heavyLift() {
+  const pairs = entriesOf('balanced')
+    .map((b) => ({ b, h: entryFor(b.modelId, 'heavy') }))
+    .filter((x): x is { b: typeof x.b; h: NonNullable<typeof x.h> } => !!x.h);
+  if (!pairs.length) return null;
+  const mean = (xs: number[]) => xs.reduce((a, c) => a + c, 0) / xs.length;
+  const costRatios = pairs.filter((x) => x.b.costPerPR && x.h.costPerPR).map((x) => x.h.costPerPR! / x.b.costPerPR!);
+  return {
+    n: pairs.length,
+    recall: mean(pairs.map((x) => x.h.recall - x.b.recall)),
+    precision: mean(pairs.map((x) => x.h.precision - x.b.precision)),
+    costRatio: costRatios.length ? mean(costRatios) : null,
+  };
+}
 
 export default function Home() {
-  const topEntries = [...lb.entries].sort((a, b) => b.f1 - a.f1).slice(0, 5);
+  const topEntries = entriesOf('balanced').slice(0, 5);
+  const bestBalanced = [...entriesOf('balanced')].sort((a, b) => b.recall - a.recall)[0];
+  const bestHeavy = [...entriesOf('heavy')].sort((a, b) => b.recall - a.recall)[0];
+  const lift = heavyLift();
+  const judge = judgeLabel(meta.judges[0]);
 
   return (
     <div className="flex-1 flex flex-col items-center">
@@ -46,8 +64,8 @@ export default function Home() {
               <p className="text-[length:var(--text-heading-sm)] font-semibold leading-[var(--leading-heading-sm)] tracking-[var(--tracking-heading-sm)] text-white max-w-xl mb-10">
                 Which models actually catch real bugs, measured on {meta.totalCases} merged pull
                 requests from production open-source projects against {meta.totalGoldens} confirmed
-                bugs. Every run is versioned in the repo, so you can check the numbers or re-score
-                them yourself.
+                bugs, in two review modes. Every run is versioned, so you can check the numbers or
+                re-score them yourself.
               </p>
 
               {/* Hero Pill Button do spec: pill branco solido, texto preto.
@@ -96,9 +114,9 @@ export default function Home() {
           <span className="eyebrow block mb-4">Methodology</span>
           <h2 className="mb-5">How the benchmark works</h2>
           <p>
-            Every model reviews the same {meta.totalCases} real PRs, against the same human-authored
-            golden comments, judged the same way. One run per model, at vendor defaults, so the
-            numbers are what you get out of the box.
+            Every model reviews the same {meta.totalCases} real PRs inside the Kodus review harness,
+            once per review mode, against the same gold set, judged the same way. One run per model
+            and mode, at vendor defaults, so the numbers are what you get out of the box.
           </p>
         </div>
       </section>
@@ -108,23 +126,23 @@ export default function Home() {
       {[
         {
           step: '01',
-          title: 'Real PRs, real bugs',
-          body: `${meta.totalCases} merged pull requests from ${meta.repos.length} production OSS repos, each with human-authored review comments as ground truth. ${meta.totalGoldens} golden bugs in total.`,
+          title: 'Real PRs, re-labelled bugs',
+          body: `${meta.totalCases} merged pull requests from ${meta.repos.length} production OSS repos. Kodus re-labelled the real problems in each PR (Opus plus a second reviewer, debated where they disagreed) into a gold set of ${meta.totalGoldens} valid true positives, gold v3.`,
         },
         {
           step: '02',
-          title: 'Deterministic replay',
-          body: 'Each model runs the same production review agent, with tool calls replayed against a frozen snapshot of the repo. No live network, and no non-determinism from the codebase changing under it.',
+          title: 'Two review modes',
+          body: `Balanced: ${MODE_DESCRIPTIONS.balanced.toLowerCase()} Heavy: ${MODE_DESCRIPTIONS.heavy.toLowerCase()} Every model gets a row in each mode.`,
         },
         {
           step: '03',
-          title: 'One judge, every finding',
-          body: `${meta.judges[0]} decides whether each reported finding describes the same underlying issue as a golden comment. Micro-averaged: true and false positives are summed across all PRs before computing precision and recall.`,
+          title: 'One judge, every comment',
+          body: `${judge} decides whether each published comment is the same problem, at the same place, as a gold bug. Each gold bug counts once; anything else is a false positive. Checked against Opus 5.5, the two agreed on 249 of 252 comments.`,
         },
         {
           step: '04',
           title: 'Publish the artifacts',
-          body: 'Every submission and scorecard is versioned in the repo. Re-scoring never requires re-running a model, only the judge call is repeated.',
+          body: 'Every submission and scorecard is versioned in the repo, and every PR has a trace page with the comments the model published next to the gold bugs it found and missed.',
         },
       ].map((s) => (
         <section key={s.step} className="w-full px-6 sm:px-12 pt-[var(--spacing-60)]">
@@ -143,11 +161,13 @@ export default function Home() {
         <div className="editorial">
           <h2 className="mb-5">What the numbers mean</h2>
           {[
-            { metric: 'Recall', desc: 'How many of the known bugs the model actually found.' },
-            { metric: 'Precision', desc: 'Of what it reported, how much was real. A model that talks more finds more but also misfires more.' },
-            { metric: 'F1', desc: 'Harmonic mean of both, equal weight. What the leaderboard ranks by, so talking more is never free.' },
-            { metric: '95% CI', desc: 'How much recall would move on a different sample of 30 PRs. Most of these intervals overlap, so the exact rank is noise, not signal.' },
-                      ].map((m) => (
+            { metric: 'Recall', desc: `Gold bugs the model found, out of ${meta.totalGoldens}.` },
+            { metric: 'Precision', desc: 'Published comments that match a gold bug, out of all published comments. A second comment on the same bug is a false positive.' },
+            { metric: 'F1', desc: 'Harmonic mean of precision and recall, equal weight.' },
+            { metric: 'F2', desc: 'The F-score with beta = 2, popularized for code review by Martian\'s benchmark: 5·P·R / (4·P + R). It weighs recall twice as much as precision, because a missed bug costs more than a comment you dismiss. The leaderboard ranks by it.' },
+            { metric: '95% CI', desc: `How much recall would move on a different sample of ${meta.totalCases} PRs. Where intervals overlap, the exact rank is noise, not signal.` },
+            { metric: 'Cost', desc: 'Measured tokens times the vendor\'s list price, with prompt cache: cached reads and cache writes at their own rates. Shown per PR and per bug found.' },
+          ].map((m) => (
             <p key={m.metric}>
               <span className="text-[color:var(--color-ink-black)] font-semibold">{m.metric}.</span>{' '}
               {m.desc}
@@ -160,10 +180,9 @@ export default function Home() {
         <div className="editorial">
           <h2 className="mb-5">What this doesn&apos;t measure</h2>
           <p>
-            <span className="text-[color:var(--color-ink-black)] font-semibold">Model run-to-run variance.</span>{' '}
-            One pass per model, so the review agent itself only runs once per entry. Judge noise
-            (re-scoring the same submission) is measured separately where available. Treat close
-            scores as tied either way.
+            <span className="text-[color:var(--color-ink-black)] font-semibold">Run-to-run variance.</span>{' '}
+            One pass per model and mode, so the review agent itself only runs once per entry.
+            Treat close scores as tied.
           </p>
           <p>
             <span className="text-[color:var(--color-ink-black)] font-semibold">Harnesses other than Kodus&apos;s, so far.</span>{' '}
@@ -191,7 +210,7 @@ export default function Home() {
           </div>
           <p>
             Merged PRs across {meta.languages.length} languages ({meta.languages.join(', ')}). Same
-            set, same golden comments, for every model, so the comparison is fair even when the
+            set, same gold bugs, for every model, so the comparison is fair even when the
             result isn&apos;t flattering.
           </p>
         </div>
@@ -205,6 +224,7 @@ export default function Home() {
         <div className="mb-[var(--spacing-36)]">
           <span className="eyebrow block mb-4">Rankings</span>
           <h2 className="font-display text-[length:var(--text-heading)] text-[color:var(--color-ink-black)]">Global leaderboard</h2>
+          <p className="text-[length:var(--text-body-sm)] text-[color:var(--muted)] mt-3">Balanced mode, ranked by F2.</p>
         </div>
 
         <div className="card-hairline overflow-hidden glow-ring">
@@ -212,7 +232,7 @@ export default function Home() {
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  {['#', 'Model', 'F1', 'Precision', 'Recall', 'Cost/PR'].map((h) => (
+                  {['#', 'Model', 'F2', 'Precision', 'Recall', 'Cost/PR'].map((h) => (
                     <th key={h} className="px-5 py-3 text-[length:var(--text-micro)] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">
                       {h}
                     </th>
@@ -243,14 +263,14 @@ export default function Home() {
                     </td>
                     <td className="px-5 py-4">
                       <span className={cn('text-[length:var(--text-body)] tabular-nums font-mono font-bold', idx === 0 ? 'text-[color:var(--accent)]' : 'text-[color:var(--foreground)]')}>
-                        {e.f1.toFixed(1)}
+                        {e.f2.toFixed(1)}
                       </span>
                     </td>
                     <td className="px-5 py-4">
                       <span className="text-[length:var(--text-body-sm)] tabular-nums font-mono text-[color:var(--muted)]">{formatScore(e.precision)}</span>
                     </td>
                     <td className="px-5 py-4">
-                      <span className="text-[length:var(--text-body-sm)] tabular-nums font-mono text-[color:var(--muted)]">{formatScore(e.score)}</span>
+                      <span className="text-[length:var(--text-body-sm)] tabular-nums font-mono text-[color:var(--muted)]">{formatScore(e.recall)}</span>
                     </td>
                     <td className="px-5 py-4">
                       <span className="text-[length:var(--text-body-sm)] tabular-nums font-mono text-[color:var(--muted)]">{formatMoney(e.costPerPR, 3)}</span>
@@ -269,6 +289,12 @@ export default function Home() {
           >
             Full ranking <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
           </Link>
+          <Link
+            href="/leaderboard?mode=heavy"
+            className="ml-6 inline-flex items-center gap-2 text-[length:var(--text-body-sm)] text-[color:var(--accent)] hover:underline font-medium group"
+          >
+            Heavy mode <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
       </section>
 
@@ -276,15 +302,23 @@ export default function Home() {
       <section className="w-full px-6 sm:px-12 pt-[var(--section-gap)]">
         <div className="editorial">
           <h2 className="mb-5">What the results say so far</h2>
-          <p>
-            <span className="text-[color:var(--color-ink-black)] font-semibold">No model finds even half.</span>{' '}
-            The best recall in this benchmark is under 45%. Code review has a lot of headroom left.
-          </p>
-          <p>
-            <span className="text-[color:var(--color-ink-black)] font-semibold">Precision and recall trade off.</span>{' '}
-            The model that talks the least is often the most precise. Different products, not
-            different quality.
-          </p>
+          {bestBalanced && (
+            <p>
+              <span className="text-[color:var(--color-ink-black)] font-semibold">Most bugs still get through.</span>{' '}
+              The best balanced recall is {formatScore(bestBalanced.recall)} ({displayNameOf(bestBalanced.modelId)})
+              {bestHeavy ? `, and the best heavy recall is ${formatScore(bestHeavy.recall)} (${displayNameOf(bestHeavy.modelId)})` : ''}.
+              Code review has a lot of headroom left.
+            </p>
+          )}
+          {lift && (
+            <p>
+              <span className="text-[color:var(--color-ink-black)] font-semibold">Heavy mode buys recall.</span>{' '}
+              Across the {lift.n} model{lift.n === 1 ? '' : 's'} measured in both modes so far, heavy finds{' '}
+              {lift.recall >= 0 ? `${lift.recall.toFixed(1)} points more` : `${(-lift.recall).toFixed(1)} points less`} recall
+              {' '}with precision {lift.precision >= 0 ? 'up' : 'down'} {Math.abs(lift.precision).toFixed(1)} points
+              {lift.costRatio ? `, at ${lift.costRatio.toFixed(1)}x the cost per PR` : ''}.
+            </p>
+          )}
           <p>
             <span className="text-[color:var(--color-ink-black)] font-semibold">Bring your own harness.</span>{' '}
             Submissions are a documented JSON contract. Submit a PR against the same cases.
@@ -304,8 +338,8 @@ export default function Home() {
           <p>
             This benchmark is run and published by
             <a href="https://kodus.io" target="_blank" rel="noopener noreferrer" className="text-[color:var(--color-ink-black)] hover:text-[color:var(--accent)] transition-colors mx-1 font-medium">Kodus</a>,
-            an AI code review company, on Kodus&apos;s own harness. Every entry so far runs on
-            that harness, so what the ranking compares is models inside it. See the
+            an AI code review company, on Kodus&apos;s own harness, and Kodus labelled the gold set.
+            Every entry runs on that harness, so what the ranking compares is models inside it. See the
             <Link href="/leaderboard" className="text-[color:var(--accent)] hover:underline mx-1">leaderboard</Link>
             for the full disclosure.
           </p>

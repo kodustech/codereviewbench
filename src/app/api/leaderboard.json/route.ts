@@ -1,10 +1,9 @@
-import leaderboardData from '@/lib/data/leaderboard.json';
 import metaData from '@/lib/data/meta.json';
-import type { LeaderboardData, Meta } from '@/lib/types';
-import { displayNameOf, providerOf } from '@/lib/constants';
+import type { Meta } from '@/lib/types';
+import { displayNameOf, providerOf, modelSlug, judgeLabel } from '@/lib/constants';
+import { entriesOf, MODES } from '@/lib/entries';
 import { SITE_URL } from '@/lib/site';
 
-const lb = leaderboardData as unknown as LeaderboardData;
 const meta = metaData as unknown as Meta;
 
 /**
@@ -30,33 +29,49 @@ export function GET() {
         measuredOn: {
             pullRequests: meta.totalCases,
             confirmedBugs: meta.totalGoldens,
+            goldSet: 'gold-v3',
+            judge: meta.judges.map(judgeLabel),
             repositories: meta.repos,
             languages: meta.languages,
         },
         generatedAt: meta.generatedAt ?? null,
+        pricesCollectedAt: meta.pricesCollectedAt,
         metricDefinitions: {
-            recall: 'Share of human-reported bugs the model found, micro-averaged across all pull requests.',
-            precision: 'Share of the model findings that matched a human-reported bug.',
+            recall: 'Valid true positives found / all valid true positives in gold v3, micro-averaged.',
+            precision: 'Published comments matching a valid true positive / all published comments. Each true positive counts once.',
             f1: 'Harmonic mean of recall and precision.',
-            costPerPR: 'Measured API cost divided by number of pull requests reviewed. Null when the model ran on a subscription rather than metered API.',
+            f2: 'F-score with beta = 2: 5*P*R / (4*P + R). Recall weighs twice precision. Ranking metric within each mode.',
+            costPerPR: 'Token cost at vendor list price with prompt cache, divided by pull requests. costBasis "api-equivalent" means the run used a subscription and is priced at API list price.',
+            costPerBugFound: 'Same total cost divided by true positives found.',
         },
-        models: lb.entries
-            .slice()
-            .sort((a, b) => b.f1 - a.f1)
-            .map((e) => ({
+        modes: {
+            balanced: 'The normal review: one generalist agent.',
+            heavy: 'Generalist plus 9 specialist lens agents in parallel, then the same verify/dedup steps.',
+        },
+        models: MODES.flatMap((mode) =>
+            entriesOf(mode).map((e) => ({
                 id: e.modelId,
                 name: displayNameOf(e.modelId),
                 provider: providerOf(e.modelId),
-                recall: Number(e.score.toFixed(1)),
+                mode,
+                rank: e.rank,
+                f2: Number(e.f2.toFixed(1)),
+                recall: Number(e.recall.toFixed(1)),
                 precision: Number(e.precision.toFixed(1)),
                 f1: Number(e.f1.toFixed(1)),
                 bugsFound: e.goldensMatched,
                 bugsTotal: e.goldensTotal,
+                comments: e.comments,
                 pullRequests: e.cases,
                 costPerPR: e.costPerPR,
+                costPerBugFound: e.costPerBugFound,
+                costBasis: e.costBasis,
+                costNote: e.costNote,
                 accessPath: e.accessPath,
-                url: `${SITE_URL}/model/${e.modelId.replace('@', '--')}`,
+                runAt: e.runAt,
+                url: `${SITE_URL}/model/${modelSlug(e.modelId)}`,
             })),
+        ),
     };
 
     return new Response(JSON.stringify(body, null, 2), {

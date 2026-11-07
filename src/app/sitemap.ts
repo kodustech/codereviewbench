@@ -1,13 +1,12 @@
 import type { MetadataRoute } from 'next';
-import leaderboardData from '@/lib/data/leaderboard.json';
 import metaData from '@/lib/data/meta.json';
-import type { LeaderboardData, Meta } from '@/lib/types';
+import type { Meta } from '@/lib/types';
 import { modelSlug } from '@/lib/constants';
-import { allPairs } from '@/lib/compare';
+import { allPairsEveryMode, pairHref } from '@/lib/compare';
+import { lb, publishedModelIds } from '@/lib/entries';
 import { publishedPosts } from '@/lib/blog';
 import { SITE_URL } from '@/lib/site';
 
-const lb = leaderboardData as unknown as LeaderboardData;
 const meta = metaData as unknown as Meta;
 
 // Quando o leaderboard foi regerado pela ultima vez (process-data.js grava
@@ -33,22 +32,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/api/leaderboard.json`, priority: 0.5, changeFrequency: 'weekly' as const },
   ].map((r) => ({ ...r, lastModified: leaderboardLastModified }));
 
-  // Cada modelo tem a propria data de corrida (`runAt`) — um modelo que nao
-  // foi re-rodado nao deveria aparecer como "mudou hoje" so porque outro
-  // modelo entrou na leaderboard.
-  const modelRoutes = lb.entries.map((e) => ({
-    url: `${SITE_URL}/model/${modelSlug(e.modelId)}`,
+  // Uma URL por modelo (a pagina mostra os dois modos); lastModified e o runAt
+  // mais recente entre os modos daquele modelo.
+  const modelRoutes = publishedModelIds().map((id) => ({
+    url: `${SITE_URL}/model/${modelSlug(id)}`,
     priority: 0.7,
     changeFrequency: 'monthly' as const,
-    lastModified: runAtOf(e),
+    lastModified: new Date(Math.max(...lb.entries.filter((e) => e.modelId === id).map((e) => runAtOf(e).getTime()))),
   }));
 
-  // Os 45 pares (C(10,2)). Le de allPairs() — mesma fonte do
-  // generateStaticParams da rota, entao sitemap e rotas nao divergem quando
-  // entrar modelo novo. lastModified e o mais recente runAt dos dois modelos
-  // do par.
-  const pairRoutes = allPairs().map((p) => ({
-    url: `${SITE_URL}/compare/${p.slug}`,
+  // Pares por modo (balanced em /compare/<par>, heavy em /compare/heavy/<par>).
+  // Mesma fonte do generateStaticParams das rotas. Paginas de trace ficam
+  // fora: sao noindex.
+  const pairRoutes = allPairsEveryMode().map((p) => ({
+    url: `${SITE_URL}${pairHref(p.mode, p.slug)}`,
     priority: 0.5,
     changeFrequency: 'monthly' as const,
     lastModified: new Date(Math.max(runAtOf(p.a).getTime(), runAtOf(p.b).getTime())),
