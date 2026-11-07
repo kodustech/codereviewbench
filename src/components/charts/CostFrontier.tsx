@@ -146,14 +146,14 @@ export default function CostFrontier({ data, height = 520 }: Props) {
             dataKey="costPerPR"
             scale="log"
             domain={[xMin, xMax]}
-            ticks={[0.05, 0.1, 0.25, 0.5, 1, 2, 4]}
+            ticks={[0.01, 0.02, 0.05, 0.1, 0.25, 0.5, 1, 2, 4]}
             stroke="var(--border)"
             tick={{ fill: 'var(--muted)', fontSize: 13 }}
             tickFormatter={(v) => `$${v < 1 ? v.toFixed(2) : v.toFixed(0)}`}
             tickLine={false}
             allowDataOverflow
             label={{
-              value: 'measured cost per PR (log scale) — cheaper →',
+              value: 'cost per PR, with prompt cache (log scale), cheaper ←',
               position: 'bottom',
               fill: 'var(--muted)',
               fontSize: 13,

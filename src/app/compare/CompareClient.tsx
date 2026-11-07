@@ -5,12 +5,16 @@ import Link from 'next/link';
 import { ArrowLeftRight, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney } from '@/lib/format';
-import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS, MODE_LABELS, MODE_DESCRIPTIONS } from '@/lib/constants';
 import { pairSlug } from '@/lib/pair-slug';
-import type { LeaderboardEntry } from '@/lib/types';
+import type { LeaderboardEntry, ReviewMode } from '@/lib/types';
 import type { PerCaseRow } from '@/lib/compare';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 interface Props {
+  mode: ReviewMode;
+  /** Same pair in the other mode, or that mode's default compare page when one
+   *  of the two models has no row there yet. */
+  otherModeHref: string;
   entries: LeaderboardEntry[];
   entryA: LeaderboardEntry;
   entryB: LeaderboardEntry;
@@ -37,15 +41,15 @@ function ModelPicker({
     >
       {entries.map((e) => (
         <option key={e.key} value={e.modelId} disabled={e.modelId === otherValue}>
-          {displayNameOf(e.modelId)} — F1 {e.f1.toFixed(1)}
+          {displayNameOf(e.modelId)} · F2 {e.f2.toFixed(1)}
         </option>
       ))}
     </select>
   );
 }
-function StatRow({ label, a, b, fmt, higherIsBetter = true }: { label: string; a: number | null; b: number | null; fmt: (v: number) => string; higherIsBetter?: boolean }) {
-  const aWins = a != null && b != null && a !== b && (higherIsBetter ? a > b : a < b);
-  const bWins = a != null && b != null && a !== b && (higherIsBetter ? b > a : b < a);
+function StatRow({ label, a, b, fmt, higherIsBetter = true, neutral = false }: { label: string; a: number | null; b: number | null; fmt: (v: number) => string; higherIsBetter?: boolean; neutral?: boolean }) {
+  const aWins = !neutral && a != null && b != null && a !== b && (higherIsBetter ? a > b : a < b);
+  const bWins = !neutral && a != null && b != null && a !== b && (higherIsBetter ? b > a : b < a);
   return (
     <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 py-3 border-b border-[var(--border)] last:border-b-0">
       <span className={cn('text-lg font-mono font-bold tabular-nums text-right', aWins ? 'text-[color:var(--accent)]' : 'text-[color:var(--foreground)]')}>
@@ -58,14 +62,18 @@ function StatRow({ label, a, b, fmt, higherIsBetter = true }: { label: string; a
     </div>
   );
 }
-export default function CompareClient({ entries, entryA, entryB, perCase }: Props) {
+function pairPath(mode: ReviewMode, a: string, b: string): string {
+  const slug = pairSlug(modelSlug(a), modelSlug(b));
+  return mode === 'heavy' ? `/compare/heavy/${slug}` : `/compare/${slug}`;
+}
+
+export default function CompareClient({ mode, otherModeHref, entries, entryA, entryB, perCase }: Props) {
   const router = useRouter();
   // Navega pra rota canonica do par, nao pra ?a=&b=. As duas renderizavam a
   // mesma comparacao, mas a de query param declara canonical /compare — ou
   // seja, e a versao que o Google ignora e que nao tem title proprio. Quem
   // escolhia dois modelos e copiava a URL compartilhava justamente essa.
-  const setModels = (a: string, b: string) =>
-    router.push(`/compare/${pairSlug(modelSlug(a), modelSlug(b))}`);
+  const setModels = (a: string, b: string) => router.push(pairPath(mode, a, b));
   const providerA = providerOf(entryA.modelId);
   const providerB = providerOf(entryB.modelId);
   // Um golden por PR, com o veredito dos dois modelos — zipado por texto (a
@@ -87,9 +95,25 @@ export default function CompareClient({ entries, entryA, entryB, perCase }: Prop
       <div className="mb-10">
         <span className="text-xs font-mono text-[color:var(--accent)] uppercase tracking-widest font-bold block mb-3">Head to head</span>
         <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)] mb-3">Compare two models</h1>
-        <p className="text-[15px] text-[color:var(--muted)] max-w-2xl leading-relaxed">
-          Same {perCase.length} PRs, same goldens — which bugs did one find that the other missed?
+        <p className="text-[15px] text-[color:var(--muted)] max-w-2xl leading-relaxed mb-6">
+          Same {perCase.length} PRs, same gold bugs, same review mode. Which bugs did one find that the other missed?
         </p>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="inline-flex p-1 bg-[var(--surface)] rounded-lg border border-[var(--border)]" role="group" aria-label="Review mode">
+            {(['balanced', 'heavy'] as ReviewMode[]).map((m) =>
+              m === mode ? (
+                <span key={m} aria-current="true" className="px-4 py-2 text-sm font-semibold rounded-md bg-[var(--surface-2)] text-[color:var(--foreground)] shadow-sm">
+                  {MODE_LABELS[m]}
+                </span>
+              ) : (
+                <Link key={m} href={otherModeHref} className="px-4 py-2 text-sm font-semibold rounded-md text-[color:var(--muted)] hover:text-[color:var(--foreground)]">
+                  {MODE_LABELS[m]}
+                </Link>
+              ),
+            )}
+          </div>
+          <p className="text-xs text-[color:var(--muted)] max-w-sm">{MODE_DESCRIPTIONS[mode]}</p>
+        </div>
       </div>
       {/* Picker */}
       <div className="flex flex-col sm:grid sm:grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-4 mb-10">
@@ -120,10 +144,16 @@ export default function CompareClient({ entries, entryA, entryB, perCase }: Prop
             {displayNameOf(entryB.modelId)}
           </Link>
         </div>
+        <StatRow label="F2" a={entryA.f2} b={entryB.f2} fmt={(v) => v.toFixed(1)} />
         <StatRow label="F1" a={entryA.f1} b={entryB.f1} fmt={(v) => v.toFixed(1)} />
-        <StatRow label="Recall" a={entryA.score} b={entryB.score} fmt={formatScore} />
+        <StatRow label="Recall" a={entryA.recall} b={entryB.recall} fmt={formatScore} />
         <StatRow label="Precision" a={entryA.precision} b={entryB.precision} fmt={formatScore} />
+        <StatRow label="Comments" a={entryA.comments} b={entryB.comments} fmt={(v) => String(v)} neutral />
         <StatRow label="Cost / PR" a={entryA.costPerPR} b={entryB.costPerPR} fmt={(v) => formatMoney(v, 3)} higherIsBetter={false} />
+        <StatRow label="Cost / bug" a={entryA.costPerBugFound} b={entryB.costPerBugFound} fmt={(v) => formatMoney(v, 3)} higherIsBetter={false} />
+        {[...new Set([entryA.costNote, entryB.costNote].filter(Boolean))].map((n) => (
+          <p key={n} className="text-xs text-[color:var(--muted)] mt-3">Cost note: {n}</p>
+        ))}
       </div>
       {/* Golden tally */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
@@ -168,7 +198,7 @@ export default function CompareClient({ entries, entryA, entryB, perCase }: Prop
                 </div>
                 <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0">
                   <span className="text-xs font-mono text-[color:var(--muted)]">
-                    {diffCount > 0 ? <span className="text-[color:var(--accent)]">{diffCount} disagree</span> : 'agree'} · {goldens.length} goldens
+                    {diffCount > 0 ? <span className="text-[color:var(--accent)]">{diffCount} disagree</span> : 'agree'} · {goldens.length} gold bugs
                   </span>
                   <ChevronDown className="size-4 text-[color:var(--muted)] group-open:hidden" />
                   <ChevronUp className="size-4 text-[color:var(--muted)] hidden group-open:block" />
@@ -176,7 +206,7 @@ export default function CompareClient({ entries, entryA, entryB, perCase }: Prop
               </summary>
               <div className="border-t border-[var(--border)] px-5 py-4">
                   {goldens.length === 0 ? (
-                    <p className="text-sm text-[color:var(--muted-dim)]">No golden detail for this PR.</p>
+                    <p className="text-sm text-[color:var(--muted-dim)]">No gold bugs in this PR.</p>
                   ) : (
                     <div className="flex flex-col gap-2">
                       {goldens.map((g, i) => (

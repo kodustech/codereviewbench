@@ -1,131 +1,140 @@
-// ── Meta ──
-export interface VarianceCaveat {
-  measured: string;
-  notMeasured: string;
-  runsPerEntry: number;
-  judgeRunsAvailable: number;
-  judgeRunsTotal: number;
-}
+// ── Modes ──
+/** balanced = the normal review (one generalist agent). heavy = generalist +
+ *  9 specialist lens agents in parallel, then the same verify/dedup steps.
+ *  On disk the balanced runs live under `light/`. */
+export type ReviewMode = 'balanced' | 'heavy';
 
+// ── Meta ──
 export interface Meta {
   totalEntries: number;
-  harnesses: string[];
+  totalModels: number;
+  modes: ReviewMode[];
+  entriesByMode: Record<ReviewMode, number>;
   models: string[];
+  harnesses: string[];
   languages: string[];
   repos: string[];
-  /** Ordem por tamanho (XS→XL), não alfabética. */
+  /** Ordered by size (XS→XL), not alphabetically. */
   sizes: string[];
-  executionModes: string[];
   accessPaths: string[];
   judges: string[];
+  gold: string[];
+  benchmarkVersion: string | null;
   totalCases: number;
   totalGoldens: number;
-  varianceCaveat: VarianceCaveat;
+  pricesCollectedAt: string | null;
+  firstRunAt: string | null;
+  lastRunAt: string | null;
   generatedAt: string;
 }
 
 // ── Leaderboard ──
 export interface BucketStat {
   recall: number;
-  precision: number;
+  /** Micro TP/(TP+FP) over the bucket; null when the model published nothing there. */
+  precision: number | null;
   goldens: number;
+  matched: number;
   count: number;
+}
+
+export interface SeverityStat {
+  matched: number;
+  goldens: number;
+  recall: number | null;
 }
 
 export interface Usage {
   inputTokens: number;
   outputTokens: number;
+  reasoningTokens?: number;
+  cacheReadTokens?: number;
+  cacheWriteTokens?: number;
+}
+
+export interface Price {
+  input: number;
+  cacheRead: number | null;
+  cacheWrite: number | null;
+  output: number;
 }
 
 export type AccessPath = 'api' | 'subscription' | 'local' | 'unknown';
-export type ExecutionMode = 'replay' | 'live' | 'unknown';
+/** 'api-equivalent' = ran on a subscription, priced at API list price. */
+export type CostBasis = 'api' | 'api-equivalent' | 'unpriced';
 
 export interface LeaderboardEntry {
+  /** `${mode}::${modelId}` */
   key: string;
+  mode: ReviewMode;
+  modelId: string;
+  /** Transport type, NOT the commercial vendor; use DISPLAY_NAMES for display. */
+  provider: string | null;
+  accessPath: AccessPath;
   harness: string;
   harnessVersion: string | null;
-  modelId: string;
-  /** Tipo de transporte (openai_compatible/anthropic/google/...), NÃO o
-   *  fornecedor comercial — usar DISPLAY_NAMES em constants.ts para exibição. */
-  provider: string;
-  accessPath: AccessPath;
-  executionMode: ExecutionMode;
+  executionMode: string;
   reasoningConfig: string;
   reasoningEffort: string | null;
-  reasoningTokens: number | null;
-  finishReasons: Record<string, number>;
-  maxFindingsInCase: number;
   judge: string | null;
+  gold: string | null;
+  benchmarkVersion: string | null;
   runAt: string | null;
 
-  /** Recall micro (headline, usado para ranking). */
-  score: number;
-  recallMacro: number;
-  /** Precisão micro — TP/(TP+FP) agregado no bench inteiro. */
+  /** Micro: valid TPs found / all valid TPs. */
+  recall: number;
+  /** Micro: comments matching a valid TP / all published comments. */
   precision: number;
-  precisionMacro: number;
-  /** F1 micro. */
   f1: number;
-  fairRecall: number;
-  loopFidelity: number | null;
+  /** F-beta with beta = 2: recall weighs twice precision. Ranking metric. */
+  f2: number;
+  recallMacro: number;
+  precisionMacro: number;
+  /** 95% bootstrap interval on recall, resampling PRs. */
+  ciLow: number | null;
+  ciHigh: number | null;
 
   goldensTotal: number;
   goldensMatched: number;
+  comments: number;
   cases: number;
+  calls: number | null;
   usage: Usage;
 
   byLanguage: Record<string, BucketStat>;
   byRepo: Record<string, BucketStat>;
   bySize: Record<string, BucketStat>;
-  /** Severidade/categoria dos findings REPORTADOS — sinal de calibração do
-   *  modelo (grita "critical" pra tudo, ou é conservador?), não recall por
-   *  severidade — goldens não têm severidade anotada. */
+  /** Recall by the gold bug's severity. */
+  bySeverity: Record<'critical' | 'high' | 'medium' | 'low', SeverityStat>;
+  /** Severity/category the model gave its own comments. */
   findingsBySeverity: { low: number; medium: number; high: number; critical: number };
   findingsByCategory: { bug: number; performance: number; security: number; other: number };
 
   costTotal: number | null;
   costPerPR: number | null;
   costPerBugFound: number | null;
-  costBasis: string;
+  costBasis: CostBasis;
+  costNote: string | null;
+  priceSource: string | null;
+  price: Price | null;
 
-  ciHalfWidth: number;
-  ciLow: number | null;
-  ciHigh: number | null;
-  ciHalfWidthBootstrap: number;
-
-  /** Judge re-scored 3x sobre a MESMA submission — ruído do judge, não do
-   *  modelo. null quando as rodadas extras ainda não existem pra essa
-   *  entrada (parcial não é publicado — ver process-scorecards.js). */
-  runToRunVariance: RunToRunVariance | null;
-
+  /** Rank within its mode, by F2. */
   rank: number;
 }
 
-export interface VarianceStat {
-  mean: number;
-  stdev: number | null;
-  values: number[];
-}
-
-export interface RunToRunVariance {
-  runs: number;
-  recall: VarianceStat;
-  precision: VarianceStat;
-  f1: VarianceStat;
-}
-
 export interface LeaderboardAverages {
-  score: number | null;
+  recall: number | null;
   precision: number | null;
   f1: number | null;
+  f2: number | null;
 }
 
 export interface LeaderboardData {
   entries: LeaderboardEntry[];
-  averages: LeaderboardAverages;
+  averages: Record<ReviewMode, LeaderboardAverages>;
 }
 
-// ── Case samples (per model × PR) ──
+// ── Case samples (per model × mode × PR) ──
 export interface Finding {
   path: string | null;
   startLine: number | null;
@@ -135,25 +144,15 @@ export interface Finding {
   description: string;
 }
 
-export interface MissedGolden {
-  text: string;
-  /** 'realMiss' = código estava disponível, modelo não achou.
-   *  'artifact' = golden aponta pra código fora do corpus de replay.
-   *  'untestable' = não dá pra verificar se o código estava disponível. */
-  classification: 'realMiss' | 'artifact' | 'untestable';
-}
-
-/** Golden completo (achado ou não) — pra diff entre dois modelos no mesmo
- *  caso. null no CaseSample quando goldens.json não cobre esse caseId. */
+/** One gold-v3 true positive, found or not by this run. */
 export interface GoldenDetail {
+  issueId: string;
   text: string;
   severity: string | null;
   matched: boolean;
 }
 
-/** Índice leve por caso — sem findings/texto — pra filtro combinado
- *  (linguagem + repo + tamanho) client-side sem embarcar o samples.json
- *  inteiro (que carrega descrições de finding) no bundle. */
+/** Light per-case index (no text) for client-side filtering. */
 export interface CaseIndexRow {
   entryKey: string;
   caseId: string;
@@ -164,13 +163,14 @@ export interface CaseIndexRow {
   matched: number;
   tpFindings: number;
   fpFindings: number;
+  costUsd: number | null;
 }
 
 export interface CaseSample {
   id: string;
   entryKey: string;
-  harness: string;
-  modelId: string | null;
+  mode: ReviewMode;
+  modelId: string;
   caseId: string;
   repo: string;
   language: string;
@@ -179,24 +179,17 @@ export interface CaseSample {
   sizeBucket: string | null;
   recall: number;
   precision: number;
-  f1: number | null;
   goldens: number;
   matched: number;
+  comments: number;
+  tpFindings: number;
+  fpFindings: number;
   findings: Finding[];
-  missedGoldens: MissedGolden[];
-  goldensDetail: GoldenDetail[] | null;
+  goldensDetail: GoldenDetail[];
   usage: Usage | null;
-  latencyMs: number | null;
+  calls: number | null;
+  costUsd: number | null;
 }
 
-/**
- * Recortes de CaseSample por pagina.
- *
- * O samples.json tem 1,1MB e `findings` sozinho e 66% dele. Passar o objeto
- * inteiro como prop joga tudo no payload RSC mesmo quando a pagina nao le o
- * campo: /compare mandava `findings` (que nao usa) e /model mandava
- * `goldensDetail` (que nao usa). Estes tipos existem pra que a fatia feita no
- * servidor seja verificada pelo compilador, e nao um cast otimista.
- */
-export type CompareCase = Omit<CaseSample, 'findings' | 'missedGoldens' | 'usage' | 'latencyMs'>;
-export type ModelDetailCase = Omit<CaseSample, 'goldensDetail' | 'usage'>;
+/** Per-page slices of CaseSample, so the server-side cut is type-checked. */
+export type ModelDetailCase = Omit<CaseSample, 'findings' | 'usage'>;

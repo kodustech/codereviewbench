@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, Fragment } from 'react';
+import { useState, useMemo, Fragment, useSyncExternalStore } from 'react';
 import { flushSync } from 'react-dom';
 import Link from 'next/link';
 import leaderboardData from '@/lib/data/leaderboard.json';
@@ -8,7 +8,18 @@ import caseIndexData from '@/lib/data/case-index.json';
 import meta from '@/lib/data/meta.json';
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney, formatCI } from '@/lib/format';
-import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS, SIZE_LABELS } from '@/lib/constants';
+import {
+  displayNameOf,
+  providerOf,
+  modelSlug,
+  REPO_LABELS,
+  LANGUAGE_LABELS,
+  SIZE_LABELS,
+  MODE_LABELS,
+  MODE_DESCRIPTIONS,
+  judgeLabel,
+  pendingModels,
+} from '@/lib/constants';
 import { bootstrapCI } from '@/lib/bootstrap';
 import dynamic from 'next/dynamic';
 import type { FrontierPoint } from '@/components/charts/CostFrontier';
@@ -21,11 +32,10 @@ const CostFrontier = dynamic(() => import('@/components/charts/CostFrontier'), {
   ssr: false,
   loading: () => <div className="h-[560px] rounded-[22px] bg-[var(--surface-2)] animate-pulse" aria-hidden />,
 });
-import { UPCOMING_MODELS } from '@/lib/upcoming';
 import ViewSwitcher from '@/components/shared/ViewSwitcher';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 import { List, LineChart, ArrowUpDown, ChevronDown, Scale, SlidersHorizontal, RotateCcw } from 'lucide-react';
-import type { LeaderboardData, LeaderboardEntry, CaseIndexRow } from '@/lib/types';
+import type { LeaderboardData, LeaderboardEntry, CaseIndexRow, ReviewMode } from '@/lib/types';
 
 const data = leaderboardData as unknown as LeaderboardData;
 const caseIndex = caseIndexData as unknown as CaseIndexRow[];
@@ -35,7 +45,18 @@ const VIEWS = [
   { key: 'frontier', label: 'Pareto Frontier', icon: LineChart },
 ];
 
-type SortKey = 'rank' | 'f1' | 'precision' | 'recall' | 'costPerPR' | 'costPerBugFound';
+const MODE_VIEWS = [
+  { key: 'balanced', label: MODE_LABELS.balanced },
+  { key: 'heavy', label: MODE_LABELS.heavy },
+];
+
+type SortKey = 'rank' | 'f2' | 'f1' | 'precision' | 'recall' | 'costPerPR' | 'costPerBugFound';
+
+/** F-beta from percentages. */
+function fBeta(p: number, r: number, beta: number): number {
+  const b2 = beta * beta;
+  return p + r > 0 ? ((1 + b2) * p * r) / (b2 * p + r) : 0;
+}
 
 function SortHeader({
   label,
@@ -72,21 +93,41 @@ interface FilteredMetrics {
   recall: number | null;
   precision: number | null;
   f1: number | null;
+  f2: number | null;
   ciLow: number | null;
   ciHigh: number | null;
+  costPerPR: number | null;
+  costPerBugFound: number | null;
 }
 
 function computeFiltered(rows: CaseIndexRow[]): FilteredMetrics {
-  if (!rows.length) return { n: 0, goldens: 0, recall: null, precision: null, f1: null, ciLow: null, ciHigh: null };
+  if (!rows.length) {
+    return { n: 0, goldens: 0, recall: null, precision: null, f1: null, f2: null, ciLow: null, ciHigh: null, costPerPR: null, costPerBugFound: null };
+  }
   const goldens = rows.reduce((s, r) => s + r.goldens, 0);
   const matched = rows.reduce((s, r) => s + r.matched, 0);
   const tp = rows.reduce((s, r) => s + r.tpFindings, 0);
   const fp = rows.reduce((s, r) => s + r.fpFindings, 0);
   const recall = goldens ? (matched / goldens) * 100 : null;
   const precision = tp + fp > 0 ? (tp / (tp + fp)) * 100 : null;
-  const f1 = precision == null || recall == null ? null : recall + precision > 0 ? (2 * recall * precision) / (recall + precision) : 0;
+  const f1 = precision == null || recall == null ? null : fBeta(precision, recall, 1);
+  const f2 = precision == null || recall == null ? null : fBeta(precision, recall, 2);
   const { lo, hi } = bootstrapCI(rows.map((r) => [r.matched, r.goldens] as [number, number]));
-  return { n: rows.length, goldens, recall, precision, f1, ciLow: lo, ciHigh: hi };
+  // Cost is tracked per PR, so the filtered subset has its own $/PR and $/bug.
+  const priced = rows.every((r) => r.costUsd != null);
+  const cost = priced ? rows.reduce((s, r) => s + (r.costUsd as number), 0) : null;
+  return {
+    n: rows.length,
+    goldens,
+    recall,
+    precision,
+    f1,
+    f2,
+    ciLow: lo,
+    ciHigh: hi,
+    costPerPR: cost == null ? null : cost / rows.length,
+    costPerBugFound: cost == null || !matched ? null : cost / matched,
+  };
 }
 
 function FilterGroup({
@@ -128,9 +169,33 @@ function FilterGroup({
   );
 }
 
+// Mode lives in the URL (?mode=heavy) so a link to the heavy table is
+// shareable. Read through useSyncExternalStore, NOT useSearchParams: that hook
+// makes a static page bail out to client rendering, and the table (the whole
+// point of the page) would vanish from the server HTML. The server snapshot is
+// balanced; a ?mode=heavy visit re-renders right after hydration.
+const MODE_EVENT = 'crb:mode';
+function subscribeMode(cb: () => void) {
+  window.addEventListener('popstate', cb);
+  window.addEventListener(MODE_EVENT, cb);
+  return () => {
+    window.removeEventListener('popstate', cb);
+    window.removeEventListener(MODE_EVENT, cb);
+  };
+}
+const readMode = () => new URLSearchParams(window.location.search).get('mode');
+
 export default function LeaderboardClient() {
+  const modeParam = useSyncExternalStore(subscribeMode, readMode, () => null);
+  const mode: ReviewMode = modeParam === 'heavy' ? 'heavy' : 'balanced';
+  const setMode = (m: string) => {
+    window.history.replaceState(null, '', m === 'heavy' ? '/leaderboard?mode=heavy' : '/leaderboard');
+    window.dispatchEvent(new Event(MODE_EVENT));
+  };
+  const modeEntries = useMemo(() => data.entries.filter((e) => e.mode === mode), [mode]);
+
   const [view, setView] = useState('table');
-  const [sortKey, setSortKey] = useState<SortKey>('f1');
+  const [sortKey, setSortKey] = useState<SortKey>('f2');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [methodologyOpen, setMethodologyOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -165,7 +230,7 @@ export default function LeaderboardClient() {
   // ainda roda, mas dá exatamente os números publicados — dá pra usar sempre.
   const filteredByKey = useMemo(() => {
     const map = new Map<string, FilteredMetrics>();
-    for (const e of data.entries) {
+    for (const e of modeEntries) {
       const rows = caseIndex.filter(
                 (r) =>
           r.entryKey === e.key &&
@@ -176,25 +241,26 @@ export default function LeaderboardClient() {
       map.set(e.key, computeFiltered(rows));
     }
     return map;
-  }, [selLangs, selRepos, selSizes]);
+  }, [selLangs, selRepos, selSizes, modeEntries]);
 
   const entries = useMemo(() => {
-    const sorted = [...data.entries].sort((a, b) => {
+    const sorted = [...modeEntries].sort((a, b) => {
       const fa = filteredByKey.get(a.key);
       const fb = filteredByKey.get(b.key);
       let av: number, bv: number;
       switch (sortKey) {
+        case 'f2':
+          av = (isFiltered ? fa?.f2 : a.f2) ?? -Infinity; bv = (isFiltered ? fb?.f2 : b.f2) ?? -Infinity; break;
         case 'f1':
           av = (isFiltered ? fa?.f1 : a.f1) ?? -Infinity; bv = (isFiltered ? fb?.f1 : b.f1) ?? -Infinity; break;
         case 'precision':
           av = (isFiltered ? fa?.precision : a.precision) ?? -Infinity; bv = (isFiltered ? fb?.precision : b.precision) ?? -Infinity; break;
         case 'recall':
-          av = (isFiltered ? fa?.recall : a.score) ?? -Infinity; bv = (isFiltered ? fb?.recall : b.score) ?? -Infinity; break;
+          av = (isFiltered ? fa?.recall : a.recall) ?? -Infinity; bv = (isFiltered ? fb?.recall : b.recall) ?? -Infinity; break;
         case 'costPerPR':
-          // custo n/a vai sempre pro fim, nos dois sentidos — nao e "gratis"
-          av = a.costPerPR ?? Infinity; bv = b.costPerPR ?? Infinity; break;
+          av = (isFiltered ? fa?.costPerPR : a.costPerPR) ?? Infinity; bv = (isFiltered ? fb?.costPerPR : b.costPerPR) ?? Infinity; break;
         case 'costPerBugFound':
-          av = a.costPerBugFound ?? Infinity; bv = b.costPerBugFound ?? Infinity; break;
+          av = (isFiltered ? fa?.costPerBugFound : a.costPerBugFound) ?? Infinity; bv = (isFiltered ? fb?.costPerBugFound : b.costPerBugFound) ?? Infinity; break;
         default:
           av = a.rank; bv = b.rank; break;
       }
@@ -202,7 +268,7 @@ export default function LeaderboardClient() {
       return (av - bv) * dir;
     });
     return sorted;
-  }, [sortKey, sortDir, filteredByKey, isFiltered]);
+  }, [sortKey, sortDir, filteredByKey, isFiltered, modeEntries]);
 
   const toggleSort = (key: SortKey) => {
     const apply = () => {
@@ -210,7 +276,8 @@ export default function LeaderboardClient() {
         setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
       } else {
         setSortKey(key);
-        setSortDir(key === 'rank' ? 'asc' : 'desc');
+        // cost: cheapest first is the useful default
+        setSortDir(key === 'rank' || key === 'costPerPR' || key === 'costPerBugFound' ? 'asc' : 'desc');
       }
     };
     // Reordenar DESLIZANDO a linha ate a nova posicao carrega informacao (da
@@ -230,27 +297,35 @@ export default function LeaderboardClient() {
     }
   };
 
-  // Filtrado, o eixo Y do Pareto usa o subconjunto (recall/CI recomputados);
-  // custo por PR continua o do bench inteiro — não dá pra fatiar tokens por
-  // caso sem inflar o bundle, então o eixo X nunca muda com o filtro.
-  const frontierData: FrontierPoint[] = data.entries
+  // Filtered, both axes use the subset: cost is tracked per PR.
+  const frontierData: FrontierPoint[] = modeEntries
     .filter((e) => e.costPerPR != null && (filteredByKey.get(e.key)?.n ?? 0) > 0)
     .map((e) => {
       const f = filteredByKey.get(e.key);
-      const recall = (isFiltered ? f?.recall : e.score) ?? 0;
+      const recall = (isFiltered ? f?.recall : e.recall) ?? 0;
       const ciLow = (isFiltered ? f?.ciLow : e.ciLow) ?? recall;
       const ciHigh = (isFiltered ? f?.ciHigh : e.ciHigh) ?? recall;
       return {
         name: displayNameOf(e.modelId),
         provider: providerOf(e.modelId),
-        costPerPR: e.costPerPR as number,
+        costPerPR: ((isFiltered ? f?.costPerPR : e.costPerPR) ?? e.costPerPR) as number,
         recall,
         ciLow,
         ciHigh,
-        costPerBug: e.costPerBugFound,
+        costPerBug: (isFiltered ? f?.costPerBugFound : e.costPerBugFound) ?? null,
         tokensOut: Math.round(e.usage.outputTokens / e.cases),
       };
     });
+
+  // Cost caveats, numbered in order of first appearance in the table.
+  const costNotes = [...new Set(entries.map((e) => e.costNote).filter((n): n is string => !!n))];
+  const noteMark = (n: string | null) => (n ? '*'.repeat(costNotes.indexOf(n) + 1) : '');
+
+  // Roster models with no row in this mode yet (still running, or not run in this mode).
+  const missingHere = [
+    ...pendingModels(data.entries.map((e) => e.modelId)),
+    ...[...new Set(data.entries.map((e) => e.modelId))].filter((id) => !modeEntries.some((e) => e.modelId === id)),
+  ];
 
   return (
     <div className="max-w-[var(--page-max-width)] mx-auto w-full px-6 sm:px-12 py-12">
@@ -258,15 +333,25 @@ export default function LeaderboardClient() {
       <div className="mb-10">
         <span className="eyebrow block mb-3">Rankings</span>
         <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)] mb-3">AI Code Review Benchmark Leaderboard</h1>
-        <p className="text-[15px] text-[color:var(--foreground-2)] max-w-2xl leading-relaxed">
-          {meta.totalCases} real pull requests, {meta.totalGoldens} human-authored golden bugs, judged by {meta.judges[0]}.
-          Ranked by F1 — recall alone rewards whoever talks most.
+        <p className="text-[15px] text-[color:var(--foreground-2)] max-w-2xl leading-relaxed mb-3">
+          {meta.totalCases} real pull requests, {meta.totalGoldens} confirmed bugs (gold v3), judged by {judgeLabel(meta.judges[0])}.
+          Every model runs in two review modes inside the Kodus harness. Ranked by F2.
+        </p>
+        <p className="text-[13px] text-[color:var(--muted)] max-w-2xl leading-relaxed">
+          <span className="font-semibold text-[color:var(--foreground-2)]">Why F2.</span> F2 is the F-score with beta = 2,
+          popularized for code review by Martian&apos;s benchmark. It weighs recall twice as much as precision, because a
+          missed bug costs more than a comment you dismiss. F2 = 5·P·R / (4·P + R).
         </p>
       </div>
 
       {/* Controls */}
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-4 pb-8 border-b border-[var(--border)]">
-        <div className="flex flex-wrap gap-x-3 gap-y-2 items-center">
+        <div className="flex flex-wrap gap-x-4 gap-y-3 items-center">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[10px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">Review mode</span>
+            <ViewSwitcher views={MODE_VIEWS} active={mode} onChange={setMode} />
+          </div>
+          <p className="text-xs text-[color:var(--muted)] max-w-xs self-end pb-2">{MODE_DESCRIPTIONS[mode]}</p>
           {/* Ghost Pill do spec quando em repouso, preenchido de azul quando ha
               filtro. O contador diz QUANTOS, que e o que a pessoa quer saber
               sem reabrir o painel. */}
@@ -303,9 +388,9 @@ export default function LeaderboardClient() {
           </div>
           <div className="flex items-center justify-between mt-5 pt-4 border-t border-[var(--border)]">
             <p className="text-xs text-[color:var(--muted-dim)] max-w-lg">
-              Recomputed from the filtered PRs — not the published headline numbers. With only {meta.totalCases} PRs total, a
+              Recomputed from the filtered PRs, not the published headline numbers. With only {meta.totalCases} PRs total, a
               narrow filter can leave very few cases per model; watch the <span className="text-[color:var(--muted)]">n=</span> count
-              and the CI. $/PR and $/bug always reflect the full run — cost isn&apos;t tracked per PR.
+              and the CI. Cost is tracked per PR, so $/PR and $/bug follow the filter too.
             </p>
             {isFiltered && (
               <button onClick={resetFilters} className="flex items-center gap-1.5 text-xs font-mono text-[color:var(--muted)] hover:text-[color:var(--foreground)] transition-colors shrink-0 ml-4">
@@ -329,7 +414,7 @@ export default function LeaderboardClient() {
             </div>
             <div className="text-left">
               <span className="text-sm font-semibold text-[color:var(--foreground)]">How to read this table</span>
-              <span className="text-xs text-[color:var(--muted-dim)] block">What F1/precision/recall mean here, and what this benchmark doesn&apos;t measure</span>
+              <span className="text-xs text-[color:var(--muted-dim)] block">What F2, recall, precision and cost mean here, and what this benchmark doesn&apos;t measure</span>
             </div>
           </div>
           <ChevronDown className={cn('size-4 text-[color:var(--muted)] transition-transform', methodologyOpen && 'rotate-180')} />
@@ -341,30 +426,37 @@ export default function LeaderboardClient() {
               <div>
                 <h3 className="text-sm font-semibold text-[color:var(--foreground)] mb-1">Metrics</h3>
                 <p className="text-sm text-[color:var(--muted)] mb-3">
-                  Micro-averaged: true/false positives and false negatives are summed across all {meta.totalCases} PRs, then
-                  precision and recall are computed once from the totals — not averaged per-PR. Same convention published by
-                  the Martian and Alibaba code review benchmarks.
+                  Micro-averaged over all {meta.totalCases} PRs. The gold set (gold v3) holds {meta.totalGoldens} valid true
+                  positives, labelled by Kodus. The judge ({judgeLabel(meta.judges[0])}) matches each published comment to a gold
+                  bug when it is the same problem at the same place.
                 </p>
                 <div className="grid grid-cols-1 gap-2 text-sm">
-                  <p><span className="text-[color:var(--foreground)] font-medium">Recall</span> — <span className="text-[color:var(--muted)]">golden bugs the model actually found</span></p>
-                  <p><span className="text-[color:var(--foreground)] font-medium">Precision</span> — <span className="text-[color:var(--muted)]">of what it reported, how much was real</span></p>
-                  <p><span className="text-[color:var(--foreground)] font-medium">F1</span> — <span className="text-[color:var(--muted)]">harmonic mean of both, equal weight</span></p>
-                  <p><span className="text-[color:var(--foreground)] font-medium">95% CI</span> — <span className="text-[color:var(--muted)]">how much recall would move on a different sample of 30 PRs. Where two intervals overlap this much, the gap between those models is not something this benchmark can measure.</span></p>
+                  <p><span className="text-[color:var(--foreground)] font-medium">Recall</span>: <span className="text-[color:var(--muted)]">valid true positives found, out of {meta.totalGoldens}.</span></p>
+                  <p><span className="text-[color:var(--foreground)] font-medium">Precision</span>: <span className="text-[color:var(--muted)]">published comments that match a valid true positive, out of all published comments. Each true positive counts once; a second comment on the same bug is a false positive.</span></p>
+                  <p><span className="text-[color:var(--foreground)] font-medium">F1</span>: <span className="text-[color:var(--muted)]">harmonic mean of precision and recall, equal weight.</span></p>
+                  <p><span className="text-[color:var(--foreground)] font-medium">F2</span>: <span className="text-[color:var(--muted)]">5·P·R / (4·P + R). Recall weighs twice precision. The ranking metric.</span></p>
+                  <p><span className="text-[color:var(--foreground)] font-medium">Recall 95% CI</span>: <span className="text-[color:var(--muted)]">bootstrap over the {meta.totalCases} PRs. How much recall would move on a different sample of PRs; overlapping intervals mean the gap is not something this benchmark can separate.</span></p>
                 </div>
               </div>
               <div>
+                <h3 className="text-sm font-semibold text-[color:var(--foreground)] mb-1">Cost</h3>
+                <p className="text-sm text-[color:var(--muted)] mb-4 leading-relaxed">
+                  Measured tokens times each vendor&apos;s list price (read {meta.pricesCollectedAt}), with prompt cache:
+                  cached reads and cache writes are billed at their own rates, the rest of the input at the input rate.
+                  Reasoning tokens are part of output. $/bug is total cost divided by valid true positives found.
+                </p>
                 <h3 className="text-sm font-semibold text-[color:var(--foreground)] mb-1">What this run does not measure</h3>
                 <ul className="text-sm text-[color:var(--muted)] space-y-2 leading-relaxed list-disc list-inside">
-                  <li><span className="text-[color:var(--foreground)]">Model run-to-run variance.</span> One pass per model — re-running the review agent itself isn&apos;t measured. Judge run-to-run (re-scoring the same submission) is measured separately where available — see each model&apos;s page.</li>
-                  <li><span className="text-[color:var(--foreground)]">Large PRs.</span> Median diff size in this set is ~13K characters; the largest is ~38K. Some commercial reviewers decline PRs above 200K characters — this benchmark says nothing about that regime.</li>
+                  <li><span className="text-[color:var(--foreground)]">Run-to-run variance.</span> One pass per model and mode. Treat close scores as tied.</li>
+                  <li><span className="text-[color:var(--foreground)]">Large PRs.</span> These are {meta.totalCases} ordinary merged PRs; very large diffs are a different regime.</li>
                 </ul>
               </div>
             </div>
             <div className="pt-4 border-t border-[var(--border)] text-sm text-[color:var(--muted)]">
               <span className="text-[color:var(--foreground)] font-medium">Conflict of interest: </span>
-              this benchmark is run and published by Kodus, which sells an AI code review product, on Kodus&apos;s own harness.
-              It measures models inside one fixed harness — it is not a comparison of review products, and the same harness
-              running a different model can score very differently than the numbers here.
+              this benchmark is run and published by Kodus, which sells an AI code review product, on Kodus&apos;s own harness,
+              and Kodus labelled the gold set. It measures models inside one fixed harness. It is not a comparison of review
+              products, and another harness running the same model can score very differently.
             </div>
           </div>
         )}
@@ -379,10 +471,11 @@ export default function LeaderboardClient() {
                 <tr className="border-b border-[var(--border)]">
                   <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">#</th>
                   <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest min-w-[220px] font-bold">Model</th>
+                  <SortHeader label="F2" sortKeyName="f2" activeKey={sortKey} onSort={toggleSort} />
                   <SortHeader label="F1" sortKeyName="f1" activeKey={sortKey} onSort={toggleSort} />
                   <SortHeader label="Precision" sortKeyName="precision" activeKey={sortKey} onSort={toggleSort} />
                   <SortHeader label="Recall" sortKeyName="recall" activeKey={sortKey} onSort={toggleSort} />
-                  <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">95% CI</th>
+                  <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">Recall 95% CI</th>
                   <SortHeader label="$/PR" sortKeyName="costPerPR" activeKey={sortKey} onSort={toggleSort} />
                   <SortHeader label="$/bug" sortKeyName="costPerBugFound" activeKey={sortKey} onSort={toggleSort} />
                 </tr>
@@ -391,9 +484,12 @@ export default function LeaderboardClient() {
                 {entries.map((e: LeaderboardEntry, idx) => {
                                   const provider = providerOf(e.modelId);
                   const f = filteredByKey.get(e.key);
+                  const f2 = isFiltered ? f?.f2 ?? null : e.f2;
                   const f1 = isFiltered ? f?.f1 ?? null : e.f1;
                   const precision = isFiltered ? f?.precision ?? null : e.precision;
-                  const recall = isFiltered ? f?.recall ?? null : e.score;
+                  const recall = isFiltered ? f?.recall ?? null : e.recall;
+                  const costPerPR = isFiltered ? f?.costPerPR ?? null : e.costPerPR;
+                  const costPerBug = isFiltered ? f?.costPerBugFound ?? null : e.costPerBugFound;
                   const ciLow = isFiltered ? f?.ciLow ?? null : e.ciLow;
                   const ciHigh = isFiltered ? f?.ciHigh ?? null : e.ciHigh;
                   const isTop = idx === 0 && (!isFiltered || (f?.n ?? 0) > 0);
@@ -426,8 +522,11 @@ export default function LeaderboardClient() {
                         </td>
                         <td className="px-5 py-4 text-right">
                           <span className={cn('text-base tabular-nums font-mono font-bold', isTop ? 'text-[color:var(--accent)]' : 'text-[color:var(--foreground)]')}>
-                            {f1 == null ? '—' : f1.toFixed(1)}
+                            {f2 == null ? '—' : f2.toFixed(1)}
                           </span>
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <span className="text-sm tabular-nums font-mono text-[color:var(--muted)]">{f1 == null ? '—' : f1.toFixed(1)}</span>
                         </td>
                         <td className="px-5 py-4 text-right">
                           <span className="text-sm tabular-nums font-mono text-[color:var(--muted)]">{precision == null ? '—' : formatScore(precision)}</span>
@@ -442,14 +541,18 @@ export default function LeaderboardClient() {
                           </span>
                         </td>
                         <td className="px-5 py-4 text-right">
-                          {e.costPerPR != null ? (
-                            <span className="text-sm tabular-nums font-mono text-[color:var(--foreground)]">{formatMoney(e.costPerPR, 3)}</span>
-                          ) : (
-                            <span className="text-xs font-mono text-[color:var(--muted-dim)]">subscription</span>
-                          )}
+                          <span className="flex flex-col items-end gap-0.5">
+                            <span className="text-sm tabular-nums font-mono text-[color:var(--foreground)]">
+                              {formatMoney(costPerPR, 3)}
+                              {e.costNote && <span className="text-[color:var(--muted-dim)]" title={e.costNote}>{noteMark(e.costNote)}</span>}
+                            </span>
+                            {e.costBasis === 'api-equivalent' && (
+                              <span className="text-[10px] font-mono uppercase tracking-widest text-[color:var(--muted-dim)]">API-equivalent</span>
+                            )}
+                          </span>
                         </td>
                         <td className="px-5 py-4 text-right">
-                          <span className="text-sm tabular-nums font-mono text-[color:var(--muted)]">{formatMoney(e.costPerBugFound, 2)}</span>
+                          <span className="text-sm tabular-nums font-mono text-[color:var(--muted)]">{formatMoney(costPerBug, 3)}</span>
                         </td>
                       </tr>
                     </Fragment>
@@ -458,6 +561,16 @@ export default function LeaderboardClient() {
               </tbody>
             </table>
           </div>
+          {costNotes.length > 0 && (
+            <div className="border-t border-[var(--border)] px-5 py-3 space-y-1">
+              {costNotes.map((n) => (
+                <p key={n} className="text-xs text-[color:var(--muted)]">
+                  <span className="font-mono text-[color:var(--muted-dim)] mr-1">{noteMark(n)}</span>
+                  {n}
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -465,43 +578,40 @@ export default function LeaderboardClient() {
       {view === 'frontier' && (
         <div>
           <p className="text-sm text-[color:var(--muted)] mb-4 max-w-2xl">
-            Recall against measured cost per PR, log scale. The dashed line connects only the Pareto frontier — models where
-            nothing is both cheaper and better. Whiskers are the 95% bootstrap interval on recall.
-            {isFiltered && ' Recall and CI reflect the active filters; cost per PR is always from the full run.'}
+            {MODE_LABELS[mode]} mode. Recall against cost per PR (with prompt cache), log scale. The dashed line connects only the
+            Pareto frontier: models where nothing is both cheaper and better. Whiskers are the 95% bootstrap interval on recall.
+            {isFiltered && ' Recall, CI and cost reflect the active filters.'}
           </p>
           <CostFrontier data={frontierData} height={560} />
         </div>
       )}
 
-      {/* Fila — so nome e fornecedor. A versao anterior explicava, por
-          modelo, por que ainda nao rodou (caminho de API vs assinatura); isso
-          e contexto interno nosso e nao muda nada pro leitor. Os motivos, com
-          clausula e fonte, estao no docs/adr-model-access-paths.md. */}
-      <section className="mt-16 pt-10 border-t border-[var(--border)]">
-        <span className="eyebrow block mb-3">Next up</span>
-        <h2 className="font-display text-[length:var(--text-heading)] text-[color:var(--color-ink-black)] mb-3">
-          Not measured yet
-        </h2>
-        <p className="text-[length:var(--text-body-sm)] text-[color:var(--muted)] mb-8">
-          The models people ask for most.
-        </p>
-
-        <ul className="flex flex-wrap gap-2">
-          {UPCOMING_MODELS.map((m) => (
-            <li
-              key={m.name}
-              className="inline-flex items-baseline gap-2 px-4 py-2 rounded-[var(--radius-badges)] border border-[var(--border)] bg-[var(--surface-card)]"
-            >
-              <span className="text-[length:var(--text-body-sm)] font-semibold text-[color:var(--color-ink-black)]">
-                {m.name}
-              </span>
-              <span className="text-[length:var(--text-micro)] font-mono uppercase tracking-widest text-[color:var(--muted-dim)]">
-                {m.provider}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {missingHere.length > 0 && (
+        <section className="mt-16 pt-10 border-t border-[var(--border)]">
+          <span className="eyebrow block mb-3">Next up</span>
+          <h2 className="font-display text-[length:var(--text-heading)] text-[color:var(--color-ink-black)] mb-3">
+            Not in the {MODE_LABELS[mode].toLowerCase()} table yet
+          </h2>
+          <p className="text-[length:var(--text-body-sm)] text-[color:var(--muted)] mb-8">
+            Part of this benchmark run; results land here as each one finishes.
+          </p>
+          <ul className="flex flex-wrap gap-2">
+            {missingHere.map((id) => (
+              <li
+                key={id}
+                className="inline-flex items-baseline gap-2 px-4 py-2 rounded-[var(--radius-badges)] border border-[var(--border)] bg-[var(--surface-card)]"
+              >
+                <span className="text-[length:var(--text-body-sm)] font-semibold text-[color:var(--color-ink-black)]">
+                  {displayNameOf(id)}
+                </span>
+                <span className="text-[length:var(--text-micro)] font-mono uppercase tracking-widest text-[color:var(--muted-dim)]">
+                  {providerOf(id)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

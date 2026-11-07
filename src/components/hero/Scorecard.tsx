@@ -14,32 +14,34 @@
 interface Props {
   modelName: string;
   harness: string;
+  mode: string;
   judge: string | null;
-  executionMode: string;
   cases: number;
   goldensTotal: number;
   goldensMatched: number;
   recall: number;
   precision: number;
+  f2: number;
   artifactPath: string;
 }
 
 export default function Scorecard({
   modelName,
   harness,
+  mode,
   judge,
-  executionMode,
   cases,
   goldensTotal,
   goldensMatched,
   recall,
   precision,
+  f2,
   artifactPath,
 }: Props) {
   const config: [string, string][] = [
     ['harness', harness],
+    ['review mode', mode],
     ['judge', judge ?? '—'],
-    ['execution', executionMode],
     ['pull requests', String(cases)],
     ['confirmed bugs', String(goldensTotal)],
   ];
@@ -48,6 +50,7 @@ export default function Scorecard({
     ['bugs found', `${goldensMatched} of ${goldensTotal}`],
     ['recall', `${recall.toFixed(1)}%`],
     ['precision', `${precision.toFixed(1)}%`],
+    ['F2', f2.toFixed(1)],
   ];
 
   return (
