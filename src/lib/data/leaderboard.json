@@ -1,2105 +1,953 @@
 {
   "entries": [
     {
-      "key": "kodus::deepseek-v4-pro",
+      "key": "balanced::gpt-6.1-sol",
+      "mode": "balanced",
+      "modelId": "gpt-6.1-sol",
+      "provider": "openai",
+      "accessPath": "subscription",
       "harness": "kodus",
       "harnessVersion": "dev",
-      "modelId": "deepseek-v4-pro",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": 1464448,
-      "finishReasons": {
-        "stopped": 23,
-        "budget-exhausted": 1,
-        "completed": 6
-      },
-      "maxFindingsInCase": 9,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-12T18:57:42.291Z",
-      "score": 44.21,
-      "recallMacro": 45,
-      "precision": 43.56,
-      "precisionMacro": 48.56,
-      "f1": 43.89,
-      "fairRecall": 45,
-      "loopFidelity": 82.97,
-      "goldensTotal": 95,
-      "goldensMatched": 42,
+      "executionMode": "live",
+      "reasoningConfig": "explicit",
+      "reasoningEffort": "low",
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T15:10:12.143Z",
+      "recall": 41.32,
+      "precision": 66.67,
+      "f1": 51.02,
+      "f2": 44.72,
+      "recallMacro": 43.78,
+      "precisionMacro": 62.04,
+      "ciLow": 33.04,
+      "ciHigh": 51.11,
+      "goldensTotal": 121,
+      "goldensMatched": 50,
+      "comments": 75,
       "cases": 30,
+      "calls": 258,
       "usage": {
-        "inputTokens": 17302878,
-        "outputTokens": 1679590
+        "inputTokens": 10356478,
+        "outputTokens": 119495,
+        "reasoningTokens": 6611,
+        "cacheReadTokens": 1451008,
+        "cacheWriteTokens": 0
       },
       "byLanguage": {
-        "java": {
-          "recall": 11.76,
-          "precision": 14.67,
-          "goldens": 17,
-          "count": 6
-        },
         "typescript": {
-          "recall": 52.17,
-          "precision": 46.11,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 75,
-          "precision": 70.83,
-          "goldens": 16,
+          "recall": 48.57,
+          "precision": 73.91,
+          "goldens": 35,
+          "matched": 17,
           "count": 6
         },
         "ruby": {
-          "recall": 35,
-          "precision": 31.94,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 47.37,
-          "precision": 73.61,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 11.76,
-          "precision": 14.67,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 52.17,
-          "precision": 46.11,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 75,
-          "precision": 70.83,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 35,
-          "precision": 31.94,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 47.37,
-          "precision": 73.61,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 40.74,
-          "precision": 39.4,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 41.18,
-          "precision": 48.33,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
-          "recall": 55,
-          "precision": 58.33,
-          "goldens": 20,
-          "count": 8
-        },
-        "XS": {
-          "recall": 50,
-          "precision": 100,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 29,
-        "medium": 50,
-        "high": 22,
-        "critical": 0
-      },
-      "findingsByCategory": {
-        "bug": 97,
-        "performance": 2,
-        "security": 2,
-        "other": 0
-      },
-      "costTotal": 8.99,
-      "costPerPR": 0.3,
-      "costPerBugFound": 0.21,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": {
-        "runs": 3,
-        "recall": {
-          "mean": 43.86,
-          "stdev": 0.61,
-          "values": [
-            44.21,
-            44.21,
-            43.16
-          ]
-        },
-        "precision": {
-          "mean": 43.56,
-          "stdev": 0.99,
-          "values": [
-            43.56,
-            42.57,
-            44.55
-          ]
-        },
-        "f1": {
-          "mean": 43.7,
-          "stdev": 0.28,
-          "values": [
-            43.89,
-            43.38,
-            43.85
-          ]
-        }
-      },
-      "ciHalfWidth": 9.99,
-      "ciLow": 32.32,
-      "ciHigh": 56.31,
-      "ciHalfWidthBootstrap": 11.99,
-      "rank": 1
-    },
-    {
-      "key": "kodus::kimi-k2.7-code",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "kimi-k2.7-code",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": null,
-      "finishReasons": {
-        "unknown": 30
-      },
-      "maxFindingsInCase": 14,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-04T22:02:19.313Z",
-      "score": 37.89,
-      "recallMacro": 39.89,
-      "precision": 50,
-      "precisionMacro": 52.47,
-      "f1": 43.11,
-      "fairRecall": 40,
-      "loopFidelity": 86.78,
-      "goldensTotal": 95,
-      "goldensMatched": 36,
-      "cases": 30,
-      "usage": {
-        "inputTokens": 14914667,
-        "outputTokens": 612873
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 17.65,
-          "precision": 31.25,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 34.78,
-          "precision": 49.55,
-          "goldens": 23,
+          "recall": 31.71,
+          "precision": 81.25,
+          "goldens": 41,
+          "matched": 13,
           "count": 6
         },
         "go": {
-          "recall": 62.5,
-          "precision": 81.35,
-          "goldens": 16,
+          "recall": 61.11,
+          "precision": 78.57,
+          "goldens": 18,
+          "matched": 11,
           "count": 6
         },
-        "ruby": {
-          "recall": 50,
-          "precision": 38.97,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 26.32,
-          "precision": 54.17,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 17.65,
-          "precision": 31.25,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 34.78,
-          "precision": 49.55,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 62.5,
-          "precision": 81.35,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 50,
-          "precision": 38.97,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 26.32,
-          "precision": 54.17,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 29.63,
-          "precision": 31.9,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 47.06,
-          "precision": 66.07,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
-          "recall": 50,
-          "precision": 79.93,
-          "goldens": 20,
-          "count": 8
-        },
-        "XS": {
-          "recall": 50,
-          "precision": 66.67,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 8,
-        "medium": 57,
-        "high": 40,
-        "critical": 6
-      },
-      "findingsByCategory": {
-        "bug": 98,
-        "performance": 2,
-        "security": 6,
-        "other": 6
-      },
-      "costTotal": 16.62,
-      "costPerPR": 0.55,
-      "costPerBugFound": 0.46,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": {
-        "runs": 3,
-        "recall": {
-          "mean": 37.54,
-          "stdev": 0.61,
-          "values": [
-            37.89,
-            36.84,
-            37.89
-          ]
-        },
-        "precision": {
-          "mean": 47.92,
-          "stdev": 1.86,
-          "values": [
-            50,
-            46.43,
-            47.32
-          ]
-        },
-        "f1": {
-          "mean": 42.09,
-          "stdev": 1.02,
-          "values": [
-            43.11,
-            41.08,
-            42.09
-          ]
-        }
-      },
-      "ciHalfWidth": 9.76,
-      "ciLow": 28.13,
-      "ciHigh": 48.68,
-      "ciHalfWidthBootstrap": 10.28,
-      "rank": 2,
-      "pairedVsTop": {
-        "diff": 6.32,
-        "lo": -2.11,
-        "hi": 14.43,
-        "p": 0.17,
-        "n": 30,
-        "separatesFromTop": false
-      }
-    },
-    {
-      "key": "kodus::qwen3.8-max",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "qwen3.8-max",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": 978947,
-      "finishReasons": {
-        "stopped": 20,
-        "completed": 10
-      },
-      "maxFindingsInCase": 14,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-06T20:57:10.581Z",
-      "score": 41.05,
-      "recallMacro": 40.72,
-      "precision": 43.93,
-      "precisionMacro": 47.05,
-      "f1": 42.44,
-      "fairRecall": 40.72,
-      "loopFidelity": 80.06,
-      "goldensTotal": 95,
-      "goldensMatched": 39,
-      "cases": 30,
-      "usage": {
-        "inputTokens": 14600182,
-        "outputTokens": 1177820
-      },
-      "byLanguage": {
         "java": {
-          "recall": 11.76,
-          "precision": 30,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 56.52,
-          "precision": 44.11,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 68.75,
-          "precision": 81.35,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 35,
-          "precision": 22.78,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 31.58,
-          "precision": 54.17,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 11.76,
-          "precision": 30,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 56.52,
-          "precision": 44.11,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 68.75,
-          "precision": 81.35,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 35,
-          "precision": 22.78,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 31.58,
-          "precision": 54.17,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 37.04,
-          "precision": 32.59,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 41.18,
-          "precision": 65.24,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
-          "recall": 55,
-          "precision": 52.08,
-          "goldens": 20,
-          "count": 8
-        },
-        "XS": {
           "recall": 25,
-          "precision": 100,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 24,
-        "medium": 49,
-        "high": 20,
-        "critical": 4
-      },
-      "findingsByCategory": {
-        "bug": 104,
-        "performance": 1,
-        "security": 1,
-        "other": 1
-      },
-      "costTotal": 36.27,
-      "costPerPR": 1.21,
-      "costPerBugFound": 0.93,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 9.89,
-      "ciLow": 29.55,
-      "ciHigh": 53.75,
-      "ciHalfWidthBootstrap": 12.1,
-      "rank": 3,
-      "pairedVsTop": {
-        "diff": 3.16,
-        "lo": -4.12,
-        "hi": 10.84,
-        "p": 0.46,
-        "n": 30,
-        "separatesFromTop": false
-      }
-    },
-    {
-      "key": "kodus::deepseek-v4.1-flash@fireworks",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "deepseek-v4.1-flash@fireworks",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": 873705,
-      "finishReasons": {
-        "stopped": 12,
-        "completed": 18
-      },
-      "maxFindingsInCase": 7,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-09-10T20:05:00.967Z",
-      "score": 35.79,
-      "recallMacro": 35.83,
-      "precision": 49.35,
-      "precisionMacro": 47.38,
-      "f1": 41.49,
-      "fairRecall": 37.5,
-      "loopFidelity": 84.68,
-      "goldensTotal": 95,
-      "goldensMatched": 34,
-      "cases": 30,
-      "usage": {
-        "inputTokens": 15244869,
-        "outputTokens": 1071769
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 17.65,
-          "precision": 26.39,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 34.78,
-          "precision": 55.56,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 68.75,
-          "precision": 76.79,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 35,
-          "precision": 34.17,
-          "goldens": 20,
+          "precision": 27.27,
+          "goldens": 12,
+          "matched": 3,
           "count": 6
         },
         "python": {
-          "recall": 26.32,
-          "precision": 43.33,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 17.65,
-          "precision": 26.39,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 34.78,
-          "precision": 55.56,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 68.75,
-          "precision": 76.79,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 35,
-          "precision": 34.17,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 26.32,
-          "precision": 43.33,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 33.33,
-          "precision": 40.83,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 41.18,
-          "precision": 40.48,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
-          "recall": 35,
-          "precision": 50,
-          "goldens": 20,
-          "count": 8
-        },
-        "XS": {
-          "recall": 50,
-          "precision": 100,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 20,
-        "medium": 38,
-        "high": 18,
-        "critical": 1
-      },
-      "findingsByCategory": {
-        "bug": 63,
-        "performance": 1,
-        "security": 1,
-        "other": 12
-      },
-      "costTotal": 4.06,
-      "costPerPR": 0.14,
-      "costPerBugFound": 0.12,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 9.64,
-      "ciLow": 24.73,
-      "ciHigh": 49,
-      "ciHalfWidthBootstrap": 12.13,
-      "rank": 4,
-      "pairedVsTop": {
-        "diff": 8.42,
-        "lo": 0,
-        "hi": 17.76,
-        "p": 0.07,
-        "n": 30,
-        "separatesFromTop": false
-      }
-    },
-    {
-      "key": "kodus::glm-5.2@fireworks",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "glm-5.2@fireworks",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": null,
-      "finishReasons": {
-        "stopped": 28,
-        "budget-exhausted": 1
-      },
-      "maxFindingsInCase": 7,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-19T18:02:18.951Z",
-      "score": 35.16,
-      "recallMacro": 35.63,
-      "precision": 46.99,
-      "precisionMacro": 52.96,
-      "f1": 40.23,
-      "fairRecall": 35.63,
-      "loopFidelity": 82.33,
-      "goldensTotal": 91,
-      "goldensMatched": 32,
-      "cases": 29,
-      "usage": {
-        "inputTokens": 13969695,
-        "outputTokens": 1333750
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 7.69,
-          "precision": 20,
-          "goldens": 13,
-          "count": 5
-        },
-        "typescript": {
-          "recall": 34.78,
-          "precision": 43.65,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 68.75,
-          "precision": 66.67,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 35,
-          "precision": 51.39,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 26.32,
-          "precision": 61.11,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 7.69,
-          "precision": 20,
-          "goldens": 13,
-          "count": 5
-        },
-        "cal.com": {
-          "recall": 34.78,
-          "precision": 43.65,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 68.75,
-          "precision": 66.67,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 35,
-          "precision": 51.39,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 26.32,
-          "precision": 61.11,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 32,
-          "precision": 46.13,
-          "goldens": 50,
-          "count": 13
-        },
-        "L": {
-          "recall": 41.18,
-          "precision": 40,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
-          "recall": 35,
-          "precision": 76.19,
-          "goldens": 20,
-          "count": 8
-        },
-        "XS": {
-          "recall": 50,
-          "precision": 50,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 12,
-        "medium": 33,
-        "high": 19,
-        "critical": 4
-      },
-      "findingsByCategory": {
-        "bug": 66,
-        "performance": 3,
-        "security": 3,
-        "other": 11
-      },
-      "costTotal": 25.43,
-      "costPerPR": 0.88,
-      "costPerBugFound": 0.79,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 9.81,
-      "ciLow": 24.72,
-      "ciHigh": 47.06,
-      "ciHalfWidthBootstrap": 11.17,
-      "rank": 5,
-      "pairedVsTop": {
-        "diff": 10.99,
-        "lo": 3,
-        "hi": 19.79,
-        "p": 0.01,
-        "n": 29,
-        "separatesFromTop": false
-      }
-    },
-    {
-      "key": "kodus::glm-5.3-flash",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "glm-5.3-flash",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": 1198254,
-      "finishReasons": {
-        "stopped": 19,
-        "completed": 11
-      },
-      "maxFindingsInCase": 9,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-31T23:16:21.414Z",
-      "score": 38.95,
-      "recallMacro": 39.56,
-      "precision": 41.05,
-      "precisionMacro": 46.68,
-      "f1": 39.97,
-      "fairRecall": 39.94,
-      "loopFidelity": 80.49,
-      "goldensTotal": 95,
-      "goldensMatched": 37,
-      "cases": 30,
-      "usage": {
-        "inputTokens": 12107810,
-        "outputTokens": 1375263
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 23.53,
-          "precision": 24,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 52.17,
-          "precision": 45.83,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 56.25,
-          "precision": 76.19,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 35,
-          "precision": 29.44,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 26.32,
-          "precision": 54.17,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 23.53,
-          "precision": 24,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 52.17,
-          "precision": 45.83,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 56.25,
-          "precision": 76.19,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 35,
-          "precision": 29.44,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 26.32,
-          "precision": 54.17,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 31.48,
-          "precision": 30.24,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 47.06,
-          "precision": 60.63,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
-          "recall": 55,
-          "precision": 66.67,
-          "goldens": 20,
-          "count": 8
-        },
-        "XS": {
-          "recall": 25,
-          "precision": 50,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 35,
-        "medium": 37,
-        "high": 19,
-        "critical": 4
-      },
-      "findingsByCategory": {
-        "bug": 82,
-        "performance": 6,
-        "security": 7,
-        "other": 0
-      },
-      "costTotal": 2.5,
-      "costPerPR": 0.08,
-      "costPerBugFound": 0.07,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 9.81,
-      "ciLow": 29.13,
-      "ciHigh": 49.41,
-      "ciHalfWidthBootstrap": 10.14,
-      "rank": 6,
-      "pairedVsTop": {
-        "diff": 5.26,
-        "lo": -3.9,
-        "hi": 14.63,
-        "p": 0.31,
-        "n": 30,
-        "separatesFromTop": false
-      }
-    },
-    {
-      "key": "kodus::kimi-k3",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "kimi-k3",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": 757542,
-      "finishReasons": {
-        "stopped": 20,
-        "completed": 10
-      },
-      "maxFindingsInCase": 10,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-05T18:33:49.036Z",
-      "score": 41.05,
-      "recallMacro": 41.72,
-      "precision": 38.71,
-      "precisionMacro": 47.5,
-      "f1": 39.85,
-      "fairRecall": 43.5,
-      "loopFidelity": 82.31,
-      "goldensTotal": 95,
-      "goldensMatched": 39,
-      "cases": 30,
-      "usage": {
-        "inputTokens": 11174498,
-        "outputTokens": 1008266
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 17.65,
-          "precision": 22.78,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 56.52,
-          "precision": 53.1,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 50,
-          "precision": 49.76,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 35,
-          "precision": 33.89,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 42.11,
-          "precision": 78.33,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 17.65,
-          "precision": 22.78,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 56.52,
-          "precision": 53.1,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 50,
-          "precision": 49.76,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 35,
-          "precision": 33.89,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 42.11,
-          "precision": 78.33,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 37.04,
-          "precision": 42.04,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 41.18,
-          "precision": 39.8,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
-          "recall": 55,
-          "precision": 56.25,
-          "goldens": 20,
-          "count": 8
-        },
-        "XS": {
-          "recall": 25,
-          "precision": 100,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 29,
-        "medium": 49,
-        "high": 33,
-        "critical": 5
-      },
-      "findingsByCategory": {
-        "bug": 112,
-        "performance": 5,
-        "security": 4,
-        "other": 3
-      },
-      "costTotal": 48.65,
-      "costPerPR": 1.62,
-      "costPerBugFound": 1.25,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 9.89,
-      "ciLow": 32.29,
-      "ciHigh": 50.46,
-      "ciHalfWidthBootstrap": 9.08,
-      "rank": 7,
-      "pairedVsTop": {
-        "diff": 3.16,
-        "lo": -5.49,
-        "hi": 12.38,
-        "p": 0.55,
-        "n": 30,
-        "separatesFromTop": false
-      }
-    },
-    {
-      "key": "kodus::deepseek-v4-flash",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "deepseek-v4-flash",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": null,
-      "finishReasons": {
-        "unknown": 30
-      },
-      "maxFindingsInCase": 9,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-04T18:45:23.274Z",
-      "score": 36.84,
-      "recallMacro": 36.5,
-      "precision": 42.11,
-      "precisionMacro": 46.79,
-      "f1": 39.3,
-      "fairRecall": 38.28,
-      "loopFidelity": 82.2,
-      "goldensTotal": 95,
-      "goldensMatched": 35,
-      "cases": 30,
-      "usage": {
-        "inputTokens": 18180399,
-        "outputTokens": 1470196
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 17.65,
-          "precision": 33.33,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 34.78,
-          "precision": 41.85,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 62.5,
-          "precision": 63.9,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 45,
-          "precision": 45.44,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 26.32,
-          "precision": 50.67,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 17.65,
-          "precision": 33.33,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 34.78,
-          "precision": 41.85,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 62.5,
-          "precision": 63.9,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 45,
-          "precision": 45.44,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 26.32,
-          "precision": 50.67,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 33.33,
-          "precision": 34.91,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 47.06,
-          "precision": 45.24,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
           "recall": 40,
-          "precision": 64.05,
-          "goldens": 20,
-          "count": 8
+          "precision": 54.55,
+          "goldens": 15,
+          "matched": 6,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 48.57,
+          "precision": 73.91,
+          "goldens": 35,
+          "matched": 17,
+          "count": 6
         },
-        "XS": {
+        "discourse": {
+          "recall": 31.71,
+          "precision": 81.25,
+          "goldens": 41,
+          "matched": 13,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 61.11,
+          "precision": 78.57,
+          "goldens": 18,
+          "matched": 11,
+          "count": 6
+        },
+        "keycloak": {
           "recall": 25,
-          "precision": 100,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 29,
-        "medium": 49,
-        "high": 17,
-        "critical": 0
-      },
-      "findingsByCategory": {
-        "bug": 83,
-        "performance": 8,
-        "security": 4,
-        "other": 0
-      },
-      "costTotal": 2.96,
-      "costPerPR": 0.1,
-      "costPerBugFound": 0.08,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": {
-        "runs": 3,
-        "recall": {
-          "mean": 36.84,
-          "stdev": 0,
-          "values": [
-            36.84,
-            36.84,
-            36.84
-          ]
-        },
-        "precision": {
-          "mean": 42.11,
-          "stdev": 0,
-          "values": [
-            42.11,
-            42.11,
-            42.11
-          ]
-        },
-        "f1": {
-          "mean": 39.3,
-          "stdev": 0,
-          "values": [
-            39.3,
-            39.3,
-            39.3
-          ]
-        }
-      },
-      "ciHalfWidth": 9.7,
-      "ciLow": 26.37,
-      "ciHigh": 47.87,
-      "ciHalfWidthBootstrap": 10.75,
-      "rank": 8,
-      "pairedVsTop": {
-        "diff": 7.37,
-        "lo": -1.85,
-        "hi": 16.67,
-        "p": 0.15,
-        "n": 30,
-        "separatesFromTop": false
-      }
-    },
-    {
-      "key": "kodus::muse-spark-1.2",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "muse-spark-1.2",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": 931289,
-      "finishReasons": {
-        "completed": 18,
-        "stopped": 12
-      },
-      "maxFindingsInCase": 13,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-06T13:13:32.659Z",
-      "score": 41.05,
-      "recallMacro": 43.61,
-      "precision": 35.04,
-      "precisionMacro": 40.7,
-      "f1": 37.81,
-      "fairRecall": 45.39,
-      "loopFidelity": 89.38,
-      "goldensTotal": 95,
-      "goldensMatched": 39,
-      "cases": 30,
-      "usage": {
-        "inputTokens": 8025659,
-        "outputTokens": 1081681
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 11.76,
-          "precision": 20,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 39.13,
-          "precision": 45,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 68.75,
-          "precision": 49.19,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 50,
-          "precision": 49.86,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 36.84,
-          "precision": 39.44,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 11.76,
-          "precision": 20,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 39.13,
-          "precision": 45,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 68.75,
-          "precision": 49.19,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 50,
-          "precision": 49.86,
-          "goldens": 20,
+          "precision": 27.27,
+          "goldens": 12,
+          "matched": 3,
           "count": 6
         },
         "sentry": {
-          "recall": 36.84,
-          "precision": 39.44,
-          "goldens": 19,
+          "recall": 40,
+          "precision": 54.55,
+          "goldens": 15,
+          "matched": 6,
           "count": 6
         }
       },
       "bySize": {
-        "M": {
-          "recall": 35.19,
-          "precision": 32.92,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 41.18,
-          "precision": 28.08,
-          "goldens": 17,
-          "count": 6
-        },
         "S": {
-          "recall": 50,
-          "precision": 55.21,
-          "goldens": 20,
+          "recall": 47.06,
+          "precision": 88.89,
+          "goldens": 34,
+          "matched": 16,
           "count": 8
         },
-        "XS": {
-          "recall": 75,
-          "precision": 75,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 2,
-        "medium": 55,
-        "high": 49,
-        "critical": 4
-      },
-      "findingsByCategory": {
-        "bug": 110,
-        "performance": 0,
-        "security": 0,
-        "other": 7
-      },
-      "costTotal": 14.63,
-      "costPerPR": 0.49,
-      "costPerBugFound": 0.38,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 9.89,
-      "ciLow": 31.25,
-      "ciHigh": 52,
-      "ciHalfWidthBootstrap": 10.38,
-      "rank": 9,
-      "pairedVsTop": {
-        "diff": 3.16,
-        "lo": -5.21,
-        "hi": 11.34,
-        "p": 0.54,
-        "n": 30,
-        "separatesFromTop": false
-      }
-    },
-    {
-      "key": "kodus::muse-spark-1.3",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "muse-spark-1.3",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": 756676,
-      "finishReasons": {
-        "stopped": 28,
-        "completed": 2
-      },
-      "maxFindingsInCase": 9,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-09-11T18:20:24.277Z",
-      "score": 38.95,
-      "recallMacro": 38.83,
-      "precision": 33.96,
-      "precisionMacro": 38.14,
-      "f1": 36.28,
-      "fairRecall": 39.11,
-      "loopFidelity": 93.15,
-      "goldensTotal": 95,
-      "goldensMatched": 37,
-      "cases": 30,
-      "usage": {
-        "inputTokens": 9728727,
-        "outputTokens": 913516
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 23.53,
-          "precision": 19,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 39.13,
-          "precision": 37.78,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 68.75,
-          "precision": 62.7,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 35,
-          "precision": 25,
-          "goldens": 20,
-          "count": 6
-        },
-        "python": {
-          "recall": 31.58,
-          "precision": 43.06,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 23.53,
-          "precision": 19,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 39.13,
-          "precision": 37.78,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 68.75,
-          "precision": 62.7,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 35,
-          "precision": 25,
-          "goldens": 20,
-          "count": 6
-        },
-        "sentry": {
-          "recall": 31.58,
-          "precision": 43.06,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
         "M": {
-          "recall": 37.04,
-          "precision": 31.19,
-          "goldens": 54,
+          "recall": 37.5,
+          "precision": 53.85,
+          "goldens": 56,
+          "matched": 21,
           "count": 14
         },
         "L": {
-          "recall": 52.94,
-          "precision": 47.14,
-          "goldens": 17,
+          "recall": 41.94,
+          "precision": 76.47,
+          "goldens": 31,
+          "matched": 13,
           "count": 6
-        },
-        "S": {
-          "recall": 35,
-          "precision": 35.83,
-          "goldens": 20,
-          "count": 8
-        },
-        "XS": {
-          "recall": 25,
-          "precision": 100,
-          "goldens": 4,
-          "count": 2
-        }
-      },
-      "findingsBySeverity": {
-        "low": 3,
-        "medium": 58,
-        "high": 42,
-        "critical": 3
-      },
-      "findingsByCategory": {
-        "bug": 106,
-        "performance": 0,
-        "security": 0,
-        "other": 0
-      },
-      "costTotal": 16.04,
-      "costPerPR": 0.53,
-      "costPerBugFound": 0.43,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 9.81,
-      "ciLow": 28.41,
-      "ciHigh": 50.56,
-      "ciHalfWidthBootstrap": 11.08,
-      "rank": 10,
-      "pairedVsTop": {
-        "diff": 5.26,
-        "lo": -2.02,
-        "hi": 12.5,
-        "p": 0.2,
-        "n": 30,
-        "separatesFromTop": false
-      }
-    },
-    {
-      "key": "kodus::qwen3.8-27b",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "qwen3.8-27b",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
-      "reasoningConfig": "vendor-default",
-      "reasoningEffort": null,
-      "reasoningTokens": null,
-      "finishReasons": {
-        "stopped": 23,
-        "completed": 6
-      },
-      "maxFindingsInCase": 9,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-17T18:05:28.182Z",
-      "score": 34.41,
-      "recallMacro": 32.41,
-      "precision": 38.14,
-      "precisionMacro": 39.56,
-      "f1": 36.18,
-      "fairRecall": 32.7,
-      "loopFidelity": 75.25,
-      "goldensTotal": 93,
-      "goldensMatched": 32,
-      "cases": 29,
-      "usage": {
-        "inputTokens": 13852051,
-        "outputTokens": 1177099
-      },
-      "byLanguage": {
-        "java": {
-          "recall": 17.65,
-          "precision": 15.28,
-          "goldens": 17,
-          "count": 6
-        },
-        "typescript": {
-          "recall": 47.83,
-          "precision": 32.61,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 50,
-          "precision": 67.5,
-          "goldens": 16,
-          "count": 6
-        },
-        "ruby": {
-          "recall": 27.78,
-          "precision": 28,
-          "goldens": 18,
-          "count": 5
-        },
-        "python": {
-          "recall": 26.32,
-          "precision": 60.67,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "byRepo": {
-        "keycloak": {
-          "recall": 17.65,
-          "precision": 15.28,
-          "goldens": 17,
-          "count": 6
-        },
-        "cal.com": {
-          "recall": 47.83,
-          "precision": 32.61,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 50,
-          "precision": 67.5,
-          "goldens": 16,
-          "count": 6
-        },
-        "discourse": {
-          "recall": 27.78,
-          "precision": 28,
-          "goldens": 18,
-          "count": 5
-        },
-        "sentry": {
-          "recall": 26.32,
-          "precision": 60.67,
-          "goldens": 19,
-          "count": 6
-        }
-      },
-      "bySize": {
-        "M": {
-          "recall": 33.33,
-          "precision": 39.69,
-          "goldens": 54,
-          "count": 14
-        },
-        "L": {
-          "recall": 35.29,
-          "precision": 25.83,
-          "goldens": 17,
-          "count": 6
-        },
-        "S": {
-          "recall": 44.44,
-          "precision": 54.76,
-          "goldens": 18,
-          "count": 7
         },
         "XS": {
           "recall": 0,
           "precision": 0,
-          "goldens": 4,
+          "goldens": 0,
+          "matched": 0,
           "count": 2
         }
       },
+      "bySeverity": {
+        "critical": {
+          "matched": 1,
+          "goldens": 4,
+          "recall": 25
+        },
+        "high": {
+          "matched": 29,
+          "goldens": 52,
+          "recall": 55.77
+        },
+        "medium": {
+          "matched": 20,
+          "goldens": 61,
+          "recall": 32.79
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
       "findingsBySeverity": {
-        "low": 27,
-        "medium": 36,
-        "high": 23,
-        "critical": 5
+        "low": 0,
+        "medium": 32,
+        "high": 42,
+        "critical": 1
       },
       "findingsByCategory": {
-        "bug": 86,
-        "performance": 3,
-        "security": 0,
-        "other": 8
+        "bug": 61,
+        "performance": 4,
+        "security": 10,
+        "other": 0
       },
-      "costTotal": 10,
-      "costPerPR": 0.34,
-      "costPerBugFound": 0.31,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 9.66,
-      "ciLow": 24.05,
-      "ciHigh": 45.36,
-      "ciHalfWidthBootstrap": 10.66,
-      "rank": 11,
-      "pairedVsTop": {
-        "diff": 9.68,
-        "lo": 2.08,
-        "hi": 18.28,
-        "p": 0.02,
-        "n": 29,
-        "separatesFromTop": false
-      }
+      "costTotal": 19.15,
+      "costPerPR": 0.6384,
+      "costPerBugFound": 0.383,
+      "costBasis": "api-equivalent",
+      "costNote": "Ran on a ChatGPT subscription. Cost shown is the API-equivalent at OpenAI list price, short-context tier.",
+      "priceSource": "https://developers.openai.com/api/docs/pricing",
+      "price": {
+        "input": 2,
+        "cacheRead": 0.1,
+        "cacheWrite": 2.5,
+        "output": 10
+      },
+      "rank": 1
     },
     {
-      "key": "kodus::minimax-m3@fireworks",
+      "key": "balanced::claude-sonnet-5.5",
+      "mode": "balanced",
+      "modelId": "claude-sonnet-5.5",
+      "provider": "anthropic",
+      "accessPath": "api",
       "harness": "kodus",
       "harnessVersion": "dev",
-      "modelId": "minimax-m3@fireworks",
-      "provider": "openai_compatible",
-      "accessPath": "api",
-      "executionMode": "replay",
+      "executionMode": "live",
       "reasoningConfig": "vendor-default",
       "reasoningEffort": null,
-      "reasoningTokens": null,
-      "finishReasons": {
-        "completed": 6,
-        "stopped": 24
-      },
-      "maxFindingsInCase": 13,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-20T17:47:53.145Z",
-      "score": 25.26,
-      "recallMacro": 29.33,
-      "precision": 35.58,
-      "precisionMacro": 41.79,
-      "f1": 29.55,
-      "fairRecall": 29.33,
-      "loopFidelity": 80.11,
-      "goldensTotal": 95,
-      "goldensMatched": 24,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T14:53:34.961Z",
+      "recall": 37.19,
+      "precision": 56.96,
+      "f1": 45,
+      "f2": 39.96,
+      "recallMacro": 40.27,
+      "precisionMacro": 54.85,
+      "ciLow": 28.57,
+      "ciHigh": 46.92,
+      "goldensTotal": 121,
+      "goldensMatched": 45,
+      "comments": 79,
       "cases": 30,
+      "calls": 315,
       "usage": {
-        "inputTokens": 13550602,
-        "outputTokens": 761279
+        "inputTokens": 15871136,
+        "outputTokens": 320027,
+        "reasoningTokens": 80864,
+        "cacheReadTokens": 10305553,
+        "cacheWriteTokens": 1769148
       },
       "byLanguage": {
-        "java": {
-          "recall": 11.76,
-          "precision": 25,
-          "goldens": 17,
-          "count": 6
-        },
         "typescript": {
-          "recall": 21.74,
-          "precision": 33.33,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 50,
-          "precision": 49.21,
-          "goldens": 16,
+          "recall": 51.43,
+          "precision": 64.29,
+          "goldens": 35,
+          "matched": 18,
           "count": 6
         },
         "ruby": {
-          "recall": 35,
-          "precision": 61.11,
-          "goldens": 20,
+          "recall": 29.27,
+          "precision": 66.67,
+          "goldens": 41,
+          "matched": 12,
+          "count": 6
+        },
+        "go": {
+          "recall": 44.44,
+          "precision": 61.54,
+          "goldens": 18,
+          "matched": 8,
+          "count": 6
+        },
+        "java": {
+          "recall": 25,
+          "precision": 37.5,
+          "goldens": 12,
+          "matched": 3,
           "count": 6
         },
         "python": {
-          "recall": 10.53,
-          "precision": 40,
-          "goldens": 19,
+          "recall": 26.67,
+          "precision": 33.33,
+          "goldens": 15,
+          "matched": 4,
           "count": 6
         }
       },
       "byRepo": {
-        "keycloak": {
-          "recall": 11.76,
-          "precision": 25,
-          "goldens": 17,
-          "count": 6
-        },
         "cal.com": {
-          "recall": 21.74,
-          "precision": 33.33,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 50,
-          "precision": 49.21,
-          "goldens": 16,
+          "recall": 51.43,
+          "precision": 64.29,
+          "goldens": 35,
+          "matched": 18,
           "count": 6
         },
         "discourse": {
-          "recall": 35,
-          "precision": 61.11,
-          "goldens": 20,
+          "recall": 29.27,
+          "precision": 66.67,
+          "goldens": 41,
+          "matched": 12,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 44.44,
+          "precision": 61.54,
+          "goldens": 18,
+          "matched": 8,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 25,
+          "precision": 37.5,
+          "goldens": 12,
+          "matched": 3,
           "count": 6
         },
         "sentry": {
-          "recall": 10.53,
-          "precision": 40,
-          "goldens": 19,
+          "recall": 26.67,
+          "precision": 33.33,
+          "goldens": 15,
+          "matched": 4,
           "count": 6
         }
       },
       "bySize": {
+        "S": {
+          "recall": 44.12,
+          "precision": 88.24,
+          "goldens": 34,
+          "matched": 15,
+          "count": 8
+        },
         "M": {
-          "recall": 14.81,
-          "precision": 31.79,
-          "goldens": 54,
+          "recall": 35.71,
+          "precision": 44.44,
+          "goldens": 56,
+          "matched": 20,
           "count": 14
         },
         "L": {
-          "recall": 29.41,
-          "precision": 41.67,
-          "goldens": 17,
+          "recall": 32.26,
+          "precision": 66.67,
+          "goldens": 31,
+          "matched": 10,
           "count": 6
         },
-        "S": {
-          "recall": 45,
-          "precision": 66.25,
-          "goldens": 20,
-          "count": 8
-        },
         "XS": {
-          "recall": 50,
-          "precision": 14.29,
-          "goldens": 4,
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
           "count": 2
         }
       },
+      "bySeverity": {
+        "critical": {
+          "matched": 2,
+          "goldens": 4,
+          "recall": 50
+        },
+        "high": {
+          "matched": 25,
+          "goldens": 52,
+          "recall": 48.08
+        },
+        "medium": {
+          "matched": 18,
+          "goldens": 61,
+          "recall": 29.51
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
       "findingsBySeverity": {
-        "low": 13,
-        "medium": 32,
+        "low": 0,
+        "medium": 52,
         "high": 26,
-        "critical": 4
+        "critical": 1
       },
       "findingsByCategory": {
-        "bug": 65,
-        "performance": 2,
-        "security": 0,
-        "other": 37
+        "bug": 66,
+        "performance": 5,
+        "security": 8,
+        "other": 0
       },
-      "costTotal": 4.98,
-      "costPerPR": 0.17,
-      "costPerBugFound": 0.21,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": null,
-      "ciHalfWidth": 8.74,
-      "ciLow": 16.48,
-      "ciHigh": 36.36,
-      "ciHalfWidthBootstrap": 9.94,
-      "rank": 12,
-      "pairedVsTop": {
-        "diff": 18.95,
-        "lo": 8.91,
-        "hi": 29.17,
-        "p": 0,
-        "n": 30,
-        "separatesFromTop": true
-      }
+      "costTotal": 16.25,
+      "costPerPR": 0.5416,
+      "costPerBugFound": 0.361,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "price": {
+        "input": 2,
+        "cacheRead": 0.1,
+        "cacheWrite": 2.5,
+        "output": 10
+      },
+      "rank": 2
     },
     {
-      "key": "kodus::gemini-3.7-flash",
-      "harness": "kodus",
-      "harnessVersion": "dev",
-      "modelId": "gemini-3.7-flash",
+      "key": "balanced::gemini-3.8-flash",
+      "mode": "balanced",
+      "modelId": "gemini-3.8-flash",
       "provider": "google",
       "accessPath": "api",
-      "executionMode": "replay",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
       "reasoningConfig": "vendor-default",
       "reasoningEffort": null,
-      "reasoningTokens": 117111,
-      "finishReasons": {
-        "completed": 15,
-        "stopped": 15
-      },
-      "maxFindingsInCase": 4,
-      "judge": "claude-haiku-4-5",
-      "runAt": "2026-08-13T18:33:01.568Z",
-      "score": 11.58,
-      "recallMacro": 11.61,
-      "precision": 73.91,
-      "precisionMacro": 71.43,
-      "f1": 20.02,
-      "fairRecall": 11.61,
-      "loopFidelity": 88.94,
-      "goldensTotal": 95,
-      "goldensMatched": 11,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T15:41:56.276Z",
+      "recall": 15.7,
+      "precision": 50,
+      "f1": 23.9,
+      "f2": 18.2,
+      "recallMacro": 13.51,
+      "precisionMacro": 48.16,
+      "ciLow": 9.48,
+      "ciHigh": 22.4,
+      "goldensTotal": 121,
+      "goldensMatched": 19,
+      "comments": 38,
       "cases": 30,
+      "calls": 207,
       "usage": {
-        "inputTokens": 10184459,
-        "outputTokens": 156682
+        "inputTokens": 52686809,
+        "outputTokens": 619973,
+        "reasoningTokens": 534611,
+        "cacheReadTokens": 46494821,
+        "cacheWriteTokens": 0
       },
       "byLanguage": {
-        "java": {
-          "recall": 5.88,
-          "precision": 50,
-          "goldens": 17,
-          "count": 6
-        },
         "typescript": {
-          "recall": 13.04,
-          "precision": 75,
-          "goldens": 23,
-          "count": 6
-        },
-        "go": {
-          "recall": 18.75,
-          "precision": 66.67,
-          "goldens": 16,
+          "recall": 22.86,
+          "precision": 72.73,
+          "goldens": 35,
+          "matched": 8,
           "count": 6
         },
         "ruby": {
-          "recall": 15,
-          "precision": 75,
-          "goldens": 20,
+          "recall": 12.2,
+          "precision": 50,
+          "goldens": 41,
+          "matched": 5,
+          "count": 6
+        },
+        "go": {
+          "recall": 22.22,
+          "precision": 66.67,
+          "goldens": 18,
+          "matched": 4,
+          "count": 6
+        },
+        "java": {
+          "recall": 8.33,
+          "precision": 16.67,
+          "goldens": 12,
+          "matched": 1,
           "count": 6
         },
         "python": {
-          "recall": 5.26,
-          "precision": 100,
-          "goldens": 19,
+          "recall": 6.67,
+          "precision": 20,
+          "goldens": 15,
+          "matched": 1,
           "count": 6
         }
       },
       "byRepo": {
-        "keycloak": {
-          "recall": 5.88,
-          "precision": 50,
-          "goldens": 17,
-          "count": 6
-        },
         "cal.com": {
-          "recall": 13.04,
-          "precision": 75,
-          "goldens": 23,
-          "count": 6
-        },
-        "grafana": {
-          "recall": 18.75,
-          "precision": 66.67,
-          "goldens": 16,
+          "recall": 22.86,
+          "precision": 72.73,
+          "goldens": 35,
+          "matched": 8,
           "count": 6
         },
         "discourse": {
-          "recall": 15,
-          "precision": 75,
-          "goldens": 20,
+          "recall": 12.2,
+          "precision": 50,
+          "goldens": 41,
+          "matched": 5,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 22.22,
+          "precision": 66.67,
+          "goldens": 18,
+          "matched": 4,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 8.33,
+          "precision": 16.67,
+          "goldens": 12,
+          "matched": 1,
           "count": 6
         },
         "sentry": {
-          "recall": 5.26,
-          "precision": 100,
-          "goldens": 19,
+          "recall": 6.67,
+          "precision": 20,
+          "goldens": 15,
+          "matched": 1,
           "count": 6
         }
       },
       "bySize": {
+        "S": {
+          "recall": 20.59,
+          "precision": 100,
+          "goldens": 34,
+          "matched": 7,
+          "count": 8
+        },
         "M": {
-          "recall": 5.56,
-          "precision": 42.86,
-          "goldens": 54,
+          "recall": 14.29,
+          "precision": 42.11,
+          "goldens": 56,
+          "matched": 8,
           "count": 14
         },
         "L": {
-          "recall": 23.53,
-          "precision": 100,
-          "goldens": 17,
+          "recall": 12.9,
+          "precision": 44.44,
+          "goldens": 31,
+          "matched": 4,
           "count": 6
         },
-        "S": {
-          "recall": 15,
-          "precision": 100,
-          "goldens": 20,
-          "count": 8
-        },
         "XS": {
-          "recall": 25,
-          "precision": 100,
-          "goldens": 4,
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
           "count": 2
         }
       },
+      "bySeverity": {
+        "critical": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        },
+        "high": {
+          "matched": 12,
+          "goldens": 52,
+          "recall": 23.08
+        },
+        "medium": {
+          "matched": 7,
+          "goldens": 61,
+          "recall": 11.48
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
       "findingsBySeverity": {
-        "low": 1,
-        "medium": 14,
-        "high": 8,
+        "low": 0,
+        "medium": 19,
+        "high": 19,
         "critical": 0
       },
       "findingsByCategory": {
-        "bug": 23,
-        "performance": 0,
-        "security": 0,
+        "bug": 33,
+        "performance": 1,
+        "security": 4,
         "other": 0
       },
-      "costTotal": 8.23,
-      "costPerPR": 0.27,
-      "costPerBugFound": 0.75,
-      "costBasis": "preço de tabela (2026-08-13), sem desconto de cache",
-      "runToRunVariance": {
-        "runs": 3,
-        "recall": {
-          "mean": 11.58,
-          "stdev": 0,
-          "values": [
-            11.58,
-            11.58,
-            11.58
-          ]
+      "costTotal": 10.46,
+      "costPerPR": 0.3485,
+      "costPerBugFound": 0.5503,
+      "costBasis": "api",
+      "costNote": "Promotional price, valid until 2026-12-31.",
+      "priceSource": "https://aistudio.google.com/docs/pricing",
+      "price": {
+        "input": 0.75,
+        "cacheRead": 0.075,
+        "cacheWrite": null,
+        "output": 3.75
+      },
+      "rank": 3
+    },
+    {
+      "key": "heavy::gpt-6.1-sol",
+      "mode": "heavy",
+      "modelId": "gpt-6.1-sol",
+      "provider": "openai",
+      "accessPath": "subscription",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "explicit",
+      "reasoningEffort": "low",
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T15:57:36.699Z",
+      "recall": 53.72,
+      "precision": 58.56,
+      "f1": 56.03,
+      "f2": 54.62,
+      "recallMacro": 59.07,
+      "precisionMacro": 57.84,
+      "ciLow": 44.67,
+      "ciHigh": 63.38,
+      "goldensTotal": 121,
+      "goldensMatched": 65,
+      "comments": 111,
+      "cases": 30,
+      "calls": 763,
+      "usage": {
+        "inputTokens": 23621360,
+        "outputTokens": 287051,
+        "reasoningTokens": 12982,
+        "cacheReadTokens": 1870720,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 57.14,
+          "precision": 64.52,
+          "goldens": 35,
+          "matched": 20,
+          "count": 6
         },
-        "precision": {
-          "mean": 73.91,
-          "stdev": 0,
-          "values": [
-            73.91,
-            73.91,
-            73.91
-          ]
+        "ruby": {
+          "recall": 41.46,
+          "precision": 58.62,
+          "goldens": 41,
+          "matched": 17,
+          "count": 6
         },
-        "f1": {
-          "mean": 20.02,
-          "stdev": 0,
-          "values": [
-            20.02,
-            20.02,
-            20.02
-          ]
+        "go": {
+          "recall": 72.22,
+          "precision": 81.25,
+          "goldens": 18,
+          "matched": 13,
+          "count": 6
+        },
+        "java": {
+          "recall": 33.33,
+          "precision": 26.67,
+          "goldens": 12,
+          "matched": 4,
+          "count": 6
+        },
+        "python": {
+          "recall": 73.33,
+          "precision": 55,
+          "goldens": 15,
+          "matched": 11,
+          "count": 6
         }
       },
-      "ciHalfWidth": 6.43,
-      "ciLow": 5.95,
-      "ciHigh": 18.28,
-      "ciHalfWidthBootstrap": 6.16,
-      "rank": 13,
-      "pairedVsTop": {
-        "diff": 32.63,
-        "lo": 21.78,
-        "hi": 43.48,
-        "p": 0,
-        "n": 30,
-        "separatesFromTop": true
-      }
+      "byRepo": {
+        "cal.com": {
+          "recall": 57.14,
+          "precision": 64.52,
+          "goldens": 35,
+          "matched": 20,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 41.46,
+          "precision": 58.62,
+          "goldens": 41,
+          "matched": 17,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 72.22,
+          "precision": 81.25,
+          "goldens": 18,
+          "matched": 13,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 33.33,
+          "precision": 26.67,
+          "goldens": 12,
+          "matched": 4,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 73.33,
+          "precision": 55,
+          "goldens": 15,
+          "matched": 11,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 55.88,
+          "precision": 90.48,
+          "goldens": 34,
+          "matched": 19,
+          "count": 8
+        },
+        "M": {
+          "recall": 51.79,
+          "precision": 44.62,
+          "goldens": 56,
+          "matched": 29,
+          "count": 14
+        },
+        "L": {
+          "recall": 54.84,
+          "precision": 70.83,
+          "goldens": 31,
+          "matched": 17,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 1,
+          "goldens": 4,
+          "recall": 25
+        },
+        "high": {
+          "matched": 32,
+          "goldens": 52,
+          "recall": 61.54
+        },
+        "medium": {
+          "matched": 32,
+          "goldens": 61,
+          "recall": 52.46
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 60,
+        "high": 50,
+        "critical": 1
+      },
+      "findingsByCategory": {
+        "bug": 96,
+        "performance": 4,
+        "security": 11,
+        "other": 0
+      },
+      "costTotal": 46.56,
+      "costPerPR": 1.552,
+      "costPerBugFound": 0.7163,
+      "costBasis": "api-equivalent",
+      "costNote": "Ran on a ChatGPT subscription. Cost shown is the API-equivalent at OpenAI list price, short-context tier.",
+      "priceSource": "https://developers.openai.com/api/docs/pricing",
+      "price": {
+        "input": 2,
+        "cacheRead": 0.1,
+        "cacheWrite": 2.5,
+        "output": 10
+      },
+      "rank": 1
+    },
+    {
+      "key": "heavy::claude-sonnet-5.5",
+      "mode": "heavy",
+      "modelId": "claude-sonnet-5.5",
+      "provider": "anthropic",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T15:24:07.800Z",
+      "recall": 47.11,
+      "precision": 53.27,
+      "f1": 50,
+      "f2": 48.22,
+      "recallMacro": 54.53,
+      "precisionMacro": 51.89,
+      "ciLow": 37.78,
+      "ciHigh": 57.43,
+      "goldensTotal": 121,
+      "goldensMatched": 57,
+      "comments": 107,
+      "cases": 30,
+      "calls": 850,
+      "usage": {
+        "inputTokens": 34919247,
+        "outputTokens": 987937,
+        "reasoningTokens": 274622,
+        "cacheReadTokens": 17361274,
+        "cacheWriteTokens": 11160057
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 60,
+          "precision": 56.76,
+          "goldens": 35,
+          "matched": 21,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 29.27,
+          "precision": 54.55,
+          "goldens": 41,
+          "matched": 12,
+          "count": 6
+        },
+        "go": {
+          "recall": 61.11,
+          "precision": 64.71,
+          "goldens": 18,
+          "matched": 11,
+          "count": 6
+        },
+        "java": {
+          "recall": 41.67,
+          "precision": 33.33,
+          "goldens": 12,
+          "matched": 5,
+          "count": 6
+        },
+        "python": {
+          "recall": 53.33,
+          "precision": 50,
+          "goldens": 15,
+          "matched": 8,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 60,
+          "precision": 56.76,
+          "goldens": 35,
+          "matched": 21,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 29.27,
+          "precision": 54.55,
+          "goldens": 41,
+          "matched": 12,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 61.11,
+          "precision": 64.71,
+          "goldens": 18,
+          "matched": 11,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 41.67,
+          "precision": 33.33,
+          "goldens": 12,
+          "matched": 5,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 53.33,
+          "precision": 50,
+          "goldens": 15,
+          "matched": 8,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 52.94,
+          "precision": 75,
+          "goldens": 34,
+          "matched": 18,
+          "count": 8
+        },
+        "M": {
+          "recall": 46.43,
+          "precision": 44.83,
+          "goldens": 56,
+          "matched": 26,
+          "count": 14
+        },
+        "L": {
+          "recall": 41.94,
+          "precision": 59.09,
+          "goldens": 31,
+          "matched": 13,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 2,
+          "goldens": 4,
+          "recall": 50
+        },
+        "high": {
+          "matched": 26,
+          "goldens": 52,
+          "recall": 50
+        },
+        "medium": {
+          "matched": 29,
+          "goldens": 61,
+          "recall": 47.54
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 71,
+        "high": 34,
+        "critical": 2
+      },
+      "findingsByCategory": {
+        "bug": 93,
+        "performance": 3,
+        "security": 11,
+        "other": 0
+      },
+      "costTotal": 52.31,
+      "costPerPR": 1.7437,
+      "costPerBugFound": 0.9177,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "price": {
+        "input": 2,
+        "cacheRead": 0.1,
+        "cacheWrite": 2.5,
+        "output": 10
+      },
+      "rank": 2
     }
   ],
   "averages": {
-    "score": 35.55,
-    "precision": 44.03,
-    "f1": 37.7
+    "balanced": {
+      "recall": 31.4,
+      "precision": 57.88,
+      "f1": 39.97,
+      "f2": 34.3
+    },
+    "heavy": {
+      "recall": 50.41,
+      "precision": 55.91,
+      "f1": 53.02,
+      "f2": 51.42
+    }
   }
 }

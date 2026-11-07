@@ -1,16 +1,19 @@
 /**
- * Pipeline de dados do site — formato scorecard.
+ * Pipeline de dados do site — benchmark v3 (gold v3, dois modos de review).
  *
- * Substitui `process-data.js`, que lia a saída do promptfoo do bench sintético.
- * Consome scorecards emitidos por `evals/scorer/cli.js` (no kodus-ai) e, quando
- * disponível, a submission correspondente — que é de onde saem as findings para
- * as páginas de trace.
+ *   node process-scorecards.js [--in=./data-v3] [--out=<dir>]
  *
- *   node process-scorecards.js [--in=./scorecards] [--submissions=./submissions]
+ * Le, para cada modo, `<in>/scorecards/<pasta>/<modelId>.json` e a submission
+ * correspondente em `<in>/submissions/<pasta>/<modelId>.submission.json`:
  *
- * O leaderboard passa a ser MATRIZ harness × modelo, não lista de modelos: o
- * mesmo modelo dentro de motores diferentes (Kodus, Claude Code, Codex, Greptile)
- * é entrada distinta e comparável.
+ *   light/  -> modo "balanced" (o review normal: um agente generalista)
+ *   heavy/  -> modo "heavy" (generalista + 9 lentes especialistas em paralelo)
+ *
+ * Pega o que estiver nas pastas. Um modelo com um modo so entra com uma linha
+ * so; a outra simplesmente nao existe no dado (nunca zero).
+ *
+ * Saida em src/lib/data/: leaderboard.json, meta.json, samples.json,
+ * case-index.json.
  */
 const fs = require('fs');
 const path = require('path');
@@ -22,19 +25,16 @@ const args = Object.fromEntries(
     }),
 );
 
-const IN_DIR = path.resolve(args.in || './scorecards');
-const SUB_DIR = path.resolve(args.submissions || './submissions');
-// Default escreve nos dados do site. `--out=` existe para poder testar o pipeline
-// sem sobrescrever o que está publicado (aprendido do jeito difícil).
+const IN_DIR = path.resolve(args.in || './data-v3');
+// `--out=` existe para testar o pipeline sem sobrescrever o que esta publicado.
 const OUT_DIR = args.out ? path.resolve(args.out) : path.join(__dirname, 'src', 'lib', 'data');
-// Re-scores adicionais da MESMA submission, mesmo judge — mede run-to-run
-// (ruído do próprio judge), não re-roda o modelo de review. Arquivo:
-// scorecards/variance/<modelId>-run{2,3}.json. O run1 já está no scorecard
-// canônico (IN_DIR); ausente = sem `variance` no entry, não um erro.
-const VARIANCE_DIR = path.join(__dirname, 'scorecards', 'variance');
 
-// caseId → repo/linguagem. Derivado do sufixo do caseId para o site não precisar
-// dos datasets do kodus-ai (que são grandes e vivem em outro repo).
+const MODE_DIRS = [
+    { dir: 'light', mode: 'balanced' },
+    { dir: 'heavy', mode: 'heavy' },
+];
+
+// caseId -> repo/linguagem, pelo sufixo do caseId.
 const REPO_RULES = [
     [/-cal-com$/, 'cal.com', 'typescript'],
     [/-discourse(-cursor)?$/, 'discourse', 'ruby'],
@@ -50,357 +50,44 @@ function classify(caseId) {
     return { repo: 'unknown', language: 'unknown' };
 }
 
-const PRICING = (() => {
+function readJson(p, fallback, warn) {
     try {
-        return JSON.parse(fs.readFileSync(path.join(__dirname, 'pricing.json'), 'utf8'));
+        return JSON.parse(fs.readFileSync(p, 'utf8'));
     } catch {
-        console.warn('  ⚠ pricing.json não encontrado — métricas de custo ficarão null');
-        return { models: {} };
+        if (warn) console.warn(`  ⚠ ${warn}`);
+        return fallback;
     }
-})();
+}
 
-// caseId → tamanho real do diff (arquivos/linhas), extraído uma vez de
-// evals/investigation/datasets/*.json no kodus-ai-bench (patchWithLinesStr já
-// frozen no fixture — não precisa clonar repo nem checkout de SHA). Ver
-// scripts/extract-pr-size.js. Faltando um caseId aqui não derruba o pipeline —
-// só cai fora dos filtros/bucket de tamanho, igual custo sem preço publicado.
-const PR_SIZE = (() => {
-    try {
-        return JSON.parse(fs.readFileSync(path.join(__dirname, 'pr-size.json'), 'utf8'));
-    } catch {
-        console.warn('  ⚠ pr-size.json não encontrado — filtro de tamanho de PR ficará vazio');
-        return {};
-    }
-})();
+const PRICING = readJson(path.join(__dirname, 'pricing.json'), { models: {} }, 'pricing.json ausente: custo fica null');
+// caseId -> tamanho do diff (ver scripts/extract-pr-size.js). Mesmos 30 PRs do v1.
+const PR_SIZE = readJson(path.join(__dirname, 'pr-size.json'), {}, 'pr-size.json ausente: filtro de tamanho fica vazio');
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL'];
-
-// caseId → golden completo (texto + severidade real do golden, não do
-// finding) — extraído uma vez de evals/investigation/datasets/*.json (ver
-// scripts/extract-goldens.js). O scorecard só grava os PERDIDOS; pra saber
-// quais foram ACERTADOS (necessário pro /compare — "A achou, B não") dá pra
-// derivar por diferença: golden completo menos os que aparecem em
-// missedGoldens (match exato de texto, mesma fonte).
-const GOLDENS = (() => {
-    try {
-        return JSON.parse(fs.readFileSync(path.join(__dirname, 'goldens.json'), 'utf8'));
-    } catch {
-        console.warn('  ⚠ goldens.json não encontrado — /compare ficará sem detalhe por golden');
-        return {};
-    }
-})();
+const SEVERITIES = ['critical', 'high', 'medium', 'low'];
 
 /**
- * Custo por PR e por bug encontrado.
- *
- * `costPerBugFound` é a métrica que combina qualidade e preço num número só:
- * modelo barato que não acha nada tem custo-por-bug terrível, e modelo caro que
- * acha tudo pode ser o melhor negócio. É o número que um comprador quer.
- *
- * Três casos em que devolvemos null em vez de zero — zero mentiria:
- *   - rodou por assinatura: não há custo por token
- *   - modelo sem preço publicado
- *   - nenhum bug encontrado: custo-por-bug é indefinido, não infinito
+ * Custo COM prompt cache. inputTokens ja inclui os tokens lidos/escritos em
+ * cache, entao o input "fresco" e o resto. reasoningTokens ja estao dentro de
+ * outputTokens: somar de novo cobraria duas vezes. cacheWrite null = sem taxa
+ * separada de escrita, cobrado como input.
  */
-function costOf(run, agg) {
-    const accessPath = run?.model?.accessPath || 'unknown';
-    if (accessPath === 'subscription' || accessPath === 'local') {
-        return {
-            costTotal: null,
-            costPerPR: null,
-            costPerBugFound: null,
-            costBasis: accessPath === 'subscription' ? 'assinatura (sem custo por token)' : 'local',
-        };
-    }
-    const p = PRICING.models[run?.model?.id];
-    if (!p) {
-        return { costTotal: null, costPerPR: null, costPerBugFound: null, costBasis: 'preço não publicado' };
-    }
-    const u = agg.usage || { inputTokens: 0, outputTokens: 0 };
-    const costTotal = (u.inputTokens / 1e6) * p.input + (u.outputTokens / 1e6) * p.output;
-    const cases = agg.casesScored || 0;
-    const bugs = agg.goldensMatched || 0;
-    return {
-        costTotal,
-        costPerPR: cases ? costTotal / cases : null,
-        costPerBugFound: bugs ? costTotal / bugs : null,
-        costBasis: `preço de tabela (${PRICING._meta?.collectedAt || 's/data'}), sem desconto de cache`,
-    };
+function costOfUsage(u, p) {
+    if (!u || !p) return null;
+    const input = u.inputTokens || 0;
+    const cacheRead = u.cacheReadTokens || 0;
+    const cacheWrite = u.cacheWriteTokens || 0;
+    const fresh = Math.max(0, input - cacheRead - cacheWrite);
+    const writePrice = p.cacheWrite == null ? p.input : p.cacheWrite;
+    const readPrice = p.cacheRead == null ? p.input : p.cacheRead;
+    return (
+        (fresh * p.input + cacheRead * readPrice + cacheWrite * writePrice + (u.outputTokens || 0) * p.output) / 1e6
+    );
 }
 
-function avg(xs) {
-    const v = xs.filter((x) => typeof x === 'number' && !Number.isNaN(x));
-    return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
-}
-
-function round2(o) {
-    if (typeof o === 'number') return Math.round(o * 100) / 100;
-    if (Array.isArray(o)) return o.map(round2);
-    if (o && typeof o === 'object') {
-        const out = {};
-        for (const [k, v] of Object.entries(o)) out[k] = round2(v);
-        return out;
-    }
-    return o;
-}
-
-function readJsonDir(dir) {
-    if (!fs.existsSync(dir)) return [];
-    return fs
-        .readdirSync(dir)
-        .filter((f) => f.endsWith('.json'))
-        .map((f) => {
-            try {
-                return { file: f, data: JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')) };
-            } catch {
-                console.warn(`  ⚠ ignorado (JSON inválido): ${f}`);
-                return null;
-            }
-        })
-        .filter(Boolean);
-}
-
-// ── carga ──
-const scorecards = readJsonDir(IN_DIR);
-if (!scorecards.length) {
-    console.error(`nenhum scorecard em ${IN_DIR}`);
-    console.error('gere com: node evals/scorer/cli.js --submission=<sub.json> --out=<scorecards>/<nome>.json');
-    process.exit(1);
-}
-
-// findings por (entryKey, runAt, caseId), para as páginas de trace. runAt entra
-// na chave de propósito: submissions/ acumula reruns e experimentos de ablação
-// (RECALL_* flags) do MESMO modelo — sem o runAt, um arquivo solto processado
-// depois na ordem do readdir sobrescreve silenciosamente os findings do run
-// canônico pra qualquer caseId que os dois tenham em comum. Descoberto porque
-// gemini37-nostrict15.submission.json (experimento) estava apagando 15/30
-// findings de gemini37-light30.submission.json (o run publicado).
-const findingsIndex = new Map();
-for (const { data } of readJsonDir(SUB_DIR)) {
-    const key = entryKeyOf(data.run);
-    const runAt = data.run?.runAt || 'unknown';
-    for (const r of data.results || []) {
-        findingsIndex.set(`${key}::${runAt}::${r.caseId}`, r.findings || []);
-    }
-}
-
-function entryKeyOf(run) {
-    const h = run?.harness?.name || 'unknown';
-    const m = run?.model?.id || 'bundled';
-    return `${h}::${m}`;
-}
-
-// ── entradas do leaderboard (harness × modelo) ──
-const entries = [];
-const allSamples = [];
-const scorecardCases = new Map(); // entryKey -> cases[] (insumo do bootstrap)
-// Índice leve (sem findings/texto) pra filtro combinado (linguagem + repo +
-// tamanho) no client sem embarcar samples.json inteiro (~870KB) no bundle da
-// leaderboard. tp/fpFindings vêm do scorer — dá pra recompor precisão micro
-// (TP/(TP+FP)) de qualquer subconjunto sem reabrir o scorecard.
-const caseIndex = [];
-let sampleId = 0;
-
-// Modelos medidos mas ainda NAO publicados. Ficam de fora do site sem sair do
-// repo — o scorecard continua versionado, entao republicar e so tirar daqui.
-// gpt-5.6-luna/terra: rodaram por assinatura, sem custo por token, entao nao
-// entram na fronteira custo x qualidade e a comparacao com os demais mistura
-// dois regimes de cota. Voltam quando rodarem por API.
-const NAO_PUBLICADOS = (args.include === 'todos'
-    ? []
-    : ['gpt-5.6-luna', 'gpt-5.6-terra']);
-
-for (const { data: sc } of scorecards) {
-    const run = sc.run || {};
-    const key = entryKeyOf(run);
-    if (NAO_PUBLICADOS.includes(run?.model?.id)) {
-        console.log(`   (fora do site: ${run.model.id} — use --include=todos para incluir)`);
-        continue;
-    }
-    const scored = (sc.cases || []).filter((c) => c.status === 'scored');
-    if (!scored.length) continue;
-    scorecardCases.set(key, scored);
-
-    // agregados por linguagem, repo e tamanho de PR, a partir dos casos
-    const byLanguage = {};
-    const byRepo = {};
-    const bySize = {};
-    // Mix de severidade/categoria do que o modelo REPORTOU — não é recall por
-    // severidade (goldens não têm severidade anotada, só texto+classificação).
-    // É um sinal de calibração: esse modelo grita "critical" pra tudo, ou é
-    // conservador? Categoria normalizada pras 3 que o scorer realmente usa de
-    // forma consistente entre modelos — o resto é string livre por modelo
-    // (ex.: "existing-finding-1", "BUG LENS") e vira "other" em vez de fingir
-    // que é taxonomia real.
-    const CANONICAL_CATEGORIES = new Set(['bug', 'performance', 'security']);
-    const bySeverity = { low: 0, medium: 0, high: 0, critical: 0 };
-    const byCategory = { bug: 0, performance: 0, security: 0, other: 0 };
-    for (const c of scored) {
-        const { repo, language } = classify(c.caseId);
-        const size = PR_SIZE[c.caseId] || null;
-        for (const [bucket, name] of [
-            [byLanguage, language],
-            [byRepo, repo],
-            ...(size ? [[bySize, size.sizeBucket]] : []),
-        ]) {
-            bucket[name] = bucket[name] || { matched: 0, goldens: 0, recalls: [], precisions: [], count: 0 };
-            bucket[name].matched += c.metrics.matched;
-            bucket[name].goldens += c.metrics.goldens;
-            bucket[name].recalls.push(c.metrics.recall);
-            bucket[name].precisions.push(c.metrics.precision);
-            bucket[name].count += 1;
-        }
-
-        const caseFindings = findingsIndex.get(`${key}::${run.runAt}::${c.caseId}`) || [];
-        for (const f of caseFindings) {
-            const sev = (f.severity || '').toLowerCase();
-            if (sev in bySeverity) bySeverity[sev] += 1;
-            const cat = (f.category || '').toLowerCase();
-            byCategory[CANONICAL_CATEGORIES.has(cat) ? cat : 'other'] += 1;
-        }
-
-        const missedGoldens = c.metrics.missedGoldens || [];
-        const missedTexts = new Set(missedGoldens.map((m) => m.text));
-        const fullGoldens = GOLDENS[c.caseId] || null;
-        // null (não []): sem goldens.json pra esse caso, não dá pra afirmar
-        // "achou zero" — diferente de genuinamente não ter detalhe nenhum.
-        const goldensDetail = fullGoldens
-            ? fullGoldens.map((g) => ({ text: g.text, severity: g.severity, matched: !missedTexts.has(g.text) }))
-            : null;
-
-        allSamples.push({
-            id: `s${sampleId++}`,
-            entryKey: key,
-            harness: run.harness?.name || 'unknown',
-            modelId: run.model?.id || null,
-            caseId: c.caseId,
-            repo,
-            language,
-            filesChanged: size?.filesChanged ?? null,
-            linesChanged: size?.linesChanged ?? null,
-            sizeBucket: size?.sizeBucket ?? null,
-            recall: c.metrics.recall,
-            precision: c.metrics.precision,
-            f1: c.metrics.f1,
-            goldens: c.metrics.goldens,
-            matched: c.metrics.matched,
-            findings: caseFindings,
-            missedGoldens,
-            goldensDetail,
-            usage: c.usage || null,
-            latencyMs: c.latencyMs ?? null,
-        });
-
-        caseIndex.push({
-            entryKey: key,
-            caseId: c.caseId,
-            repo,
-            language,
-            sizeBucket: size?.sizeBucket ?? null,
-            goldens: c.metrics.goldens,
-            matched: c.metrics.matched,
-            tpFindings: c.metrics.tpFindings ?? 0,
-            fpFindings: c.metrics.fpFindings ?? 0,
-        });
-    }
-
-    const finalize = (bucket) =>
-        Object.fromEntries(
-            Object.entries(bucket).map(([k, v]) => [
-                k,
-                {
-                    recall: (v.goldens ? v.matched / v.goldens : 0) * 100,
-                    precision: (avg(v.precisions) || 0) * 100,
-                    goldens: v.goldens,
-                    count: v.count,
-                },
-            ]),
-        );
-
-    const a = sc.aggregate || {};
-    entries.push({
-        key,
-        harness: run.harness?.name || 'unknown',
-        harnessVersion: run.harness?.version || null,
-        modelId: run.model?.id || null,
-        provider: run.model?.provider || null,
-        // Regime de acesso: assinatura e API têm limites e latência diferentes.
-        // Fica no dado para o site poder rotular, em vez de virar nota de rodapé.
-        accessPath: run.model?.accessPath || 'unknown',
-        executionMode: run.executionMode || 'unknown',
-        // Regime de raciocínio. Sem isso o ranking embute calibração de vendor
-        // como se fosse qualidade: medimos 8x de diferença em output entre dois
-        // modelos que rodaram ambos "no default".
-        reasoningConfig: run.reasoning?.config || 'unknown',
-        reasoningEffort: run.reasoning?.effortRequested || null,
-        reasoningTokens: scored.reduce((s, c) => s + (c.usage?.reasoningTokens || 0), 0) || null,
-
-        // Sinal de truncamento. Um recall baixo acompanhado de finishReason de
-        // corte é artefato da rota de acesso, não qualidade do modelo — e sem
-        // isso visível o leaderboard publica um ranking que mistura as duas
-        // coisas. `maxFindingsInCase` complementa: teto idêntico entre modelos
-        // diferentes que compartilham a rota é indício de limite externo.
-        finishReasons: scored.reduce((acc, c) => {
-            const k = c.finishReason || 'unknown';
-            acc[k] = (acc[k] || 0) + 1;
-            return acc;
-        }, {}),
-        maxFindingsInCase: Math.max(
-            0,
-            ...allSamples.filter((s) => s.entryKey === key).map((s) => s.findings.length),
-        ),
-        judge: sc.judge?.model || null,
-        runAt: run.runAt || null,
-
-        // headline = recall micro (pondera por bug, não por PR). precision e f1
-        // também em micro — mesma convenção (TP/(TP+FP) agregado no bench
-        // inteiro), consistente com o que Martian e Alibaba publicam. macro
-        // fica ao lado só por continuidade histórica.
-        score: (a.recallMicro ?? 0) * 100,
-        recallMacro: (a.recallMacro ?? 0) * 100,
-        precision: (a.precisionMicro ?? a.precisionMacro ?? 0) * 100,
-        precisionMacro: (a.precisionMacro ?? 0) * 100,
-        f1:
-            a.f1Micro != null
-                ? a.f1Micro * 100
-                : (() => {
-                      const p = a.precisionMicro ?? a.precisionMacro ?? 0;
-                      const r = a.recallMicro ?? 0;
-                      return p + r ? (200 * p * r) / (p + r) : 0;
-                  })(),
-        fairRecall: (a.fairRecallMacro ?? 0) * 100,
-        loopFidelity: a.loopFidelityMacro == null ? null : a.loopFidelityMacro * 100,
-
-        goldensTotal: a.goldensTotal ?? 0,
-        goldensMatched: a.goldensMatched ?? 0,
-        cases: a.casesScored ?? scored.length,
-        usage: a.usage || { inputTokens: 0, outputTokens: 0 },
-
-        byLanguage: finalize(byLanguage),
-        byRepo: finalize(byRepo),
-        bySize: finalize(bySize),
-        findingsBySeverity: bySeverity,
-        findingsByCategory: byCategory,
-
-        ...costOf(run, a),
-    });
-}
-
-// ── intervalo de confiança e agrupamento em faixas ──
-// Com ~95 goldens no set light, a margem é ±8-9pp. Publicar 1º/2º/3º com uma
-// casa decimal promete precisão que o dado não paga — então o site expõe a
-// margem e uma faixa, e o rank fica como ordenação, não como afirmação.
-// Bootstrap sobre CASOS (não sobre goldens). A fórmula binomial assume goldens
-// independentes, e eles não são: vários vivem no mesmo PR, e um modelo que "pega
-// o assunto" daquele PR acerta vários de uma vez. Reamostrar casos com reposição
-// respeita essa estrutura e não custa chamada nenhuma de API.
-//
-// LIMITE IMPORTANTE: isto mede só a variância de QUAIS PRs caíram no set. NÃO
-// mede a variância do mesmo modelo entre rodadas — para isso é preciso rodar o
-// mesmo modelo mais de uma vez. Ver `varianceCaveat` no meta.
 function bootstrapCI(cases, iterations = 2000, seed = 42) {
     const pairs = cases.map((c) => [c.metrics.matched, c.metrics.goldens]);
     if (!pairs.length) return { lo: null, hi: null };
-    // PRNG determinístico (mulberry32): mesmo dado → mesmo intervalo, sempre.
+    // PRNG deterministico (mulberry32): mesmo dado, mesmo intervalo.
     let s = seed;
     const rnd = () => {
         s |= 0; s = (s + 0x6d2b79f5) | 0;
@@ -422,226 +109,311 @@ function bootstrapCI(cases, iterations = 2000, seed = 42) {
     return { lo: at(0.025), hi: at(0.975) };
 }
 
+function fScore(p, r, beta) {
+    const b2 = beta * beta;
+    return p + r > 0 ? ((1 + b2) * p * r) / (b2 * p + r) : 0;
+}
 
-// ── comparacao pareada entre dois modelos ───────────────────────────────────
-//
-// Por que pareado: os dois modelos rodam os MESMOS PRs. Comparar os dois
-// intervalos marginais joga fora essa informacao — se um PR e dificil, ele e
-// dificil para os dois, e essa dificuldade comum cancela na diferenca. Na
-// pratica o intervalo da diferenca sai ~40% mais estreito que os marginais,
-// entao o teste marginal declarava empate em casos que o pareado separa.
-//
-// Reamostra os caseIds uma vez por iteracao e calcula os DOIS recalls sobre o
-// MESMO conjunto reamostrado. Devolve a diferenca observada, o IC da diferenca
-// e o p bilateral do bootstrap.
-function pairedDiff(casesA, casesB, iterations = 4000, seed = 42) {
-    const mapA = new Map(casesA.map((c) => [c.caseId, c.metrics]));
-    const mapB = new Map(casesB.map((c) => [c.caseId, c.metrics]));
-    // so casos que os dois rodaram — sem isso a diferenca compara conjuntos
-    // distintos e deixa de ser pareada
-    const ids = [...mapA.keys()].filter((id) => mapB.has(id));
-    if (ids.length < 2) return null;
-
-    let s = seed;
-    const rnd = () => {
-        s |= 0; s = (s + 0x6d2b79f5) | 0;
-        let t = Math.imul(s ^ (s >>> 15), 1 | s);
-        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-    const recallOf = (map, sample) => {
-        let m = 0, g = 0;
-        for (const id of sample) { const x = map.get(id); m += x.matched; g += x.goldens; }
-        return g ? (m / g) * 100 : 0;
-    };
-
-    const observed = recallOf(mapA, ids) - recallOf(mapB, ids);
-    const diffs = [];
-    for (let i = 0; i < iterations; i++) {
-        const sample = new Array(ids.length);
-        for (let j = 0; j < ids.length; j++) sample[j] = ids[(rnd() * ids.length) | 0];
-        diffs.push(recallOf(mapA, sample) - recallOf(mapB, sample));
+function round2(o) {
+    if (typeof o === 'number') return Math.round(o * 100) / 100;
+    if (Array.isArray(o)) return o.map(round2);
+    if (o && typeof o === 'object') {
+        const out = {};
+        for (const [k, v] of Object.entries(o)) out[k] = round2(v);
+        return out;
     }
-    diffs.sort((a, b) => a - b);
-    const at = (q) => diffs[Math.min(diffs.length - 1, Math.floor(q * diffs.length))];
-
-    // p bilateral do bootstrap: duas vezes a menor cauda em relacao a zero.
-    const below = diffs.filter((d) => d <= 0).length / diffs.length;
-    const p = Math.min(1, 2 * Math.min(below, 1 - below));
-
-    return { observed, lo: at(0.025), hi: at(0.975), p, n: ids.length };
+    return o;
 }
 
-function mean(xs) {
-    return xs.reduce((a, b) => a + b, 0) / xs.length;
-}
-// stdev amostral (n-1) — com n=3 é uma estimativa bem grosseira, por isso o
-// site rotula explicitamente "n=3" perto de qualquer número que use isso.
-function stdev(xs) {
-    if (xs.length < 2) return null;
-    const m = mean(xs);
-    return Math.sqrt(xs.reduce((s, x) => s + (x - m) ** 2, 0) / (xs.length - 1));
+// Custo por PR fica com 4 casas: modelo barato custa fracao de centavo por PR,
+// e round2 zeraria.
+function round4(n) {
+    return n == null ? null : Math.round(n * 10000) / 10000;
 }
 
-// Variância run-a-run: reroda o MESMO judge sobre a MESMA submission (não
-// rereoda o modelo de review) — isola ruído do julgamento do ruído de qual
-// PR caiu no set (que o bootstrap acima já cobre). null quando não há
-// scorecards/variance/<modelId>-run{2,3}.json para esse modelo — ausência,
-// não zero.
-function runToRunVariance(entry) {
-    if (!entry.modelId) return null;
-    const runs = [{ recallMicro: entry.score / 100, precisionMicro: entry.precision / 100, f1Micro: entry.f1 / 100 }];
-    for (const n of [2, 3]) {
-        const p = path.join(VARIANCE_DIR, `${entry.modelId}-run${n}.json`);
-        try {
-            const sc = JSON.parse(fs.readFileSync(p, 'utf8'));
-            const a = sc.aggregate || {};
-            runs.push({ recallMicro: a.recallMicro ?? 0, precisionMicro: a.precisionMicro ?? 0, f1Micro: a.f1Micro ?? 0 });
-        } catch {
-            // arquivo dessa rodada ainda não existe — variância parcial não é
-            // publicada, é tudo ou nada pra não sugerir mais confiança do que
-            // o dado sustenta.
-            return null;
+function readModeDir(kind, dir) {
+    const full = path.join(IN_DIR, kind, dir);
+    if (!fs.existsSync(full)) return [];
+    return fs
+        .readdirSync(full)
+        .filter((f) => f.endsWith('.json'))
+        .map((f) => {
+            const data = readJson(path.join(full, f), null, `ignorado (JSON invalido): ${kind}/${dir}/${f}`);
+            return data ? { file: f, data } : null;
+        })
+        .filter(Boolean);
+}
+
+const entries = [];
+const allSamples = [];
+const caseIndex = [];
+let sampleId = 0;
+
+for (const { dir, mode } of MODE_DIRS) {
+    // findings publicados por (modelId, caseId), para as paginas de trace
+    const findingsIndex = new Map();
+    for (const { data } of readModeDir('submissions', dir)) {
+        const modelId = data.run?.model?.id;
+        for (const r of data.results || []) findingsIndex.set(`${modelId}::${r.caseId}`, r.findings || []);
+    }
+
+    for (const { file, data: sc } of readModeDir('scorecards', dir)) {
+        const run = sc.run || {};
+        const modelId = run.model?.id;
+        if (!modelId) {
+            console.warn(`  ⚠ sem run.model.id: ${dir}/${file}`);
+            continue;
         }
+        if (run.mode && run.mode !== mode) {
+            console.warn(`  ⚠ ${dir}/${file} declara mode=${run.mode}, pasta diz ${mode}; vale a pasta`);
+        }
+        const scored = (sc.cases || []).filter((c) => c.status === 'scored');
+        if (!scored.length) continue;
+        const key = `${mode}::${modelId}`;
+        const price = PRICING.models[modelId] || null;
+        const accessPath = run.model?.accessPath || 'unknown';
+
+        const byLanguage = {};
+        const byRepo = {};
+        const bySize = {};
+        const bySeverity = Object.fromEntries(SEVERITIES.map((s) => [s, { matched: 0, goldens: 0 }]));
+        const CANONICAL_CATEGORIES = new Set(['bug', 'performance', 'security']);
+        const findingsBySeverity = { low: 0, medium: 0, high: 0, critical: 0 };
+        const findingsByCategory = { bug: 0, performance: 0, security: 0, other: 0 };
+
+        for (const c of scored) {
+            const m = c.metrics;
+            const { repo, language } = classify(c.caseId);
+            const size = PR_SIZE[c.caseId] || null;
+            const tp = m.tpFindings ?? 0;
+            const fp = m.fpFindings ?? 0;
+            for (const [bucket, name] of [
+                [byLanguage, language],
+                [byRepo, repo],
+                ...(size ? [[bySize, size.sizeBucket]] : []),
+            ]) {
+                bucket[name] = bucket[name] || { matched: 0, goldens: 0, tp: 0, fp: 0, count: 0 };
+                bucket[name].matched += m.matched;
+                bucket[name].goldens += m.goldens;
+                bucket[name].tp += tp;
+                bucket[name].fp += fp;
+                bucket[name].count += 1;
+            }
+
+            const matchedGoldens = m.matchedGoldens || [];
+            const missedGoldens = m.missedGoldens || [];
+            for (const g of matchedGoldens) if (bySeverity[g.severity]) { bySeverity[g.severity].matched += 1; bySeverity[g.severity].goldens += 1; }
+            for (const g of missedGoldens) if (bySeverity[g.severity]) bySeverity[g.severity].goldens += 1;
+
+            const findings = findingsIndex.get(`${modelId}::${c.caseId}`) || [];
+            for (const f of findings) {
+                const sev = (f.severity || '').toLowerCase();
+                if (sev in findingsBySeverity) findingsBySeverity[sev] += 1;
+                const cat = (f.category || '').toLowerCase();
+                findingsByCategory[CANONICAL_CATEGORIES.has(cat) ? cat : 'other'] += 1;
+            }
+
+            // Ordem do gold (issueId), achado ou nao, pro /compare e pro trace.
+            const goldensDetail = [
+                ...matchedGoldens.map((g) => ({ ...g, matched: true })),
+                ...missedGoldens.map((g) => ({ ...g, matched: false })),
+            ].sort((a, b) => a.issueId.localeCompare(b.issueId));
+
+            const costUsd = round4(costOfUsage(c.usage, price));
+            allSamples.push({
+                id: `s${sampleId++}`,
+                entryKey: key,
+                mode,
+                modelId,
+                caseId: c.caseId,
+                repo,
+                language,
+                filesChanged: size?.filesChanged ?? null,
+                linesChanged: size?.linesChanged ?? null,
+                sizeBucket: size?.sizeBucket ?? null,
+                recall: m.recall,
+                precision: m.precision,
+                goldens: m.goldens,
+                matched: m.matched,
+                comments: m.findings ?? findings.length,
+                tpFindings: tp,
+                fpFindings: fp,
+                findings,
+                goldensDetail,
+                usage: c.usage || null,
+                calls: c.calls ?? null,
+                costUsd,
+            });
+            caseIndex.push({
+                entryKey: key,
+                caseId: c.caseId,
+                repo,
+                language,
+                sizeBucket: size?.sizeBucket ?? null,
+                goldens: m.goldens,
+                matched: m.matched,
+                tpFindings: tp,
+                fpFindings: fp,
+                costUsd,
+            });
+        }
+
+        const finalize = (bucket) =>
+            Object.fromEntries(
+                Object.entries(bucket).map(([k, v]) => [
+                    k,
+                    {
+                        recall: v.goldens ? (v.matched / v.goldens) * 100 : 0,
+                        precision: v.tp + v.fp ? (v.tp / (v.tp + v.fp)) * 100 : null,
+                        goldens: v.goldens,
+                        matched: v.matched,
+                        count: v.count,
+                    },
+                ]),
+            );
+
+        const a = sc.aggregate || {};
+        const recall = a.recallMicro ?? 0;
+        const precision = a.precisionMicro ?? 0;
+        const usage = {
+            inputTokens: 0, outputTokens: 0, reasoningTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0,
+            ...(a.usage || {}),
+        };
+        const costTotal = costOfUsage(usage, price);
+        const cases = a.casesScored ?? scored.length;
+        const goldensMatched = a.goldensMatched ?? 0;
+        const ci = bootstrapCI(scored);
+
+        entries.push({
+            key,
+            mode,
+            modelId,
+            provider: run.model?.provider || null,
+            accessPath,
+            harness: run.harness?.name || 'unknown',
+            harnessVersion: run.harness?.version || null,
+            executionMode: run.executionMode || 'unknown',
+            reasoningConfig: run.reasoning?.config || 'unknown',
+            reasoningEffort: run.reasoning?.effortRequested || null,
+            judge: sc.judge?.model || null,
+            gold: sc.judge?.gold || null,
+            benchmarkVersion: sc.benchmarkVersion || null,
+            runAt: run.runAt || null,
+
+            recall: recall * 100,
+            precision: precision * 100,
+            f1: (a.f1Micro ?? fScore(precision, recall, 1)) * 100,
+            f2: (a.f2Micro ?? fScore(precision, recall, 2)) * 100,
+            recallMacro: (a.recallMacro ?? 0) * 100,
+            precisionMacro: (a.precisionMacro ?? 0) * 100,
+            ciLow: ci.lo,
+            ciHigh: ci.hi,
+
+            goldensTotal: a.goldensTotal ?? 0,
+            goldensMatched,
+            comments: a.comments ?? 0,
+            cases,
+            calls: a.calls ?? null,
+            usage,
+
+            byLanguage: finalize(byLanguage),
+            byRepo: finalize(byRepo),
+            bySize: finalize(bySize),
+            bySeverity: Object.fromEntries(
+                SEVERITIES.map((s) => [s, { ...bySeverity[s], recall: bySeverity[s].goldens ? (bySeverity[s].matched / bySeverity[s].goldens) * 100 : null }]),
+            ),
+            findingsBySeverity,
+            findingsByCategory,
+
+            costTotal: costTotal == null ? null : Math.round(costTotal * 100) / 100,
+            costPerPR: costTotal == null || !cases ? null : round4(costTotal / cases),
+            costPerBugFound: costTotal == null || !goldensMatched ? null : round4(costTotal / goldensMatched),
+            // 'api-equivalent': rodou por assinatura, custo e o preco de tabela
+            // da API para os mesmos tokens. Nunca null por ser assinatura.
+            costBasis: price ? (accessPath === 'subscription' ? 'api-equivalent' : 'api') : 'unpriced',
+            costNote: price?.costNote || null,
+            priceSource: price?.source || null,
+            price: price
+                ? { input: price.input, cacheRead: price.cacheRead, cacheWrite: price.cacheWrite, output: price.output }
+                : null,
+        });
     }
-    const recalls = runs.map((r) => r.recallMicro * 100);
-    const precisions = runs.map((r) => r.precisionMicro * 100);
-    const f1s = runs.map((r) => r.f1Micro * 100);
-    return {
-        runs: runs.length,
-        recall: { mean: mean(recalls), stdev: stdev(recalls), values: recalls },
-        precision: { mean: mean(precisions), stdev: stdev(precisions), values: precisions },
-        f1: { mean: mean(f1s), stdev: stdev(f1s), values: f1s },
-    };
 }
 
-for (const e of entries) {
-    e.runToRunVariance = runToRunVariance(e);
+if (!entries.length) {
+    console.error(`nenhum scorecard em ${IN_DIR}/scorecards/{light,heavy}`);
+    process.exit(1);
 }
 
-for (const e of entries) {
-    const p = e.score / 100;
-    const n = e.goldensTotal || 1;
-    // mantido para comparação; o intervalo publicado é o bootstrap
-    e.ciHalfWidth = 1.96 * Math.sqrt(Math.max(p * (1 - p), 0) / n) * 100;
-    const scoredCases = (scorecardCases.get(e.key) || []).filter((c) => c.status === 'scored');
-    const b = bootstrapCI(scoredCases);
-    e.ciLow = b.lo;
-    e.ciHigh = b.hi;
-    // meia-largura efetiva usada no agrupamento em faixas
-    e.ciHalfWidthBootstrap = b.lo != null ? (b.hi - b.lo) / 2 : e.ciHalfWidth;
+// Rank dentro do modo, por F2 (o ranking que o site publica).
+for (const { mode } of MODE_DIRS) {
+    entries
+        .filter((e) => e.mode === mode)
+        .sort((a, b) => b.f2 - a.f2)
+        .forEach((e, i) => (e.rank = i + 1));
 }
-// Ordena e numera por F1, que e o ranking que o site publica ("Ranked by F1").
-// Antes ordenava por recall, entao a coluna "#" saia fora de ordem ao lado de
-// uma tabela ordenada por F1 (01, 05, 04, 07...) — o numero dizia uma coisa e
-// a posicao dizia outra.
-entries.sort((a, b) => b.f1 - a.f1);
-entries.forEach((e, i) => (e.rank = i + 1));
+entries.sort((a, b) => (a.mode === b.mode ? a.rank - b.rank : a.mode === 'balanced' ? -1 : 1));
 
-// ── Comparacao pareada contra o topo ────────────────────────────────────────
-//
-// As FAIXAS (tiers) foram removidas da publicacao em 2026-08-20. O calculo
-// estava correto, o conceito e que nao se sustentava: o criterio comparava
-// cada modelo com o LIDER da faixa, e "nao separa" NAO e transitivo. Isso
-// produzia fronteira falsa — minimax-m3 caiu em T2 e qwen3.8-27b ficou em T1
-// sendo que os dois nao separam entre si (p=0,108). O site afirmava uma
-// diferenca que o bench nao mede.
-//
-// Nao ha regra limpa: comparar com o VIZINHO em vez do lider inverte o erro
-// (juntaria na mesma faixa deepseek-v4-pro e minimax-m3, que separam).
-// Enquanto nao houver n suficiente pra que isso deixe de ser ambiguo, o site
-// publica o intervalo de confianca e nao agrupa.
-//
-// O teste pareado continua sendo calculado e gravado: e informacao real, e e
-// o que permite retomar o agrupamento quando fizer sentido. Ver a emenda em
-// docs/adr-conservative-calibration.md.
-const ALPHA = 0.05;
-const top = entries[0];
-if (top) {
-    const topCases = scorecardCases.get(top.key) || [];
-    const tests = entries.slice(1).map((e) => ({
-        e,
-        r: pairedDiff(topCases, scorecardCases.get(e.key) || []),
-    }));
-    const m = tests.length;
-    const ordered = [...tests].filter((t) => t.r).sort((a, b) => a.r.p - b.r.p);
-    const separated = new Set();
-    for (let i = 0; i < ordered.length; i++) {
-        if (ordered[i].r.p <= ALPHA / (m - i)) separated.add(ordered[i].e.key);
-        else break;
-    }
-    for (const t of tests) {
-        t.e.pairedVsTop = t.r
-            ? {
-                  diff: +t.r.observed.toFixed(2),
-                  lo: +t.r.lo.toFixed(2),
-                  hi: +t.r.hi.toFixed(2),
-                  p: +t.r.p.toFixed(4),
-                  n: t.r.n,
-                  separatesFromTop: separated.has(t.e.key),
-              }
-            : null;
-    }
+// Custo e quatro casas fora do round2 generico.
+const COST_KEYS = new Set(['costPerPR', 'costPerBugFound', 'costUsd', 'price']);
+function roundEntry(e) {
+    const out = round2(e);
+    for (const k of COST_KEYS) if (k in e) out[k] = e[k];
+    return out;
 }
 
-const leaderboard = round2({
-    entries,
-    averages: {
-        score: avg(entries.map((e) => e.score)),
-        precision: avg(entries.map((e) => e.precision)),
-        f1: avg(entries.map((e) => e.f1)),
-    },
-});
+const avgOf = (xs) => (xs.length ? xs.reduce((s, x) => s + x, 0) / xs.length : null);
+const averages = Object.fromEntries(
+    MODE_DIRS.map(({ mode }) => {
+        const es = entries.filter((e) => e.mode === mode);
+        return [mode, round2({
+            recall: avgOf(es.map((e) => e.recall)),
+            precision: avgOf(es.map((e) => e.precision)),
+            f1: avgOf(es.map((e) => e.f1)),
+            f2: avgOf(es.map((e) => e.f2)),
+        })];
+    }),
+);
 
+const leaderboard = { entries: entries.map(roundEntry), averages };
+
+const runAts = entries.map((e) => e.runAt).filter(Boolean).sort();
 const meta = {
     totalEntries: entries.length,
+    totalModels: new Set(entries.map((e) => e.modelId)).size,
+    modes: MODE_DIRS.map((m) => m.mode).filter((m) => entries.some((e) => e.mode === m)),
+    entriesByMode: Object.fromEntries(MODE_DIRS.map(({ mode }) => [mode, entries.filter((e) => e.mode === mode).length])),
+    models: [...new Set(entries.map((e) => e.modelId))].sort(),
     harnesses: [...new Set(entries.map((e) => e.harness))].sort(),
-    models: [...new Set(entries.map((e) => e.modelId).filter(Boolean))].sort(),
     languages: [...new Set(allSamples.map((s) => s.language))].sort(),
     repos: [...new Set(allSamples.map((s) => s.repo))].sort(),
-    // ordem por tamanho (XS→XL), não alfabética — alfabética dá L,M,S,XL,XS.
     sizes: SIZE_ORDER.filter((s) => allSamples.some((sample) => sample.sizeBucket === s)),
-    executionModes: [...new Set(entries.map((e) => e.executionMode))].sort(),
     accessPaths: [...new Set(entries.map((e) => e.accessPath))].sort(),
     judges: [...new Set(entries.map((e) => e.judge).filter(Boolean))].sort(),
+    gold: [...new Set(entries.map((e) => e.gold).filter(Boolean))].sort(),
+    benchmarkVersion: entries[0].benchmarkVersion,
     totalCases: Math.max(...entries.map((e) => e.cases)),
     totalGoldens: Math.max(...entries.map((e) => e.goldensTotal)),
-    // Faixas removidas da publicacao (ver comentario no bloco de comparacao).
-    pairwiseMethod: {
-        test: 'bootstrap pareado da diferenca de recall contra o 1o colocado, nos mesmos PRs',
-        iterations: 4000,
-        alpha: 0.05,
-        correction: 'Holm-Bonferroni sobre as comparacoes contra o 1o colocado',
-        note: 'Pareado porque todo modelo roda os MESMOS PRs: a dificuldade do caso cancela na diferenca, o que estreita o intervalo em ~40% frente aos marginais. A correcao existe porque testar N modelos a 95% produz falso positivo por acaso. NAO usar isto para agrupar em faixas: "nao separa" nao e transitivo.',
-    },
-    // Rótulo obrigatório: dois tipos de variância, dois status diferentes.
-    varianceCaveat: {
-        measured: 'case-sampling (bootstrap 2000x) e judge run-to-run (3 rodadas do mesmo judge sobre a mesma submission, onde disponível)',
-        notMeasured: 'model run-to-run (rodar o MESMO modelo de novo do zero — 1 passada por entrada)',
-        runsPerEntry: 1,
-        judgeRunsAvailable: entries.filter((e) => e.runToRunVariance).length,
-        judgeRunsTotal: entries.length,
-    },
+    pricesCollectedAt: PRICING._meta?.collectedAt || null,
+    firstRunAt: runAts[0] || null,
+    lastRunAt: runAts[runAts.length - 1] || null,
     generatedAt: new Date().toISOString(),
 };
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 fs.writeFileSync(path.join(OUT_DIR, 'meta.json'), JSON.stringify(meta, null, 2));
 fs.writeFileSync(path.join(OUT_DIR, 'leaderboard.json'), JSON.stringify(leaderboard, null, 2));
-fs.writeFileSync(path.join(OUT_DIR, 'samples.json'), JSON.stringify(round2(allSamples)));
+fs.writeFileSync(path.join(OUT_DIR, 'samples.json'), JSON.stringify(allSamples.map(roundEntry)));
 fs.writeFileSync(path.join(OUT_DIR, 'case-index.json'), JSON.stringify(caseIndex));
 
-console.log(`✅ ${entries.length} entrada(s) · ${allSamples.length} amostras`);
+console.log(`✅ ${entries.length} entrada(s), ${meta.totalModels} modelo(s), ${allSamples.length} amostras`);
 for (const e of entries) {
-    const money =
-        e.costPerPR != null
-            ? `$${e.costPerPR.toFixed(3)}/PR` +
-              (e.costPerBugFound != null ? ` · $${e.costPerBugFound.toFixed(2)}/bug` : '')
-            : `custo n/a (${e.costBasis})`;
+    const money = e.costPerPR != null
+        ? `$${e.costPerPR.toFixed(3)}/PR · $${e.costPerBugFound?.toFixed(3) ?? '—'}/bug (${e.costBasis})`
+        : `custo n/a (${e.costBasis})`;
     console.log(
-        `   #${e.rank} ${e.harness}/${e.modelId || 'bundled'} ` +
-            `${e.score.toFixed(1)}% [${(e.ciLow??0).toFixed(1)}–${(e.ciHigh??0).toFixed(1)}] ` +
-            `(${e.goldensMatched}/${e.goldensTotal}) ${e.accessPath}/${e.executionMode} · ${money}`,
+        `   [${e.mode}] #${e.rank} ${e.modelId} F2 ${e.f2.toFixed(1)} · R ${e.recall.toFixed(1)} · P ${e.precision.toFixed(1)} ` +
+            `(${e.goldensMatched}/${e.goldensTotal}, ${e.comments} comments) · ${money}`,
     );
 }
-console.log(`→ ${path.relative(process.cwd(), OUT_DIR)}`);
+console.log(`→ ${path.relative(process.cwd(), OUT_DIR) || '.'}`);

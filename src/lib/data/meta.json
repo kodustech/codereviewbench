@@ -1,22 +1,21 @@
 {
-  "totalEntries": 13,
+  "totalEntries": 5,
+  "totalModels": 3,
+  "modes": [
+    "balanced",
+    "heavy"
+  ],
+  "entriesByMode": {
+    "balanced": 3,
+    "heavy": 2
+  },
+  "models": [
+    "claude-sonnet-5.5",
+    "gemini-3.8-flash",
+    "gpt-6.1-sol"
+  ],
   "harnesses": [
     "kodus"
-  ],
-  "models": [
-    "deepseek-v4-flash",
-    "deepseek-v4-pro",
-    "deepseek-v4.1-flash@fireworks",
-    "gemini-3.7-flash",
-    "glm-5.2@fireworks",
-    "glm-5.3-flash",
-    "kimi-k2.7-code",
-    "kimi-k3",
-    "minimax-m3@fireworks",
-    "muse-spark-1.2",
-    "muse-spark-1.3",
-    "qwen3.8-27b",
-    "qwen3.8-max"
   ],
   "languages": [
     "go",
@@ -38,30 +37,21 @@
     "M",
     "L"
   ],
-  "executionModes": [
-    "replay"
-  ],
   "accessPaths": [
-    "api"
+    "api",
+    "subscription"
   ],
   "judges": [
-    "claude-haiku-4-5"
+    "claude-haiku-5-5"
   ],
+  "gold": [
+    "gold-v3"
+  ],
+  "benchmarkVersion": "light-30-gold-v3",
   "totalCases": 30,
-  "totalGoldens": 95,
-  "pairwiseMethod": {
-    "test": "bootstrap pareado da diferenca de recall contra o 1o colocado, nos mesmos PRs",
-    "iterations": 4000,
-    "alpha": 0.05,
-    "correction": "Holm-Bonferroni sobre as comparacoes contra o 1o colocado",
-    "note": "Pareado porque todo modelo roda os MESMOS PRs: a dificuldade do caso cancela na diferenca, o que estreita o intervalo em ~40% frente aos marginais. A correcao existe porque testar N modelos a 95% produz falso positivo por acaso. NAO usar isto para agrupar em faixas: \"nao separa\" nao e transitivo."
-  },
-  "varianceCaveat": {
-    "measured": "case-sampling (bootstrap 2000x) e judge run-to-run (3 rodadas do mesmo judge sobre a mesma submission, onde disponível)",
-    "notMeasured": "model run-to-run (rodar o MESMO modelo de novo do zero — 1 passada por entrada)",
-    "runsPerEntry": 1,
-    "judgeRunsAvailable": 4,
-    "judgeRunsTotal": 13
-  },
-  "generatedAt": "2026-09-11T18:23:08.195Z"
+  "totalGoldens": 121,
+  "pricesCollectedAt": "2026-11-07",
+  "firstRunAt": "2026-11-07T14:53:34.961Z",
+  "lastRunAt": "2026-11-07T15:57:36.699Z",
+  "generatedAt": "2026-11-07T16:20:07.078Z"
 }

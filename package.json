@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "badges": "node scripts/generate-badges.js",
-    "prepare": "git config core.hooksPath .githooks"
+    "prepare": "git config core.hooksPath .githooks",
+    "data": "node process-scorecards.js && node scripts/generate-badges.js"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
