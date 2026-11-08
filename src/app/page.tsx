@@ -137,7 +137,7 @@ export default function Home() {
         {
           step: '03',
           title: 'One judge, every comment',
-          body: `${judge} decides whether each published comment is the same problem, at the same place, as a gold bug. Each gold bug counts once; anything else is a false positive. Checked against Opus 5.5, the two agreed on 249 of 252 comments.`,
+          body: `${judge} decides whether each published comment is the same problem, at the same place, as a gold bug. Each gold bug counts once; anything else is a false positive. Checked against Opus 5.5, the two agreed on 249 of 252 comments; judging the same output again moves a score by at most one bug.`,
         },
         {
           step: '04',

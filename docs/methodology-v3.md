@@ -44,6 +44,12 @@ Prices in `pricing.json`, read from each vendor's official page on 2026-11-07 (U
 - Gemini 3.8 Flash is at its promotional price, valid until 2026-12-31.
 - GPT models ran on a ChatGPT subscription; their cost is the API-equivalent at OpenAI list price, short-context tier.
 
+## Known limits
+
+- One run per model and mode. Re-judging the same output moved a model's score by at most one matched bug (under 1 point of recall); resampling the 30 pull requests moves it by about 20 points (95% bootstrap interval).
+- GPT-6 Luna ran at the vendor's default reasoning effort; through the subscription backend that default reasons very little on this task (about 25 reasoning tokens per pull request). The API default may differ.
+- A review whose model calls failed in transport (rate limit, lost connection) was set aside and run again; those dumps are kept as incidents in the run repository. Calls aborted by the product's own timeouts were kept: a customer on a slow model gets the same.
+
 ## Dropped from v1
 
 Not present in the v3 data, so removed from the site rather than estimated: fair recall, loop fidelity, the realMiss/artifact/untestable classification of missed bugs, judge run-to-run variance runs, and the paired test against the top model.

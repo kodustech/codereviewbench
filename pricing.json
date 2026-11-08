@@ -99,7 +99,7 @@
       "output": 0.50,
       "provider": "openai",
       "source": "https://developers.openai.com/api/docs/pricing",
-      "costNote": "Ran on a ChatGPT subscription. Cost shown is the API-equivalent at OpenAI list price, short-context tier."
+      "costNote": "Ran on a ChatGPT subscription. Cost shown is the API-equivalent at OpenAI list price, short-context tier. It ran at the vendor's default reasoning effort; through the subscription backend that default reasons very little on this task (about 25 reasoning tokens per pull request), and the API default may differ."
     }
   }
 }
