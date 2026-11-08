@@ -1,6 +1,193 @@
 {
   "entries": [
     {
+      "key": "balanced::kimi-k3.1-pro",
+      "mode": "balanced",
+      "modelId": "kimi-k3.1-pro",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T19:50:38.562Z",
+      "recall": 68.6,
+      "precision": 49.11,
+      "f1": 57.24,
+      "f2": 63.55,
+      "recallMacro": 70.76,
+      "precisionMacro": 50.77,
+      "ciLow": 58.96,
+      "ciHigh": 78.03,
+      "goldensTotal": 121,
+      "goldensMatched": 83,
+      "comments": 169,
+      "cases": 30,
+      "calls": 450,
+      "usage": {
+        "inputTokens": 62513655,
+        "outputTokens": 1405247,
+        "reasoningTokens": 908272,
+        "cacheReadTokens": 56538112,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 74.29,
+          "precision": 54.17,
+          "goldens": 35,
+          "matched": 26,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 58.54,
+          "precision": 55.81,
+          "goldens": 41,
+          "matched": 24,
+          "count": 6
+        },
+        "go": {
+          "recall": 77.78,
+          "precision": 60.87,
+          "goldens": 18,
+          "matched": 14,
+          "count": 6
+        },
+        "java": {
+          "recall": 75,
+          "precision": 28.13,
+          "goldens": 12,
+          "matched": 9,
+          "count": 6
+        },
+        "python": {
+          "recall": 66.67,
+          "precision": 43.48,
+          "goldens": 15,
+          "matched": 10,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 74.29,
+          "precision": 54.17,
+          "goldens": 35,
+          "matched": 26,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 58.54,
+          "precision": 55.81,
+          "goldens": 41,
+          "matched": 24,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 77.78,
+          "precision": 60.87,
+          "goldens": 18,
+          "matched": 14,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 75,
+          "precision": 28.13,
+          "goldens": 12,
+          "matched": 9,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 66.67,
+          "precision": 43.48,
+          "goldens": 15,
+          "matched": 10,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 70.59,
+          "precision": 77.42,
+          "goldens": 34,
+          "matched": 24,
+          "count": 8
+        },
+        "M": {
+          "recall": 62.5,
+          "precision": 38.04,
+          "goldens": 56,
+          "matched": 35,
+          "count": 14
+        },
+        "L": {
+          "recall": 77.42,
+          "precision": 57.14,
+          "goldens": 31,
+          "matched": 24,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 2,
+          "goldens": 4,
+          "recall": 50
+        },
+        "high": {
+          "matched": 42,
+          "goldens": 52,
+          "recall": 80.77
+        },
+        "medium": {
+          "matched": 38,
+          "goldens": 61,
+          "recall": 62.3
+        },
+        "low": {
+          "matched": 1,
+          "goldens": 4,
+          "recall": 25
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 164,
+        "high": 5,
+        "critical": 0
+      },
+      "findingsByCategory": {
+        "bug": 132,
+        "performance": 19,
+        "security": 18,
+        "other": 0
+      },
+      "costTotal": 37.31,
+      "costPerPR": 1.2437,
+      "costPerBugFound": 0.4495,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://platform.kimi.ai/docs/pricing/chat",
+      "price": {
+        "input": 2,
+        "cacheRead": 0.2,
+        "cacheWrite": 2,
+        "output": 10
+      },
+      "rank": 1
+    },
+    {
       "key": "balanced::gpt-6.1-sol",
       "mode": "balanced",
       "modelId": "gpt-6.1-sol",
@@ -9,126 +196,126 @@
       "harness": "kodus",
       "harnessVersion": "dev",
       "executionMode": "live",
-      "reasoningConfig": "explicit",
-      "reasoningEffort": "low",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
       "judge": "claude-haiku-5-5",
       "gold": "gold-v3",
       "benchmarkVersion": "light-30-gold-v3",
-      "runAt": "2026-11-07T15:10:12.143Z",
-      "recall": 41.32,
-      "precision": 66.67,
-      "f1": 51.02,
-      "f2": 44.72,
-      "recallMacro": 43.78,
-      "precisionMacro": 62.04,
-      "ciLow": 33.04,
-      "ciHigh": 51.11,
+      "runAt": "2026-11-07T20:03:22.217Z",
+      "recall": 42.98,
+      "precision": 62.65,
+      "f1": 50.98,
+      "f2": 45.86,
+      "recallMacro": 46.44,
+      "precisionMacro": 56.49,
+      "ciLow": 32.59,
+      "ciHigh": 54.44,
       "goldensTotal": 121,
-      "goldensMatched": 50,
-      "comments": 75,
+      "goldensMatched": 52,
+      "comments": 83,
       "cases": 30,
-      "calls": 258,
+      "calls": 275,
       "usage": {
-        "inputTokens": 10356478,
-        "outputTokens": 119495,
-        "reasoningTokens": 6611,
-        "cacheReadTokens": 1451008,
+        "inputTokens": 12593404,
+        "outputTokens": 176004,
+        "reasoningTokens": 19798,
+        "cacheReadTokens": 1749632,
         "cacheWriteTokens": 0
       },
       "byLanguage": {
         "typescript": {
-          "recall": 48.57,
-          "precision": 73.91,
+          "recall": 51.43,
+          "precision": 72,
           "goldens": 35,
-          "matched": 17,
+          "matched": 18,
           "count": 6
         },
         "ruby": {
-          "recall": 31.71,
-          "precision": 81.25,
+          "recall": 29.27,
+          "precision": 70.59,
           "goldens": 41,
-          "matched": 13,
+          "matched": 12,
           "count": 6
         },
         "go": {
-          "recall": 61.11,
-          "precision": 78.57,
+          "recall": 66.67,
+          "precision": 75,
           "goldens": 18,
-          "matched": 11,
+          "matched": 12,
           "count": 6
         },
         "java": {
           "recall": 25,
-          "precision": 27.27,
+          "precision": 23.08,
           "goldens": 12,
           "matched": 3,
           "count": 6
         },
         "python": {
-          "recall": 40,
-          "precision": 54.55,
+          "recall": 46.67,
+          "precision": 58.33,
           "goldens": 15,
-          "matched": 6,
+          "matched": 7,
           "count": 6
         }
       },
       "byRepo": {
         "cal.com": {
-          "recall": 48.57,
-          "precision": 73.91,
+          "recall": 51.43,
+          "precision": 72,
           "goldens": 35,
-          "matched": 17,
+          "matched": 18,
           "count": 6
         },
         "discourse": {
-          "recall": 31.71,
-          "precision": 81.25,
+          "recall": 29.27,
+          "precision": 70.59,
           "goldens": 41,
-          "matched": 13,
+          "matched": 12,
           "count": 6
         },
         "grafana": {
-          "recall": 61.11,
-          "precision": 78.57,
+          "recall": 66.67,
+          "precision": 75,
           "goldens": 18,
-          "matched": 11,
+          "matched": 12,
           "count": 6
         },
         "keycloak": {
           "recall": 25,
-          "precision": 27.27,
+          "precision": 23.08,
           "goldens": 12,
           "matched": 3,
           "count": 6
         },
         "sentry": {
-          "recall": 40,
-          "precision": 54.55,
+          "recall": 46.67,
+          "precision": 58.33,
           "goldens": 15,
-          "matched": 6,
+          "matched": 7,
           "count": 6
         }
       },
       "bySize": {
         "S": {
-          "recall": 47.06,
-          "precision": 88.89,
+          "recall": 41.18,
+          "precision": 87.5,
           "goldens": 34,
-          "matched": 16,
+          "matched": 14,
           "count": 8
         },
         "M": {
-          "recall": 37.5,
-          "precision": 53.85,
+          "recall": 42.86,
+          "precision": 52.17,
           "goldens": 56,
-          "matched": 21,
+          "matched": 24,
           "count": 14
         },
         "L": {
-          "recall": 41.94,
-          "precision": 76.47,
+          "recall": 45.16,
+          "precision": 73.68,
           "goldens": 31,
-          "matched": 13,
+          "matched": 14,
           "count": 6
         },
         "XS": {
@@ -151,9 +338,9 @@
           "recall": 55.77
         },
         "medium": {
-          "matched": 20,
+          "matched": 22,
           "goldens": 61,
-          "recall": 32.79
+          "recall": 36.07
         },
         "low": {
           "matched": 0,
@@ -163,19 +350,19 @@
       },
       "findingsBySeverity": {
         "low": 0,
-        "medium": 32,
-        "high": 42,
+        "medium": 35,
+        "high": 47,
         "critical": 1
       },
       "findingsByCategory": {
-        "bug": 61,
-        "performance": 4,
-        "security": 10,
+        "bug": 69,
+        "performance": 5,
+        "security": 9,
         "other": 0
       },
-      "costTotal": 19.15,
-      "costPerPR": 0.6384,
-      "costPerBugFound": 0.383,
+      "costTotal": 23.62,
+      "costPerPR": 0.7874,
+      "costPerBugFound": 0.4543,
       "costBasis": "api-equivalent",
       "costNote": "Ran on a ChatGPT subscription. Cost shown is the API-equivalent at OpenAI list price, short-context tier.",
       "priceSource": "https://developers.openai.com/api/docs/pricing",
@@ -185,7 +372,381 @@
         "cacheWrite": 2.5,
         "output": 10
       },
-      "rank": 1
+      "rank": 2
+    },
+    {
+      "key": "balanced::glm-5.3",
+      "mode": "balanced",
+      "modelId": "glm-5.3",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-08T01:30:50.430Z",
+      "recall": 41.32,
+      "precision": 43.48,
+      "f1": 42.37,
+      "f2": 41.74,
+      "recallMacro": 44.49,
+      "precisionMacro": 35.77,
+      "ciLow": 29.59,
+      "ciHigh": 53.33,
+      "goldensTotal": 121,
+      "goldensMatched": 50,
+      "comments": 115,
+      "cases": 30,
+      "calls": 429,
+      "usage": {
+        "inputTokens": 50652718,
+        "outputTokens": 3398124,
+        "reasoningTokens": 2979438,
+        "cacheReadTokens": 44513641,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 54.29,
+          "precision": 47.5,
+          "goldens": 35,
+          "matched": 19,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 26.83,
+          "precision": 50,
+          "goldens": 41,
+          "matched": 11,
+          "count": 6
+        },
+        "go": {
+          "recall": 72.22,
+          "precision": 56.52,
+          "goldens": 18,
+          "matched": 13,
+          "count": 6
+        },
+        "java": {
+          "recall": 33.33,
+          "precision": 28.57,
+          "goldens": 12,
+          "matched": 4,
+          "count": 6
+        },
+        "python": {
+          "recall": 20,
+          "precision": 18.75,
+          "goldens": 15,
+          "matched": 3,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 54.29,
+          "precision": 47.5,
+          "goldens": 35,
+          "matched": 19,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 26.83,
+          "precision": 50,
+          "goldens": 41,
+          "matched": 11,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 72.22,
+          "precision": 56.52,
+          "goldens": 18,
+          "matched": 13,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 33.33,
+          "precision": 28.57,
+          "goldens": 12,
+          "matched": 4,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 20,
+          "precision": 18.75,
+          "goldens": 15,
+          "matched": 3,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 52.94,
+          "precision": 66.67,
+          "goldens": 34,
+          "matched": 18,
+          "count": 8
+        },
+        "M": {
+          "recall": 30.36,
+          "precision": 28.81,
+          "goldens": 56,
+          "matched": 17,
+          "count": 14
+        },
+        "L": {
+          "recall": 48.39,
+          "precision": 57.69,
+          "goldens": 31,
+          "matched": 15,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 2,
+          "goldens": 4,
+          "recall": 50
+        },
+        "high": {
+          "matched": 26,
+          "goldens": 52,
+          "recall": 50
+        },
+        "medium": {
+          "matched": 22,
+          "goldens": 61,
+          "recall": 36.07
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 63,
+        "high": 51,
+        "critical": 1
+      },
+      "findingsByCategory": {
+        "bug": 99,
+        "performance": 8,
+        "security": 8,
+        "other": 0
+      },
+      "costTotal": 35.12,
+      "costPerPR": 1.1707,
+      "costPerBugFound": 0.7024,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://fireworks.ai/pricing",
+      "price": {
+        "input": 1.4,
+        "cacheRead": 0.26,
+        "cacheWrite": null,
+        "output": 4.4
+      },
+      "rank": 3
+    },
+    {
+      "key": "balanced::deepseek-v4.1-flash",
+      "mode": "balanced",
+      "modelId": "deepseek-v4.1-flash",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "explicit",
+      "reasoningEffort": "medium",
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T20:00:51.712Z",
+      "recall": 40.5,
+      "precision": 43.36,
+      "f1": 41.88,
+      "f2": 41.04,
+      "recallMacro": 40.13,
+      "precisionMacro": 34.8,
+      "ciLow": 30.53,
+      "ciHigh": 50,
+      "goldensTotal": 121,
+      "goldensMatched": 49,
+      "comments": 113,
+      "cases": 30,
+      "calls": 424,
+      "usage": {
+        "inputTokens": 65300735,
+        "outputTokens": 2237286,
+        "reasoningTokens": 1845453,
+        "cacheReadTokens": 62088320,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 54.29,
+          "precision": 54.29,
+          "goldens": 35,
+          "matched": 19,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 34.15,
+          "precision": 56,
+          "goldens": 41,
+          "matched": 14,
+          "count": 6
+        },
+        "go": {
+          "recall": 55.56,
+          "precision": 58.82,
+          "goldens": 18,
+          "matched": 10,
+          "count": 6
+        },
+        "java": {
+          "recall": 33.33,
+          "precision": 19.05,
+          "goldens": 12,
+          "matched": 4,
+          "count": 6
+        },
+        "python": {
+          "recall": 13.33,
+          "precision": 13.33,
+          "goldens": 15,
+          "matched": 2,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 54.29,
+          "precision": 54.29,
+          "goldens": 35,
+          "matched": 19,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 34.15,
+          "precision": 56,
+          "goldens": 41,
+          "matched": 14,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 55.56,
+          "precision": 58.82,
+          "goldens": 18,
+          "matched": 10,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 33.33,
+          "precision": 19.05,
+          "goldens": 12,
+          "matched": 4,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 13.33,
+          "precision": 13.33,
+          "goldens": 15,
+          "matched": 2,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 44.12,
+          "precision": 57.69,
+          "goldens": 34,
+          "matched": 15,
+          "count": 8
+        },
+        "M": {
+          "recall": 35.71,
+          "precision": 33.9,
+          "goldens": 56,
+          "matched": 20,
+          "count": 14
+        },
+        "L": {
+          "recall": 45.16,
+          "precision": 60.87,
+          "goldens": 31,
+          "matched": 14,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 1,
+          "goldens": 4,
+          "recall": 25
+        },
+        "high": {
+          "matched": 29,
+          "goldens": 52,
+          "recall": 55.77
+        },
+        "medium": {
+          "matched": 19,
+          "goldens": 61,
+          "recall": 31.15
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 61,
+        "high": 50,
+        "critical": 2
+      },
+      "findingsByCategory": {
+        "bug": 89,
+        "performance": 13,
+        "security": 11,
+        "other": 0
+      },
+      "costTotal": 4.02,
+      "costPerPR": 0.134,
+      "costPerBugFound": 0.0821,
+      "costBasis": "api",
+      "costNote": "Priced at DeepSeek's standard (peak) rate; the off-peak rate is half.",
+      "priceSource": "https://api-docs.deepseek.com/quick_start/pricing",
+      "price": {
+        "input": 0.3,
+        "cacheRead": 0.006,
+        "cacheWrite": null,
+        "output": 1.2
+      },
+      "rank": 4
     },
     {
       "key": "balanced::claude-sonnet-5.5",
@@ -372,7 +933,755 @@
         "cacheWrite": 2.5,
         "output": 10
       },
-      "rank": 2
+      "rank": 5
+    },
+    {
+      "key": "balanced::muse-spark-1.2",
+      "mode": "balanced",
+      "modelId": "muse-spark-1.2",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T16:34:00.953Z",
+      "recall": 37.19,
+      "precision": 33.58,
+      "f1": 35.29,
+      "f2": 36.41,
+      "recallMacro": 36.74,
+      "precisionMacro": 29.03,
+      "ciLow": 28,
+      "ciHigh": 47.17,
+      "goldensTotal": 121,
+      "goldensMatched": 45,
+      "comments": 134,
+      "cases": 30,
+      "calls": 443,
+      "usage": {
+        "inputTokens": 21268828,
+        "outputTokens": 2201677,
+        "reasoningTokens": 1965607,
+        "cacheReadTokens": 12906859,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 60,
+          "precision": 60,
+          "goldens": 35,
+          "matched": 21,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 26.83,
+          "precision": 30.56,
+          "goldens": 41,
+          "matched": 11,
+          "count": 6
+        },
+        "go": {
+          "recall": 38.89,
+          "precision": 33.33,
+          "goldens": 18,
+          "matched": 7,
+          "count": 6
+        },
+        "java": {
+          "recall": 16.67,
+          "precision": 8.33,
+          "goldens": 12,
+          "matched": 2,
+          "count": 6
+        },
+        "python": {
+          "recall": 26.67,
+          "precision": 22.22,
+          "goldens": 15,
+          "matched": 4,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 60,
+          "precision": 60,
+          "goldens": 35,
+          "matched": 21,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 26.83,
+          "precision": 30.56,
+          "goldens": 41,
+          "matched": 11,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 38.89,
+          "precision": 33.33,
+          "goldens": 18,
+          "matched": 7,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 16.67,
+          "precision": 8.33,
+          "goldens": 12,
+          "matched": 2,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 26.67,
+          "precision": 22.22,
+          "goldens": 15,
+          "matched": 4,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 35.29,
+          "precision": 50,
+          "goldens": 34,
+          "matched": 12,
+          "count": 8
+        },
+        "M": {
+          "recall": 42.86,
+          "precision": 31.58,
+          "goldens": 56,
+          "matched": 24,
+          "count": 14
+        },
+        "L": {
+          "recall": 29.03,
+          "precision": 31.03,
+          "goldens": 31,
+          "matched": 9,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 1,
+          "goldens": 4,
+          "recall": 25
+        },
+        "high": {
+          "matched": 23,
+          "goldens": 52,
+          "recall": 44.23
+        },
+        "medium": {
+          "matched": 20,
+          "goldens": 61,
+          "recall": 32.79
+        },
+        "low": {
+          "matched": 1,
+          "goldens": 4,
+          "recall": 25
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 94,
+        "high": 38,
+        "critical": 2
+      },
+      "findingsByCategory": {
+        "bug": 110,
+        "performance": 13,
+        "security": 11,
+        "other": 0
+      },
+      "costTotal": 21.75,
+      "costPerPR": 0.7249,
+      "costPerBugFound": 0.4832,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://dev.meta.ai/docs/pricing-rate-limits",
+      "price": {
+        "input": 1.25,
+        "cacheRead": 0.15,
+        "cacheWrite": null,
+        "output": 4.25
+      },
+      "rank": 6
+    },
+    {
+      "key": "balanced::glm-5.3-flash",
+      "mode": "balanced",
+      "modelId": "glm-5.3-flash",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-08T01:39:11.584Z",
+      "recall": 35.54,
+      "precision": 39.81,
+      "f1": 37.55,
+      "f2": 36.32,
+      "recallMacro": 35.99,
+      "precisionMacro": 38.08,
+      "ciLow": 27.66,
+      "ciHigh": 43.16,
+      "goldensTotal": 121,
+      "goldensMatched": 43,
+      "comments": 108,
+      "cases": 30,
+      "calls": 389,
+      "usage": {
+        "inputTokens": 42939899,
+        "outputTokens": 1938066,
+        "reasoningTokens": 1653991,
+        "cacheReadTokens": 37155220,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 42.86,
+          "precision": 45.45,
+          "goldens": 35,
+          "matched": 15,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 31.71,
+          "precision": 52,
+          "goldens": 41,
+          "matched": 13,
+          "count": 6
+        },
+        "go": {
+          "recall": 44.44,
+          "precision": 47.06,
+          "goldens": 18,
+          "matched": 8,
+          "count": 6
+        },
+        "java": {
+          "recall": 25,
+          "precision": 16.67,
+          "goldens": 12,
+          "matched": 3,
+          "count": 6
+        },
+        "python": {
+          "recall": 26.67,
+          "precision": 26.67,
+          "goldens": 15,
+          "matched": 4,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 42.86,
+          "precision": 45.45,
+          "goldens": 35,
+          "matched": 15,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 31.71,
+          "precision": 52,
+          "goldens": 41,
+          "matched": 13,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 44.44,
+          "precision": 47.06,
+          "goldens": 18,
+          "matched": 8,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 25,
+          "precision": 16.67,
+          "goldens": 12,
+          "matched": 3,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 26.67,
+          "precision": 26.67,
+          "goldens": 15,
+          "matched": 4,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 44.12,
+          "precision": 75,
+          "goldens": 34,
+          "matched": 15,
+          "count": 8
+        },
+        "M": {
+          "recall": 30.36,
+          "precision": 27.87,
+          "goldens": 56,
+          "matched": 17,
+          "count": 14
+        },
+        "L": {
+          "recall": 35.48,
+          "precision": 47.83,
+          "goldens": 31,
+          "matched": 11,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 2,
+          "goldens": 4,
+          "recall": 50
+        },
+        "high": {
+          "matched": 24,
+          "goldens": 52,
+          "recall": 46.15
+        },
+        "medium": {
+          "matched": 17,
+          "goldens": 61,
+          "recall": 27.87
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 59,
+        "high": 47,
+        "critical": 2
+      },
+      "findingsByCategory": {
+        "bug": 92,
+        "performance": 7,
+        "security": 9,
+        "other": 0
+      },
+      "costTotal": 2.95,
+      "costPerPR": 0.0984,
+      "costPerBugFound": 0.0686,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://fireworks.ai/pricing",
+      "price": {
+        "input": 0.15,
+        "cacheRead": 0.03,
+        "cacheWrite": null,
+        "output": 0.5
+      },
+      "rank": 7
+    },
+    {
+      "key": "balanced::deepseek-v4-pro",
+      "mode": "balanced",
+      "modelId": "deepseek-v4-pro",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "explicit",
+      "reasoningEffort": "medium",
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T18:24:53.246Z",
+      "recall": 32.23,
+      "precision": 47.56,
+      "f1": 38.42,
+      "f2": 34.45,
+      "recallMacro": 30.41,
+      "precisionMacro": 41.68,
+      "ciLow": 22,
+      "ciHigh": 42.86,
+      "goldensTotal": 121,
+      "goldensMatched": 39,
+      "comments": 82,
+      "cases": 30,
+      "calls": 314,
+      "usage": {
+        "inputTokens": 44173515,
+        "outputTokens": 2269827,
+        "reasoningTokens": 2011820,
+        "cacheReadTokens": 41224704,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 45.71,
+          "precision": 76.19,
+          "goldens": 35,
+          "matched": 16,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 17.07,
+          "precision": 41.18,
+          "goldens": 41,
+          "matched": 7,
+          "count": 6
+        },
+        "go": {
+          "recall": 50,
+          "precision": 52.94,
+          "goldens": 18,
+          "matched": 9,
+          "count": 6
+        },
+        "java": {
+          "recall": 16.67,
+          "precision": 16.67,
+          "goldens": 12,
+          "matched": 2,
+          "count": 6
+        },
+        "python": {
+          "recall": 33.33,
+          "precision": 33.33,
+          "goldens": 15,
+          "matched": 5,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 45.71,
+          "precision": 76.19,
+          "goldens": 35,
+          "matched": 16,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 17.07,
+          "precision": 41.18,
+          "goldens": 41,
+          "matched": 7,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 50,
+          "precision": 52.94,
+          "goldens": 18,
+          "matched": 9,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 16.67,
+          "precision": 16.67,
+          "goldens": 12,
+          "matched": 2,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 33.33,
+          "precision": 33.33,
+          "goldens": 15,
+          "matched": 5,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 38.24,
+          "precision": 76.47,
+          "goldens": 34,
+          "matched": 13,
+          "count": 8
+        },
+        "M": {
+          "recall": 30.36,
+          "precision": 36.96,
+          "goldens": 56,
+          "matched": 17,
+          "count": 14
+        },
+        "L": {
+          "recall": 29.03,
+          "precision": 56.25,
+          "goldens": 31,
+          "matched": 9,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        },
+        "high": {
+          "matched": 23,
+          "goldens": 52,
+          "recall": 44.23
+        },
+        "medium": {
+          "matched": 16,
+          "goldens": 61,
+          "recall": 26.23
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 56,
+        "high": 25,
+        "critical": 1
+      },
+      "findingsByCategory": {
+        "bug": 74,
+        "performance": 4,
+        "security": 4,
+        "other": 0
+      },
+      "costTotal": 14.69,
+      "costPerPR": 0.4898,
+      "costPerBugFound": 0.3768,
+      "costBasis": "api",
+      "costNote": "Priced at DeepSeek's standard (peak) rate; the off-peak rate is half.",
+      "priceSource": "https://api-docs.deepseek.com/quick_start/pricing",
+      "price": {
+        "input": 1.32,
+        "cacheRead": 0.044,
+        "cacheWrite": null,
+        "output": 3.96
+      },
+      "rank": 8
+    },
+    {
+      "key": "balanced::minimax-m3",
+      "mode": "balanced",
+      "modelId": "minimax-m3",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-08T01:52:04.323Z",
+      "recall": 19.83,
+      "precision": 38.1,
+      "f1": 26.09,
+      "f2": 21.94,
+      "recallMacro": 17.17,
+      "precisionMacro": 38.98,
+      "ciLow": 14.41,
+      "ciHigh": 25.83,
+      "goldensTotal": 121,
+      "goldensMatched": 24,
+      "comments": 63,
+      "cases": 30,
+      "calls": 319,
+      "usage": {
+        "inputTokens": 30741966,
+        "outputTokens": 1394130,
+        "reasoningTokens": 1048830,
+        "cacheReadTokens": 26106470,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 25.71,
+          "precision": 40.91,
+          "goldens": 35,
+          "matched": 9,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 14.63,
+          "precision": 40,
+          "goldens": 41,
+          "matched": 6,
+          "count": 6
+        },
+        "go": {
+          "recall": 27.78,
+          "precision": 62.5,
+          "goldens": 18,
+          "matched": 5,
+          "count": 6
+        },
+        "java": {
+          "recall": 8.33,
+          "precision": 9.09,
+          "goldens": 12,
+          "matched": 1,
+          "count": 6
+        },
+        "python": {
+          "recall": 20,
+          "precision": 42.86,
+          "goldens": 15,
+          "matched": 3,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 25.71,
+          "precision": 40.91,
+          "goldens": 35,
+          "matched": 9,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 14.63,
+          "precision": 40,
+          "goldens": 41,
+          "matched": 6,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 27.78,
+          "precision": 62.5,
+          "goldens": 18,
+          "matched": 5,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 8.33,
+          "precision": 9.09,
+          "goldens": 12,
+          "matched": 1,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 20,
+          "precision": 42.86,
+          "goldens": 15,
+          "matched": 3,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 20.59,
+          "precision": 53.85,
+          "goldens": 34,
+          "matched": 7,
+          "count": 8
+        },
+        "M": {
+          "recall": 21.43,
+          "precision": 32.43,
+          "goldens": 56,
+          "matched": 12,
+          "count": 14
+        },
+        "L": {
+          "recall": 16.13,
+          "precision": 41.67,
+          "goldens": 31,
+          "matched": 5,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        },
+        "high": {
+          "matched": 12,
+          "goldens": 52,
+          "recall": 23.08
+        },
+        "medium": {
+          "matched": 11,
+          "goldens": 61,
+          "recall": 18.03
+        },
+        "low": {
+          "matched": 1,
+          "goldens": 4,
+          "recall": 25
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 36,
+        "high": 26,
+        "critical": 1
+      },
+      "findingsByCategory": {
+        "bug": 55,
+        "performance": 5,
+        "security": 3,
+        "other": 0
+      },
+      "costTotal": 4.63,
+      "costPerPR": 0.1543,
+      "costPerBugFound": 0.1929,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://fireworks.ai/pricing",
+      "price": {
+        "input": 0.3,
+        "cacheRead": 0.06,
+        "cacheWrite": null,
+        "output": 1.2
+      },
+      "rank": 9
     },
     {
       "key": "balanced::gemini-3.8-flash",
@@ -559,137 +1868,324 @@
         "cacheWrite": null,
         "output": 3.75
       },
-      "rank": 3
+      "rank": 10
     },
     {
-      "key": "heavy::gpt-6.1-sol",
-      "mode": "heavy",
-      "modelId": "gpt-6.1-sol",
+      "key": "balanced::gpt-6-luna",
+      "mode": "balanced",
+      "modelId": "gpt-6-luna",
       "provider": "openai",
       "accessPath": "subscription",
       "harness": "kodus",
       "harnessVersion": "dev",
       "executionMode": "live",
-      "reasoningConfig": "explicit",
-      "reasoningEffort": "low",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
       "judge": "claude-haiku-5-5",
       "gold": "gold-v3",
       "benchmarkVersion": "light-30-gold-v3",
-      "runAt": "2026-11-07T15:57:36.699Z",
-      "recall": 53.72,
-      "precision": 58.56,
-      "f1": 56.03,
-      "f2": 54.62,
-      "recallMacro": 59.07,
-      "precisionMacro": 57.84,
-      "ciLow": 44.67,
-      "ciHigh": 63.38,
+      "runAt": "2026-11-07T21:08:37.793Z",
+      "recall": 6.61,
+      "precision": 61.54,
+      "f1": 11.94,
+      "f2": 8.05,
+      "recallMacro": 4.28,
+      "precisionMacro": 56.67,
+      "ciLow": 2.42,
+      "ciHigh": 11.01,
       "goldensTotal": 121,
-      "goldensMatched": 65,
-      "comments": 111,
+      "goldensMatched": 8,
+      "comments": 13,
       "cases": 30,
-      "calls": 763,
+      "calls": 93,
       "usage": {
-        "inputTokens": 23621360,
-        "outputTokens": 287051,
-        "reasoningTokens": 12982,
-        "cacheReadTokens": 1870720,
+        "inputTokens": 8661003,
+        "outputTokens": 51159,
+        "reasoningTokens": 4190,
+        "cacheReadTokens": 2285312,
         "cacheWriteTokens": 0
       },
       "byLanguage": {
         "typescript": {
-          "recall": 57.14,
-          "precision": 64.52,
+          "recall": 8.57,
+          "precision": 75,
           "goldens": 35,
-          "matched": 20,
+          "matched": 3,
           "count": 6
         },
         "ruby": {
-          "recall": 41.46,
-          "precision": 58.62,
+          "recall": 7.32,
+          "precision": 60,
           "goldens": 41,
-          "matched": 17,
+          "matched": 3,
           "count": 6
         },
         "go": {
-          "recall": 72.22,
-          "precision": 81.25,
+          "recall": 5.56,
+          "precision": 50,
           "goldens": 18,
-          "matched": 13,
+          "matched": 1,
           "count": 6
         },
         "java": {
-          "recall": 33.33,
-          "precision": 26.67,
+          "recall": 0,
+          "precision": 0,
           "goldens": 12,
-          "matched": 4,
+          "matched": 0,
           "count": 6
         },
         "python": {
-          "recall": 73.33,
-          "precision": 55,
+          "recall": 6.67,
+          "precision": 100,
           "goldens": 15,
-          "matched": 11,
+          "matched": 1,
           "count": 6
         }
       },
       "byRepo": {
         "cal.com": {
-          "recall": 57.14,
-          "precision": 64.52,
+          "recall": 8.57,
+          "precision": 75,
           "goldens": 35,
-          "matched": 20,
+          "matched": 3,
           "count": 6
         },
         "discourse": {
-          "recall": 41.46,
-          "precision": 58.62,
+          "recall": 7.32,
+          "precision": 60,
           "goldens": 41,
-          "matched": 17,
+          "matched": 3,
           "count": 6
         },
         "grafana": {
-          "recall": 72.22,
-          "precision": 81.25,
+          "recall": 5.56,
+          "precision": 50,
           "goldens": 18,
-          "matched": 13,
+          "matched": 1,
           "count": 6
         },
         "keycloak": {
-          "recall": 33.33,
-          "precision": 26.67,
+          "recall": 0,
+          "precision": 0,
           "goldens": 12,
-          "matched": 4,
+          "matched": 0,
           "count": 6
         },
         "sentry": {
-          "recall": 73.33,
-          "precision": 55,
+          "recall": 6.67,
+          "precision": 100,
           "goldens": 15,
-          "matched": 11,
+          "matched": 1,
           "count": 6
         }
       },
       "bySize": {
         "S": {
-          "recall": 55.88,
-          "precision": 90.48,
+          "recall": 14.71,
+          "precision": 83.33,
           "goldens": 34,
-          "matched": 19,
+          "matched": 5,
           "count": 8
         },
         "M": {
-          "recall": 51.79,
-          "precision": 44.62,
+          "recall": 1.79,
+          "precision": 25,
           "goldens": 56,
-          "matched": 29,
+          "matched": 1,
           "count": 14
         },
         "L": {
-          "recall": 54.84,
-          "precision": 70.83,
+          "recall": 6.45,
+          "precision": 66.67,
           "goldens": 31,
-          "matched": 17,
+          "matched": 2,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": null,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        },
+        "high": {
+          "matched": 7,
+          "goldens": 52,
+          "recall": 13.46
+        },
+        "medium": {
+          "matched": 1,
+          "goldens": 61,
+          "recall": 1.64
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 4,
+        "high": 9,
+        "critical": 0
+      },
+      "findingsByCategory": {
+        "bug": 11,
+        "performance": 1,
+        "security": 1,
+        "other": 0
+      },
+      "costTotal": 0.69,
+      "costPerPR": 0.0229,
+      "costPerBugFound": 0.0858,
+      "costBasis": "api-equivalent",
+      "costNote": "Ran on a ChatGPT subscription. Cost shown is the API-equivalent at OpenAI list price, short-context tier. It ran at the vendor's default reasoning effort; through the subscription backend that default reasons very little on this task (about 25 reasoning tokens per pull request), and the API default may differ.",
+      "priceSource": "https://developers.openai.com/api/docs/pricing",
+      "price": {
+        "input": 0.1,
+        "cacheRead": 0.01,
+        "cacheWrite": 0.125,
+        "output": 0.5
+      },
+      "rank": 11
+    },
+    {
+      "key": "heavy::kimi-k3.1-pro",
+      "mode": "heavy",
+      "modelId": "kimi-k3.1-pro",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T21:37:28.908Z",
+      "recall": 67.77,
+      "precision": 37.61,
+      "f1": 48.38,
+      "f2": 58.4,
+      "recallMacro": 71.68,
+      "precisionMacro": 34.31,
+      "ciLow": 56.73,
+      "ciHigh": 77.78,
+      "goldensTotal": 121,
+      "goldensMatched": 82,
+      "comments": 218,
+      "cases": 30,
+      "calls": 1005,
+      "usage": {
+        "inputTokens": 74325277,
+        "outputTokens": 2591770,
+        "reasoningTokens": 1652769,
+        "cacheReadTokens": 58549760,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 68.57,
+          "precision": 38.71,
+          "goldens": 35,
+          "matched": 24,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 51.22,
+          "precision": 41.18,
+          "goldens": 41,
+          "matched": 21,
+          "count": 6
+        },
+        "go": {
+          "recall": 83.33,
+          "precision": 46.88,
+          "goldens": 18,
+          "matched": 15,
+          "count": 6
+        },
+        "java": {
+          "recall": 75,
+          "precision": 23.08,
+          "goldens": 12,
+          "matched": 9,
+          "count": 6
+        },
+        "python": {
+          "recall": 86.67,
+          "precision": 38.24,
+          "goldens": 15,
+          "matched": 13,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 68.57,
+          "precision": 38.71,
+          "goldens": 35,
+          "matched": 24,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 51.22,
+          "precision": 41.18,
+          "goldens": 41,
+          "matched": 21,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 83.33,
+          "precision": 46.88,
+          "goldens": 18,
+          "matched": 15,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 75,
+          "precision": 23.08,
+          "goldens": 12,
+          "matched": 9,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 86.67,
+          "precision": 38.24,
+          "goldens": 15,
+          "matched": 13,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 67.65,
+          "precision": 62.16,
+          "goldens": 34,
+          "matched": 23,
+          "count": 8
+        },
+        "M": {
+          "recall": 64.29,
+          "precision": 29.27,
+          "goldens": 56,
+          "matched": 36,
+          "count": 14
+        },
+        "L": {
+          "recall": 74.19,
+          "precision": 41.82,
+          "goldens": 31,
+          "matched": 23,
           "count": 6
         },
         "XS": {
@@ -702,14 +2198,575 @@
       },
       "bySeverity": {
         "critical": {
+          "matched": 2,
+          "goldens": 4,
+          "recall": 50
+        },
+        "high": {
+          "matched": 38,
+          "goldens": 52,
+          "recall": 73.08
+        },
+        "medium": {
+          "matched": 41,
+          "goldens": 61,
+          "recall": 67.21
+        },
+        "low": {
           "matched": 1,
           "goldens": 4,
           "recall": 25
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 213,
+        "high": 5,
+        "critical": 0
+      },
+      "findingsByCategory": {
+        "bug": 185,
+        "performance": 15,
+        "security": 18,
+        "other": 0
+      },
+      "costTotal": 69.18,
+      "costPerPR": 2.306,
+      "costPerBugFound": 0.8436,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://platform.kimi.ai/docs/pricing/chat",
+      "price": {
+        "input": 2,
+        "cacheRead": 0.2,
+        "cacheWrite": 2,
+        "output": 10
+      },
+      "rank": 1
+    },
+    {
+      "key": "heavy::gpt-6.1-sol",
+      "mode": "heavy",
+      "modelId": "gpt-6.1-sol",
+      "provider": "openai",
+      "accessPath": "subscription",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T20:57:45.785Z",
+      "recall": 55.37,
+      "precision": 55.37,
+      "f1": 55.37,
+      "f2": 55.37,
+      "recallMacro": 63.44,
+      "precisionMacro": 51.1,
+      "ciLow": 45,
+      "ciHigh": 67.11,
+      "goldensTotal": 121,
+      "goldensMatched": 67,
+      "comments": 121,
+      "cases": 30,
+      "calls": 778,
+      "usage": {
+        "inputTokens": 26133023,
+        "outputTokens": 386866,
+        "reasoningTokens": 38847,
+        "cacheReadTokens": 2050944,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 60,
+          "precision": 63.64,
+          "goldens": 35,
+          "matched": 21,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 41.46,
+          "precision": 54.84,
+          "goldens": 41,
+          "matched": 17,
+          "count": 6
+        },
+        "go": {
+          "recall": 83.33,
+          "precision": 71.43,
+          "goldens": 18,
+          "matched": 15,
+          "count": 6
+        },
+        "java": {
+          "recall": 50,
+          "precision": 31.58,
+          "goldens": 12,
+          "matched": 6,
+          "count": 6
+        },
+        "python": {
+          "recall": 53.33,
+          "precision": 47.06,
+          "goldens": 15,
+          "matched": 8,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 60,
+          "precision": 63.64,
+          "goldens": 35,
+          "matched": 21,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 41.46,
+          "precision": 54.84,
+          "goldens": 41,
+          "matched": 17,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 83.33,
+          "precision": 71.43,
+          "goldens": 18,
+          "matched": 15,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 50,
+          "precision": 31.58,
+          "goldens": 12,
+          "matched": 6,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 53.33,
+          "precision": 47.06,
+          "goldens": 15,
+          "matched": 8,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 47.06,
+          "precision": 76.19,
+          "goldens": 34,
+          "matched": 16,
+          "count": 8
+        },
+        "M": {
+          "recall": 58.93,
+          "precision": 47.83,
+          "goldens": 56,
+          "matched": 33,
+          "count": 14
+        },
+        "L": {
+          "recall": 58.06,
+          "precision": 62.07,
+          "goldens": 31,
+          "matched": 18,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 2,
+          "goldens": 4,
+          "recall": 50
         },
         "high": {
-          "matched": 32,
+          "matched": 33,
           "goldens": 52,
-          "recall": 61.54
+          "recall": 63.46
+        },
+        "medium": {
+          "matched": 31,
+          "goldens": 61,
+          "recall": 50.82
+        },
+        "low": {
+          "matched": 1,
+          "goldens": 4,
+          "recall": 25
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 66,
+        "high": 53,
+        "critical": 2
+      },
+      "findingsByCategory": {
+        "bug": 106,
+        "performance": 5,
+        "security": 10,
+        "other": 0
+      },
+      "costTotal": 52.24,
+      "costPerPR": 1.7413,
+      "costPerBugFound": 0.7797,
+      "costBasis": "api-equivalent",
+      "costNote": "Ran on a ChatGPT subscription. Cost shown is the API-equivalent at OpenAI list price, short-context tier.",
+      "priceSource": "https://developers.openai.com/api/docs/pricing",
+      "price": {
+        "input": 2,
+        "cacheRead": 0.1,
+        "cacheWrite": 2.5,
+        "output": 10
+      },
+      "rank": 2
+    },
+    {
+      "key": "heavy::glm-5.3",
+      "mode": "heavy",
+      "modelId": "glm-5.3",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T23:49:55.548Z",
+      "recall": 55.37,
+      "precision": 36.61,
+      "f1": 44.08,
+      "f2": 50.22,
+      "recallMacro": 58.56,
+      "precisionMacro": 29.25,
+      "ciLow": 45.83,
+      "ciHigh": 64.65,
+      "goldensTotal": 121,
+      "goldensMatched": 67,
+      "comments": 183,
+      "cases": 30,
+      "calls": 1194,
+      "usage": {
+        "inputTokens": 74030106,
+        "outputTokens": 8669401,
+        "reasoningTokens": 7418727,
+        "cacheReadTokens": 57570976,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 57.14,
+          "precision": 33.33,
+          "goldens": 35,
+          "matched": 20,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 43.9,
+          "precision": 42.86,
+          "goldens": 41,
+          "matched": 18,
+          "count": 6
+        },
+        "go": {
+          "recall": 83.33,
+          "precision": 48.39,
+          "goldens": 18,
+          "matched": 15,
+          "count": 6
+        },
+        "java": {
+          "recall": 50,
+          "precision": 22.22,
+          "goldens": 12,
+          "matched": 6,
+          "count": 6
+        },
+        "python": {
+          "recall": 53.33,
+          "precision": 34.78,
+          "goldens": 15,
+          "matched": 8,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 57.14,
+          "precision": 33.33,
+          "goldens": 35,
+          "matched": 20,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 43.9,
+          "precision": 42.86,
+          "goldens": 41,
+          "matched": 18,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 83.33,
+          "precision": 48.39,
+          "goldens": 18,
+          "matched": 15,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 50,
+          "precision": 22.22,
+          "goldens": 12,
+          "matched": 6,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 53.33,
+          "precision": 34.78,
+          "goldens": 15,
+          "matched": 8,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 55.88,
+          "precision": 44.19,
+          "goldens": 34,
+          "matched": 19,
+          "count": 8
+        },
+        "M": {
+          "recall": 51.79,
+          "precision": 30.21,
+          "goldens": 56,
+          "matched": 29,
+          "count": 14
+        },
+        "L": {
+          "recall": 61.29,
+          "precision": 46.34,
+          "goldens": 31,
+          "matched": 19,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 3,
+          "goldens": 4,
+          "recall": 75
+        },
+        "high": {
+          "matched": 35,
+          "goldens": 52,
+          "recall": 67.31
+        },
+        "medium": {
+          "matched": 29,
+          "goldens": 61,
+          "recall": 47.54
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 107,
+        "high": 73,
+        "critical": 3
+      },
+      "findingsByCategory": {
+        "bug": 159,
+        "performance": 7,
+        "security": 17,
+        "other": 0
+      },
+      "costTotal": 76.16,
+      "costPerPR": 2.5386,
+      "costPerBugFound": 1.1367,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://fireworks.ai/pricing",
+      "price": {
+        "input": 1.4,
+        "cacheRead": 0.26,
+        "cacheWrite": null,
+        "output": 4.4
+      },
+      "rank": 3
+    },
+    {
+      "key": "heavy::deepseek-v4.1-flash",
+      "mode": "heavy",
+      "modelId": "deepseek-v4.1-flash",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "explicit",
+      "reasoningEffort": "medium",
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T22:01:17.894Z",
+      "recall": 52.89,
+      "precision": 37.65,
+      "f1": 43.99,
+      "f2": 48.93,
+      "recallMacro": 61.81,
+      "precisionMacro": 35.56,
+      "ciLow": 40.45,
+      "ciHigh": 65.09,
+      "goldensTotal": 121,
+      "goldensMatched": 64,
+      "comments": 170,
+      "cases": 30,
+      "calls": 1120,
+      "usage": {
+        "inputTokens": 85258579,
+        "outputTokens": 4846308,
+        "reasoningTokens": 3776972,
+        "cacheReadTokens": 72030464,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 62.86,
+          "precision": 47.83,
+          "goldens": 35,
+          "matched": 22,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 41.46,
+          "precision": 41.46,
+          "goldens": 41,
+          "matched": 17,
+          "count": 6
+        },
+        "go": {
+          "recall": 77.78,
+          "precision": 53.85,
+          "goldens": 18,
+          "matched": 14,
+          "count": 6
+        },
+        "java": {
+          "recall": 50,
+          "precision": 20.69,
+          "goldens": 12,
+          "matched": 6,
+          "count": 6
+        },
+        "python": {
+          "recall": 33.33,
+          "precision": 17.86,
+          "goldens": 15,
+          "matched": 5,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 62.86,
+          "precision": 47.83,
+          "goldens": 35,
+          "matched": 22,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 41.46,
+          "precision": 41.46,
+          "goldens": 41,
+          "matched": 17,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 77.78,
+          "precision": 53.85,
+          "goldens": 18,
+          "matched": 14,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 50,
+          "precision": 20.69,
+          "goldens": 12,
+          "matched": 6,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 33.33,
+          "precision": 17.86,
+          "goldens": 15,
+          "matched": 5,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 55.88,
+          "precision": 67.86,
+          "goldens": 34,
+          "matched": 19,
+          "count": 8
+        },
+        "M": {
+          "recall": 42.86,
+          "precision": 24,
+          "goldens": 56,
+          "matched": 24,
+          "count": 14
+        },
+        "L": {
+          "recall": 67.74,
+          "precision": 56.76,
+          "goldens": 31,
+          "matched": 21,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 2,
+          "goldens": 4,
+          "recall": 50
+        },
+        "high": {
+          "matched": 30,
+          "goldens": 52,
+          "recall": 57.69
         },
         "medium": {
           "matched": 32,
@@ -724,29 +2781,29 @@
       },
       "findingsBySeverity": {
         "low": 0,
-        "medium": 60,
-        "high": 50,
-        "critical": 1
+        "medium": 113,
+        "high": 53,
+        "critical": 4
       },
       "findingsByCategory": {
-        "bug": 96,
-        "performance": 4,
-        "security": 11,
+        "bug": 142,
+        "performance": 13,
+        "security": 15,
         "other": 0
       },
-      "costTotal": 46.56,
-      "costPerPR": 1.552,
-      "costPerBugFound": 0.7163,
-      "costBasis": "api-equivalent",
-      "costNote": "Ran on a ChatGPT subscription. Cost shown is the API-equivalent at OpenAI list price, short-context tier.",
-      "priceSource": "https://developers.openai.com/api/docs/pricing",
+      "costTotal": 10.22,
+      "costPerPR": 0.3405,
+      "costPerBugFound": 0.1596,
+      "costBasis": "api",
+      "costNote": "Priced at DeepSeek's standard (peak) rate; the off-peak rate is half.",
+      "priceSource": "https://api-docs.deepseek.com/quick_start/pricing",
       "price": {
-        "input": 2,
-        "cacheRead": 0.1,
-        "cacheWrite": 2.5,
-        "output": 10
+        "input": 0.3,
+        "cacheRead": 0.006,
+        "cacheWrite": null,
+        "output": 1.2
       },
-      "rank": 1
+      "rank": 4
     },
     {
       "key": "heavy::claude-sonnet-5.5",
@@ -762,26 +2819,26 @@
       "judge": "claude-haiku-5-5",
       "gold": "gold-v3",
       "benchmarkVersion": "light-30-gold-v3",
-      "runAt": "2026-11-07T15:24:07.800Z",
+      "runAt": "2026-11-07T19:12:04.585Z",
       "recall": 47.11,
-      "precision": 53.27,
-      "f1": 50,
-      "f2": 48.22,
+      "precision": 57,
+      "f1": 51.58,
+      "f2": 48.8,
       "recallMacro": 54.53,
-      "precisionMacro": 51.89,
+      "precisionMacro": 58,
       "ciLow": 37.78,
       "ciHigh": 57.43,
       "goldensTotal": 121,
       "goldensMatched": 57,
-      "comments": 107,
+      "comments": 100,
       "cases": 30,
-      "calls": 850,
+      "calls": 845,
       "usage": {
-        "inputTokens": 34919247,
-        "outputTokens": 987937,
-        "reasoningTokens": 274622,
-        "cacheReadTokens": 17361274,
-        "cacheWriteTokens": 11160057
+        "inputTokens": 35328202,
+        "outputTokens": 990562,
+        "reasoningTokens": 276784,
+        "cacheReadTokens": 17667707,
+        "cacheWriteTokens": 11277131
       },
       "byLanguage": {
         "typescript": {
@@ -793,21 +2850,21 @@
         },
         "ruby": {
           "recall": 29.27,
-          "precision": 54.55,
+          "precision": 60,
           "goldens": 41,
           "matched": 12,
           "count": 6
         },
         "go": {
           "recall": 61.11,
-          "precision": 64.71,
+          "precision": 68.75,
           "goldens": 18,
           "matched": 11,
           "count": 6
         },
         "java": {
           "recall": 41.67,
-          "precision": 33.33,
+          "precision": 45.45,
           "goldens": 12,
           "matched": 5,
           "count": 6
@@ -830,21 +2887,21 @@
         },
         "discourse": {
           "recall": 29.27,
-          "precision": 54.55,
+          "precision": 60,
           "goldens": 41,
           "matched": 12,
           "count": 6
         },
         "grafana": {
           "recall": 61.11,
-          "precision": 64.71,
+          "precision": 68.75,
           "goldens": 18,
           "matched": 11,
           "count": 6
         },
         "keycloak": {
           "recall": 41.67,
-          "precision": 33.33,
+          "precision": 45.45,
           "goldens": 12,
           "matched": 5,
           "count": 6
@@ -860,21 +2917,21 @@
       "bySize": {
         "S": {
           "recall": 52.94,
-          "precision": 75,
+          "precision": 81.82,
           "goldens": 34,
           "matched": 18,
           "count": 8
         },
         "M": {
           "recall": 46.43,
-          "precision": 44.83,
+          "precision": 46.43,
           "goldens": 56,
           "matched": 26,
           "count": 14
         },
         "L": {
           "recall": 41.94,
-          "precision": 59.09,
+          "precision": 68.42,
           "goldens": 31,
           "matched": 13,
           "count": 6
@@ -911,19 +2968,19 @@
       },
       "findingsBySeverity": {
         "low": 0,
-        "medium": 71,
-        "high": 34,
+        "medium": 65,
+        "high": 33,
         "critical": 2
       },
       "findingsByCategory": {
-        "bug": 93,
-        "performance": 3,
-        "security": 11,
+        "bug": 85,
+        "performance": 5,
+        "security": 10,
         "other": 0
       },
-      "costTotal": 52.31,
-      "costPerPR": 1.7437,
-      "costPerBugFound": 0.9177,
+      "costTotal": 52.63,
+      "costPerPR": 1.7544,
+      "costPerBugFound": 0.9234,
       "costBasis": "api",
       "costNote": null,
       "priceSource": "https://platform.claude.com/docs/en/about-claude/pricing",
@@ -933,21 +2990,1143 @@
         "cacheWrite": 2.5,
         "output": 10
       },
-      "rank": 2
+      "rank": 5
+    },
+    {
+      "key": "heavy::deepseek-v4-pro",
+      "mode": "heavy",
+      "modelId": "deepseek-v4-pro",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "explicit",
+      "reasoningEffort": "medium",
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T22:08:01.032Z",
+      "recall": 47.93,
+      "precision": 41.13,
+      "f1": 44.27,
+      "f2": 46.4,
+      "recallMacro": 55.42,
+      "precisionMacro": 39.63,
+      "ciLow": 38.24,
+      "ciHigh": 58.47,
+      "goldensTotal": 121,
+      "goldensMatched": 58,
+      "comments": 141,
+      "cases": 30,
+      "calls": 962,
+      "usage": {
+        "inputTokens": 61517941,
+        "outputTokens": 6093707,
+        "reasoningTokens": 5418187,
+        "cacheReadTokens": 52081792,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 62.86,
+          "precision": 51.16,
+          "goldens": 35,
+          "matched": 22,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 26.83,
+          "precision": 37.93,
+          "goldens": 41,
+          "matched": 11,
+          "count": 6
+        },
+        "go": {
+          "recall": 72.22,
+          "precision": 59.09,
+          "goldens": 18,
+          "matched": 13,
+          "count": 6
+        },
+        "java": {
+          "recall": 41.67,
+          "precision": 20.83,
+          "goldens": 12,
+          "matched": 5,
+          "count": 6
+        },
+        "python": {
+          "recall": 46.67,
+          "precision": 30.43,
+          "goldens": 15,
+          "matched": 7,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 62.86,
+          "precision": 51.16,
+          "goldens": 35,
+          "matched": 22,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 26.83,
+          "precision": 37.93,
+          "goldens": 41,
+          "matched": 11,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 72.22,
+          "precision": 59.09,
+          "goldens": 18,
+          "matched": 13,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 41.67,
+          "precision": 20.83,
+          "goldens": 12,
+          "matched": 5,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 46.67,
+          "precision": 30.43,
+          "goldens": 15,
+          "matched": 7,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 55.88,
+          "precision": 67.86,
+          "goldens": 34,
+          "matched": 19,
+          "count": 8
+        },
+        "M": {
+          "recall": 42.86,
+          "precision": 30,
+          "goldens": 56,
+          "matched": 24,
+          "count": 14
+        },
+        "L": {
+          "recall": 48.39,
+          "precision": 50,
+          "goldens": 31,
+          "matched": 15,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 2,
+          "goldens": 4,
+          "recall": 50
+        },
+        "high": {
+          "matched": 28,
+          "goldens": 52,
+          "recall": 53.85
+        },
+        "medium": {
+          "matched": 27,
+          "goldens": 61,
+          "recall": 44.26
+        },
+        "low": {
+          "matched": 1,
+          "goldens": 4,
+          "recall": 25
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 99,
+        "high": 38,
+        "critical": 4
+      },
+      "findingsByCategory": {
+        "bug": 125,
+        "performance": 7,
+        "security": 9,
+        "other": 0
+      },
+      "costTotal": 38.88,
+      "costPerPR": 1.2959,
+      "costPerBugFound": 0.6703,
+      "costBasis": "api",
+      "costNote": "Priced at DeepSeek's standard (peak) rate; the off-peak rate is half.",
+      "priceSource": "https://api-docs.deepseek.com/quick_start/pricing",
+      "price": {
+        "input": 1.32,
+        "cacheRead": 0.044,
+        "cacheWrite": null,
+        "output": 3.96
+      },
+      "rank": 6
+    },
+    {
+      "key": "heavy::glm-5.3-flash",
+      "mode": "heavy",
+      "modelId": "glm-5.3-flash",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-08T03:40:09.874Z",
+      "recall": 47.93,
+      "precision": 40.56,
+      "f1": 43.94,
+      "f2": 46.25,
+      "recallMacro": 49.63,
+      "precisionMacro": 39.89,
+      "ciLow": 39.08,
+      "ciHigh": 57.41,
+      "goldensTotal": 121,
+      "goldensMatched": 58,
+      "comments": 143,
+      "cases": 30,
+      "calls": 1047,
+      "usage": {
+        "inputTokens": 65222784,
+        "outputTokens": 5724297,
+        "reasoningTokens": 4812163,
+        "cacheReadTokens": 50212056,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 54.29,
+          "precision": 47.5,
+          "goldens": 35,
+          "matched": 19,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 36.59,
+          "precision": 44.12,
+          "goldens": 41,
+          "matched": 15,
+          "count": 6
+        },
+        "go": {
+          "recall": 66.67,
+          "precision": 42.86,
+          "goldens": 18,
+          "matched": 12,
+          "count": 6
+        },
+        "java": {
+          "recall": 41.67,
+          "precision": 27.78,
+          "goldens": 12,
+          "matched": 5,
+          "count": 6
+        },
+        "python": {
+          "recall": 46.67,
+          "precision": 30.43,
+          "goldens": 15,
+          "matched": 7,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 54.29,
+          "precision": 47.5,
+          "goldens": 35,
+          "matched": 19,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 36.59,
+          "precision": 44.12,
+          "goldens": 41,
+          "matched": 15,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 66.67,
+          "precision": 42.86,
+          "goldens": 18,
+          "matched": 12,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 41.67,
+          "precision": 27.78,
+          "goldens": 12,
+          "matched": 5,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 46.67,
+          "precision": 30.43,
+          "goldens": 15,
+          "matched": 7,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 47.06,
+          "precision": 69.57,
+          "goldens": 34,
+          "matched": 16,
+          "count": 8
+        },
+        "M": {
+          "recall": 44.64,
+          "precision": 29.07,
+          "goldens": 56,
+          "matched": 25,
+          "count": 14
+        },
+        "L": {
+          "recall": 54.84,
+          "precision": 56.67,
+          "goldens": 31,
+          "matched": 17,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 1,
+          "goldens": 4,
+          "recall": 25
+        },
+        "high": {
+          "matched": 25,
+          "goldens": 52,
+          "recall": 48.08
+        },
+        "medium": {
+          "matched": 32,
+          "goldens": 61,
+          "recall": 52.46
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 93,
+        "high": 49,
+        "critical": 1
+      },
+      "findingsByCategory": {
+        "bug": 121,
+        "performance": 7,
+        "security": 15,
+        "other": 0
+      },
+      "costTotal": 6.62,
+      "costPerPR": 0.2207,
+      "costPerBugFound": 0.1141,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://fireworks.ai/pricing",
+      "price": {
+        "input": 0.15,
+        "cacheRead": 0.03,
+        "cacheWrite": null,
+        "output": 0.5
+      },
+      "rank": 7
+    },
+    {
+      "key": "heavy::muse-spark-1.2",
+      "mode": "heavy",
+      "modelId": "muse-spark-1.2",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T19:41:57.563Z",
+      "recall": 46.28,
+      "precision": 27.32,
+      "f1": 34.36,
+      "f2": 40.64,
+      "recallMacro": 53.94,
+      "precisionMacro": 28,
+      "ciLow": 36.43,
+      "ciHigh": 57.29,
+      "goldensTotal": 121,
+      "goldensMatched": 56,
+      "comments": 205,
+      "cases": 30,
+      "calls": 1128,
+      "usage": {
+        "inputTokens": 58327250,
+        "outputTokens": 5197552,
+        "reasoningTokens": 4488732,
+        "cacheReadTokens": 29843231,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 62.86,
+          "precision": 45.83,
+          "goldens": 35,
+          "matched": 22,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 31.71,
+          "precision": 24.53,
+          "goldens": 41,
+          "matched": 13,
+          "count": 6
+        },
+        "go": {
+          "recall": 66.67,
+          "precision": 30.77,
+          "goldens": 18,
+          "matched": 12,
+          "count": 6
+        },
+        "java": {
+          "recall": 25,
+          "precision": 9.68,
+          "goldens": 12,
+          "matched": 3,
+          "count": 6
+        },
+        "python": {
+          "recall": 40,
+          "precision": 17.65,
+          "goldens": 15,
+          "matched": 6,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 62.86,
+          "precision": 45.83,
+          "goldens": 35,
+          "matched": 22,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 31.71,
+          "precision": 24.53,
+          "goldens": 41,
+          "matched": 13,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 66.67,
+          "precision": 30.77,
+          "goldens": 18,
+          "matched": 12,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 25,
+          "precision": 9.68,
+          "goldens": 12,
+          "matched": 3,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 40,
+          "precision": 17.65,
+          "goldens": 15,
+          "matched": 6,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 50,
+          "precision": 56.67,
+          "goldens": 34,
+          "matched": 17,
+          "count": 8
+        },
+        "M": {
+          "recall": 46.43,
+          "precision": 20.31,
+          "goldens": 56,
+          "matched": 26,
+          "count": 14
+        },
+        "L": {
+          "recall": 41.94,
+          "precision": 31.71,
+          "goldens": 31,
+          "matched": 13,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 2,
+          "goldens": 4,
+          "recall": 50
+        },
+        "high": {
+          "matched": 28,
+          "goldens": 52,
+          "recall": 53.85
+        },
+        "medium": {
+          "matched": 26,
+          "goldens": 61,
+          "recall": 42.62
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 149,
+        "high": 56,
+        "critical": 0
+      },
+      "findingsByCategory": {
+        "bug": 177,
+        "performance": 11,
+        "security": 17,
+        "other": 0
+      },
+      "costTotal": 62.17,
+      "costPerPR": 2.0724,
+      "costPerBugFound": 1.1102,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://dev.meta.ai/docs/pricing-rate-limits",
+      "price": {
+        "input": 1.25,
+        "cacheRead": 0.15,
+        "cacheWrite": null,
+        "output": 4.25
+      },
+      "rank": 8
+    },
+    {
+      "key": "heavy::minimax-m3",
+      "mode": "heavy",
+      "modelId": "minimax-m3",
+      "provider": "openai_compatible",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-08T04:24:01.523Z",
+      "recall": 28.1,
+      "precision": 33.33,
+      "f1": 30.49,
+      "f2": 29.01,
+      "recallMacro": 28.84,
+      "precisionMacro": 27.83,
+      "ciLow": 20,
+      "ciHigh": 36.54,
+      "goldensTotal": 121,
+      "goldensMatched": 34,
+      "comments": 102,
+      "cases": 30,
+      "calls": 835,
+      "usage": {
+        "inputTokens": 51559394,
+        "outputTokens": 3126836,
+        "reasoningTokens": 2465957,
+        "cacheReadTokens": 40347216,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 34.29,
+          "precision": 44.44,
+          "goldens": 35,
+          "matched": 12,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 17.07,
+          "precision": 30.43,
+          "goldens": 41,
+          "matched": 7,
+          "count": 6
+        },
+        "go": {
+          "recall": 33.33,
+          "precision": 40,
+          "goldens": 18,
+          "matched": 6,
+          "count": 6
+        },
+        "java": {
+          "recall": 25,
+          "precision": 17.65,
+          "goldens": 12,
+          "matched": 3,
+          "count": 6
+        },
+        "python": {
+          "recall": 40,
+          "precision": 30,
+          "goldens": 15,
+          "matched": 6,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 34.29,
+          "precision": 44.44,
+          "goldens": 35,
+          "matched": 12,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 17.07,
+          "precision": 30.43,
+          "goldens": 41,
+          "matched": 7,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 33.33,
+          "precision": 40,
+          "goldens": 18,
+          "matched": 6,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 25,
+          "precision": 17.65,
+          "goldens": 12,
+          "matched": 3,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 40,
+          "precision": 30,
+          "goldens": 15,
+          "matched": 6,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 38.24,
+          "precision": 59.09,
+          "goldens": 34,
+          "matched": 13,
+          "count": 8
+        },
+        "M": {
+          "recall": 21.43,
+          "precision": 21.43,
+          "goldens": 56,
+          "matched": 12,
+          "count": 14
+        },
+        "L": {
+          "recall": 29.03,
+          "precision": 42.86,
+          "goldens": 31,
+          "matched": 9,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 1,
+          "goldens": 4,
+          "recall": 25
+        },
+        "high": {
+          "matched": 17,
+          "goldens": 52,
+          "recall": 32.69
+        },
+        "medium": {
+          "matched": 16,
+          "goldens": 61,
+          "recall": 26.23
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 68,
+        "high": 32,
+        "critical": 2
+      },
+      "findingsByCategory": {
+        "bug": 87,
+        "performance": 6,
+        "security": 9,
+        "other": 0
+      },
+      "costTotal": 9.54,
+      "costPerPR": 0.3179,
+      "costPerBugFound": 0.2805,
+      "costBasis": "api",
+      "costNote": null,
+      "priceSource": "https://fireworks.ai/pricing",
+      "price": {
+        "input": 0.3,
+        "cacheRead": 0.06,
+        "cacheWrite": null,
+        "output": 1.2
+      },
+      "rank": 9
+    },
+    {
+      "key": "heavy::gemini-3.8-flash",
+      "mode": "heavy",
+      "modelId": "gemini-3.8-flash",
+      "provider": "google",
+      "accessPath": "api",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T16:45:02.577Z",
+      "recall": 21.49,
+      "precision": 48.15,
+      "f1": 29.71,
+      "f2": 24.16,
+      "recallMacro": 21.14,
+      "precisionMacro": 46.15,
+      "ciLow": 14.41,
+      "ciHigh": 28.28,
+      "goldensTotal": 121,
+      "goldensMatched": 26,
+      "comments": 54,
+      "cases": 30,
+      "calls": 653,
+      "usage": {
+        "inputTokens": 64091646,
+        "outputTokens": 1530850,
+        "reasoningTokens": 1296923,
+        "cacheReadTokens": 46921276,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 28.57,
+          "precision": 66.67,
+          "goldens": 35,
+          "matched": 10,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 17.07,
+          "precision": 53.85,
+          "goldens": 41,
+          "matched": 7,
+          "count": 6
+        },
+        "go": {
+          "recall": 27.78,
+          "precision": 55.56,
+          "goldens": 18,
+          "matched": 5,
+          "count": 6
+        },
+        "java": {
+          "recall": 16.67,
+          "precision": 22.22,
+          "goldens": 12,
+          "matched": 2,
+          "count": 6
+        },
+        "python": {
+          "recall": 13.33,
+          "precision": 25,
+          "goldens": 15,
+          "matched": 2,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 28.57,
+          "precision": 66.67,
+          "goldens": 35,
+          "matched": 10,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 17.07,
+          "precision": 53.85,
+          "goldens": 41,
+          "matched": 7,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 27.78,
+          "precision": 55.56,
+          "goldens": 18,
+          "matched": 5,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 16.67,
+          "precision": 22.22,
+          "goldens": 12,
+          "matched": 2,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 13.33,
+          "precision": 25,
+          "goldens": 15,
+          "matched": 2,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 23.53,
+          "precision": 100,
+          "goldens": 34,
+          "matched": 8,
+          "count": 8
+        },
+        "M": {
+          "recall": 23.21,
+          "precision": 40.63,
+          "goldens": 56,
+          "matched": 13,
+          "count": 14
+        },
+        "L": {
+          "recall": 16.13,
+          "precision": 41.67,
+          "goldens": 31,
+          "matched": 5,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        },
+        "high": {
+          "matched": 14,
+          "goldens": 52,
+          "recall": 26.92
+        },
+        "medium": {
+          "matched": 12,
+          "goldens": 61,
+          "recall": 19.67
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 32,
+        "high": 22,
+        "critical": 0
+      },
+      "findingsByCategory": {
+        "bug": 48,
+        "performance": 1,
+        "security": 5,
+        "other": 0
+      },
+      "costTotal": 22.14,
+      "costPerPR": 0.7379,
+      "costPerBugFound": 0.8514,
+      "costBasis": "api",
+      "costNote": "Promotional price, valid until 2026-12-31.",
+      "priceSource": "https://aistudio.google.com/docs/pricing",
+      "price": {
+        "input": 0.75,
+        "cacheRead": 0.075,
+        "cacheWrite": null,
+        "output": 3.75
+      },
+      "rank": 10
+    },
+    {
+      "key": "heavy::gpt-6-luna",
+      "mode": "heavy",
+      "modelId": "gpt-6-luna",
+      "provider": "openai",
+      "accessPath": "subscription",
+      "harness": "kodus",
+      "harnessVersion": "dev",
+      "executionMode": "live",
+      "reasoningConfig": "vendor-default",
+      "reasoningEffort": null,
+      "judge": "claude-haiku-5-5",
+      "gold": "gold-v3",
+      "benchmarkVersion": "light-30-gold-v3",
+      "runAt": "2026-11-07T21:33:05.798Z",
+      "recall": 13.22,
+      "precision": 35.56,
+      "f1": 19.28,
+      "f2": 15.12,
+      "recallMacro": 8.82,
+      "precisionMacro": 31.58,
+      "ciLow": 5.88,
+      "ciHigh": 21.43,
+      "goldensTotal": 121,
+      "goldensMatched": 16,
+      "comments": 45,
+      "cases": 30,
+      "calls": 491,
+      "usage": {
+        "inputTokens": 18856334,
+        "outputTokens": 161470,
+        "reasoningTokens": 8312,
+        "cacheReadTokens": 2814976,
+        "cacheWriteTokens": 0
+      },
+      "byLanguage": {
+        "typescript": {
+          "recall": 14.29,
+          "precision": 27.78,
+          "goldens": 35,
+          "matched": 5,
+          "count": 6
+        },
+        "ruby": {
+          "recall": 7.32,
+          "precision": 50,
+          "goldens": 41,
+          "matched": 3,
+          "count": 6
+        },
+        "go": {
+          "recall": 27.78,
+          "precision": 71.43,
+          "goldens": 18,
+          "matched": 5,
+          "count": 6
+        },
+        "java": {
+          "recall": 8.33,
+          "precision": 14.29,
+          "goldens": 12,
+          "matched": 1,
+          "count": 6
+        },
+        "python": {
+          "recall": 13.33,
+          "precision": 28.57,
+          "goldens": 15,
+          "matched": 2,
+          "count": 6
+        }
+      },
+      "byRepo": {
+        "cal.com": {
+          "recall": 14.29,
+          "precision": 27.78,
+          "goldens": 35,
+          "matched": 5,
+          "count": 6
+        },
+        "discourse": {
+          "recall": 7.32,
+          "precision": 50,
+          "goldens": 41,
+          "matched": 3,
+          "count": 6
+        },
+        "grafana": {
+          "recall": 27.78,
+          "precision": 71.43,
+          "goldens": 18,
+          "matched": 5,
+          "count": 6
+        },
+        "keycloak": {
+          "recall": 8.33,
+          "precision": 14.29,
+          "goldens": 12,
+          "matched": 1,
+          "count": 6
+        },
+        "sentry": {
+          "recall": 13.33,
+          "precision": 28.57,
+          "goldens": 15,
+          "matched": 2,
+          "count": 6
+        }
+      },
+      "bySize": {
+        "S": {
+          "recall": 11.76,
+          "precision": 66.67,
+          "goldens": 34,
+          "matched": 4,
+          "count": 8
+        },
+        "M": {
+          "recall": 8.93,
+          "precision": 20,
+          "goldens": 56,
+          "matched": 5,
+          "count": 14
+        },
+        "L": {
+          "recall": 22.58,
+          "precision": 53.85,
+          "goldens": 31,
+          "matched": 7,
+          "count": 6
+        },
+        "XS": {
+          "recall": 0,
+          "precision": 0,
+          "goldens": 0,
+          "matched": 0,
+          "count": 2
+        }
+      },
+      "bySeverity": {
+        "critical": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        },
+        "high": {
+          "matched": 8,
+          "goldens": 52,
+          "recall": 15.38
+        },
+        "medium": {
+          "matched": 8,
+          "goldens": 61,
+          "recall": 13.11
+        },
+        "low": {
+          "matched": 0,
+          "goldens": 4,
+          "recall": 0
+        }
+      },
+      "findingsBySeverity": {
+        "low": 0,
+        "medium": 30,
+        "high": 14,
+        "critical": 1
+      },
+      "findingsByCategory": {
+        "bug": 37,
+        "performance": 0,
+        "security": 8,
+        "other": 0
+      },
+      "costTotal": 1.71,
+      "costPerPR": 0.0571,
+      "costPerBugFound": 0.1071,
+      "costBasis": "api-equivalent",
+      "costNote": "Ran on a ChatGPT subscription. Cost shown is the API-equivalent at OpenAI list price, short-context tier. It ran at the vendor's default reasoning effort; through the subscription backend that default reasons very little on this task (about 25 reasoning tokens per pull request), and the API default may differ.",
+      "priceSource": "https://developers.openai.com/api/docs/pricing",
+      "price": {
+        "input": 0.1,
+        "cacheRead": 0.01,
+        "cacheWrite": 0.125,
+        "output": 0.5
+      },
+      "rank": 11
     }
   ],
   "averages": {
     "balanced": {
-      "recall": 31.4,
-      "precision": 57.88,
-      "f1": 39.97,
-      "f2": 34.3
+      "recall": 34.34,
+      "precision": 47.83,
+      "f1": 37.33,
+      "f2": 35.23
     },
     "heavy": {
-      "recall": 50.41,
-      "precision": 55.91,
-      "f1": 53.02,
-      "f2": 51.42
+      "recall": 43.95,
+      "precision": 40.94,
+      "f1": 40.5,
+      "f2": 42.12
     }
   }
 }

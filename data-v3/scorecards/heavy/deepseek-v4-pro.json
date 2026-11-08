@@ -18,7 +18,7 @@
    "config": "explicit",
    "effortRequested": "medium"
   },
-  "runAt": "2026-11-07T20:09:55.479Z",
+  "runAt": "2026-11-07T22:08:01.032Z",
   "mode": "heavy"
  },
  "judge": {
@@ -39,13 +39,13 @@
   "goldensMatched": 58,
   "comments": 141,
   "usage": {
-   "inputTokens": 61372561,
-   "outputTokens": 6100634,
-   "reasoningTokens": 5424043,
-   "cacheReadTokens": 51926144,
+   "inputTokens": 61517941,
+   "outputTokens": 6093707,
+   "reasoningTokens": 5418187,
+   "cacheReadTokens": 52081792,
    "cacheWriteTokens": 0
   },
-  "calls": 960
+  "calls": 962
  },
  "cases": [
   {
@@ -1018,13 +1018,13 @@
     "missedGoldens": []
    },
    "usage": {
-    "inputTokens": 854279,
-    "outputTokens": 91604,
-    "reasoningTokens": 75651,
-    "cacheReadTokens": 746240,
+    "inputTokens": 999659,
+    "outputTokens": 84677,
+    "reasoningTokens": 69795,
+    "cacheReadTokens": 901888,
     "cacheWriteTokens": 0
    },
-   "calls": 24,
+   "calls": 26,
    "latencyMs": null
   },
   {

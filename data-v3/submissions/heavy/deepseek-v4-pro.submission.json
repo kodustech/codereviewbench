@@ -18,7 +18,7 @@
    "config": "explicit",
    "effortRequested": "medium"
   },
-  "runAt": "2026-11-07T20:09:55.479Z",
+  "runAt": "2026-11-07T22:08:01.032Z",
   "mode": "heavy"
  },
  "results": [
@@ -922,9 +922,9 @@
      "path": "model/infinispan/src/main/java/org/keycloak/models/cache/infinispan/GroupAdapter.java",
      "startLine": 274,
      "endLine": 275,
-     "severity": "medium",
+     "severity": "high",
      "category": "bug",
-     "description": "getSubGroupsCount() now returns null when modelSupplier.get() returns null (cached group evicted\u2026 \u2014 GroupUtils.toRepresentation forwards the value into GroupRepresentation.setSubGroupCount, so a null count can now reach API responses, and any caller that auto-unboxes or assumes a non-null count will NPE. Either update consumers to treat null as 'group no longer present' (skip/fallback) or keep the old non-null contract (e.g., return 0L) to avoid propagating null."
+     "description": "Return 0L instead of null when delegate model is missing in getSubGroupsCount \u2014 Returning `null` here breaks the `GroupModel` contract that this method 'Never returns null', and `GroupUtils.populateSubGroupCount` forwards that null into the REST response. Return `0L` when `model` is null."
     },
     {
      "path": "tests/base/src/test/java/org/keycloak/tests/admin/group/GroupTest.java",
@@ -932,7 +932,7 @@
      "endLine": 157,
      "severity": "medium",
      "category": "bug",
-     "description": "Reader thread is never joined before asserting caught exceptions \u2014 The reader thread is never joined, so `assertThat(caughtExceptions, Matchers.empty())` races with the reader's in-flight `groups(...)` request: an exception raised after the assertion has already run is appended to `caughtExceptions` but never checked, letting the test pass even when the concurrent-access NPE still occurs. Join the thread before asserting \u2014 store the `Thread` reference and call `join()` after `deletedAll.set(true)` so any late failure is observed."
+     "description": "Reader thread is never joined before asserting caughtExceptions \u2014 The assertion can pass before the reader thread finishes its last in-flight request, hiding exceptions that occur after the check. Join `reader` before asserting on `caughtExceptions` so the concurrent-deletion behavior is fully observed."
     }
    ]
   },
