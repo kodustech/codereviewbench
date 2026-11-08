@@ -2,18 +2,18 @@
 title: The best AI code reviewer finds fewer than half the bugs
 description: We ran thirteen models over the same thirty merged pull requests, scoring them against bugs that human reviewers actually flagged. The top scorer found 44% of them. None broke 50%.
 date: '2026-08-21'
-dateModified: '2026-11-07'
+dateModified: '2026-11-08'
 keywords:
   - ai code review
   - ai code review benchmark
   - best ai code review tool
 faq:
   - q: "What is the best AI code review model?"
-    a: "On this benchmark, DeepSeek V4 Pro ranked highest, finding 44.2% of the bugs human reviewers had already flagged on the same pull requests — the best result measured, and still under half."
+    a: "On the current benchmark (gold v3, balanced mode), Kimi K3.1 Pro ranks first by F2, finding 68.6% of the 121 verified bugs at 49.1% precision. In heavy mode it stays first; GPT-6.1 Sol is second with 55.4% recall and 55.4% precision."
   - q: "How good is AI at code review compared to human reviewers?"
-    a: "Well below human-level recall by this measure. No model tested found even half of the bugs a human reviewer had already caught on the same pull requests; the median model found about a third."
+    a: "Below human-level recall by this measure. In balanced mode the top model finds 68.6% of the bugs human reviewers had already flagged on the same pull requests and the median model finds 37.2%. Heavy mode raises the median to 47.9%."
   - q: "Can AI code review replace a human doing final approval on a pull request?"
-    a: "Not reliably, based on these results. Since even the top model misses more than half of known bugs, a clean pass from an AI reviewer isn't solid evidence the pull request is bug-free."
+    a: "Not reliably, based on these results. Even the top model misses about a third of known bugs, so a clean pass from an AI reviewer isn't solid evidence the pull request is bug-free."
 ---
 
 > **Note, 2026-11-07:** the numbers in this post come from the v1 benchmark (Aug–Sep 2026), which used a

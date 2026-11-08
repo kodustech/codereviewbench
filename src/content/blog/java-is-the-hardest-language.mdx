@@ -2,18 +2,18 @@
 title: AI reviewers are four times worse at Java than at Go
 description: The same thirteen models, the same harness, the same scoring. Mean recall on Go pull requests is 59.1%. On Java it is 15.1%. Every model shows the gap.
 date: '2026-08-22'
-dateModified: '2026-11-07'
+dateModified: '2026-11-08'
 keywords:
   - ai code review java
   - ai code review go
   - ai code review by language
 faq:
   - q: "Is AI code review as good for Java as for other languages?"
-    a: "No. Java is the weakest language on this benchmark by far — mean recall is 15.1% on Java versus 59.1% on Go, a 3.9x gap that holds across every model tested."
+    a: "In the v1 benchmark (Aug–Sep 2026): No. Java is the weakest language on this benchmark by far — mean recall is 15.1% on Java versus 59.1% on Go, a 3.9x gap that holds across every model tested."
   - q: "What is the best AI code review model for Java?"
-    a: "The best Java score in the set is 23.5% (a tie between two models) — still worse than the worst Go score among models that cleared 20% overall (50.0%). Check a model's own per-language numbers rather than trusting its overall score for Java."
+    a: "In the v1 benchmark (Aug–Sep 2026), the best Java score in the set is 23.5% (a tie between two models) — still worse than the worst Go score among models that cleared 20% overall (50.0%). Check a model's own per-language numbers rather than trusting its overall score for Java."
   - q: "Which programming language is hardest for AI code review to handle?"
-    a: "Java, on this benchmark. Candidate reasons include Java pushing logic into inheritance and annotations away from the diff, and the Java corpus leaning on contracts declared elsewhere in the codebase — though the data can't fully isolate the cause."
+    a: "In the v1 benchmark (Aug–Sep 2026): Java, on this benchmark. Candidate reasons include Java pushing logic into inheritance and annotations away from the diff, and the Java corpus leaning on contracts declared elsewhere in the codebase — though the data can't fully isolate the cause."
 ---
 
 > **Note, 2026-11-07:** the numbers in this post come from the v1 benchmark (Aug–Sep 2026), which used a
