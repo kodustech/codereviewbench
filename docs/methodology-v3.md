@@ -18,7 +18,7 @@ What the site measures since 2026-11-07, and what changed from v1 (the runs of A
 | Review modes | one | two per model: **balanced** (one generalist agent) and **heavy** (generalist + 9 specialist lens agents in parallel, then the same verify/dedup steps) |
 | Ranking | F1 | **F2** = 5·P·R / (4·P + R), recall weighted twice precision; ranked within each mode |
 | Cost | tokens × list price, no cache discount; subscription runs had no cost | tokens × list price **with prompt cache**; subscription runs priced at the API-equivalent list price |
-| Models | 15 (Aug–Sep 2026 roster) | 11: DeepSeek V4 Pro, DeepSeek V4.1 Flash, Kimi K3.1 Pro, GLM-5.3, GLM-5.3 Flash, MiniMax M3, Gemini 3.8 Flash, Muse Spark 1.2, GPT-6.1 Sol, GPT-6 Luna, Claude Sonnet 5.5 |
+| Models | 15 (Aug–Sep 2026 roster) | 13: DeepSeek V4 Pro, DeepSeek V4.1 Flash, Kimi K3.1 Pro, GLM-5.3, GLM-5.3 Flash, MiniMax M3, Gemini 3.8 Flash, Muse Spark 1.2, GPT-6.1 Sol, GPT-6 Luna, Claude Sonnet 5.5, Claude Opus 5.5, Qwen3.8 27B (AkashML) |
 
 ## Metrics
 
@@ -38,7 +38,7 @@ cost = (input − cacheRead − cacheWrite) · inputPrice
      + output · outputPrice
 ```
 
-Prices in `pricing.json`, read from each vendor's official page on 2026-11-07 (URL per model). Caveats shown on the site where cost appears:
+Prices in `pricing.json`, read from each vendor's official page on 2026-11-07, Opus 5.5 and Qwen3.8 27B on 2026-11-09 (URL per model). Caveats shown on the site where cost appears:
 
 - DeepSeek is priced at its standard (peak) rate; off-peak is half.
 - Gemini 3.8 Flash is at its promotional price, valid until 2026-12-31.
