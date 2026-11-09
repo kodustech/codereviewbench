@@ -1,15 +1,16 @@
 {
-  "totalEntries": 22,
-  "totalModels": 11,
+  "totalEntries": 26,
+  "totalModels": 13,
   "modes": [
     "balanced",
     "heavy"
   ],
   "entriesByMode": {
-    "balanced": 11,
-    "heavy": 11
+    "balanced": 13,
+    "heavy": 13
   },
   "models": [
+    "claude-opus-5.5",
     "claude-sonnet-5.5",
     "deepseek-v4-pro",
     "deepseek-v4.1-flash",
@@ -20,7 +21,8 @@
     "gpt-6.1-sol",
     "kimi-k3.1-pro",
     "minimax-m3",
-    "muse-spark-1.2"
+    "muse-spark-1.2",
+    "qwen3.8-27b"
   ],
   "harnesses": [
     "kodus"
@@ -60,6 +62,6 @@
   "totalGoldens": 121,
   "pricesCollectedAt": "2026-11-07",
   "firstRunAt": "2026-11-07T14:53:34.961Z",
-  "lastRunAt": "2026-11-08T04:24:01.523Z",
-  "generatedAt": "2026-11-08T04:29:08.057Z"
+  "lastRunAt": "2026-11-09T19:58:45.545Z",
+  "generatedAt": "2026-11-09T22:38:15.167Z"
 }

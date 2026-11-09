@@ -83,6 +83,23 @@
       "provider": "anthropic",
       "source": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
+    "claude-opus-5.5": {
+      "input": 4.00,
+      "cacheRead": 0.20,
+      "cacheWrite": 5.00,
+      "output": 20.00,
+      "provider": "anthropic",
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    "qwen3.8-27b": {
+      "input": 0.225,
+      "cacheRead": 0.05,
+      "cacheWrite": null,
+      "output": 1.98,
+      "provider": "akashml",
+      "source": "https://api.akashml.com/v1/models",
+      "costNote": "AkashML price (fp8 serving), read from its models API on 2026-11-09."
+    },
     "gpt-6.1-sol": {
       "input": 2.00,
       "cacheRead": 0.10,

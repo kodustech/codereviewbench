@@ -14,6 +14,8 @@ export const DISPLAY_NAMES: Record<string, { name: string; provider: string }> =
   'gpt-6.1-sol': { name: 'GPT-6.1 Sol', provider: 'OpenAI' },
   'gpt-6-luna': { name: 'GPT-6 Luna', provider: 'OpenAI' },
   'claude-sonnet-5.5': { name: 'Claude Sonnet 5.5', provider: 'Anthropic' },
+  'claude-opus-5.5': { name: 'Claude Opus 5.5', provider: 'Anthropic' },
+  'qwen3.8-27b': { name: 'Qwen3.8 27B', provider: 'Alibaba' },
 };
 
 export const V3_ROSTER = Object.keys(DISPLAY_NAMES);
