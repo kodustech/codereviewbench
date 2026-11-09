@@ -40,14 +40,12 @@ cost = (input − cacheRead − cacheWrite) · inputPrice
 
 Prices in `pricing.json`, read from each vendor's official page on 2026-11-07, Opus 5.5 and Qwen3.8 27B on 2026-11-09 (URL per model). Caveats shown on the site where cost appears:
 
-- DeepSeek is priced at its standard (peak) rate; off-peak is half.
 - Gemini 3.8 Flash is at its promotional price, valid until 2026-12-31.
-- GPT models are priced at OpenAI list price, short-context tier.
 
 ## Known limits
 
 - One run per model and mode. Re-judging the same output moved a model's score by at most one matched bug (under 1 point of recall); resampling the 30 pull requests moves it by about 20 points (95% bootstrap interval).
-- GPT-6 Luna ran at the vendor's default reasoning effort, which reasons very little on this task (about 25 reasoning tokens per pull request).
+- GPT-6 Luna ran at the vendor's default reasoning effort, which reasons very little on this task (about 25 reasoning tokens per PR).
 - A review whose model calls failed in transport (rate limit, lost connection) was set aside and run again; those dumps are kept as incidents in the run repository. Calls aborted by the product's own timeouts were kept: a customer on a slow model gets the same.
 
 ## Dropped from v1

@@ -14,8 +14,7 @@
       "cacheWrite": null,
       "output": 3.96,
       "provider": "deepseek",
-      "source": "https://api-docs.deepseek.com/quick_start/pricing",
-      "costNote": "Priced at DeepSeek's standard (peak) rate; the off-peak rate is half."
+      "source": "https://api-docs.deepseek.com/quick_start/pricing"
     },
     "deepseek-v4.1-flash": {
       "input": 0.30,
@@ -23,8 +22,7 @@
       "cacheWrite": null,
       "output": 1.20,
       "provider": "deepseek",
-      "source": "https://api-docs.deepseek.com/quick_start/pricing",
-      "costNote": "Priced at DeepSeek's standard (peak) rate; the off-peak rate is half."
+      "source": "https://api-docs.deepseek.com/quick_start/pricing"
     },
     "kimi-k3.1-pro": {
       "input": 2.00,
@@ -98,7 +96,7 @@
       "output": 1.98,
       "provider": "akashml",
       "source": "https://api.akashml.com/v1/models",
-      "costNote": "AkashML price (fp8 serving), read from its models API on 2026-11-09."
+      "costNote": "Served by AkashML in fp8 (8-bit quantized weights)."
     },
     "gpt-6.1-sol": {
       "input": 2.00,
@@ -106,8 +104,7 @@
       "cacheWrite": 2.50,
       "output": 10.00,
       "provider": "openai",
-      "source": "https://developers.openai.com/api/docs/pricing",
-      "costNote": "OpenAI list price, short-context tier."
+      "source": "https://developers.openai.com/api/docs/pricing"
     },
     "gpt-6-luna": {
       "input": 0.10,
@@ -116,7 +113,7 @@
       "output": 0.50,
       "provider": "openai",
       "source": "https://developers.openai.com/api/docs/pricing",
-      "costNote": "OpenAI list price, short-context tier. It ran at the vendor's default reasoning effort, which reasons very little on this task (about 25 reasoning tokens per pull request)."
+      "costNote": "Ran at the vendor's default reasoning effort, which reasons very little on this task (about 25 reasoning tokens per PR)."
     }
   }
 }

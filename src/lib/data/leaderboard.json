@@ -364,7 +364,7 @@
       "costPerPR": 0.7874,
       "costPerBugFound": 0.4543,
       "costBasis": "api",
-      "costNote": "OpenAI list price, short-context tier.",
+      "costNote": null,
       "priceSource": "https://developers.openai.com/api/docs/pricing",
       "price": {
         "input": 2,
@@ -925,7 +925,7 @@
       "costPerPR": 0.134,
       "costPerBugFound": 0.0821,
       "costBasis": "api",
-      "costNote": "Priced at DeepSeek's standard (peak) rate; the off-peak rate is half.",
+      "costNote": null,
       "priceSource": "https://api-docs.deepseek.com/quick_start/pricing",
       "price": {
         "input": 0.3,
@@ -1673,7 +1673,7 @@
       "costPerPR": 0.4898,
       "costPerBugFound": 0.3768,
       "costBasis": "api",
-      "costNote": "Priced at DeepSeek's standard (peak) rate; the off-peak rate is half.",
+      "costNote": null,
       "priceSource": "https://api-docs.deepseek.com/quick_start/pricing",
       "price": {
         "input": 1.32,
@@ -1860,7 +1860,7 @@
       "costPerPR": 0.1984,
       "costPerBugFound": 0.1751,
       "costBasis": "api",
-      "costNote": "AkashML price (fp8 serving), read from its models API on 2026-11-09.",
+      "costNote": "Served by AkashML in fp8 (8-bit quantized weights).",
       "priceSource": "https://api.akashml.com/v1/models",
       "price": {
         "input": 0.225,
@@ -2421,7 +2421,7 @@
       "costPerPR": 0.0229,
       "costPerBugFound": 0.0858,
       "costBasis": "api",
-      "costNote": "OpenAI list price, short-context tier. It ran at the vendor's default reasoning effort, which reasons very little on this task (about 25 reasoning tokens per pull request).",
+      "costNote": "Ran at the vendor's default reasoning effort, which reasons very little on this task (about 25 reasoning tokens per PR).",
       "priceSource": "https://developers.openai.com/api/docs/pricing",
       "price": {
         "input": 0.1,
@@ -2795,7 +2795,7 @@
       "costPerPR": 1.7413,
       "costPerBugFound": 0.7797,
       "costBasis": "api",
-      "costNote": "OpenAI list price, short-context tier.",
+      "costNote": null,
       "priceSource": "https://developers.openai.com/api/docs/pricing",
       "price": {
         "input": 2,
@@ -3356,7 +3356,7 @@
       "costPerPR": 0.3405,
       "costPerBugFound": 0.1596,
       "costBasis": "api",
-      "costNote": "Priced at DeepSeek's standard (peak) rate; the off-peak rate is half.",
+      "costNote": null,
       "priceSource": "https://api-docs.deepseek.com/quick_start/pricing",
       "price": {
         "input": 0.3,
@@ -3730,7 +3730,7 @@
       "costPerPR": 1.2959,
       "costPerBugFound": 0.6703,
       "costBasis": "api",
-      "costNote": "Priced at DeepSeek's standard (peak) rate; the off-peak rate is half.",
+      "costNote": null,
       "priceSource": "https://api-docs.deepseek.com/quick_start/pricing",
       "price": {
         "input": 1.32,
@@ -4104,7 +4104,7 @@
       "costPerPR": 0.409,
       "costPerBugFound": 0.236,
       "costBasis": "api",
-      "costNote": "AkashML price (fp8 serving), read from its models API on 2026-11-09.",
+      "costNote": "Served by AkashML in fp8 (8-bit quantized weights).",
       "priceSource": "https://api.akashml.com/v1/models",
       "price": {
         "input": 0.225,
@@ -4852,7 +4852,7 @@
       "costPerPR": 0.0571,
       "costPerBugFound": 0.1071,
       "costBasis": "api",
-      "costNote": "OpenAI list price, short-context tier. It ran at the vendor's default reasoning effort, which reasons very little on this task (about 25 reasoning tokens per pull request).",
+      "costNote": "Ran at the vendor's default reasoning effort, which reasons very little on this task (about 25 reasoning tokens per PR).",
       "priceSource": "https://developers.openai.com/api/docs/pricing",
       "price": {
         "input": 0.1,
