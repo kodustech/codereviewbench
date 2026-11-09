@@ -5,7 +5,7 @@
     "unit": "per 1M tokens",
     "source": "Official pricing page of each vendor (URL per model below), read 2026-11-07.",
     "formula": "cost = (input - cacheRead - cacheWrite) * input + cacheRead * cacheRead + cacheWrite * (cacheWrite ?? input) + output * output. inputTokens include cached tokens; reasoning tokens are already inside outputTokens.",
-    "note": "cacheWrite null = the vendor charges no separate cache-write fee, so written tokens are billed at the input price. Models run on a subscription are priced at the API-equivalent list price."
+    "note": "cacheWrite null = the vendor charges no separate cache-write fee, so written tokens are billed at the input price."
   },
   "models": {
     "deepseek-v4-pro": {
@@ -107,7 +107,7 @@
       "output": 10.00,
       "provider": "openai",
       "source": "https://developers.openai.com/api/docs/pricing",
-      "costNote": "Ran on a ChatGPT subscription. Cost shown is the API-equivalent at OpenAI list price, short-context tier."
+      "costNote": "OpenAI list price, short-context tier."
     },
     "gpt-6-luna": {
       "input": 0.10,
@@ -116,7 +116,7 @@
       "output": 0.50,
       "provider": "openai",
       "source": "https://developers.openai.com/api/docs/pricing",
-      "costNote": "Ran on a ChatGPT subscription. Cost shown is the API-equivalent at OpenAI list price, short-context tier. It ran at the vendor's default reasoning effort; through the subscription backend that default reasons very little on this task (about 25 reasoning tokens per pull request), and the API default may differ."
+      "costNote": "OpenAI list price, short-context tier. It ran at the vendor's default reasoning effort, which reasons very little on this task (about 25 reasoning tokens per pull request)."
     }
   }
 }

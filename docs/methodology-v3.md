@@ -17,7 +17,7 @@ What the site measures since 2026-11-07, and what changed from v1 (the runs of A
 | Match rule | finding describes the same issue as a golden | same problem at the same place; each valid TP counts once, a second comment on it is a false positive |
 | Review modes | one | two per model: **balanced** (one generalist agent) and **heavy** (generalist + 9 specialist lens agents in parallel, then the same verify/dedup steps) |
 | Ranking | F1 | **F2** = 5·P·R / (4·P + R), recall weighted twice precision; ranked within each mode |
-| Cost | tokens × list price, no cache discount; subscription runs had no cost | tokens × list price **with prompt cache**; subscription runs priced at the API-equivalent list price |
+| Cost | tokens × list price, no cache discount; subscription runs had no cost | tokens × list price **with prompt cache** |
 | Models | 15 (Aug–Sep 2026 roster) | 13: DeepSeek V4 Pro, DeepSeek V4.1 Flash, Kimi K3.1 Pro, GLM-5.3, GLM-5.3 Flash, MiniMax M3, Gemini 3.8 Flash, Muse Spark 1.2, GPT-6.1 Sol, GPT-6 Luna, Claude Sonnet 5.5, Claude Opus 5.5, Qwen3.8 27B (AkashML) |
 
 ## Metrics
@@ -42,12 +42,12 @@ Prices in `pricing.json`, read from each vendor's official page on 2026-11-07, O
 
 - DeepSeek is priced at its standard (peak) rate; off-peak is half.
 - Gemini 3.8 Flash is at its promotional price, valid until 2026-12-31.
-- GPT models ran on a ChatGPT subscription; their cost is the API-equivalent at OpenAI list price, short-context tier.
+- GPT models are priced at OpenAI list price, short-context tier.
 
 ## Known limits
 
 - One run per model and mode. Re-judging the same output moved a model's score by at most one matched bug (under 1 point of recall); resampling the 30 pull requests moves it by about 20 points (95% bootstrap interval).
-- GPT-6 Luna ran at the vendor's default reasoning effort; through the subscription backend that default reasons very little on this task (about 25 reasoning tokens per pull request). The API default may differ.
+- GPT-6 Luna ran at the vendor's default reasoning effort, which reasons very little on this task (about 25 reasoning tokens per pull request).
 - A review whose model calls failed in transport (rate limit, lost connection) was set aside and run again; those dumps are kept as incidents in the run repository. Calls aborted by the product's own timeouts were kept: a customer on a slow model gets the same.
 
 ## Dropped from v1

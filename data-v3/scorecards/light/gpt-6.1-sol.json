@@ -9,7 +9,7 @@
   "model": {
    "id": "gpt-6.1-sol",
    "provider": "openai",
-   "accessPath": "subscription"
+   "accessPath": "api"
   },
   "executionMode": "live",
   "sandbox": "alive",

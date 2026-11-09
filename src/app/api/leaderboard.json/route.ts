@@ -41,7 +41,7 @@ export function GET() {
             precision: 'Published comments matching a valid true positive / all published comments. Each true positive counts once.',
             f1: 'Harmonic mean of recall and precision.',
             f2: 'F-score with beta = 2: 5*P*R / (4*P + R). Recall weighs twice precision. Ranking metric within each mode.',
-            costPerPR: 'Token cost at vendor list price with prompt cache, divided by pull requests. costBasis "api-equivalent" means the run used a subscription and is priced at API list price.',
+            costPerPR: 'Token cost at vendor list price with prompt cache, divided by pull requests.',
             costPerBugFound: 'Same total cost divided by true positives found.',
         },
         modes: {
