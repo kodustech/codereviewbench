@@ -1,0 +1,599 @@
+{
+ "benchmarkVersion": "light-30-gold-v3",
+ "run": {
+  "harness": {
+   "name": "kodus",
+   "version": "dev"
+  },
+  "teamConfig": null,
+  "model": {
+   "id": "gemini-3.8-flash",
+   "provider": "google",
+   "accessPath": "api"
+  },
+  "executionMode": "live",
+  "sandbox": "alive",
+  "heavy": true,
+  "reasoning": {
+   "config": "vendor-default",
+   "effortRequested": null
+  },
+  "runAt": "2026-11-07T16:45:02.577Z",
+  "mode": "heavy"
+ },
+ "results": [
+  {
+   "caseId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com",
+   "findings": [
+    {
+     "path": "packages/features/bookings/lib/handleNewBooking.ts",
+     "startLine": 1063,
+     "endLine": 1079,
+     "severity": "high",
+     "category": "bug",
+     "description": "Null destinationCalendar drops collective hosts' calendars \u2014 When an organizer has no calendar configured, `evt.destinationCalendar?.push(...)` silently skips adding `teamDestinationCalendars`. Default `destinationCalendar` to an empty array `[]` instead of `null` to preserve collective host calendars."
+    },
+    {
+     "path": "packages/trpc/server/routers/viewer/organizations/create.handler.ts",
+     "startLine": 150,
+     "endLine": 154,
+     "severity": "high",
+     "category": "bug",
+     "description": "Inverted IS_TEAM_BILLING_ENABLED check for organization slug \u2014 Organizations created with team billing disabled are left without a `slug`. Restore `!IS_TEAM_BILLING_ENABLED ? { slug } : {}` so the organization receives its slug directly."
+    },
+    {
+     "path": "packages/core/EventManager.ts",
+     "startLine": 118,
+     "endLine": 121,
+     "severity": "high",
+     "category": "bug",
+     "description": "Unchecked access to mainHostDestinationCalendar causes TypeError \u2014 An empty `evt.destinationCalendar` causes `mainHostDestinationCalendar.integration` to throw an unhandled `TypeError` when checking `MeetLocationType`. Use optional chaining on `mainHostDestinationCalendar?.integration` to guard against `undefined`."
+    },
+    {
+     "path": "packages/app-store/googlecalendar/lib/CalendarService.ts",
+     "startLine": 254,
+     "endLine": 256,
+     "severity": "high",
+     "category": "bug",
+     "description": "`selectedCalendar` fallback matches against falsy `externalCalendarId` \u2014 Matching against a falsy `externalCalendarId` always evaluates to `undefined`, leaving `selectedCalendar` unset. Fall back directly to `mainHostDestinationCalendar?.externalId` instead.\n\n**Also found in:**\n- `packages/app-store/googlecalendar/lib/CalendarService.ts:315-317`\n- `packages/app-store/googlecalendar/lib/CalendarService.ts:315-318`"
+    }
+   ]
+  },
+  {
+   "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+   "findings": [
+    {
+     "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+     "startLine": 47,
+     "endLine": 49,
+     "severity": "high",
+     "category": "bug",
+     "description": "`isTeamAdminOrOwner` uses logical AND instead of OR \u2014 Because a user cannot be both an admin and an owner simultaneously, `isTeamAdminOrOwner` always evaluates to `false`. Replace `&&` with `||` so either role is permitted."
+    },
+    {
+     "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+     "startLine": 168,
+     "endLine": 168,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Unfiltered guests array passed to sendAddGuestsEmails \u2014 Existing attendees present in `guests` will be misidentified as new guests and sent `AttendeeScheduledEmail` instead of `AttendeeAddGuestsEmail`. Pass `uniqueGuests` to `sendAddGuestsEmails` instead."
+    }
+   ]
+  },
+  {
+   "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
+   "findings": [
+    {
+     "path": "packages/app-store/_utils/oauth/parseRefreshTokenResponse.ts",
+     "startLine": 25,
+     "endLine": 27,
+     "severity": "high",
+     "category": "bug",
+     "description": "Hardcoded refresh token dummy string overwrites stored credentials \u2014 Merging this result overwrites and permanently corrupts valid OAuth refresh tokens in the database. Remove the fallback assignment so `refresh_token` is omitted when absent."
+    },
+    {
+     "path": "packages/app-store/googlecalendar/lib/CalendarService.ts",
+     "startLine": 97,
+     "endLine": 98,
+     "severity": "high",
+     "category": "bug",
+     "description": "Credential key updated with SafeParseReturnType instead of parsed data \u2014 Storing the wrapper object in the database corrupts the credential record and breaks subsequent calendar operations. Destructure `data` from `parseRefreshTokenResponse` so only the parsed credential payload is passed to `prisma.credential.update`."
+    },
+    {
+     "path": "packages/app-store/zoho-bigin/lib/CalendarService.ts",
+     "startLine": 92,
+     "endLine": 94,
+     "severity": "high",
+     "category": "bug",
+     "description": "refreshOAuthTokens receives credential ID instead of user ID \u2014 Passing a credential record ID prevents the sync endpoint from locating the Cal.com user. Pass `credential.userId` to `refreshOAuthTokens` instead of `credentialId`."
+    },
+    {
+     "path": "packages/app-store/_utils/oauth/refreshOAuthTokens.ts",
+     "startLine": 8,
+     "endLine": 16,
+     "severity": "high",
+     "category": "bug",
+     "description": "Raw fetch Response returned instead of response data expected by callers \u2014 Returning a raw `Response` lacks the `.data` property expected by callers, causing unhandled `TypeError` exceptions when accessing tokens. Parse the response body with `await response.json()` before returning it."
+    },
+    {
+     "path": "apps/web/pages/api/webhook/app-credential.ts",
+     "startLine": 24,
+     "endLine": 27,
+     "severity": "high",
+     "category": "security",
+     "description": "Header lookup fails if CALCOM_WEBHOOK_HEADER_NAME has uppercase characters \u2014 Node normalizes incoming header names to lowercase, causing lookup failures if `CALCOM_WEBHOOK_HEADER_NAME` contains uppercase characters. Call `.toLowerCase()` on the header key before indexing `req.headers`."
+    },
+    {
+     "path": "apps/web/pages/api/webhook/app-credential.ts",
+     "startLine": 57,
+     "endLine": 59,
+     "severity": "medium",
+     "category": "security",
+     "description": "Insecure fallback to empty string for encryption key \u2014 Decrypting with an empty string compromises security when the environment variable is unset. Reject the request early if `process.env.CALCOM_APP_CREDENTIAL_ENCRYPTION_KEY` is missing instead of falling back to `\"\"`."
+    },
+    {
+     "path": "packages/app-store/_utils/oauth/parseRefreshTokenResponse.ts",
+     "startLine": 5,
+     "endLine": 11,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Invalid `[z.string().toString()]` key in Zod schema strips response properties \u2014 Evaluating `toString()` creates a static `\"[object Object]\"` key, causing Zod to strip token expiry fields from the response. Chain `.passthrough()` onto `minimumTokenResponseSchema` instead of defining computed schema keys."
+    },
+    {
+     "path": "apps/web/pages/api/webhook/app-credential.ts",
+     "startLine": 24,
+     "endLine": 29,
+     "severity": "medium",
+     "category": "security",
+     "description": "Timing attack vulnerability in webhook secret comparison \u2014 Comparing secrets with `!==` leaks timing information that allows attackers to guess the secret token. Use `crypto.timingSafeEqual` for a constant-time comparison instead."
+    }
+   ]
+  },
+  {
+   "caseId": "sms-workflow-reminder-retry-count-tracking-cal-com",
+   "findings": [
+    {
+     "path": "packages/features/ee/workflows/api/scheduleSMSReminders.ts",
+     "startLine": 31,
+     "endLine": 43,
+     "severity": "high",
+     "category": "bug",
+     "description": "Retry count cleanup deletes non-SMS workflow reminders \u2014 Reminders for `EMAIL` or `WHATSAPP` with `retryCount > 1` are inadvertently deleted because `method: WorkflowMethods.SMS` only scopes the first `OR` branch. Move `method: WorkflowMethods.SMS` to the top-level `where` clause alongside `OR` so both conditions apply only to SMS reminders."
+    }
+   ]
+  },
+  {
+   "caseId": "feat-2fa-backup-codes-cal-com",
+   "findings": []
+  },
+  {
+   "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+   "findings": []
+  },
+  {
+   "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+   "findings": [
+    {
+     "path": "app/jobs/scheduled/poll_feed.rb",
+     "startLine": 35,
+     "endLine": 35,
+     "severity": "high",
+     "category": "bug",
+     "description": "NoMethodError when feed item content is nil \u2014 Feed items that omit content abort the scheduled poll job when `scrub` is called on `nil`. Check that `i.content` is present before calling `scrub` and `CGI.unescapeHTML`."
+    },
+    {
+     "path": "app/views/embed/best.html.erb",
+     "startLine": 6,
+     "endLine": 6,
+     "severity": "high",
+     "category": "bug",
+     "description": "Syntax error from invalid `<%- end if %>` tag \u2014 ERB compilation fails and crashes the view whenever comments render. Replace `<%- end if %>` with `<%- end %>` to close the conditional block."
+    },
+    {
+     "path": "spec/jobs/poll_feed_spec.rb",
+     "startLine": 19,
+     "endLine": 23,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Test 'requires feed_polling_url' does not enable feed polling \u2014 Because `SiteSetting.feed_polling_enabled?` defaults to `false`, `execute` short-circuits early and creates a false positive even if URL validation breaks. Stub `feed_polling_enabled?` to `true` and supply `embed_by_username`."
+    },
+    {
+     "path": "spec/jobs/poll_feed_spec.rb",
+     "startLine": 25,
+     "endLine": 29,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Test does not stub feed_polling_enabled? or feed_polling_url \u2014 Because `SiteSetting.feed_polling_enabled?` defaults to `false`, `execute` short-circuits early and passes even if username checks break. Stub `feed_polling_enabled?` to `true` and configure `feed_polling_url`."
+    },
+    {
+     "path": "app/views/layouts/embed.html.erb",
+     "startLine": 10,
+     "endLine": 12,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Full URL passed as postMessage targetOrigin fails origin match \u2014 Passing the full URL from `request.referer` fails origin matching or throws a `SyntaxError`, blocking `discourse-resize` messages. Pass `'*'` or a parsed origin to `parent.postMessage` instead."
+    }
+   ]
+  },
+  {
+   "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
+   "findings": [
+    {
+     "path": "db/migrate/20150818190757_create_embeddable_hosts.rb",
+     "startLine": 9,
+     "endLine": 16,
+     "severity": "high",
+     "category": "bug",
+     "description": "NoMethodError when indexing query results without checking row presence \u2014 If `embed_category` or `uncategorized_category_id` returns no rows, indexing `[0]` raises `NoMethodError`. Verify the query results are present before reading `['id']` or `['value']`."
+    },
+    {
+     "path": "spec/models/topic_spec.rb",
+     "startLine": 1403,
+     "endLine": 1405,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Obsolete test for blank embeddable_host in Topic#expandable_first_post? \u2014 `Topic#expandable_first_post?` no longer checks embeddable hosts, so this test passes vacuously regardless of host state. Remove this spec or update it to test `SiteSetting.embed_truncate?` and `has_topic_embed?`."
+    },
+    {
+     "path": "app/models/embeddable_host.rb",
+     "startLine": 5,
+     "endLine": 8,
+     "severity": "medium",
+     "category": "bug",
+     "description": "NoMethodError when host is nil in before_validation callback \u2014 A blank or missing `self.host` causes `sub!` to raise `NoMethodError`, crashing with a 500 error instead of validation failures. Guard the mutations with `if self.host.present?`."
+    }
+   ]
+  },
+  {
+   "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
+   "findings": []
+  },
+  {
+   "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
+   "findings": [
+    {
+     "path": "app/controllers/uploads_controller.rb",
+     "startLine": 63,
+     "endLine": 70,
+     "severity": "high",
+     "category": "bug",
+     "description": "Invalid ImageMagick resize geometry and stale tempfile size in downsize loop \u2014 Appending `\\>` to `\"80%\"` produces invalid ImageMagick geometry, and `tempfile.size` caches the initial file size so the loop cannot terminate early. Use pixel dimensions for `OptimizedImage.downsize` and check `File.size(tempfile.path)` on each iteration."
+    },
+    {
+     "path": "app/models/optimized_image.rb",
+     "startLine": 145,
+     "endLine": 151,
+     "severity": "high",
+     "category": "bug",
+     "description": "Duplicate method definition overwrites OptimizedImage.downsize \u2014 Ruby lacks method overloading, so callers like `Jobs::ResizeEmoji` expecting the 5-parameter signature will raise an `ArgumentError`. Merge both parameter signatures into a single `downsize` method that handles either argument structure."
+    }
+   ]
+  },
+  {
+   "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
+   "findings": [
+    {
+     "path": "app/controllers/admin/groups_controller.rb",
+     "startLine": 85,
+     "endLine": 89,
+     "severity": "high",
+     "category": "bug",
+     "description": "`remove_member` expects nonexistent `group_id` parameter \u2014 Requests fail with `ActionController::ParameterMissing` because member routes provide `params[:id]` rather than `params[:group_id]`. Update `remove_member` to read `params.require(:id)`.\n\n**Also found in:**\n- `app/controllers/admin/groups_controller.rb:66-70`\n- `app/controllers/admin/groups_controller.rb:84-86`"
+    },
+    {
+     "path": "app/controllers/admin/groups_controller.rb",
+     "startLine": 71,
+     "endLine": 76,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Duplicate or existing group members cause unhandled database exception \u2014 Submitting existing or duplicate usernames triggers a unique constraint violation on `index_group_users_on_group_id_and_user_id`, resulting in an unhandled 500 error. Check membership with `group.users.include?(user)` before calling `group.add(user)`."
+    },
+    {
+     "path": "app/assets/javascripts/admin/controllers/admin-group.js.es6",
+     "startLine": 11,
+     "endLine": 14,
+     "severity": "medium",
+     "category": "bug",
+     "description": "totalPages overcounts when user_count is an exact multiple of limit \u2014 Users can paginate to an empty page when `user_count` divides evenly by `limit`. Replace the `Math.floor` calculation with `Math.ceil`."
+    }
+   ]
+  },
+  {
+   "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
+   "findings": []
+  },
+  {
+   "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+   "findings": [
+    {
+     "path": "pkg/services/anonymous/anonimpl/impl.go",
+     "startLine": 144,
+     "endLine": 148,
+     "severity": "medium",
+     "category": "security",
+     "description": "Device cached before CreateOrUpdateDevice validation completes \u2014 Blocked devices exceeding `deviceLimit` can bypass authentication on subsequent requests because `tagDeviceUI` returns `nil` on cache hits. Populate `localCache` only after `CreateOrUpdateDevice` succeeds, or evict the key on error."
+    },
+    {
+     "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
+     "startLine": 80,
+     "endLine": 86,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Outer args slice mutated in retried WithDbSession callback \u2014 Retrying the transaction on lock contention prepends duplicate `query` elements to `args`, causing execution to fail with argument mismatch errors. Pass `query` directly to `dbSession.Exec` instead of prepending it to `args`."
+    },
+    {
+     "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
+     "startLine": 109,
+     "endLine": 118,
+     "severity": "medium",
+     "category": "bug",
+     "description": "TOCTOU race condition in device limit check \u2014 Concurrent requests can all see the count below `deviceLimit` and insert simultaneously, exceeding the configured limit. Move `CountDevices` and the insert into a single transaction with appropriate locking."
+    },
+    {
+     "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
+     "startLine": 52,
+     "endLine": 54,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Unbound int64 in ProvideAnonDBStore breaks Wire provider set \u2014 Wire code generation fails because it cannot resolve the unbound `deviceLimit int64` parameter registered in `pkg/server/wire.go`. Update or remove the `anonstore.ProvideAnonDBStore` registration in `wire.go` since `ProvideAnonymousDeviceService` now instantiates it directly."
+    }
+   ]
+  },
+  {
+   "caseId": "frontend-asset-optimization-grafana-codex",
+   "findings": []
+  },
+  {
+   "caseId": "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex",
+   "findings": []
+  },
+  {
+   "caseId": "dual-storage-architecture-grafana-codex",
+   "findings": [
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 50,
+     "endLine": 53,
+     "severity": "high",
+     "category": "bug",
+     "description": "Context cancellation aborts asynchronous legacy write \u2014 Propagating request context cancellation aborts background writes as soon as the HTTP handler returns. Wrap `ctx` with `context.WithoutCancel` before calling `context.WithTimeoutCause`."
+    },
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 106,
+     "endLine": 106,
+     "severity": "medium",
+     "category": "performance",
+     "description": "High metric cardinality from passing object name instead of kind \u2014 Using individual resource names causes metric cardinality explosion and excessive memory consumption in Prometheus. Pass `options.Kind` instead of `name` to `d.recordStorageDuration`."
+    },
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 44,
+     "endLine": 46,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Create storage error recorded under legacy metric instead of storage \u2014 This misattributes storage failures and latency to the legacy storage metric. Call `d.recordStorageDuration` instead of `d.recordLegacyDuration` when `d.Storage.Create` fails.\n\n**Also found in:**\n- `pkg/apiserver/rest/dualwriter_mode3.go:128-130`\n- `pkg/apiserver/rest/dualwriter_mode3.go:165-167`"
+    }
+   ]
+  },
+  {
+   "caseId": "unified-storage-performance-optimizations-grafana-codex",
+   "findings": [
+    {
+     "path": "pkg/storage/unified/search/bleve.go",
+     "startLine": 96,
+     "endLine": 104,
+     "severity": "high",
+     "category": "bug",
+     "description": "Concurrent index creation causes storage conflicts and race conditions \u2014 Concurrent calls to `bleve.New` for the same key will collide on the directory path, corrupting index files and leaking duplicate indices. Keep `b.cacheMu` locked across the entire build or synchronize creation with a per-key lock."
+    }
+   ]
+  },
+  {
+   "caseId": "notification-rule-processing-engine-grafana-codex",
+   "findings": [
+    {
+     "path": "public/app/features/alerting/unified/rule-list/FilterView.tsx",
+     "startLine": 157,
+     "endLine": 163,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Missing key prop on GrafanaRuleListItem \u2014 Without item identity tracking inside `rules.map`, React can hit reconciliation bugs and retain stale state as filtered results update. Pass `key={key}` to `<GrafanaRuleListItem>`."
+    }
+   ]
+  },
+  {
+   "caseId": "implement-access-token-context-encoding-framework-keycloak",
+   "findings": [
+    {
+     "path": "services/src/main/java/org/keycloak/protocol/oidc/encode/AccessTokenContext.java",
+     "startLine": 73,
+     "endLine": 74,
+     "severity": "medium",
+     "category": "bug",
+     "description": "rawTokenId validation checks grantType instead of rawTokenId \u2014 This leaves `rawTokenId` unvalidated while checking `grantType` with a mismatched error message. Pass `rawTokenId` to `Objects.requireNonNull` instead."
+    },
+    {
+     "path": "testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/AssertEvents.java",
+     "startLine": 482,
+     "endLine": 485,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Inverted condition and incorrect substring range in isAccessTokenId \u2014 Valid access token IDs are rejected because the check inspects the wrong characters and returns `false` upon matching `expectedGrantShortcut`. Invert the condition and slice indices 4 to 6 after verifying `items[0]` length."
+    }
+   ]
+  },
+  {
+   "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
+   "findings": [
+    {
+     "path": "model/infinispan/src/main/java/org/keycloak/models/cache/infinispan/GroupAdapter.java",
+     "startLine": 274,
+     "endLine": 275,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Return of null from getSubGroupsCount can cause NullPointerException \u2014 Callers auto-unboxing the return value to `long` will throw a `NullPointerException` when `model` is null. Return `0L` instead of `null` to satisfy the `GroupModel.getSubGroupsCount` contract."
+    },
+    {
+     "path": "tests/base/src/test/java/org/keycloak/tests/admin/group/GroupTest.java",
+     "startLine": 139,
+     "endLine": 158,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Background reader thread is not joined before assertions \u2014 Assertions can run while the reader thread is still active, missing late exceptions and causing false test passes. Store the thread in a variable and call `join()` before checking `caughtExceptions`."
+    }
+   ]
+  },
+  {
+   "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+   "findings": [
+    {
+     "path": "misc/theme-verifier/src/main/java/org/keycloak/themeverifier/VerifyMessageProperties.java",
+     "startLine": 74,
+     "endLine": 75,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Unescaped hyphen in `[a-zA-Z-_]` creates unexpected character range \u2014 The regex treats `Z-_` as an ASCII range instead of a literal hyphen, preventing hyphenated locale codes from matching. Move the hyphen to the end of the character class as `[a-zA-Z_-]` or escape it."
+    },
+    {
+     "path": "js/apps/account-ui/maven-resources/theme/keycloak.v3/account/messages/messages_en.properties",
+     "startLine": 188,
+     "endLine": 188,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Unsupported MessageFormat syntax used in i18next message property \u2014 Using Java `MessageFormat` syntax in `error-invalid-multivalued-size` breaks i18next localization, displaying raw placeholders and choice expressions directly to users. Switch back to `{{0}}` interpolation placeholders and replace the choice format with static wording.\n\n**Also found in:**\n- `js/apps/admin-ui/maven-resources/theme/keycloak.v2/admin/messages/messages_en.properties:3138-3138`"
+    },
+    {
+     "path": "misc/theme-verifier/src/main/java/org/keycloak/themeverifier/VerifyMessageProperties.java",
+     "startLine": 106,
+     "endLine": 112,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Unconstrained end index calculation causes StringIndexOutOfBoundsException \u2014 Overlapping prefix and suffix matches can cause `length - end` to fall below `start`, throwing a `StringIndexOutOfBoundsException` in `substring()`. Constrain `end` in the loop condition using `sanitized.length() - start` and `value.length() - start`."
+    }
+   ]
+  },
+  {
+   "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+   "findings": [
+    {
+     "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/AdminPermissions.java",
+     "startLine": 89,
+     "endLine": 96,
+     "severity": "high",
+     "category": "bug",
+     "description": "Client removal fails with UnsupportedOperationException under V2 authz \u2014 `ClientPermissionsV2.setPermissionsEnabled()` unconditionally throws `UnsupportedOperationException`, aborting client deletion when V2 fine-grained authorization is enabled. Guard this call by checking whether `Profile.Feature.ADMIN_FINE_GRAINED_AUTHZ_V2` is disabled."
+    },
+    {
+     "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+     "startLine": 65,
+     "endLine": 69,
+     "severity": "high",
+     "category": "bug",
+     "description": "canManage(ClientModel) checks role directly instead of calling canManage() \u2014 Callers granted permission to manage all clients are denied managing individual clients that have a dedicated resource in `resourceStore`. Replace the `root.hasOneAdminRole(AdminRoles.MANAGE_CLIENTS)` check with a call to `canManage()`."
+    }
+   ]
+  },
+  {
+   "caseId": "fixing-re-authentication-with-passkeys-keycloak",
+   "findings": []
+  },
+  {
+   "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+   "findings": []
+  },
+  {
+   "caseId": "replays-self-serve-bulk-delete-system-sentry",
+   "findings": [
+    {
+     "path": "src/sentry/issues/endpoints/browser_reporting_collector.py",
+     "startLine": 50,
+     "endLine": 60,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Falsy age or timestamp bypasses field mutual exclusion validation \u2014 Falsy values like `0` cause `self.initial_data.get()` to treat present fields as absent and bypass mutual exclusion checks. Move this cross-field validation into `validate` and check presence using `in self.initial_data`."
+    },
+    {
+     "path": "src/sentry/replays/endpoints/project_replay_summarize_breadcrumbs.py",
+     "startLine": 110,
+     "endLine": 120,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Error IDs misaligned with event payloads when zipping with events.values() \u2014 Pairing `error_ids` with `events.values()` misaligns or drops data when entries are missing or unordered. Look up each payload directly from `events` using its corresponding `node_id` instead."
+    }
+   ]
+  },
+  {
+   "caseId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry",
+   "findings": [
+    {
+     "path": "src/sentry/spans/consumers/process/flusher.py",
+     "startLine": 337,
+     "endLine": 347,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Expired deadline skips terminating remaining flusher processes \u2014 Breaking early leaves subsequent entries in `self.processes` running as orphaned background processes. Remove the early `break` check so each process is terminated even after `deadline` expires."
+    },
+    {
+     "path": "tests/sentry/spans/consumers/process/test_consumer.py",
+     "startLine": 61,
+     "endLine": 63,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Patched time.sleep makes wait a no-op \u2014 Because `time.sleep` is patched to a no-op earlier in the test, this returns immediately and introduces race conditions. Synchronize on an event or use an unpatched sleep instead."
+    }
+   ]
+  },
+  {
+   "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+   "findings": [
+    {
+     "path": "src/sentry/integrations/mixins/issues.py",
+     "startLine": 411,
+     "endLine": 418,
+     "severity": "high",
+     "category": "bug",
+     "description": "assignment_source added to sync_status_outbound instead of sync_assignee_outbound \u2014 Callers in `sync_assignee_outbound.py` pass `assignment_source` to `sync_assignee_outbound`, which will fail because the parameter is missing there. Move `assignment_source` from `sync_status_outbound` to `sync_assignee_outbound`."
+    },
+    {
+     "path": "src/sentry/integrations/services/assignment_source.py",
+     "startLine": 19,
+     "endLine": 19,
+     "severity": "medium",
+     "category": "bug",
+     "description": "AssignmentSource.queued evaluated at class definition time \u2014 Every `AssignmentSource` instance receives the same static startup timestamp instead of its actual creation time. Use `field(default_factory=timezone.now)` on `queued` so it evaluates dynamically at instantiation."
+    }
+   ]
+  },
+  {
+   "caseId": "github-oauth-security-enhancement-sentry",
+   "findings": [
+    {
+     "path": "src/sentry/integrations/github/integration.py",
+     "startLine": 401,
+     "endLine": 414,
+     "severity": "medium",
+     "category": "security",
+     "description": "OAuth state uses static pipeline signature enabling CSRF \u2014 An attacker can bypass CSRF validation and link an arbitrary GitHub account to a victim session because `pipeline.signature` is predictable. Generate a cryptographically secure random token, store it with `pipeline.bind_state`, and validate the callback `state` against it."
+    }
+   ]
+  },
+  {
+   "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
+   "findings": []
+  },
+  {
+   "caseId": "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry",
+   "findings": [
+    {
+     "path": "src/sentry/monitors/logic/incident_occurrence.py",
+     "startLine": 160,
+     "endLine": 170,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Original monitor config returned instead of modified copy \u2014 The updated schedule display is discarded because the untransformed configuration dictionary is returned. Return `config` instead of `monitor_environment.monitor.config`."
+    }
+   ]
+  }
+ ]
+}

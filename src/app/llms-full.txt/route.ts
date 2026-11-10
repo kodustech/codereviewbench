@@ -1,13 +1,12 @@
-import leaderboardData from '@/lib/data/leaderboard.json';
 import metaData from '@/lib/data/meta.json';
-import type { LeaderboardData, LeaderboardEntry, Meta } from '@/lib/types';
-import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import type { LeaderboardEntry, Meta, ReviewMode } from '@/lib/types';
+import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS, MODE_LABELS, COST_BASIS_LABELS, judgeLabel } from '@/lib/constants';
 import { formatScore, formatMoney } from '@/lib/format';
-import { allPairs, pairDiff, type GoldenSplit } from '@/lib/compare';
+import { allPairsEveryMode, pairDiff, pairHref, type GoldenSplit, type Pair } from '@/lib/compare';
+import { entriesOf, entryFor, publishedModelIds, lb, MODES } from '@/lib/entries';
 import { publishedPosts, postBody } from '@/lib/blog';
 import { SITE_URL, SITE_DESCRIPTION } from '@/lib/site';
 
-const lb = leaderboardData as unknown as LeaderboardData;
 const meta = metaData as unknown as Meta;
 
 /**
@@ -27,68 +26,65 @@ function goldenLine(g: GoldenSplit): string {
     return `- [${sev}] ${g.text} (${repo}, ${lang}, case ${g.caseId})`;
 }
 
-function modelSection(e: LeaderboardEntry, rank: number, total: number): string {
-    const name = displayNameOf(e.modelId);
-    const provider = providerOf(e.modelId);
+function modeBlock(e: LeaderboardEntry, total: number): string {
+    const line = (o: Record<string, { recall: number; precision: number | null; goldens: number; matched: number; count: number }>, label: (k: string) => string) =>
+        Object.entries(o)
+            .map(([k, v]) => `- ${label(k)}: recall ${formatScore(v.recall)} (${v.matched}/${v.goldens}), precision ${v.precision == null ? 'n/a' : formatScore(v.precision)}, ${v.count} PRs`)
+            .join('\n');
+    const sev = (['critical', 'high', 'medium', 'low'] as const)
+        .map((k) => `${k} ${e.bySeverity[k].matched}/${e.bySeverity[k].goldens}`)
+        .join(', ');
+    return `## ${MODE_LABELS[e.mode]} mode
 
-    const byLanguage = Object.entries(e.byLanguage)
-        .map(([lang, s]) => `- ${LANGUAGE_LABELS[lang] || lang}: recall ${formatScore(s.recall)}, precision ${formatScore(s.precision)} (${s.goldens} goldens, ${s.count} cases)`)
-        .join('\n');
+Rank #${e.rank} of ${total} by F2. F2 ${e.f2.toFixed(1)}, F1 ${e.f1.toFixed(1)}, recall ${formatScore(e.recall)} (95% CI ${e.ciLow?.toFixed(1)}–${e.ciHigh?.toFixed(1)}), precision ${formatScore(e.precision)}. Found ${e.goldensMatched} of ${e.goldensTotal} confirmed bugs with ${e.comments} published comments. Run at ${e.runAt ?? 'unknown'}.
 
-    const byRepo = Object.entries(e.byRepo)
-        .map(([repo, s]) => `- ${REPO_LABELS[repo] || repo}: recall ${formatScore(s.recall)}, precision ${formatScore(s.precision)} (${s.goldens} goldens, ${s.count} cases)`)
-        .join('\n');
+Recall by bug severity: ${sev}.
 
-    const bySize = Object.entries(e.bySize)
-        .map(([size, s]) => `- ${size}: recall ${formatScore(s.recall)}, precision ${formatScore(s.precision)} (${s.goldens} goldens, ${s.count} cases)`)
-        .join('\n');
+By language:
+${line(e.byLanguage, (k) => LANGUAGE_LABELS[k] || k)}
 
-    const fs = e.findingsBySeverity;
-    const fc = e.findingsByCategory;
+By repository:
+${line(e.byRepo, (k) => REPO_LABELS[k] || k)}
 
-    return `<!-- source: ${SITE_URL}/model/${modelSlug(e.modelId)} -->
-
-# ${name} — AI Code Review Benchmark Results
-
-> How well does ${name} review code? Measured on ${e.cases} real merged pull requests: ${formatScore(e.score)} recall, ${formatScore(e.precision)} precision, F1 ${e.f1.toFixed(1)}, finding ${e.goldensMatched} of ${e.goldensTotal} human-reported bugs.
-
-${name} (${provider}) ranks #${rank} of ${total} models on CodeReviewBench, with ${formatScore(e.score)} recall (macro ${formatScore(e.recallMacro)}), ${formatScore(e.precision)} precision (macro ${formatScore(e.precisionMacro)}) and F1 ${e.f1.toFixed(1)}. It found ${e.goldensMatched} of ${e.goldensTotal} confirmed human-reported bugs across ${e.cases} pull requests. Judge: ${e.judge ?? 'unknown'}. Execution mode: ${e.executionMode}. Harness: ${e.harness}${e.harnessVersion ? ` (${e.harnessVersion})` : ''}. Run at: ${e.runAt ?? 'unknown'}.
-
-## By language
-${byLanguage}
-
-## By repository
-${byRepo}
-
-## By pull request size
-${bySize}
-
-## Findings reported
-By severity — low: ${fs.low}, medium: ${fs.medium}, high: ${fs.high}, critical: ${fs.critical}.
-By category — bug: ${fc.bug}, performance: ${fc.performance}, security: ${fc.security}, other: ${fc.other}.
-
-## Cost
-Total ${formatMoney(e.costTotal, 2)}, ${formatMoney(e.costPerPR, 2)}/PR, ${formatMoney(e.costPerBugFound, 2)}/bug found. Basis: ${e.costBasis}.
+Cost (${COST_BASIS_LABELS[e.costBasis]}, with prompt cache): total ${formatMoney(e.costTotal, 2)}, ${formatMoney(e.costPerPR, 3)}/PR, ${formatMoney(e.costPerBugFound, 3)}/bug found.${e.costNote ? ` ${e.costNote}` : ''}
 `;
 }
 
-function compareSection(pair: { a: LeaderboardEntry; b: LeaderboardEntry; slug: string }): string {
-    const { a, b, slug } = pair;
+function modelSection(modelId: string): string {
+    const name = displayNameOf(modelId);
+    const provider = providerOf(modelId);
+    const blocks = MODES.map((m) => {
+        const e = entryFor(modelId, m);
+        return e ? modeBlock(e, entriesOf(m).length) : `## ${MODE_LABELS[m]} mode
+
+Not run yet.
+`;
+    }).join('\n');
+    const any = entryFor(modelId, 'balanced') ?? entryFor(modelId, 'heavy')!;
+    return `<!-- source: ${SITE_URL}/model/${modelSlug(modelId)} -->
+
+# ${name} — AI Code Review Benchmark Results
+
+${name} (${provider}) on CodeReviewBench: ${any.cases} merged pull requests, ${any.goldensTotal} confirmed bugs, judge ${judgeLabel(any.judge)}, harness ${any.harness}, access ${any.accessPath}.
+
+${blocks}`;
+}
+
+function compareSection(pair: Pair): string {
+    const { a, b, slug, mode } = pair;
     const nameA = displayNameOf(a.modelId);
     const nameB = displayNameOf(b.modelId);
     const diff = pairDiff(a, b);
-
     const onlyA = diff.onlyA.length ? diff.onlyA.map(goldenLine).join('\n') : '(none)';
     const onlyB = diff.onlyB.length ? diff.onlyB.map(goldenLine).join('\n') : '(none)';
+    return `<!-- source: ${SITE_URL}${pairHref(mode, slug)} -->
 
-    return `<!-- source: ${SITE_URL}/compare/${slug} -->
+# ${nameA} vs ${nameB} (${MODE_LABELS[mode]} mode)
 
-# ${nameA} vs ${nameB}
+> Head-to-head on the same ${diff.sharedCases} merged pull requests, same review mode.
 
-> Head-to-head on the same merged pull requests: ${diff.sharedCases} shared cases compared${diff.uncoveredCases ? `, ${diff.uncoveredCases} excluded for missing golden coverage` : ''}.
-
-${nameA}: ${formatScore(a.score)} recall, ${formatScore(a.precision)} precision, F1 ${a.f1.toFixed(1)}, ${a.goldensMatched}/${a.goldensTotal} bugs found.
-${nameB}: ${formatScore(b.score)} recall, ${formatScore(b.precision)} precision, F1 ${b.f1.toFixed(1)}, ${b.goldensMatched}/${b.goldensTotal} bugs found.
+${nameA}: F2 ${a.f2.toFixed(1)}, ${formatScore(a.recall)} recall, ${formatScore(a.precision)} precision, ${a.goldensMatched}/${a.goldensTotal} bugs found, ${formatMoney(a.costPerPR, 3)}/PR.
+${nameB}: F2 ${b.f2.toFixed(1)}, ${formatScore(b.recall)} recall, ${formatScore(b.precision)} precision, ${b.goldensMatched}/${b.goldensTotal} bugs found, ${formatMoney(b.costPerPR, 3)}/PR.
 
 Both found: ${diff.both}. Neither found: ${diff.neither}.
 
@@ -112,35 +108,41 @@ ${body}
 `;
 }
 
-export function GET() {
-    const ranked = lb.entries.slice().sort((a, b) => b.f1 - a.f1);
-
-    const leaderboardRows = ranked
+function leaderboardTable(mode: ReviewMode): string {
+    const rows = entriesOf(mode)
         .map(
-            (e, i) =>
-                `| ${i + 1} | ${displayNameOf(e.modelId)} | ${providerOf(e.modelId)} | ${formatScore(e.score)} | ${formatScore(e.precision)} | ${e.f1.toFixed(1)} | ${e.goldensMatched}/${e.goldensTotal} | ${formatMoney(e.costPerPR, 2)} |`,
+            (e) =>
+                `| ${e.rank} | ${displayNameOf(e.modelId)} | ${providerOf(e.modelId)} | ${e.f2.toFixed(1)} | ${formatScore(e.recall)} | ${formatScore(e.precision)} | ${e.f1.toFixed(1)} | ${e.goldensMatched}/${e.goldensTotal} | ${formatMoney(e.costPerPR, 3)} | ${formatMoney(e.costPerBugFound, 3)} |`,
         )
         .join('\n');
+    const avg = lb.averages[mode];
+    return `## ${MODE_LABELS[mode]} mode
 
+| Rank | Model | Provider | F2 | Recall | Precision | F1 | Bugs found | Cost/PR | Cost/bug |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+${rows}
+
+Averages: F2 ${avg.f2?.toFixed(1) ?? '—'}, recall ${avg.recall != null ? formatScore(avg.recall) : '—'}, precision ${avg.precision != null ? formatScore(avg.precision) : '—'}.
+`;
+}
+
+export function GET() {
+    const notes = [...new Set(lb.entries.map((e) => e.costNote).filter(Boolean))].map((n) => `- ${n}`).join('\n');
     const leaderboardSection = `<!-- source: ${SITE_URL}/leaderboard -->
 
 # CodeReviewBench Leaderboard
 
-> Current results, ranked by F1. ${meta.totalEntries} models evaluated on ${meta.totalCases} merged pull requests across ${meta.repos.join(', ')}, covering ${meta.languages.join(', ')}. ${meta.totalGoldens} confirmed human-reported bugs form the ground truth. Judge: ${meta.judges.join(', ')}. Harness: ${meta.harnesses.join(', ')}. Data generated ${meta.generatedAt}.
+> Ranked by F2 within each review mode. ${meta.totalModels} models on ${meta.totalCases} merged pull requests across ${meta.repos.join(', ')}, covering ${meta.languages.join(', ')}. ${meta.totalGoldens} confirmed bugs form the ground truth. Judge: ${meta.judges.map(judgeLabel).join(', ')}. Harness: ${meta.harnesses.join(', ')}. Data generated ${meta.generatedAt}.
 
-| Rank | Model | Provider | Recall | Precision | F1 | Bugs found | Cost/PR |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-${leaderboardRows}
+F2 = 5·P·R / (4·P + R): recall weighs twice precision, because a missed bug costs more than a comment you dismiss. Cost is list price with prompt cache.
+${notes}
 
-Averages across all ${meta.totalEntries} models: recall ${lb.averages.score != null ? formatScore(lb.averages.score) : '—'}, precision ${lb.averages.precision != null ? formatScore(lb.averages.precision) : '—'}, F1 ${lb.averages.f1 != null ? lb.averages.f1.toFixed(1) : '—'}.
-`;
+${MODES.filter((m) => entriesOf(m).length).map(leaderboardTable).join('\n')}`;
 
-    const modelSections = ranked.map((e, i) => modelSection(e, i + 1, ranked.length)).join('\n');
-
-    const compareSections = allPairs()
-        .map(compareSection)
-        .join('\n');
-
+    const models = publishedModelIds();
+    const modelSections = models.map(modelSection).join('\n');
+    const pairs = allPairsEveryMode();
+    const compareSections = pairs.map(compareSection).join('\n');
     const posts = publishedPosts();
     const blogSections = posts.map((p) => blogSection(p.slug, p.title, p.description)).join('\n');
 
@@ -155,17 +157,17 @@ Averages across all ${meta.totalEntries} models: recall ${lb.averages.score != n
 ${leaderboardSection}
 ---
 
-# Part 2: Model pages (${ranked.length})
+# Part 2: Model pages (${models.length})
 
 ${modelSections}
 ---
 
-# Part 3: Compare pages (${allPairs().length})
+# Part 3: Compare pages (${pairs.length})
 
 ${compareSections}
 ---
 
-# Part 4: Blog posts (${posts.length})
+# Part 4: Blog posts (${posts.length}, numbers from the v1 benchmark, Aug–Sep 2026)
 
 ${blogSections}`;
 

@@ -1,50 +1,60 @@
-import leaderboardData from '@/lib/data/leaderboard.json';
 import samplesData from '@/lib/data/samples.json';
-import type { LeaderboardData, LeaderboardEntry, CaseSample, GoldenDetail } from '@/lib/types';
+import type { LeaderboardEntry, CaseSample, ReviewMode } from '@/lib/types';
 import { modelSlug } from '@/lib/constants';
+import { entriesOf, MODES } from '@/lib/entries';
 import { PAIR_SEPARATOR, canonicalPair, pairSlug } from '@/lib/pair-slug';
 
 export { PAIR_SEPARATOR, canonicalPair, pairSlug };
 
-const lb = leaderboardData as unknown as LeaderboardData;
 const allSamples = samplesData as unknown as CaseSample[];
 
+/** URL of a pair inside a mode. Balanced keeps the historical /compare/<pair>
+ *  path; heavy lives under /compare/heavy/<pair>. */
+export function pairHref(mode: ReviewMode, slug: string): string {
+    return mode === 'heavy' ? `/compare/heavy/${slug}` : `/compare/${slug}`;
+}
 
+export interface Pair {
+    mode: ReviewMode;
+    a: LeaderboardEntry;
+    b: LeaderboardEntry;
+    slug: string;
+}
 
-
-/** Os 45 pares (C(10,2)) em ordem canonica. Fonte do generateStaticParams e do
- *  sitemap — os dois LEEM daqui pra nao divergirem. */
-export function allPairs(): { a: LeaderboardEntry; b: LeaderboardEntry; slug: string }[] {
-    const out: { a: LeaderboardEntry; b: LeaderboardEntry; slug: string }[] = [];
-    const es = lb.entries;
+/** Every pair of models that both have a row in `mode`, in canonical order.
+ *  Source of generateStaticParams and of the sitemap, so they never diverge. */
+export function allPairs(mode: ReviewMode): Pair[] {
+    const out: Pair[] = [];
+    const es = entriesOf(mode);
     for (let i = 0; i < es.length; i += 1) {
         for (let j = i + 1; j < es.length; j += 1) {
             const [sa, sb] = canonicalPair(modelSlug(es[i].modelId), modelSlug(es[j].modelId));
             const a = es.find((e) => modelSlug(e.modelId) === sa)!;
             const b = es.find((e) => modelSlug(e.modelId) === sb)!;
-            out.push({ a, b, slug: `${sa}${PAIR_SEPARATOR}${sb}` });
+            out.push({ mode, a, b, slug: `${sa}${PAIR_SEPARATOR}${sb}` });
         }
     }
     return out;
 }
 
-/** Resolve um slug de par. Casa contra o conjunto conhecido em vez de dar split
- *  no separador — imune a slug que contenha `-vs-`. `canonical` diz se a URL
- *  pedida ja esta na ordem canonica; se nao, a rota redireciona 308. */
+export function allPairsEveryMode(): Pair[] {
+    return MODES.flatMap((m) => allPairs(m));
+}
+
+/** Resolves a pair slug within a mode. `canonical` tells whether the order
+ *  requested is the canonical one; if not, the route redirects 308. */
 export function parsePairSlug(
+    mode: ReviewMode,
     slug: string,
 ): { a: LeaderboardEntry; b: LeaderboardEntry; canonicalSlug: string; canonical: boolean } | null {
-    const pairs = allPairs();
+    const pairs = allPairs(mode);
     const hit = pairs.find((p) => p.slug === slug);
     if (hit) return { a: hit.a, b: hit.b, canonicalSlug: hit.slug, canonical: true };
-
-    // Ordem invertida: `b-vs-a` resolve pro mesmo par, mas nao e canonico.
     const flipped = pairs.find((p) => {
         const [x, y] = p.slug.split(PAIR_SEPARATOR);
         return `${y}${PAIR_SEPARATOR}${x}` === slug;
     });
     if (flipped) return { a: flipped.a, b: flipped.b, canonicalSlug: flipped.slug, canonical: false };
-
     return null;
 }
 
@@ -57,55 +67,38 @@ export interface GoldenSplit {
 }
 
 export interface PairDiff {
-    /** Bugs reais que A achou e B perdeu (e vice-versa). E o conteudo que torna
-     *  cada uma das 45 paginas diferente das outras — sem isso viram doorway
-     *  pages com a mesma tabela trocada. */
+    /** Gold bugs A found and B missed (and vice versa). */
     onlyA: GoldenSplit[];
     onlyB: GoldenSplit[];
     both: number;
     neither: number;
-    /** Casos que os dois rodaram E tem goldensDetail dos dois lados. */
     sharedCases: number;
-    /** Casos que os dois rodaram mas ficaram de fora do diff por falta de
-     *  goldensDetail (goldens.json nao cobre o caso). Exposto pra pagina poder
-     *  declarar a cobertura em vez de fingir que o diff viu tudo. */
-    uncoveredCases: number;
 }
 
-/** Diff de goldens entre dois modelos, casado por (caseId, texto do golden).
- *  `goldensDetail` e null quando goldens.json nao cobre o caso — esses casos
- *  contam em `uncoveredCases`, nunca entram como "os dois perderam". */
-export function pairDiff(a: LeaderboardEntry, b: LeaderboardEntry): PairDiff {
-    const byCase = (key: string) => {
-        const m = new Map<string, CaseSample>();
-        for (const s of allSamples) if (s.entryKey === key) m.set(s.caseId, s);
-        return m;
-    };
-    const ca = byCase(a.key);
-    const cb = byCase(b.key);
+function casesOf(key: string): Map<string, CaseSample> {
+    const m = new Map<string, CaseSample>();
+    for (const s of allSamples) if (s.entryKey === key) m.set(s.caseId, s);
+    return m;
+}
 
+/** Gold diff between two runs, matched by gold issueId on the same PR. */
+export function pairDiff(a: LeaderboardEntry, b: LeaderboardEntry): PairDiff {
+    const ca = casesOf(a.key);
+    const cb = casesOf(b.key);
     const onlyA: GoldenSplit[] = [];
     const onlyB: GoldenSplit[] = [];
     let both = 0;
     let neither = 0;
     let sharedCases = 0;
-    let uncoveredCases = 0;
 
     for (const [caseId, sa] of ca) {
         const sb = cb.get(caseId);
         if (!sb) continue;
-        if (!sa.goldensDetail || !sb.goldensDetail) {
-            uncoveredCases += 1;
-            continue;
-        }
         sharedCases += 1;
-
-        const bByText = new Map<string, GoldenDetail>();
-        for (const g of sb.goldensDetail) bByText.set(g.text, g);
-
+        const bById = new Map(sb.goldensDetail.map((g) => [g.issueId, g]));
         for (const ga of sa.goldensDetail) {
-            const gb = bByText.get(ga.text);
-            if (!gb) continue; // golden so existe de um lado — nao e comparavel
+            const gb = bById.get(ga.issueId);
+            if (!gb) continue;
             const meta = { caseId, repo: sa.repo, language: sa.language, text: ga.text, severity: ga.severity };
             if (ga.matched && !gb.matched) onlyA.push(meta);
             else if (!ga.matched && gb.matched) onlyB.push(meta);
@@ -114,13 +107,15 @@ export function pairDiff(a: LeaderboardEntry, b: LeaderboardEntry): PairDiff {
         }
     }
 
-    const sev = (s: string | null) => (s?.toLowerCase() === 'critical' ? 0 : s?.toLowerCase() === 'high' ? 1 : 2);
-    onlyA.sort((x, y) => sev(x.severity) - sev(y.severity));
-    onlyB.sort((x, y) => sev(x.severity) - sev(y.severity));
-
-    return { onlyA, onlyB, both, neither, sharedCases, uncoveredCases };
+    const sev = (s: string | null) => {
+        const i = ['critical', 'high', 'medium', 'low'].indexOf(s?.toLowerCase() ?? '');
+        return i === -1 ? 4 : i;
+    };
+    const bySev = (x: GoldenSplit, y: GoldenSplit) => sev(x.severity) - sev(y.severity);
+    onlyA.sort(bySev);
+    onlyB.sort(bySev);
+    return { onlyA, onlyB, both, neither, sharedCases };
 }
-
 
 export interface GoldenRow {
     text: string;
@@ -136,37 +131,25 @@ export interface PerCaseRow {
     goldens: GoldenRow[];
 }
 
-/**
- * Zip dos dois lados feito NO SERVIDOR.
- *
- * Antes o /compare mandava `casesA` e `casesB` inteiros como prop e o cliente
- * zipava. Como o texto de cada golden existe nos dois lados, ele atravessava o
- * payload RSC DUAS vezes (medido: 3 ocorrencias do mesmo texto por resposta —
- * 1 no HTML renderizado, 2 no payload). O cliente so precisa do resultado do
- * zip: `ca` e `cb` eram devolvidos no objeto e nunca lidos.
- */
+/** Both sides zipped on the server, so gold text crosses the RSC payload once. */
 export function buildPerCase(a: LeaderboardEntry, b: LeaderboardEntry): PerCaseRow[] {
-    const byCaseB = new Map<string, CaseSample>();
-    for (const s of allSamples) if (s.entryKey === b.key) byCaseB.set(s.caseId, s);
-
+    const cb = casesOf(b.key);
     const out: PerCaseRow[] = [];
-    for (const ca of allSamples) {
-        if (ca.entryKey !== a.key) continue;
-        const cb = byCaseB.get(ca.caseId);
-        if (!cb) continue;
-        const goldens: GoldenRow[] = [];
-        if (ca.goldensDetail && cb.goldensDetail) {
-            const byTextB = new Map(cb.goldensDetail.map((g) => [g.text, g]));
-            for (const ga of ca.goldensDetail) {
-                goldens.push({
-                    text: ga.text,
-                    severity: ga.severity,
-                    foundA: ga.matched,
-                    foundB: byTextB.get(ga.text)?.matched ?? false,
-                });
-            }
-        }
-        out.push({ caseId: ca.caseId, repo: ca.repo, language: ca.language, goldens });
+    for (const ca of [...casesOf(a.key).values()].sort((x, y) => x.caseId.localeCompare(y.caseId))) {
+        const sb = cb.get(ca.caseId);
+        if (!sb) continue;
+        const bById = new Map(sb.goldensDetail.map((g) => [g.issueId, g]));
+        out.push({
+            caseId: ca.caseId,
+            repo: ca.repo,
+            language: ca.language,
+            goldens: ca.goldensDetail.map((g) => ({
+                text: g.text,
+                severity: g.severity,
+                foundA: g.matched,
+                foundB: bById.get(g.issueId)?.matched ?? false,
+            })),
+        });
     }
     return out;
 }

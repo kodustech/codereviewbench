@@ -12,7 +12,7 @@
  * prefers-reduced-motion.
  */
 import Scorecard from './Scorecard';
-import { displayNameOf, modelSlug } from '@/lib/constants';
+import { displayNameOf, judgeLabel, MODE_LABELS } from '@/lib/constants';
 import type { LeaderboardEntry } from '@/lib/types';
 
 interface Props {
@@ -33,14 +33,15 @@ export default function ScorecardStack({ entries }: Props) {
           <Scorecard
             modelName={displayNameOf(e.modelId)}
             harness={e.harness}
-            judge={e.judge}
-            executionMode={e.executionMode}
+            mode={MODE_LABELS[e.mode].toLowerCase()}
+            judge={judgeLabel(e.judge)}
             cases={e.cases}
             goldensTotal={e.goldensTotal}
             goldensMatched={e.goldensMatched}
-            recall={e.score}
+            recall={e.recall}
             precision={e.precision}
-            artifactPath={`scorecards/${modelSlug(e.modelId)}.json`}
+            f2={e.f2}
+            artifactPath={`data-v3/scorecards/${e.mode === 'heavy' ? 'heavy' : 'light'}/${e.modelId}.json`}
           />
         </div>
       ))}

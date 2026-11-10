@@ -1,0 +1,1417 @@
+{
+ "benchmarkVersion": "light-30-gold-v3",
+ "run": {
+  "harness": {
+   "name": "kodus",
+   "version": "dev"
+  },
+  "teamConfig": null,
+  "model": {
+   "id": "claude-opus-5.5",
+   "provider": "anthropic",
+   "accessPath": "api"
+  },
+  "executionMode": "live",
+  "sandbox": "alive",
+  "heavy": false,
+  "reasoning": {
+   "config": "vendor-default",
+   "effortRequested": null
+  },
+  "runAt": "2026-11-09T13:17:34.130Z",
+  "mode": "balanced"
+ },
+ "judge": {
+  "model": "claude-haiku-5-5",
+  "gold": "gold-v3",
+  "rule": "same problem at the same place; each valid TP once; everything else FP"
+ },
+ "aggregate": {
+  "cases": 30,
+  "casesScored": 30,
+  "recallMicro": 0.4214876033057851,
+  "precisionMicro": 0.5257731958762887,
+  "f1Micro": 0.46788990825688076,
+  "f2Micro": 0.43889845094664365,
+  "recallMacro": 0.44287439613526564,
+  "precisionMacro": 0.49214285714285716,
+  "goldensTotal": 121,
+  "goldensMatched": 51,
+  "comments": 97,
+  "usage": {
+   "inputTokens": 9118920,
+   "outputTokens": 315459,
+   "reasoningTokens": 89060,
+   "cacheReadTokens": 5846561,
+   "cacheWriteTokens": 891081
+  },
+  "calls": 334
+ },
+ "cases": [
+  {
+   "caseId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.6666666666666666,
+    "precision": 1.0,
+    "matched": 6,
+    "goldens": 9,
+    "findings": 6,
+    "tpFindings": 6,
+    "fpFindings": 0,
+    "matchedGoldens": [
+     {
+      "issueId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com#03",
+      "text": "When externalCalendarId is absent, updateEvent/deleteEvent look for a destination calendar whose externalId equals that absent value, so the lookup never matches and the configured destination calendar is no longer used.",
+      "severity": "high"
+     },
+     {
+      "issueId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com#04",
+      "text": "The organization slug is now set only when team billing is enabled (inverted condition), so with billing both slug and requestedSlug are set and without billing neither is.",
+      "severity": "high"
+     },
+     {
+      "issueId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com#07",
+      "text": "The Google Meet fallback reads mainHostDestinationCalendar.integration without optional chaining, so a Meet booking with a null or empty destinationCalendar throws instead of falling back to Cal Video.",
+      "severity": "high"
+     },
+     {
+      "issueId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com#08",
+      "text": "For collective events whose organizer has no destination calendar, destinationCalendar is null and the optional push drops all other hosts' destination calendars, so those hosts never get calendar events.",
+      "severity": "high"
+     },
+     {
+      "issueId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com#09",
+      "text": "Video booking references are now saved without their credentialId, so cancelling the booking can no longer find the video credential and the meeting is not deleted.",
+      "severity": "high"
+     },
+     {
+      "issueId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com#13",
+      "text": "Cancelling all remaining occurrences of a recurring collective booking deletes only the first calendar reference of each booking, repeated once per host, so the other hosts' events stay on their calendars.",
+      "severity": "high"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com#05",
+      "text": "Office365 (and Lark) createEvent ignore the new credentialId argument and always use the first destination calendar, so in collective bookings other hosts' credentials target the organizer's calendar instead of their own.",
+      "severity": "high"
+     },
+     {
+      "issueId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com#sncc-01",
+      "text": "When cancelling a recurring booking with multiple calendar references, the recurring-event deletion over all remaining bookings and credentials runs once per reference, causing duplicate delete calls and errors.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com#prod-01",
+      "text": "In Google createEvent, when no destination calendar matches the credentialId, the hangout-link events.patch is called with an undefined calendarId and fails, so the Meet link is not added to the event description.",
+      "severity": "medium"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 405279,
+    "outputTokens": 13985,
+    "reasoningTokens": 3795,
+    "cacheReadTokens": 259118,
+    "cacheWriteTokens": 45152
+   },
+   "calls": 17,
+   "latencyMs": null
+  },
+  {
+   "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.5,
+    "precision": 0.8,
+    "matched": 4,
+    "goldens": 8,
+    "findings": 5,
+    "tpFindings": 4,
+    "fpFindings": 1,
+    "matchedGoldens": [
+     {
+      "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#01",
+      "text": "isTeamAdminOrOwner combines isTeamAdmin and isTeamOwner with &&, so only team owners pass; team admins who are not organizer or attendee are wrongly rejected with FORBIDDEN.",
+      "severity": "high"
+     },
+     {
+      "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#02",
+      "text": "The guest blacklist is lowercased but incoming guest emails are compared without normalization, so a blacklisted address submitted with different casing bypasses BLACKLISTED_GUEST_EMAILS and is added and emailed.",
+      "severity": "high"
+     },
+     {
+      "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#06",
+      "text": "The handler passes the unfiltered guests list to sendAddGuestsEmails, which uses it to pick who gets AttendeeScheduledEmail, so existing attendees included in the request receive a new-booking confirmation instead of the add-guests email.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#08",
+      "text": "EventManager is created with the requesting user's credentials, so when a non-organizer adds guests the organizer's calendar event is not updated (or the wrong account is used) for references without a credentialId.",
+      "severity": "high"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#03",
+      "text": "The server never deduplicates the guests array, so a request with the same email twice inserts duplicate attendee rows for the booking.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#16",
+      "text": "sendAddGuestsEmails ignores the event type's disableStandardEmails settings, so hosts and attendees receive add-guests emails even when standard emails are disabled.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#e2b-01",
+      "text": "The add-guests handler omits booking.iCalUID from the CalendarEvent, so the add-guests emails' .ics attachments use booking.uid as UID and recipients' calendars treat them as a new event rather than an update of the original booking invite.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "add-guest-management-functionality-to-existing-bookings-cal-com#kimi-01",
+      "text": "Guest email uniqueness is checked case-sensitively, so case variants of the same address are accepted as distinct guests (and slip past the lowercased blacklist).",
+      "severity": "high"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 325052,
+    "outputTokens": 14377,
+    "reasoningTokens": 3664,
+    "cacheReadTokens": 181467,
+    "cacheWriteTokens": 32852
+   },
+   "calls": 16,
+   "latencyMs": null
+  },
+  {
+   "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.8888888888888888,
+    "precision": 0.6666666666666666,
+    "matched": 8,
+    "goldens": 9,
+    "findings": 12,
+    "tpFindings": 8,
+    "fpFindings": 4,
+    "matchedGoldens": [
+     {
+      "issueId": "oauth-credential-sync-and-app-integration-enhancements-cal-com#02",
+      "text": "The webhook parses the body with zod .parse and decrypts/JSON-parses the keys without error handling, so invalid payloads produce 500 errors instead of 400 responses.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "oauth-credential-sync-and-app-integration-enhancements-cal-com#07",
+      "text": "parseRefreshTokenResponse writes the hardcoded string 'refresh_token' when the refresh response omits a refresh token, so the stored credential gets an invalid refresh token and later refreshes fail.",
+      "severity": "high"
+     },
+     {
+      "issueId": "oauth-credential-sync-and-app-integration-enhancements-cal-com#08",
+      "text": "minimumTokenResponseSchema uses computed keys from z.string().toString(), which produce a literal key rather than a wildcard, so the sync-mode schema does not validate or keep expiry and other token fields as intended.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "oauth-credential-sync-and-app-integration-enhancements-cal-com#10",
+      "text": "Google Calendar persists the safeParse result object instead of its data as the credential key, corrupting the stored credential so later reads fail.",
+      "severity": "high"
+     },
+     {
+      "issueId": "oauth-credential-sync-and-app-integration-enhancements-cal-com#13",
+      "text": "Salesforce getClient now refreshes the OAuth token and writes the credential on every service construction, adding a network round trip and DB write even when the access token is valid.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "oauth-credential-sync-and-app-integration-enhancements-cal-com#14",
+      "text": "The new Salesforce token refresh uses prisma without importing it, so the code fails type checking and throws a ReferenceError at runtime.",
+      "severity": "high"
+     },
+     {
+      "issueId": "oauth-credential-sync-and-app-integration-enhancements-cal-com#16",
+      "text": "Salesforce checks response.statusText !== 'OK' instead of response.ok when refreshing the token, which can misclassify successful responses, and then ignores the refreshed token.",
+      "severity": "high"
+     },
+     {
+      "issueId": "oauth-credential-sync-and-app-integration-enhancements-cal-com#17",
+      "text": "After refreshing the Salesforce token, jsforce.Connection is created with the stale access_token and instance_url instead of the newly refreshed values.",
+      "severity": "high"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "oauth-credential-sync-and-app-integration-enhancements-cal-com#opa-01",
+      "text": "The app-credential webhook looks up appStoreMetadata by app.slug, but the map is keyed by dirName, so apps whose slug differs from their directory (e.g. google-calendar) always get a 404 and their credentials cannot be synced.",
+      "severity": "high"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 573490,
+    "outputTokens": 34625,
+    "reasoningTokens": 10581,
+    "cacheReadTokens": 348607,
+    "cacheWriteTokens": 44974
+   },
+   "calls": 34,
+   "latencyMs": null
+  },
+  {
+   "caseId": "sms-workflow-reminder-retry-count-tracking-cal-com",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.6,
+    "precision": 0.75,
+    "matched": 3,
+    "goldens": 5,
+    "findings": 4,
+    "tpFindings": 3,
+    "fpFindings": 1,
+    "matchedGoldens": [
+     {
+      "issueId": "sms-workflow-reminder-retry-count-tracking-cal-com#04",
+      "text": "The retry-count update inside the catch block is not guarded, so if it throws (for example the reminder was deleted concurrently) the error escapes the loop and the cron run fails, skipping the remaining reminders.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "sms-workflow-reminder-retry-count-tracking-cal-com#06",
+      "text": "Claims transient errors increment retryCount, so two runs during an outage delete the whole pending SMS reminder queue.",
+      "severity": "critical"
+     },
+     {
+      "issueId": "sms-workflow-reminder-retry-count-tracking-cal-com#e2b-01",
+      "text": "SMS-sending locks are counted as failed scheduling attempts: scheduleSMS returns undefined for locked users/teams, retryCount is incremented, and after two cron runs the retryCount > 1 cleanup deletes future reminders even if sending is later unlocked.",
+      "severity": "high"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "sms-workflow-reminder-retry-count-tracking-cal-com#01",
+      "text": "retryCount is set to reminder.retryCount + 1 from a value read at the start of the run instead of an atomic increment, so overlapping runs can lose increments.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "sms-workflow-reminder-retry-count-tracking-cal-com#02",
+      "text": "The deleteMany OR clause applies retryCount > 1 without the SMS method filter, so the SMS cron deletes any workflow reminder (email, WhatsApp) with retryCount above 1.",
+      "severity": "high"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 210608,
+    "outputTokens": 11329,
+    "reasoningTokens": 2885,
+    "cacheReadTokens": 129287,
+    "cacheWriteTokens": 7830
+   },
+   "calls": 13,
+   "latencyMs": null
+  },
+  {
+   "caseId": "feat-2fa-backup-codes-cal-com",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.0,
+    "precision": 0.0,
+    "matched": 0,
+    "goldens": 1,
+    "findings": 3,
+    "tpFindings": 0,
+    "fpFindings": 3,
+    "matchedGoldens": [],
+    "missedGoldens": [
+     {
+      "issueId": "feat-2fa-backup-codes-cal-com#01",
+      "text": "The credentials authorize() skips the password check when any totpCode is present, and the new backup-code branch never validates that totpCode, so a backup code plus a dummy totpCode logs in without the account password.",
+      "severity": "critical"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 305452,
+    "outputTokens": 9492,
+    "reasoningTokens": 2609,
+    "cacheReadTokens": 186116,
+    "cacheWriteTokens": 24829
+   },
+   "calls": 10,
+   "latencyMs": null
+  },
+  {
+   "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.3333333333333333,
+    "precision": 1.0,
+    "matched": 1,
+    "goldens": 3,
+    "findings": 1,
+    "tpFindings": 1,
+    "fpFindings": 0,
+    "matchedGoldens": [
+     {
+      "issueId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com#prod-02",
+      "text": "Claims getBaseConditions returns OR fragments without parentheses, so a caller appending `AND <extra>` would leak rows outside the authorization scope.",
+      "severity": "high"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com#03",
+      "text": "The getBaseConditions test uses a single booking matching both auth and filter conditions, so it would pass even if the conditions were not combined.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com#kimi-03",
+      "text": "The new public options type makes teamId optional for team scope, so a missing teamId compiles and silently yields empty insights instead of a type error.",
+      "severity": "medium"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 179359,
+    "outputTokens": 4324,
+    "reasoningTokens": 1123,
+    "cacheReadTokens": 114278,
+    "cacheWriteTokens": 18311
+   },
+   "calls": 5,
+   "latencyMs": null
+  },
+  {
+   "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.3333333333333333,
+    "precision": 0.5714285714285714,
+    "matched": 4,
+    "goldens": 12,
+    "findings": 7,
+    "tpFindings": 4,
+    "fpFindings": 3,
+    "matchedGoldens": [
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#06",
+      "text": "PollFeed reads i.content.scrub for every feed item, so items without a content element (common in RSS feeds that only have description) raise NoMethodError and abort the import of the remaining items.",
+      "severity": "high"
+     },
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#09",
+      "text": "TopicEmbed.import appends a footer that interpolates the URL unescaped into an <a href='...'> tag in raw HTML that is later rendered unsanitized, so a crafted URL can inject markup; it also appends to contents with << without handling nil.",
+      "severity": "critical"
+     },
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#22",
+      "text": "absolutize_urls only handles root-relative paths: protocol-relative URLs like //cdn.example.com/x.png are rewritten to http://host/cdn.example.com/x.png and path-relative links are left unresolved, breaking links and images in imported posts.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#30",
+      "text": "Every retrieval of an article not yet embedded synchronously polls and imports the entire RSS feed, and since throttling is per URL, many different article requests repeat the full feed download and processing.",
+      "severity": "medium"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#04",
+      "text": "The referer and embed_url host checks compare against SiteSetting.embeddable_host case-sensitively, so a host differing only in case is rejected even though hostnames are case-insensitive.",
+      "severity": "high"
+     },
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#18",
+      "text": "When the embedded post has been deleted, TopicEmbed.import's update path passes a nil embed.post to PostRevisor and crashes on every later import of that URL.",
+      "severity": "high"
+     },
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#19",
+      "text": "Claims import_remote crashes on unparseable pages (nil content) and dead URLs because it does no nil check or network error handling around open(url).read.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#33",
+      "text": "The 'requires feed_polling_url' and 'requires embed_by_username' specs leave feed_polling_enabled at its false default, so they never reach the condition they name and would pass with those checks deleted.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#sncc-03",
+      "text": "The embed layout references the 'embed' stylesheet and embed.js, but neither is in config.assets.precompile, so with precompiled assets in production the embed page fails to load them.",
+      "severity": "high"
+     },
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#opa-01",
+      "text": "The retrieve throttle is keyed by the full embed URL, so an anonymous client can vary the query string on the embeddable host to bypass it and make the server create an unbounded number of topics.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#opa-04",
+      "text": "The \"requires feed_polling_enabled?\" spec leaves feed_polling_url and embed_by_username at their blank defaults, so poll_feed is skipped regardless and the test would pass even without the enabled check.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "enhance-embed-url-handling-and-validation-system-discourse-cursor#kimip-01",
+      "text": "`import_remote` fetches the embed URL with open-uri, which follows redirects, so the embeddable-host check on the initial URL can be bypassed to reach internal services (SSRF).",
+      "severity": "high"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 370115,
+    "outputTokens": 23316,
+    "reasoningTokens": 7550,
+    "cacheReadTokens": 229206,
+    "cacheWriteTokens": 23551
+   },
+   "calls": 22,
+   "latencyMs": null
+  },
+  {
+   "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.25,
+    "precision": 0.14285714285714285,
+    "matched": 1,
+    "goldens": 4,
+    "findings": 7,
+    "tpFindings": 1,
+    "fpFindings": 6,
+    "matchedGoldens": [
+     {
+      "issueId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor#07",
+      "text": "The migration reads execute(...)[0]['id'] for embed_category without checking for an empty result, so installs without that setting stored crash the migration instead of falling back to the uncategorized category.",
+      "severity": "high"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor#11",
+      "text": "After saving a host, the component overwrites its category with findById(categoryId); when no category was chosen this is null even though the server saved the uncategorized category, so the row shows no category until reload.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor#14",
+      "text": "Hosts saved with a port (allowed by the validation regex) are stored as host:port, but lookup compares only URI.host, so those configured hosts never match and embedding fails for them.",
+      "severity": "high"
+     },
+     {
+      "issueId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor#prod-01",
+      "text": "EmbeddableHost's host format validation only accepts TLDs of 2-5 letters, so admins cannot add embeddable hosts on longer TLDs like example.technology.",
+      "severity": "high"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 287086,
+    "outputTokens": 16474,
+    "reasoningTokens": 5332,
+    "cacheReadTokens": 194622,
+    "cacheWriteTokens": 24811
+   },
+   "calls": 18,
+   "latencyMs": null
+  },
+  {
+   "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.2,
+    "precision": 1.0,
+    "matched": 1,
+    "goldens": 5,
+    "findings": 1,
+    "tpFindings": 1,
+    "fpFindings": 0,
+    "matchedGoldens": [
+     {
+      "issueId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor#pf-sonnet-C1",
+      "text": "On mobile the .small-action custom message keeps margin-left:-40px, tuned for the old 4em left padding; with the new flex layout and 1.5% padding it is pulled into the avatar column and overlaps the icon.",
+      "severity": "medium"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor#01",
+      "text": "The flex-item styles target the inner .extra-info-wrapper instead of the component's root div, so in the flexbox header a long topic title keeps its full width and pushes the navigation panel out instead of being truncated.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor#02",
+      "text": "The align-items mixin emits no -moz-box-align, so on old Firefox versions using the display:-moz-box fallback the advertised vertical centering is not applied.",
+      "severity": "low"
+     },
+     {
+      "issueId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor#05",
+      "text": "Removing the float-based right alignment of .d-header .panel leaves the server-rendered (no-JS) header's login panel, which sits inside .row and is not a flex item, no longer right-aligned next to the title.",
+      "severity": "low"
+     },
+     {
+      "issueId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor#pf-gpt-C1",
+      "text": "Making .small-action a flex container leaves .small-action-desc content-sized (no flex:1), so the right-floated edit/delete buttons inside it sit right after short action descriptions instead of at the right edge of the row.",
+      "severity": "low"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 121752,
+    "outputTokens": 4281,
+    "reasoningTokens": 1106,
+    "cacheReadTokens": 87174,
+    "cacheWriteTokens": 5258
+   },
+   "calls": 5,
+   "latencyMs": null
+  },
+  {
+   "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.375,
+    "precision": 0.75,
+    "matched": 3,
+    "goldens": 8,
+    "findings": 4,
+    "tpFindings": 3,
+    "fpFindings": 1,
+    "matchedGoldens": [
+     {
+      "issueId": "feature-automatically-downsize-large-images-discourse-cursor#01",
+      "text": "downsize is defined twice in OptimizedImage; the new (from, to, dimensions, opts) version overrides the (max_width, max_height) one, so existing callers such as ResizeEmoji that pass width and height now raise ArgumentError.",
+      "severity": "high"
+     },
+     {
+      "issueId": "feature-automatically-downsize-large-images-discourse-cursor#02",
+      "text": "The client-side upload size check hardcodes 10 MB instead of the per-type max_<type>_size_kb setting, so attachment limits diverge from the server: larger allowed attachments are blocked and smaller limits are only enforced server-side.",
+      "severity": "high"
+     },
+     {
+      "issueId": "feature-automatically-downsize-large-images-discourse-cursor#03",
+      "text": "The upload downsizing passes a percentage ('80%') as dimensions, but for animated GIFs the gifsicle path uses --resize-fit, which expects WxH geometry, so downsizing silently fails.",
+      "severity": "high"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "feature-automatically-downsize-large-images-discourse-cursor#04",
+      "text": "Auto-downsizing passes the upload tempfile path, which lacks a .gif extension, so the animated branch is never chosen and convert keeps only the first frame, flattening oversized animated GIFs.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "feature-automatically-downsize-large-images-discourse-cursor#09",
+      "text": "Claims the downsize loop checking tempfile.size may never terminate because of a stale cached size, causing infinite loops.",
+      "severity": "high"
+     },
+     {
+      "issueId": "feature-automatically-downsize-large-images-discourse-cursor#sncc-01",
+      "text": "The 413 upload error message states a hard-coded 10 MB maximum that may not match the limit the server or web server actually enforces.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "feature-automatically-downsize-large-images-discourse-cursor#opa-01",
+      "text": "The upload tempfile path, which for API URL uploads embeds the request-controlled type param, is now passed to OptimizedImage.downsize and run unescaped in a shell via backticks, allowing command injection through type.",
+      "severity": "critical"
+     },
+     {
+      "issueId": "feature-automatically-downsize-large-images-discourse-cursor#musep-01",
+      "text": "Oversized SVG uploads go through the new ImageMagick downsize loop because SVG counts as an image, so the vector file is rasterized or corrupted in place before Upload.create_for parses it as SVG.",
+      "severity": "high"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 174072,
+    "outputTokens": 11783,
+    "reasoningTokens": 3868,
+    "cacheReadTokens": 97023,
+    "cacheWriteTokens": 8151
+   },
+   "calls": 12,
+   "latencyMs": null
+  },
+  {
+   "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.3,
+    "precision": 1.0,
+    "matched": 3,
+    "goldens": 10,
+    "findings": 3,
+    "tpFindings": 3,
+    "fpFindings": 0,
+    "matchedGoldens": [
+     {
+      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#01",
+      "text": "The admin group pager computes total pages as floor(user_count / limit) + 1, so when the member count is an exact multiple of the limit it shows an extra page and Next navigates to an empty member list.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#06",
+      "text": "The public members endpoint now always caps results at 50 per page, but the public group members page has no pagination, so groups with more than 50 members are silently truncated for users.",
+      "severity": "high"
+     },
+     {
+      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#opa-01",
+      "text": "Admin add_members pushes every username into group.users without skipping existing members, so adding someone already in the group hits the unique group_users index, returns a 500 and leaves earlier users partially added.",
+      "severity": "medium"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#04",
+      "text": "Paging actions fire overlapping member requests and each response unconditionally overwrites offset and members, so a stale response arriving last can revert the list to an earlier page.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#07",
+      "text": "Creating a group ignores the alias_level the admin selected, saving only name and visibility, so new groups keep the default alias level.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#10",
+      "text": "Removing a member deletes the membership row directly and skips clearing the user's primary_group_id, so a removed user can keep this group as their primary group.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#opa-02",
+      "text": "The public group members endpoint takes `limit` from params with no upper bound or positivity check, letting a visitor request huge pages or trigger a 500 with a negative limit.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#snloop-01",
+      "text": "Admin remove_member calls group.users.delete with a raw integer id, which raises RecordNotFound (404/500) when the user is not or no longer a member, e.g. on concurrent removal.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#musep-01",
+      "text": "Admin remove_member deletes memberships with group.users.delete, which skips GroupUser callbacks, so the cached groups.user_count is never decremented and stays inflated.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "fix-proper-handling-of-group-memberships-discourse-cursor#muse13-01",
+      "text": "Group member pagination is off by one when user_count is a multiple of limit: Next moves to offset == user_count and shows an empty page.",
+      "severity": "medium"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 290216,
+    "outputTokens": 8212,
+    "reasoningTokens": 2287,
+    "cacheReadTokens": 201831,
+    "cacheWriteTokens": 20381
+   },
+   "calls": 10,
+   "latencyMs": null
+  },
+  {
+   "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
+   "status": "scored",
+   "metrics": {
+    "recall": 1.0,
+    "precision": 1.0,
+    "matched": 2,
+    "goldens": 2,
+    "findings": 2,
+    "tpFindings": 2,
+    "fpFindings": 0,
+    "matchedGoldens": [
+     {
+      "issueId": "feature-localization-fallbacks-server-side-discourse-cursor#01",
+      "text": "Fallback locale catalogs are only loaded in the controller's set_locale filter, while translate loads just the current locale, so translations outside requests (jobs, mailers) cannot fall back to the site default or English.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "feature-localization-fallbacks-server-side-discourse-cursor#06",
+      "text": "The translation cache key does not include the site or its default locale, but fallback results now depend on SiteSetting.default_locale, so multisite processes or a changed default locale serve stale fallback translations.",
+      "severity": "medium"
+     }
+    ],
+    "missedGoldens": []
+   },
+   "usage": {
+    "inputTokens": 135718,
+    "outputTokens": 6394,
+    "reasoningTokens": 1657,
+    "cacheReadTokens": 91439,
+    "cacheWriteTokens": 6527
+   },
+   "calls": 8,
+   "latencyMs": null
+  },
+  {
+   "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.5,
+    "precision": 0.25,
+    "matched": 1,
+    "goldens": 2,
+    "findings": 4,
+    "tpFindings": 1,
+    "fpFindings": 3,
+    "matchedGoldens": [
+     {
+      "issueId": "anonymous-add-configurable-device-limit-grafana-codex#07",
+      "text": "tagDeviceUI caches the device key before CreateOrUpdateDevice; when the store returns ErrDeviceLimitReached the entry stays, so the next request from the same device skips the limit check and authenticates for up to 29 minutes.",
+      "severity": "high"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "anonymous-add-configurable-device-limit-grafana-codex#11",
+      "text": "The new auth.anonymous device_limit setting has no entry in conf/defaults.ini, so the GF_AUTH_ANONYMOUS_DEVICE_LIMIT environment override is ignored and the limit stays 0.",
+      "severity": "high"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 262023,
+    "outputTokens": 11891,
+    "reasoningTokens": 3389,
+    "cacheReadTokens": 148583,
+    "cacheWriteTokens": 18655
+   },
+   "calls": 13,
+   "latencyMs": null
+  },
+  {
+   "caseId": "frontend-asset-optimization-grafana-codex",
+   "status": "scored",
+   "metrics": {
+    "recall": null,
+    "precision": 0.0,
+    "matched": 0,
+    "goldens": 0,
+    "findings": 1,
+    "tpFindings": 0,
+    "fpFindings": 1,
+    "matchedGoldens": [],
+    "missedGoldens": []
+   },
+   "usage": {
+    "inputTokens": 69023,
+    "outputTokens": 2552,
+    "reasoningTokens": 382,
+    "cacheReadTokens": 50668,
+    "cacheWriteTokens": 4424
+   },
+   "calls": 5,
+   "latencyMs": null
+  },
+  {
+   "caseId": "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex",
+   "status": "scored",
+   "metrics": {
+    "recall": null,
+    "precision": 0.0,
+    "matched": 0,
+    "goldens": 0,
+    "findings": 1,
+    "tpFindings": 0,
+    "fpFindings": 1,
+    "matchedGoldens": [],
+    "missedGoldens": []
+   },
+   "usage": {
+    "inputTokens": 253611,
+    "outputTokens": 4865,
+    "reasoningTokens": 1333,
+    "cacheReadTokens": 178939,
+    "cacheWriteTokens": 20485
+   },
+   "calls": 5,
+   "latencyMs": null
+  },
+  {
+   "caseId": "dual-storage-architecture-grafana-codex",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.5555555555555556,
+    "precision": 1.0,
+    "matched": 5,
+    "goldens": 9,
+    "findings": 5,
+    "tpFindings": 5,
+    "fpFindings": 0,
+    "matchedGoldens": [
+     {
+      "issueId": "dual-storage-architecture-grafana-codex#02",
+      "text": "The legacy DeleteCollection goroutine records its duration with recordStorageDuration instead of recordLegacyDuration, misattributing legacy latency and errors to the storage metric.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "dual-storage-architecture-grafana-codex#03",
+      "text": "Delete's success path records the storage metric with the object name in the kind label instead of options.Kind, creating per-object series and inconsistent labels.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "dual-storage-architecture-grafana-codex#04",
+      "text": "On storage Create/Update failure the duration is recorded with recordLegacyDuration, attributing unified-store errors to the legacy metric.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "dual-storage-architecture-grafana-codex#05",
+      "text": "Mode 3 legacy writes now run in background goroutines derived from the request context, which is cancelled when the request completes, so legacy writes can be cancelled and legacy storage falls out of sync.",
+      "severity": "high"
+     },
+     {
+      "issueId": "dual-storage-architecture-grafana-codex#06",
+      "text": "Legacy.Update now receives the original objInfo instead of a wrapper carrying the object stored in unified storage, so legacy recomputes the update and can diverge.",
+      "severity": "high"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "dual-storage-architecture-grafana-codex#07",
+      "text": "The Mode 3 tests never wait for or assert the asynchronous legacy writes, and legacy and storage share one mock, so removing the legacy calls would not fail them.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "dual-storage-architecture-grafana-codex#11",
+      "text": "Independent per-request goroutines remove ordering between legacy writes to the same resource, so legacy can end up with an older version or a resurrected object.",
+      "severity": "high"
+     },
+     {
+      "issueId": "dual-storage-architecture-grafana-codex#sncc-01",
+      "text": "DualWriterMode3.Delete now returns on any unified-storage error, including NotFound, before deleting from legacy, so objects that exist only in legacy can no longer be deleted.",
+      "severity": "high"
+     },
+     {
+      "issueId": "dual-storage-architecture-grafana-codex#snapi-01",
+      "text": "Mode 3 legacy-storage write errors (create/update/delete/delete-collection) are no longer logged after moving to async goroutines; only a duration metric with an error flag is recorded.",
+      "severity": "medium"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 299598,
+    "outputTokens": 13031,
+    "reasoningTokens": 2561,
+    "cacheReadTokens": 165364,
+    "cacheWriteTokens": 28340
+   },
+   "calls": 16,
+   "latencyMs": null
+  },
+  {
+   "caseId": "unified-storage-performance-optimizations-grafana-codex",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.3333333333333333,
+    "precision": 1.0,
+    "matched": 1,
+    "goldens": 3,
+    "findings": 1,
+    "tpFindings": 1,
+    "fpFindings": 0,
+    "matchedGoldens": [
+     {
+      "issueId": "unified-storage-performance-optimizations-grafana-codex#01",
+      "text": "BuildIndex now locks only the final cache assignment, so concurrent callers for the same uncached key all build the same expensive index in parallel and the last one overwrites the others.",
+      "severity": "medium"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "unified-storage-performance-optimizations-grafana-codex#02",
+      "text": "The new startup log calls TotalDocs, which iterates the index cache without a lock, after the event goroutine that can add indexes has started, so a concurrent map read and write can crash the process.",
+      "severity": "high"
+     },
+     {
+      "issueId": "unified-storage-performance-optimizations-grafana-codex#sncc-01",
+      "text": "The PR skips the storage-server module integration test on postgres instead of fixing the failure, removing coverage of the new eager initialization on postgres.",
+      "severity": "medium"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 240170,
+    "outputTokens": 4902,
+    "reasoningTokens": 1031,
+    "cacheReadTokens": 147869,
+    "cacheWriteTokens": 10184
+   },
+   "calls": 5,
+   "latencyMs": null
+  },
+  {
+   "caseId": "notification-rule-processing-engine-grafana-codex",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.25,
+    "precision": 0.3333333333333333,
+    "matched": 1,
+    "goldens": 4,
+    "findings": 3,
+    "tpFindings": 1,
+    "fpFindings": 2,
+    "matchedGoldens": [
+     {
+      "issueId": "notification-rule-processing-engine-grafana-codex#01",
+      "text": "The pause menu item is still gated on a Grafana ruler rule, but the list view now passes only the Prometheus rule, so Pause/Resume disappears for list-view rules even when the user may pause them.",
+      "severity": "high"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "notification-rule-processing-engine-grafana-codex#02",
+      "text": "The Delete menu item still requires a ruler rule, which list-view Grafana rules no longer provide, so users with delete permission lose the Delete action.",
+      "severity": "high"
+     },
+     {
+      "issueId": "notification-rule-processing-engine-grafana-codex#03",
+      "text": "When the Grafana prom-rule branch is skipped (datasource rules), useAllGrafanaPromRuleAbilities(undefined) still reports Duplicate as supported and allowed by Grafana create permission, and AlertRuleMenu ORs it with the ruler ability, so Duplicate appears on cloud rules even when the ruler check denies it.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "notification-rule-processing-engine-grafana-codex#11",
+      "text": "For list-view Grafana rules RuleActionsButtons gets only promRule, so the Silence menu item is shown but the silence drawer, still gated on a ruler alerting rule, never renders and clicking Silence does nothing.",
+      "severity": "high"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 291775,
+    "outputTokens": 9147,
+    "reasoningTokens": 2584,
+    "cacheReadTokens": 159172,
+    "cacheWriteTokens": 42091
+   },
+   "calls": 10,
+   "latencyMs": null
+  },
+  {
+   "caseId": "implement-access-token-context-encoding-framework-keycloak",
+   "status": "scored",
+   "metrics": {
+    "recall": null,
+    "precision": 0.0,
+    "matched": 0,
+    "goldens": 0,
+    "findings": 7,
+    "tpFindings": 0,
+    "fpFindings": 7,
+    "matchedGoldens": [],
+    "missedGoldens": []
+   },
+   "usage": {
+    "inputTokens": 792787,
+    "outputTokens": 26307,
+    "reasoningTokens": 7090,
+    "cacheReadTokens": 501616,
+    "cacheWriteTokens": 64678
+   },
+   "calls": 24,
+   "latencyMs": null
+  },
+  {
+   "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
+   "status": "scored",
+   "metrics": {
+    "recall": null,
+    "precision": 0.0,
+    "matched": 0,
+    "goldens": 0,
+    "findings": 1,
+    "tpFindings": 0,
+    "fpFindings": 1,
+    "matchedGoldens": [],
+    "missedGoldens": []
+   },
+   "usage": {
+    "inputTokens": 96294,
+    "outputTokens": 2961,
+    "reasoningTokens": 597,
+    "cacheReadTokens": 63276,
+    "cacheWriteTokens": 12515
+   },
+   "calls": 5,
+   "latencyMs": null
+  },
+  {
+   "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+   "status": "scored",
+   "metrics": {
+    "recall": 1.0,
+    "precision": 0.5,
+    "matched": 2,
+    "goldens": 2,
+    "findings": 4,
+    "tpFindings": 2,
+    "fpFindings": 2,
+    "matchedGoldens": [
+     {
+      "issueId": "add-html-sanitizer-for-translated-message-resources-keycloak#06",
+      "text": "The diff-trimming code computes common prefix and suffix independently, so they can overlap and substring throws StringIndexOutOfBoundsException, crashing the verifier instead of reporting the illegal HTML.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "add-html-sanitizer-for-translated-message-resources-keycloak#10",
+      "text": "The account and admin UI bundles now use Java MessageFormat placeholders and choice syntax for error-invalid-multivalued-size, but i18next expects {{n}}, so the UI shows literal {0}/{1}/{2} and the raw choice text.",
+      "severity": "medium"
+     }
+    ],
+    "missedGoldens": []
+   },
+   "usage": {
+    "inputTokens": 320692,
+    "outputTokens": 16980,
+    "reasoningTokens": 5215,
+    "cacheReadTokens": 189303,
+    "cacheWriteTokens": 43784
+   },
+   "calls": 19,
+   "latencyMs": null
+  },
+  {
+   "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.0,
+    "precision": 0.0,
+    "matched": 0,
+    "goldens": 8,
+    "findings": 1,
+    "tpFindings": 0,
+    "fpFindings": 1,
+    "matchedGoldens": [],
+    "missedGoldens": [
+     {
+      "issueId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak#01",
+      "text": "Claims the removal-cleanup listener is guarded by the V1 fine-grained flag, so client/role/group permissions are orphaned when V1 is disabled or only V2 is enabled.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak#03",
+      "text": "getClientsWithPermission in ClientPermissionsV2 only finds the type-level 'Clients' resource and returns its name, never actual client ids, so callers that resolve the returned values as client ids get wrong results or null clients.",
+      "severity": "high"
+     },
+     {
+      "issueId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak#04",
+      "text": "Claims getResourceTypeResource can return null in ClientPermissionsV2.hasPermission, causing a NullPointerException in findByResource.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak#09",
+      "text": "ClientPermissionsV2.canView() ignores a global MANAGE permission, so admins with only global manage take the unpaginated, per-client evaluated listing path.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak#10",
+      "text": "canView(client) short-circuits on the global all-clients VIEW permission, so a client-specific permission denying an admin is never evaluated and the client is still viewable.",
+      "severity": "high"
+     },
+     {
+      "issueId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak#11",
+      "text": "The negative check for removing a default client scope expects ForbiddenException, but it can come from the preceding getDefaultClientScopes() call, so the test passes even without a permission check on removal.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak#opa-02",
+      "text": "ClientPermissionsV2.canExchangeTo throws UnsupportedOperationException, but AbstractTokenExchangeProvider still calls clients().canExchangeTo for client-to-client exchange, so with token exchange and FGAP V2 enabled the request fails with a server error instead of a permission decision.",
+      "severity": "high"
+     },
+     {
+      "issueId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak#musep-01",
+      "text": "In ClientPermissionsV2.hasPermission, an admin granted a permission on all clients is denied on any client that also has its own per-client permission resource, because only the per-client resource is evaluated.",
+      "severity": "high"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 459465,
+    "outputTokens": 11805,
+    "reasoningTokens": 4091,
+    "cacheReadTokens": 276603,
+    "cacheWriteTokens": 57447
+   },
+   "calls": 7,
+   "latencyMs": null
+  },
+  {
+   "caseId": "fixing-re-authentication-with-passkeys-keycloak",
+   "status": "scored",
+   "metrics": {
+    "recall": null,
+    "precision": 0.0,
+    "matched": 0,
+    "goldens": 0,
+    "findings": 1,
+    "tpFindings": 0,
+    "fpFindings": 1,
+    "matchedGoldens": [],
+    "missedGoldens": []
+   },
+   "usage": {
+    "inputTokens": 337118,
+    "outputTokens": 7481,
+    "reasoningTokens": 3250,
+    "cacheReadTokens": 231887,
+    "cacheWriteTokens": 39624
+   },
+   "calls": 5,
+   "latencyMs": null
+  },
+  {
+   "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.5,
+    "precision": 1.0,
+    "matched": 1,
+    "goldens": 2,
+    "findings": 1,
+    "tpFindings": 1,
+    "fpFindings": 0,
+    "matchedGoldens": [
+     {
+      "issueId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak#02",
+      "text": "The test registers cleanup for the literal alias \"alias\" instead of the created IDP aliases, so the created identity providers are never cleaned up.",
+      "severity": "low"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak#opa-01",
+      "text": "Adding the organization/BROKER_PUBLIC check to the shared LoginFilter.getLoginPredicate also changes IdentityProviderBean.federatedProviderPredicate, so with organizations disabled a user's linked IdP that has an organizationId but is not public is no longer shown on the login page.",
+      "severity": "high"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 238471,
+    "outputTokens": 5191,
+    "reasoningTokens": 2169,
+    "cacheReadTokens": 141810,
+    "cacheWriteTokens": 32436
+   },
+   "calls": 5,
+   "latencyMs": null
+  },
+  {
+   "caseId": "replays-self-serve-bulk-delete-system-sentry",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.1,
+    "precision": 0.5,
+    "matched": 1,
+    "goldens": 10,
+    "findings": 2,
+    "tpFindings": 1,
+    "fpFindings": 1,
+    "matchedGoldens": [
+     {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#sncc-01",
+      "text": "Error event timestamps (seconds) are compared with replay recording event timestamps (milliseconds), so errors are not interleaved chronologically with breadcrumbs.",
+      "severity": "medium"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#01",
+      "text": "The age/timestamp mutual-exclusion validators check truthiness via initial_data.get(), so a zero value is treated as absent and a report carrying both fields passes validation.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#02",
+      "text": "The validation-failure warning logs the entire raw, attacker-controlled browser report instead of a redacted subset.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#07",
+      "text": "The Snuba replay lookup for error IDs runs even when enable_error_context=false, adding a needless query (and failure point) to opt-out requests.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#12",
+      "text": "With the use-table-widget-visualization flag on, the widget renders TableWidgetVisualization with hardcoded empty columns and data instead of the query results, so every table widget shows an empty table.",
+      "severity": "high"
+     },
+     {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#13",
+      "text": "The custom cell renderers fall back to default rendering on any falsy return (0, '', null), not only undefined, so a renderer cannot render zero or an empty cell.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#19",
+      "text": "The attribute-keys query key no longer includes the organization slug, so two organizations with the same filters share a cache entry and switching orgs can show the previous org's attribute names.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#opa-01",
+      "text": "Every paginated breadcrumb-summary request queries the replay and fetches all of its error events from nodestore with no cap, adding latency and memory proportional to the replay's error count on each page.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#opa-02",
+      "text": "HIDDEN_ATTRIBUTES is applied only when a search query is present; the no-search early return shows all attributes, so the hidden attributes still appear in the default span attributes view.",
+      "severity": "medium"
+     },
+     {
+      "issueId": "replays-self-serve-bulk-delete-system-sentry#opa-03",
+      "text": "The bulk delete test sets max_segment_id to None to cover the new guard in _make_recording_filenames, but it mocks delete_matched_rows, so the guard is never executed and removing it would not fail the test.",
+      "severity": "medium"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 942161,
+    "outputTokens": 7095,
+    "reasoningTokens": 1891,
+    "cacheReadTokens": 720040,
+    "cacheWriteTokens": 158678
+   },
+   "calls": 8,
+   "latencyMs": null
+  },
+  {
+   "caseId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry",
+   "status": "scored",
+   "metrics": {
+    "recall": 1.0,
+    "precision": 0.5,
+    "matched": 2,
+    "goldens": 2,
+    "findings": 4,
+    "tpFindings": 2,
+    "fpFindings": 2,
+    "matchedGoldens": [
+     {
+      "issueId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry#03",
+      "text": "The restart path only kills a hung flusher if it is a multiprocessing.Process, but spawn-context workers are SpawnProcess, so hung processes are never killed and a duplicate flusher is started for the same shards.",
+      "severity": "high"
+     },
+     {
+      "issueId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry#04",
+      "text": "join() breaks out of the per-process loop when the shared deadline expires, skipping termination of the remaining flusher processes and leaving them running after shutdown.",
+      "severity": "medium"
+     }
+    ],
+    "missedGoldens": []
+   },
+   "usage": {
+    "inputTokens": 322199,
+    "outputTokens": 10842,
+    "reasoningTokens": 2185,
+    "cacheReadTokens": 201360,
+    "cacheWriteTokens": 17956
+   },
+   "calls": 12,
+   "latencyMs": null
+  },
+  {
+   "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+   "status": "scored",
+   "metrics": {
+    "recall": null,
+    "precision": 0.0,
+    "matched": 0,
+    "goldens": 0,
+    "findings": 1,
+    "tpFindings": 0,
+    "fpFindings": 1,
+    "matchedGoldens": [],
+    "missedGoldens": []
+   },
+   "usage": {
+    "inputTokens": 161077,
+    "outputTokens": 4021,
+    "reasoningTokens": 1024,
+    "cacheReadTokens": 115706,
+    "cacheWriteTokens": 19982
+   },
+   "calls": 5,
+   "latencyMs": null
+  },
+  {
+   "caseId": "github-oauth-security-enhancement-sentry",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.0,
+    "precision": 0.0,
+    "matched": 0,
+    "goldens": 1,
+    "findings": 3,
+    "tpFindings": 0,
+    "fpFindings": 3,
+    "matchedGoldens": [],
+    "missedGoldens": [
+     {
+      "issueId": "github-oauth-security-enhancement-sentry#10",
+      "text": "test_installation_not_found uses a wrong OAuth state, so it fails at the state check and never reaches the installation-not-found path it is meant to test.",
+      "severity": "medium"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 304922,
+    "outputTokens": 8903,
+    "reasoningTokens": 2003,
+    "cacheReadTokens": 199761,
+    "cacheWriteTokens": 18559
+   },
+   "calls": 10,
+   "latencyMs": null
+  },
+  {
+   "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
+   "status": "scored",
+   "metrics": {
+    "recall": 0.5,
+    "precision": 1.0,
+    "matched": 1,
+    "goldens": 2,
+    "findings": 1,
+    "tpFindings": 1,
+    "fpFindings": 0,
+    "matchedGoldens": [
+     {
+      "issueId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry#02",
+      "text": "MetricAlertDetectorHandler subclasses StatefulDetectorHandler without implementing its abstract methods, so instantiating it for metric alert detectors raises TypeError where it previously returned an empty-result handler.",
+      "severity": "high"
+     }
+    ],
+    "missedGoldens": [
+     {
+      "issueId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry#04",
+      "text": "The mock occurrence builder ignores its value argument, so tests (e.g. group_2 expected with 6 while the packet carries 10) pass regardless of which value is passed to build_occurrence_and_event_data.",
+      "severity": "medium"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 182741,
+    "outputTokens": 4979,
+    "reasoningTokens": 1239,
+    "cacheReadTokens": 125879,
+    "cacheWriteTokens": 23373
+   },
+   "calls": 5,
+   "latencyMs": null
+  },
+  {
+   "caseId": "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry",
+   "status": "scored",
+   "metrics": {
+    "recall": null,
+    "precision": 0.0,
+    "matched": 0,
+    "goldens": 0,
+    "findings": 1,
+    "tpFindings": 0,
+    "fpFindings": 1,
+    "matchedGoldens": [],
+    "missedGoldens": []
+   },
+   "usage": {
+    "inputTokens": 166594,
+    "outputTokens": 3914,
+    "reasoningTokens": 569,
+    "cacheReadTokens": 108557,
+    "cacheWriteTokens": 15243
+   },
+   "calls": 5,
+   "latencyMs": null
+  }
+ ]
+}

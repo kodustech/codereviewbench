@@ -8,7 +8,7 @@ import { SITE_TAGLINE } from '@/lib/site';
 export const metadata = {
   title: `${SITE_TAGLINE} Leaderboard`,
   // Cortada pra caber nos ~155 chars que o Google exibe.
-  description: `Which AI model finds the most real bugs? ${meta.totalEntries} models ranked on ${meta.totalCases} merged pull requests, scored against ${meta.totalGoldens} human-reported bugs.`,
+  description: `Which AI model finds the most real bugs? ${meta.totalModels} models ranked by F2 in balanced and heavy review modes on ${meta.totalCases} merged PRs, against ${meta.totalGoldens} confirmed bugs.`,
   alternates: { canonical: '/leaderboard' },
 };
 

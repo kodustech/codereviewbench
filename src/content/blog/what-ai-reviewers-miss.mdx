@@ -2,19 +2,23 @@
 title: When an AI reviewer misses a bug, the code was usually right there
 description: We classified 792 missed bugs across thirteen models. 79% were real misses, where the relevant code was available and the model did not find the problem. Only 5% were artifacts of the test setup.
 date: '2026-08-22'
-dateModified: '2026-10-26'
+dateModified: '2026-11-08'
 keywords:
   - ai code review false negatives
   - ai code review accuracy
   - why ai code review misses bugs
 faq:
   - q: "Why does AI code review miss bugs?"
-    a: "Mostly not for lack of context. Classifying all 792 bugs these models failed to find, 79% are genuine misses — the model already had access to the relevant code and simply didn't flag the problem. Only 5% were missed because a needed file wasn't available in the test setup."
+    a: "In the v1 benchmark (Aug–Sep 2026), mostly not for lack of context. Classifying all 792 bugs these models failed to find, 79% are genuine misses — the model already had access to the relevant code and simply didn't flag the problem. Only 5% were missed because a needed file wasn't available in the test setup."
   - q: "Does a clean pass from an AI code reviewer mean a pull request has no bugs?"
-    a: "No. The base rate here is that these models miss most real bugs, and when they miss, it's usually a genuine miss, not a gap in what they were shown. A clean pass from an AI gate shouldn't be read as evidence the pull request is bug-free."
+    a: "In the v1 benchmark (Aug–Sep 2026): No. The base rate here is that these models miss most real bugs, and when they miss, it's usually a genuine miss, not a gap in what they were shown. A clean pass from an AI gate shouldn't be read as evidence the pull request is bug-free."
   - q: "What severity are the issues AI code reviewers actually flag?"
-    a: "Mostly medium. Across all models, 48% of reported findings are self-rated medium severity and only 3% critical — a wall of moderate comments is the typical output, with severe findings rare enough to get lost in it."
+    a: "In the v1 benchmark (Aug–Sep 2026), mostly medium. Across all models, 48% of reported findings are self-rated medium severity and only 3% critical — a wall of moderate comments is the typical output, with severe findings rare enough to get lost in it."
 ---
+
+> **Note, 2026-11-07:** the numbers in this post come from the v1 benchmark (Aug–Sep 2026), which used a
+> different gold set, judge and cost method. The benchmark has since been re-run on a re-labelled gold set
+> with two review modes; see the [current leaderboard](/leaderboard) for today's numbers.
 
 It would be comforting if the misses were the benchmark's fault. They are not.
 

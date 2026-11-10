@@ -55,14 +55,26 @@ function main() {
     const lb = JSON.parse(fs.readFileSync(LEADERBOARD_PATH, 'utf8'));
     fs.mkdirSync(OUT_DIR, { recursive: true });
     let count = 0;
+    // Um badge por modelo: F2 do modo balanced (o ranking padrao); heavy so
+    // quando o modelo ainda nao tem balanced. Badges de modelos que sairam do
+    // leaderboard sao apagados pra nao servir numero velho.
+    const byModel = new Map();
     for (const e of lb.entries) {
+        if (!byModel.has(e.modelId) || e.mode === 'balanced') byModel.set(e.modelId, e);
+    }
+    const keep = new Set();
+    for (const e of byModel.values()) {
         // Nome do arquivo usa o slug (`--`), nao o id cru: `@` num path de URL
         // 404a no Next. Mesma regra de modelSlug() em src/lib/constants.ts —
         // duplicada aqui porque este script e CommonJS puro, sem o alias `@/`.
         const slug = e.modelId.replace('@', '--');
-        const svg = badgeSvg('codereviewbench', `${e.modelId} · F1 ${e.f1.toFixed(1)}`, ACCENT_HEX);
+        keep.add(`${slug}.svg`);
+        const svg = badgeSvg('codereviewbench', `${e.modelId} · ${e.mode} F2 ${e.f2.toFixed(1)}`, ACCENT_HEX);
         fs.writeFileSync(path.join(OUT_DIR, `${slug}.svg`), svg);
         count += 1;
+    }
+    for (const f of fs.readdirSync(OUT_DIR)) {
+        if (f.endsWith('.svg') && !keep.has(f)) fs.unlinkSync(path.join(OUT_DIR, f));
     }
     console.log(`✅ ${count} badge(s) → public/badge/`);
 }

@@ -1,26 +1,55 @@
-/** modelId (o mesmo que TIER0 no kodus-ai) → nome e fornecedor pra exibição. */
+import type { ReviewMode } from './types';
+
+/** v3 roster: site id → display name and vendor. Models without a scorecard
+ *  yet show up as "running" on the leaderboard (see pendingModels). */
 export const DISPLAY_NAMES: Record<string, { name: string; provider: string }> = {
   'deepseek-v4-pro': { name: 'DeepSeek V4 Pro', provider: 'DeepSeek' },
-  'deepseek-v4-flash': { name: 'DeepSeek V4 Flash', provider: 'DeepSeek' },
-  'deepseek-v4.1-flash@fireworks': { name: 'DeepSeek V4.1 Flash', provider: 'DeepSeek' },
-  'qwen3.8-max': { name: 'Qwen3.8 Max', provider: 'Alibaba' },
-  'qwen3.8-27b': { name: 'Qwen3.8 27B', provider: 'Alibaba' },
-  'kimi-k3': { name: 'Kimi K3', provider: 'Moonshot' },
-  'kimi-k2.7-code': { name: 'Kimi K2.7 Code', provider: 'Moonshot' },
-  'muse-spark-1.2': { name: 'Muse Spark 1.2', provider: 'Meta' },
-  'muse-spark-1.3': { name: 'Muse Spark 1.3', provider: 'Meta' },
-  'gemini-3.7-flash': { name: 'Gemini 3.7 Flash', provider: 'Google' },
-  'gpt-5.6-luna': { name: 'GPT-5.6 Luna', provider: 'OpenAI' },
-  'gpt-5.6-terra': { name: 'GPT-5.6 Terra', provider: 'OpenAI' },
-  'grok-4.5': { name: 'Grok 4.5', provider: 'xAI' },
-  'grok-4.6': { name: 'Grok 4.6', provider: 'xAI' },
-  'glm-5.2': { name: 'GLM-5.2', provider: 'Zhipu' },
+  'deepseek-v4.1-flash': { name: 'DeepSeek V4.1 Flash', provider: 'DeepSeek' },
+  'kimi-k3.1-pro': { name: 'Kimi K3.1 Pro', provider: 'Moonshot' },
+  'glm-5.3': { name: 'GLM-5.3', provider: 'Zhipu' },
   'glm-5.3-flash': { name: 'GLM-5.3 Flash', provider: 'Zhipu' },
-  // Rodado via Fireworks (gateway), nao pela API nativa da Z.ai — o sufixo
-  // fica no id (e no scorecard), mas o nome exibido e do MODELO, nao da rota.
-  // A rota aparece no campo `harness`/nota de custo, nao no nome.
-  'glm-5.2@fireworks': { name: 'GLM-5.2', provider: 'Zhipu' },
-  'minimax-m3@fireworks': { name: 'MiniMax M3', provider: 'MiniMax' },
+  'minimax-m3': { name: 'MiniMax M3', provider: 'MiniMax' },
+  'gemini-3.8-flash': { name: 'Gemini 3.8 Flash', provider: 'Google' },
+  'muse-spark-1.2': { name: 'Muse Spark 1.2', provider: 'Meta' },
+  'gpt-6.1-sol': { name: 'GPT-6.1 Sol', provider: 'OpenAI' },
+  'gpt-6-luna': { name: 'GPT-6 Luna', provider: 'OpenAI' },
+  'claude-sonnet-5.5': { name: 'Claude Sonnet 5.5', provider: 'Anthropic' },
+  'claude-opus-5.5': { name: 'Claude Opus 5.5', provider: 'Anthropic' },
+  'qwen3.8-27b': { name: 'Qwen3.8 27B', provider: 'Alibaba' },
+};
+
+export const V3_ROSTER = Object.keys(DISPLAY_NAMES);
+
+/** Roster models with no published row yet in any mode. */
+export function pendingModels(publishedModelIds: string[]): string[] {
+  const have = new Set(publishedModelIds);
+  return V3_ROSTER.filter((id) => !have.has(id));
+}
+
+export const MODE_LABELS: Record<ReviewMode, string> = {
+  balanced: 'Balanced',
+  heavy: 'Heavy',
+};
+
+export const MODE_DESCRIPTIONS: Record<ReviewMode, string> = {
+  balanced: 'The normal review, with one generalist agent.',
+  heavy: 'The generalist plus 9 specialist lens agents in parallel, then the same verify and dedup steps.',
+};
+
+/** Judge model id (as in the scorecard) → display name. */
+export const JUDGE_LABELS: Record<string, string> = {
+  'claude-haiku-5-5': 'Claude Haiku 5.5',
+};
+
+export function judgeLabel(id: string | null | undefined): string {
+  if (!id) return 'unknown';
+  return JUDGE_LABELS[id] || id;
+}
+
+export const COST_BASIS_LABELS: Record<string, string> = {
+  api: 'API list price',
+  'api-equivalent': 'API-equivalent',
+  unpriced: 'no published price',
 };
 
 /** modelId → segmento de URL seguro.
@@ -49,6 +78,9 @@ export function providerOf(modelId: string): string {
  *  (nenhum modelo desses fornecedores está publicado ainda) — rodar o
  *  validador com o conjunto completo antes de publicar algo que os use. */
 export const PROVIDER_COLORS: Record<string, string> = {
+  // Anthropic (2026-11-07): marca oficial e quase-preta; no tema claro ela le
+  //   bem e nao colide com nenhuma cor da paleta. NAO validada no script.
+  Anthropic: '#262626',
   Alibaba: '#2b6cb0',
   DeepSeek: '#dd6b20',
   Moonshot: '#38a169',

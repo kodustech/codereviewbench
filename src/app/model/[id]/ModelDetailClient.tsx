@@ -2,44 +2,62 @@
 
 import { cn } from '@/lib/utils';
 import { formatScore, formatMoney, formatCI, formatDelta } from '@/lib/format';
-import { displayNameOf, providerOf, modelSlug, REPO_LABELS, LANGUAGE_LABELS } from '@/lib/constants';
+import {
+  displayNameOf,
+  providerOf,
+  modelSlug,
+  REPO_LABELS,
+  LANGUAGE_LABELS,
+  MODE_LABELS,
+  MODE_DESCRIPTIONS,
+  COST_BASIS_LABELS,
+  judgeLabel,
+} from '@/lib/constants';
 import { pairSlug } from '@/lib/pair-slug';
-import type { LeaderboardEntry, LeaderboardAverages, ModelDetailCase } from '@/lib/types';
-import StatsCard from '@/components/shared/StatsCard';
+import type { LeaderboardEntry, LeaderboardAverages, ReviewMode } from '@/lib/types';
 import Badge from '@/components/shared/Badge';
 import ProviderLogo from '@/components/shared/ProviderLogo';
 import Link from 'next/link';
-import { ArrowLeft, Target, Shield, DollarSign, Coins, ChevronDown, ChevronUp, Code2, Check } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp, Code2, Check, X } from 'lucide-react';
 import { useState } from 'react';
 
+const MODES: ReviewMode[] = ['balanced', 'heavy'];
+
+export interface ModeRun {
+  matched: number;
+  goldens: number;
+  comments: number;
+  tp: number;
+  fp: number;
+  costUsd: number | null;
+}
+
+export interface ModelCaseRow {
+  caseId: string;
+  repo: string;
+  language: string;
+  sizeBucket: string | null;
+  runs: Partial<Record<ReviewMode, ModeRun>>;
+  goldens: { issueId: string; text: string; severity: string | null; found: Partial<Record<ReviewMode, boolean>> }[];
+}
+
 interface ModelDetailClientProps {
-  entry: LeaderboardEntry;
-  averages: LeaderboardAverages;
-  allEntries: LeaderboardEntry[];
-  cases: ModelDetailCase[];
+  modelId: string;
+  entries: Record<ReviewMode, LeaderboardEntry | null | undefined>;
+  averages: Record<ReviewMode, LeaderboardAverages>;
+  modeTotals: Record<ReviewMode, number>;
+  /** Other models with a row in each mode, for compare links. */
+  others: Record<ReviewMode, string[]>;
+  cases: ModelCaseRow[];
 }
 
-function classificationLabel(c: string): { label: string; variant: 'default' | 'amber' | 'error' } {
-  if (c === 'realMiss') return { label: 'missed — code was available', variant: 'error' };
-  if (c === 'artifact') return { label: 'outside replay corpus', variant: 'default' };
-  return { label: 'unverifiable', variant: 'amber' };
+/** Where a pair lives: balanced keeps /compare/<pair>, heavy is under /compare/heavy. */
+function pairHref(mode: ReviewMode, a: string, b: string): string {
+  const slug = pairSlug(modelSlug(a), modelSlug(b));
+  return mode === 'heavy' ? `/compare/heavy/${slug}` : `/compare/${slug}`;
 }
 
-// Cores reaproveitadas dos tokens do tema (neutro → âmbar da marca → coral →
-// perigo), sem inventar uma nova cor só pra essa faixa de severidade.
-const SEVERITY_ORDER = [
-  { key: 'low' as const, label: 'Low', color: 'var(--muted)' },
-  { key: 'medium' as const, label: 'Medium', color: 'var(--accent)' },
-  { key: 'high' as const, label: 'High', color: 'var(--accent-2)' },
-  { key: 'critical' as const, label: 'Critical', color: 'var(--danger)' },
-];
-
-const CATEGORY_ORDER = [
-  { key: 'bug' as const, label: 'Bug' },
-  { key: 'performance' as const, label: 'Performance' },
-  { key: 'security' as const, label: 'Security' },
-  { key: 'other' as const, label: 'Other' },
-];
+const SEVERITY_ORDER = ['critical', 'high', 'medium', 'low'] as const;
 
 const SITE_URL = 'https://codereviewbench.com';
 
@@ -95,12 +113,31 @@ function EmbedButton({ modelId }: { modelId: string }) {
   );
 }
 
-export default function ModelDetailClient({ entry, averages, allEntries, cases }: ModelDetailClientProps) {
-  const [expandedCase, setExpandedCase] = useState<string | null>(null);
-  const provider = providerOf(entry.modelId);
-  const severityTotal = Object.values(entry.findingsBySeverity).reduce((a, b) => a + b, 0);
+export default function ModelDetailClient({ modelId, entries, averages, modeTotals, others, cases }: ModelDetailClientProps) {
+  const provider = providerOf(modelId);
+  const modes = MODES.filter((m) => entries[m]);
+  const headline = entries.balanced ?? entries.heavy!;
+  const headlineMode: ReviewMode = entries.balanced ? 'balanced' : 'heavy';
+  const avgF2 = averages[headlineMode]?.f2;
 
-  const repoRows = Object.entries(entry.byRepo).sort((a, b) => b[1].goldens - a[1].goldens);
+  type Row = { label: string; value: (e: LeaderboardEntry) => string; strong?: boolean };
+  const rows: Row[] = [
+    { label: 'Rank (by F2)', value: (e) => `#${e.rank} of ${modeTotals[e.mode]}` },
+    { label: 'F2', value: (e) => e.f2.toFixed(1), strong: true },
+    { label: 'F1', value: (e) => e.f1.toFixed(1) },
+    { label: 'Recall', value: (e) => formatScore(e.recall) },
+    { label: 'Recall 95% CI', value: (e) => formatCI(e.ciLow, e.ciHigh) },
+    { label: 'Precision', value: (e) => formatScore(e.precision) },
+    { label: 'Bugs found', value: (e) => `${e.goldensMatched} of ${e.goldensTotal}` },
+    { label: 'Comments published', value: (e) => String(e.comments) },
+    { label: 'Cost / PR', value: (e) => formatMoney(e.costPerPR, 3) },
+    { label: 'Cost / bug found', value: (e) => formatMoney(e.costPerBugFound, 3) },
+    { label: 'Total cost (30 PRs)', value: (e) => formatMoney(e.costTotal, 2) },
+  ];
+
+  const repos = [...new Set(MODES.flatMap((m) => Object.keys(entries[m]?.byRepo ?? {})))];
+  const costNote = headline.costNote;
+  const costBasis = headline.costBasis;
 
   return (
     <div className="max-w-[var(--page-max-width)] mx-auto w-full px-6 sm:px-12 py-12">
@@ -111,7 +148,7 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
         >
           <ArrowLeft className="size-4" /> Back to Leaderboard
         </Link>
-        <EmbedButton modelId={entry.modelId} />
+        <EmbedButton modelId={modelId} />
       </div>
 
       {/* Header */}
@@ -120,153 +157,158 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <span className="flex items-center gap-3 min-w-0">
               <ProviderLogo provider={provider} className="size-6" />
-              <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)]">{displayNameOf(entry.modelId)}</h1>
+              <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)]">{displayNameOf(modelId)}</h1>
             </span>
-            <span className="flex items-center gap-2">
-              <Badge variant="default">{provider}</Badge>
-            </span>
+            <Badge variant="default">{provider}</Badge>
           </div>
           <p className="text-[color:var(--muted)] font-mono text-sm">
-            Rank #{entry.rank} of {allEntries.length} · {entry.cases} PRs · {entry.goldensMatched}/{entry.goldensTotal} golden bugs found
+            {modes.map((m) => `${MODE_LABELS[m]} #${entries[m]!.rank} of ${modeTotals[m]}`).join(' · ')} · {headline.cases} PRs
           </p>
         </div>
         <div className="text-center">
-          <span className="font-display text-5xl tabular-nums text-[color:var(--accent)]">{entry.f1.toFixed(1)}</span>
+          <span className="font-display text-5xl tabular-nums text-[color:var(--accent)]">{headline.f2.toFixed(1)}</span>
           <p className="text-xs text-[color:var(--muted)] font-mono uppercase mt-1">
-            F1 · {averages.f1 != null ? formatDelta(entry.f1 - averages.f1) : '—'} vs avg
+            F2 {MODE_LABELS[headlineMode].toLowerCase()} · {avgF2 != null ? formatDelta(headline.f2 - avgF2) : '—'} vs avg
           </p>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        <StatsCard
-          icon={Target}
-          label="Recall"
-          value={formatScore(entry.score)}
-          delta={averages.score != null ? entry.score - averages.score : undefined}
-        />
-        <StatsCard
-          icon={Shield}
-          label="Precision"
-          value={formatScore(entry.precision)}
-          delta={averages.precision != null ? entry.precision - averages.precision : undefined}
-        />
-        <StatsCard icon={DollarSign} label="Cost / PR" value={formatMoney(entry.costPerPR, 3)} />
-        <StatsCard icon={Coins} label="Cost / bug found" value={formatMoney(entry.costPerBugFound, 2)} />
-      </div>
-
-      {/* Regime + CI */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-        <div className="card-hairline p-6">
-          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Confidence</h2>
-          <p className="text-sm text-[color:var(--foreground-2)] leading-relaxed relative mb-3">
-            95% bootstrap interval on recall (2000 resamples over the {entry.cases} PRs):
-            <span className="text-[color:var(--foreground)] font-mono font-bold mx-1">{formatCI(entry.ciLow, entry.ciHigh)}</span>
-            points. This measures sampling variance from which PRs are in the set.
-          </p>
-          {entry.runToRunVariance ? (
-            <p className="text-sm text-[color:var(--foreground-2)] leading-relaxed relative mb-3">
-              Judge noise (same submission, {entry.runToRunVariance.runs} independent re-scores): recall
-              <span className="text-[color:var(--foreground)] font-mono font-bold mx-1">
-                {entry.runToRunVariance.recall.mean.toFixed(1)} ± {entry.runToRunVariance.recall.stdev?.toFixed(1) ?? '—'}
-              </span>
-              pts (n={entry.runToRunVariance.runs}). This is the judge alone — the exact same findings, scored again.
-            </p>
-          ) : (
-            <p className="text-sm text-[color:var(--muted-dim)] leading-relaxed relative mb-3">Judge run-to-run variance not yet measured for this model.</p>
-          )}
-          <p className="text-xs text-[color:var(--muted-dim)] leading-relaxed relative">
-            Neither measures model run-to-run variance — re-running the review agent itself, not just the judge. One pass per entry.
-          </p>
-        </div>
-        <div className="card-hairline p-6">
-          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Run configuration</h2>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm relative">
-            <span className="text-[color:var(--muted)]">Harness</span>
-            <span className="text-[color:var(--foreground)] font-mono">{entry.harness}</span>
-            <span className="text-[color:var(--muted)]">Access path</span>
-            <span className="text-[color:var(--foreground)] font-mono">{entry.accessPath}</span>
-            <span className="text-[color:var(--muted)]">Execution mode</span>
-            <span className="text-[color:var(--foreground)] font-mono">{entry.executionMode}</span>
-            <span className="text-[color:var(--muted)]">Reasoning</span>
-            <span className="text-[color:var(--foreground)] font-mono">
-              {entry.reasoningConfig}{entry.reasoningEffort ? ` (${entry.reasoningEffort})` : ''}
-            </span>
-            <span className="text-[color:var(--muted)]">Judge</span>
-            <span className="text-[color:var(--foreground)] font-mono">{entry.judge}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Severity/category mix */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-        <div className="card-hairline p-6">
-          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-1 relative">Severity mix</h2>
-          <p className="text-xs text-[color:var(--muted-dim)] mb-4 relative">
-            What the model called its own findings — not recall by severity, goldens aren&apos;t severity-tagged.
-          </p>
-          {severityTotal > 0 ? (
-            <div className="relative">
-              <div className="flex h-2.5 w-full rounded-full overflow-hidden bg-[var(--surface-2)]">
-                {SEVERITY_ORDER.map(({ key, color }) => {
-                  const count = entry.findingsBySeverity[key];
-                  if (!count) return null;
-                  return <div key={key} style={{ width: `${(count / severityTotal) * 100}%`, background: color }} />;
-                })}
-              </div>
-              <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-3">
-                {SEVERITY_ORDER.map(({ key, color, label }) => (
-                  <span key={key} className="flex items-center gap-1.5 text-xs font-mono text-[color:var(--muted)]">
-                    <span className="size-2 rounded-full shrink-0" style={{ background: color }} />
-                    {label} <span className="text-[color:var(--foreground-2)]">{entry.findingsBySeverity[key]}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm text-[color:var(--muted-dim)] relative">No findings reported.</p>
-          )}
-        </div>
-        <div className="card-hairline p-6">
-          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-1 relative">Category mix</h2>
-          <p className="text-xs text-[color:var(--muted-dim)] mb-4 relative">
-            Only bug/performance/security are consistent across models — the rest is free text, bucketed as other.
-          </p>
-          <div className="flex flex-wrap gap-2 relative">
-            {CATEGORY_ORDER.map(({ key, label }) => (
-              <span key={key} className="inline-flex items-baseline gap-1.5 px-2.5 py-1.5 rounded-md bg-[var(--surface-2)] text-xs font-mono">
-                <span className="text-[color:var(--muted)]">{label}</span>
-                <span className="text-[color:var(--foreground)] font-semibold">{entry.findingsByCategory[key]}</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* By repo */}
-      <div className="mb-12">
-        <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">By repository</h2>
+      {/* Both modes side by side */}
+      <div className="mb-4">
+        <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Balanced vs heavy</h2>
         <div className="card-hairline overflow-hidden">
           <div className="overflow-x-auto custom-scrollbar relative">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">Repo</th>
-                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">Recall</th>
-                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">Precision</th>
-                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">Goldens</th>
-                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">PRs</th>
+                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">Metric</th>
+                  {MODES.map((m) => (
+                    <th key={m} className="px-5 py-3 text-right">
+                      <span className="block text-xs font-mono text-[color:var(--foreground)] uppercase tracking-widest font-bold">{MODE_LABELS[m]}</span>
+                      <span className="block text-[11px] font-normal normal-case text-[color:var(--muted-dim)] whitespace-normal max-w-[16rem] ml-auto">{MODE_DESCRIPTIONS[m]}</span>
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {repoRows.map(([repo, stat]) => (
-                  <tr key={repo} className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--surface-2)] transition-colors">
-                    <td className="px-5 py-3 text-sm text-[color:var(--foreground)] font-medium">{REPO_LABELS[repo] || repo}</td>
-                    <td className="px-5 py-3 text-sm font-mono tabular-nums text-[color:var(--muted)] text-right">{formatScore(stat.recall)}</td>
-                    <td className="px-5 py-3 text-sm font-mono tabular-nums text-[color:var(--muted)] text-right">{formatScore(stat.precision)}</td>
-                    <td className="px-5 py-3 text-sm font-mono tabular-nums text-[color:var(--muted)] text-right">{stat.goldens}</td>
-                    <td className="px-5 py-3 text-sm font-mono tabular-nums text-[color:var(--muted)] text-right">{stat.count}</td>
+                {rows.map((r) => (
+                  <tr key={r.label} className="border-b border-[var(--border)] last:border-b-0">
+                    <td className="px-5 py-3 text-sm text-[color:var(--muted)]">{r.label}</td>
+                    {MODES.map((m) => {
+                      const e = entries[m];
+                      return (
+                        <td key={m} className="px-5 py-3 text-right">
+                          {e ? (
+                            <span className={cn('font-mono tabular-nums', r.strong ? 'text-base font-bold text-[color:var(--accent)]' : 'text-sm text-[color:var(--foreground)]')}>
+                              {r.value(e)}
+                            </span>
+                          ) : (
+                            <span className="text-xs font-mono text-[color:var(--muted-dim)]">not run yet</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p className="text-xs text-[color:var(--muted)] mt-3 leading-relaxed">
+          Cost: {COST_BASIS_LABELS[costBasis]}, with prompt cache.{costNote ? ` ${costNote}` : ''}
+          {headline.priceSource && (
+            <>
+              {' '}Prices from{' '}
+              <a href={headline.priceSource} target="_blank" rel="noopener noreferrer" className="underline hover:text-[color:var(--foreground)]">
+                the vendor&apos;s pricing page
+              </a>
+              .
+            </>
+          )}
+        </p>
+      </div>
+
+      {/* Run configuration */}
+      <div className="card-hairline p-6 mb-12 mt-8">
+        <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Run configuration</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm relative">
+          <span className="text-[color:var(--muted)]">Harness</span>
+          <span className="text-[color:var(--foreground)] font-mono">{headline.harness}</span>
+          <span className="text-[color:var(--muted)]">Access path</span>
+          <span className="text-[color:var(--foreground)] font-mono">{headline.accessPath}</span>
+          <span className="text-[color:var(--muted)]">Reasoning</span>
+          <span className="text-[color:var(--foreground)] font-mono">
+            {headline.reasoningConfig}{headline.reasoningEffort ? ` (${headline.reasoningEffort})` : ''}
+          </span>
+          <span className="text-[color:var(--muted)]">Judge</span>
+          <span className="text-[color:var(--foreground)] font-mono">{judgeLabel(headline.judge)}</span>
+          <span className="text-[color:var(--muted)]">Gold set</span>
+          <span className="text-[color:var(--foreground)] font-mono">{headline.gold ?? '—'} ({headline.goldensTotal} bugs)</span>
+          {modes.map((m) => (
+            <span key={m} className="contents">
+              <span className="text-[color:var(--muted)]">Run at ({MODE_LABELS[m].toLowerCase()})</span>
+              <span className="text-[color:var(--foreground)] font-mono">{entries[m]!.runAt?.slice(0, 16).replace('T', ' ') ?? '—'} UTC</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Recall by gold severity + by repo */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+        <div>
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Recall by bug severity</h2>
+          <div className="card-hairline overflow-hidden">
+            <table className="w-full text-left border-collapse whitespace-nowrap">
+              <thead>
+                <tr className="border-b border-[var(--border)]">
+                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">Severity</th>
+                  {MODES.map((m) => (
+                    <th key={m} className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">{MODE_LABELS[m]}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {SEVERITY_ORDER.map((sev) => (
+                  <tr key={sev} className="border-b border-[var(--border)] last:border-b-0">
+                    <td className="px-5 py-3 text-sm text-[color:var(--foreground)] capitalize">{sev}</td>
+                    {MODES.map((m) => {
+                      const st = entries[m]?.bySeverity[sev];
+                      return (
+                        <td key={m} className="px-5 py-3 text-sm font-mono tabular-nums text-[color:var(--muted)] text-right">
+                          {st ? `${st.matched}/${st.goldens}` : '—'}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Recall by repository</h2>
+          <div className="card-hairline overflow-hidden">
+            <table className="w-full text-left border-collapse whitespace-nowrap">
+              <thead>
+                <tr className="border-b border-[var(--border)]">
+                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">Repo</th>
+                  {MODES.map((m) => (
+                    <th key={m} className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">{MODE_LABELS[m]}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {repos.map((repo) => (
+                  <tr key={repo} className="border-b border-[var(--border)] last:border-b-0">
+                    <td className="px-5 py-3 text-sm text-[color:var(--foreground)]">{REPO_LABELS[repo] || repo}</td>
+                    {MODES.map((m) => {
+                      const st = entries[m]?.byRepo[repo];
+                      return (
+                        <td key={m} className="px-5 py-3 text-sm font-mono tabular-nums text-[color:var(--muted)] text-right">
+                          {st ? `${formatScore(st.recall)} (${st.matched}/${st.goldens})` : '—'}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
@@ -275,108 +317,103 @@ export default function ModelDetailClient({ entry, averages, allEntries, cases }
         </div>
       </div>
 
-      {/* Per-PR breakdown */}
+      {/* Per-PR breakdown, both modes */}
       <div className="mb-8">
         <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
           Per-PR breakdown ({cases.length})
         </h2>
         <div className="flex flex-col gap-2">
-          {cases.map((c) => {
-            const isOpen = expandedCase === c.id;
-            return (
-              <div key={c.id} className="card-hairline overflow-hidden">
-                <button
-                  onClick={() => setExpandedCase(isOpen ? null : c.id)}
-                  className="relative w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-5 py-3.5 hover:bg-[var(--surface-2)] transition-colors text-left"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-[11px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest shrink-0">
-                      {REPO_LABELS[c.repo] || c.repo} · {LANGUAGE_LABELS[c.language] || c.language}
-                    </span>
-                    <span className="text-sm text-[color:var(--foreground)] truncate font-mono">{c.caseId}</span>
-                  </div>
-                  <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0">
-                    <span className="text-xs font-mono text-[color:var(--muted)]">
-                      {c.matched}/{c.goldens} found · {c.findings.length} reported
-                    </span>
-                    {isOpen ? <ChevronUp className="size-4 text-[color:var(--muted)]" /> : <ChevronDown className="size-4 text-[color:var(--muted)]" />}
-                  </div>
-                </button>
-                {isOpen && (
-                  <div className="border-t border-[var(--border)] px-5 py-4 space-y-4 panel-in">
-                    {c.findings.length > 0 && (
-                      <div>
-                        <span className="text-[11px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold block mb-2">
-                          Reported ({c.findings.length})
-                        </span>
-                        <div className="space-y-2">
-                          {c.findings.map((f, i) => (
-                            <div key={i} className="text-sm bg-[var(--background)] border border-[var(--border)] rounded-md p-3">
-                              {f.path && (
-                                <span className="block text-xs font-mono text-[color:var(--muted-dim)] mb-1 truncate">
-                                  {f.path}{f.startLine ? `:${f.startLine}` : ''}
-                                </span>
+          {cases.map((c) => (
+            // <details>: gold text stays in the DOM for crawlers, hidden by CSS.
+            <details key={c.caseId} className="card-hairline overflow-hidden group">
+              <summary className="relative w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 px-5 py-3.5 hover:bg-[var(--surface-2)] transition-colors text-left cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="text-[11px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest shrink-0">
+                    {REPO_LABELS[c.repo] || c.repo} · {LANGUAGE_LABELS[c.language] || c.language}
+                  </span>
+                  <span className="text-sm text-[color:var(--foreground)] truncate font-mono">{c.caseId}</span>
+                </div>
+                <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0">
+                  <span className="text-xs font-mono text-[color:var(--muted)]">
+                    {MODES.map((m) => {
+                      const r = c.runs[m];
+                      return r ? `${MODE_LABELS[m].toLowerCase()} ${r.matched}/${r.goldens} found` : null;
+                    })
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </span>
+                  <ChevronDown className="size-4 text-[color:var(--muted)] group-open:hidden" />
+                  <ChevronUp className="size-4 text-[color:var(--muted)] hidden group-open:block" />
+                </div>
+              </summary>
+              <div className="border-t border-[var(--border)] px-5 py-4 space-y-4">
+                <div className="flex flex-wrap gap-2">
+                  {MODES.filter((m) => c.runs[m]).map((m) => {
+                    const r = c.runs[m]!;
+                    return (
+                      <Link
+                        key={m}
+                        href={`/traces/${modelSlug(modelId)}/${m}/${c.caseId}`}
+                        className="inline-flex items-center gap-2 card-hairline px-3 py-1.5 text-xs font-mono text-[color:var(--foreground)] hover:text-[color:var(--accent)] transition-colors"
+                      >
+                        {MODE_LABELS[m]} trace: {r.comments} comments ({r.tp} matched a bug, {r.fp} did not) · {formatMoney(r.costUsd, 3)}
+                      </Link>
+                    );
+                  })}
+                </div>
+                <div className="space-y-2">
+                  {c.goldens.map((g) => (
+                    <div key={g.issueId} className="text-sm bg-[var(--background)] border border-[var(--border)] rounded-md p-3 flex items-start gap-3">
+                      <div className="min-w-0">
+                        {g.severity && (
+                          <span className="text-[10px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest block mb-1">{g.severity}</span>
+                        )}
+                        <span className="text-[color:var(--foreground-2)] leading-relaxed">{g.text}</span>
+                        <span className="flex flex-wrap gap-x-4 mt-1.5 text-[11px] font-mono text-[color:var(--muted-dim)]">
+                          {MODES.filter((m) => c.runs[m]).map((m) => (
+                            <span key={m} className="inline-flex items-center gap-1">
+                              {g.found[m] ? (
+                                <Check className="size-3.5 text-[color:var(--success)]" aria-hidden />
+                              ) : (
+                                <X className="size-3.5" aria-hidden />
                               )}
-                              <span className="text-[color:var(--foreground-2)] leading-relaxed">{f.description}</span>
-                            </div>
+                              {MODE_LABELS[m]} {g.found[m] ? 'found it' : 'missed it'}
+                            </span>
                           ))}
-                        </div>
-                      </div>
-                    )}
-                    {c.missedGoldens.length > 0 && (
-                      <div>
-                        <span className="text-[11px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold block mb-2">
-                          Missed golden bugs ({c.missedGoldens.length})
                         </span>
-                        <div className="space-y-2">
-                          {c.missedGoldens.map((g, i) => {
-                            const cls = classificationLabel(g.classification);
-                            return (
-                              <div key={i} className="text-sm bg-[var(--background)] border border-[var(--border)] rounded-md p-3 flex items-start gap-3">
-                                <Badge variant={cls.variant} className="shrink-0 mt-0.5">{cls.label}</Badge>
-                                <span className="text-[color:var(--foreground-2)] leading-relaxed">{g.text}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
                       </div>
-                    )}
-                    {c.findings.length === 0 && c.missedGoldens.length === 0 && (
-                      <p className="text-sm text-[color:var(--muted)]">No findings reported, no golden bugs in this PR.</p>
-                    )}
-                  </div>
-                )}
+                    </div>
+                  ))}
+                  {c.goldens.length === 0 && <p className="text-sm text-[color:var(--muted)]">No gold bugs in this PR.</p>}
+                </div>
               </div>
-            );
-          })}
+            </details>
+          ))}
           {cases.length === 0 && (
-            <p className={cn('text-[color:var(--muted)] text-center py-12 font-mono text-sm')}>No case data available for this model.</p>
+            <p className="text-[color:var(--muted)] text-center py-12 font-mono text-sm">No case data available for this model.</p>
           )}
         </div>
 
-        {/* Link pras rotas de par. Sem isto as 45 paginas /compare/<a>-vs-<b> ficam
-            orfas: existem no sitemap e nenhum link interno aponta pra elas, o que
-            significa rastreio raro e autoridade proxima de zero. Daqui cada modelo
-            alcanca os outros 9, cobrindo os 45 pares. */}
-        <div className="mt-16 pt-10 border-t border-[var(--border)]">
-          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-5">
-            Compare {displayNameOf(entry.modelId)} with
-          </h2>
-          <ul className="flex flex-wrap gap-2">
-            {allEntries
-              .filter((e) => e.modelId !== entry.modelId)
-              .map((e) => (
-                <li key={e.key}>
+        {/* Links to the pair routes, so every /compare page has an internal link. */}
+        {MODES.filter((m) => others[m].length && entries[m]).map((m) => (
+          <div key={m} className="mt-12 pt-8 border-t border-[var(--border)]">
+            <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-5">
+              Compare {displayNameOf(modelId)} ({MODE_LABELS[m].toLowerCase()}) with
+            </h2>
+            <ul className="flex flex-wrap gap-2">
+              {others[m].map((other) => (
+                <li key={other}>
                   <Link
-                    href={`/compare/${pairSlug(modelSlug(entry.modelId), modelSlug(e.modelId))}`}
+                    href={pairHref(m, modelId, other)}
                     className="inline-block card-hairline px-3.5 py-2 text-sm text-[color:var(--foreground)] hover:text-[color:var(--accent)] transition-colors"
                   >
-                    {displayNameOf(e.modelId)}
+                    {displayNameOf(other)}
                   </Link>
                 </li>
               ))}
-          </ul>
-        </div>
+            </ul>
+          </div>
+        ))}
       </div>
     </div>
   );

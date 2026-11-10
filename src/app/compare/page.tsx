@@ -1,38 +1,45 @@
-import leaderboardData from '@/lib/data/leaderboard.json';
-import type { LeaderboardData } from '@/lib/types';
-import { buildPerCase } from '@/lib/compare';
+import type { ReviewMode } from '@/lib/types';
+import { buildPerCase, pairHref, pairSlug } from '@/lib/compare';
+import { entriesOf, entryFor, isMode } from '@/lib/entries';
+import { modelSlug } from '@/lib/constants';
 import CompareClient from './CompareClient';
 
-const lb = leaderboardData as unknown as LeaderboardData;
-
 export const metadata = {
-  // O layout ja aplica o template "%s | CodeReviewBench" — repetir aqui
-  // duplicaria o nome do site no title.
   title: 'Compare AI Code Review Models',
   description:
-    'Compare two AI code review models side by side on the same real pull requests: which bugs one found that the other missed, per PR, with recall, precision and cost.',
+    'Compare two AI code review models side by side on the same real pull requests, in the same review mode: which bugs one found that the other missed, with F2, recall, precision and cost.',
   alternates: { canonical: '/compare' },
 };
 
 export default async function ComparePage({
   searchParams,
 }: {
-  searchParams: Promise<{ a?: string; b?: string }>;
+  searchParams: Promise<{ a?: string; b?: string; mode?: string }>;
 }) {
-  const { a, b } = await searchParams;
-  const byF1 = [...lb.entries].sort((x, y) => y.f1 - x.f1);
-
-  const entryA = byF1.find((e) => e.modelId === a) || byF1[0];
-  // Segundo modelo: pega o próximo da lista que não seja o mesmo do primeiro,
-  // nunca deixa A e B iguais mesmo se a URL pedir isso.
-  const entryB = byF1.find((e) => e.modelId === b && e.modelId !== entryA.modelId) || byF1.find((e) => e.modelId !== entryA.modelId) || byF1[1];
-
-  // Fatia antes de virar prop: o que nao for lido pelo cliente nao precisa
-  // atravessar o payload RSC. `findings` sozinho e 66% do samples.json.
+  const { a, b, mode: modeParam } = await searchParams;
+  const mode: ReviewMode = isMode(modeParam) ? modeParam : 'balanced';
+  const ranked = entriesOf(mode);
+  if (ranked.length < 2) {
+    return (
+      <div className="max-w-[1200px] mx-auto w-full px-6 sm:px-12 py-12">
+        <h1 className="text-3xl font-display mb-3">Compare two models</h1>
+        <p className="text-[color:var(--muted)]">Fewer than two models have results in this mode yet.</p>
+      </div>
+    );
+  }
+  const entryA = ranked.find((e) => e.modelId === a) || ranked[0];
+  const entryB = ranked.find((e) => e.modelId === b && e.modelId !== entryA.modelId) || ranked.find((e) => e.modelId !== entryA.modelId)!;
+  const other: ReviewMode = mode === 'heavy' ? 'balanced' : 'heavy';
+  const otherModeHref =
+    entryFor(entryA.modelId, other) && entryFor(entryB.modelId, other)
+      ? pairHref(other, pairSlug(modelSlug(entryA.modelId), modelSlug(entryB.modelId)))
+      : `/compare?mode=${other}`;
 
   return (
     <CompareClient
-      entries={lb.entries}
+      mode={mode}
+      otherModeHref={otherModeHref}
+      entries={ranked}
       entryA={entryA}
       entryB={entryB}
       perCase={buildPerCase(entryA, entryB)}

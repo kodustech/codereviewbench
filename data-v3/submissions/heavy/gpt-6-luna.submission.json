@@ -1,0 +1,525 @@
+{
+ "benchmarkVersion": "light-30-gold-v3",
+ "run": {
+  "harness": {
+   "name": "kodus",
+   "version": "dev"
+  },
+  "teamConfig": null,
+  "model": {
+   "id": "gpt-6-luna",
+   "provider": "openai",
+   "accessPath": "api"
+  },
+  "executionMode": "live",
+  "sandbox": "alive",
+  "heavy": true,
+  "reasoning": {
+   "config": "vendor-default",
+   "effortRequested": null
+  },
+  "runAt": "2026-11-07T21:33:05.798Z",
+  "mode": "heavy"
+ },
+ "results": [
+  {
+   "caseId": "fix-handle-collective-multiple-host-on-destinationcalendar-cal-com",
+   "findings": [
+    {
+     "path": "packages/core/EventManager.ts",
+     "startLine": 118,
+     "endLine": 120,
+     "severity": "high",
+     "category": "bug",
+     "description": "Missing destination calendar crashes Google Meet fallback \u2014 Without a destination calendar, `mainHostDestinationCalendar.integration` throws before event creation can continue. Guard the missing entry to preserve the fallback behavior."
+    },
+    {
+     "path": "packages/app-store/googlecalendar/lib/CalendarService.ts",
+     "startLine": 198,
+     "endLine": 200,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Organizer email uses the first destination for every calendar update \u2014 Updates to calendars other than the first can use the wrong organizer email. Select the destination matching `externalCalendarId`, falling back to the first destination."
+    },
+    {
+     "path": "packages/core/CalendarManager.ts",
+     "startLine": 230,
+     "endLine": 230,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Hidden-notes message is hard-coded in English \u2014 Users in other locales will see the hard-coded English text. Replace `\"Notes have been hidden by the organizer\"` with the surrounding user-facing translation mechanism."
+    },
+    {
+     "path": "packages/app-store/googlecalendar/lib/CalendarService.ts",
+     "startLine": 254,
+     "endLine": 256,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Missing calendar ID leaves updates without a destination \u2014 When `externalCalendarId` is absent, `selectedCalendar` resolves to no destination and can leave the update targeting an undefined calendar ID. Fall back to a valid event destination or the primary calendar.\n\n**Also found in:**\n- `packages/app-store/googlecalendar/lib/CalendarService.ts:315-317`"
+    }
+   ]
+  },
+  {
+   "caseId": "add-guest-management-functionality-to-existing-bookings-cal-com",
+   "findings": [
+    {
+     "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+     "startLine": 74,
+     "endLine": 78,
+     "severity": "high",
+     "category": "bug",
+     "description": "Concurrent requests can add duplicate attendee emails \u2014 Concurrent requests can both pass this check and create duplicate attendees. Enforce uniqueness atomically or add a database constraint and handle conflicts."
+    },
+    {
+     "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+     "startLine": 70,
+     "endLine": 77,
+     "severity": "high",
+     "category": "security",
+     "description": "Email casing bypasses blacklist and duplicate checks \u2014 Case differences can let guests bypass the blacklist or be added twice. Normalize the submitted and stored addresses before comparing them in `uniqueGuests`."
+    },
+    {
+     "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+     "startLine": 168,
+     "endLine": 168,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Emails are sent for guests who were not added \u2014 Guests who were not inserted can receive normal scheduled emails, making notifications inconsistent with the attendee list. Pass the emails actually inserted to `sendAddGuestsEmails`."
+    },
+    {
+     "path": "packages/trpc/server/routers/viewer/bookings/addGuests.handler.ts",
+     "startLine": 52,
+     "endLine": 52,
+     "severity": "medium",
+     "category": "security",
+     "description": "Case-sensitive attendee email check denies valid attendees \u2014 An attendee whose account email differs only by case can be incorrectly denied authorization. Compare normalized addresses in `isAttendee`."
+    }
+   ]
+  },
+  {
+   "caseId": "oauth-credential-sync-and-app-integration-enhancements-cal-com",
+   "findings": [
+    {
+     "path": "packages/app-store/_utils/oauth/refreshOAuthTokens.ts",
+     "startLine": 8,
+     "endLine": 15,
+     "severity": "high",
+     "category": "bug",
+     "description": "Credential sync returns a response shape callers cannot consume \u2014 Callers may read an absent `data` property or treat the `Response` wrapper as token data when sync is enabled. Parse and normalize the endpoint response to the shape each caller expects."
+    },
+    {
+     "path": "apps/web/pages/api/webhook/app-credential.ts",
+     "startLine": 62,
+     "endLine": 90,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Concurrent webhook deliveries can create duplicate credentials \u2014 Concurrent deliveries can both create credentials for the same user and app, violating the one-credential-per-user/app invariant. Use an atomic upsert or add a unique constraint to the `Credential` schema."
+    },
+    {
+     "path": "packages/app-store/_utils/oauth/refreshOAuthTokens.ts",
+     "startLine": 5,
+     "endLine": 5,
+     "severity": "medium",
+     "category": "bug",
+     "description": "User ID 0 bypasses credential sync \u2014 A valid `userId` of `0` skips the sync path and uses the local provider refresh instead. Check explicitly for null or undefined so every valid ID uses the configured endpoint."
+    },
+    {
+     "path": "apps/web/pages/api/webhook/app-credential.ts",
+     "startLine": 24,
+     "endLine": 27,
+     "severity": "medium",
+     "category": "security",
+     "description": "Webhook secret comparison leaks matching prefixes through timing \u2014 Direct string comparison can leak matching secret prefixes through timing. Validate equal lengths, then compare the webhook secret with a constant-time function."
+    },
+    {
+     "path": "apps/web/pages/api/webhook/app-credential.ts",
+     "startLine": 56,
+     "endLine": 59,
+     "severity": "medium",
+     "category": "security",
+     "description": "Missing encryption key falls back to an empty string \u2014 Fail fast when `CALCOM_APP_CREDENTIAL_ENCRYPTION_KEY` is missing instead of attempting decryption."
+    }
+   ]
+  },
+  {
+   "caseId": "sms-workflow-reminder-retry-count-tracking-cal-com",
+   "findings": [
+    {
+     "path": "packages/features/ee/workflows/api/scheduleSMSReminders.ts",
+     "startLine": 38,
+     "endLine": 42,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Retry cleanup deletes reminders regardless of method or retry policy \u2014 A reminder that fails twice is deleted on the next scheduler run, including non-SMS reminders. Restrict `retryCount` cleanup to SMS reminders and preserve reminders until the retry policy marks them exhausted."
+    }
+   ]
+  },
+  {
+   "caseId": "feat-2fa-backup-codes-cal-com",
+   "findings": [
+    {
+     "path": "apps/web/pages/api/auth/two-factor/totp/setup.ts",
+     "startLine": 78,
+     "endLine": 78,
+     "severity": "high",
+     "category": "security",
+     "description": "Backup codes are exposed in the API response \u2014 Anyone who captures this response can use the plaintext backup codes to access the account. Avoid returning `backupCodes` in a generally observable response, or protect delivery from logging and recording."
+    },
+    {
+     "path": "packages/features/auth/lib/next-auth-options.ts",
+     "startLine": 147,
+     "endLine": 155,
+     "severity": "high",
+     "category": "bug",
+     "description": "Concurrent requests can reuse the same backup code \u2014 Replace the unconditional `prisma.user.update` with an atomic conditional update that only consumes the code if the stored set is unchanged."
+    },
+    {
+     "path": "apps/web/components/settings/TwoFactorAuthAPI.ts",
+     "startLine": 22,
+     "endLine": 22,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Security-area modal omits backup code when disabling 2FA \u2014 The security-area modal cannot disable 2FA with a backup code because it omits that value. Update its call to `disable` to pass the backup code."
+    }
+   ]
+  },
+  {
+   "caseId": "feat-convert-insightsbookingservice-to-use-prisma-sql-raw-queries-cal-com",
+   "findings": [
+    {
+     "path": "packages/lib/server/service/insightsBooking.ts",
+     "startLine": 104,
+     "endLine": 111,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Zero-valued filter IDs are ignored \u2014 ID 0 is treated as absent, so the requested SQL predicate is omitted. Check `eventTypeId` and `memberUserId` against `undefined` instead."
+    }
+   ]
+  },
+  {
+   "caseId": "enhance-embed-url-handling-and-validation-system-discourse-cursor",
+   "findings": [
+    {
+     "path": "app/models/topic_embed.rb",
+     "startLine": 22,
+     "endLine": 23,
+     "severity": "critical",
+     "category": "security",
+     "description": "Imported feed HTML is stored without sanitization \u2014 An attacker controlling a feed item can inject executable markup that runs on every embedding page. Sanitize `contents` with an allowlist before passing it to `PostCreator`."
+    }
+   ]
+  },
+  {
+   "caseId": "feature-can-edit-category-host-relationships-for-embedding-discourse-cursor",
+   "findings": [
+    {
+     "path": "db/migrate/20150818190757_create_embeddable_hosts.rb",
+     "startLine": 9,
+     "endLine": 11,
+     "severity": "high",
+     "category": "bug",
+     "description": "Missing embed_category causes the migration to raise \u2014 If `embed_category` is absent, indexing the empty query result raises and aborts the migration. Check for an empty result and use the uncategorized-category fallback."
+    },
+    {
+     "path": "app/models/embeddable_host.rb",
+     "startLine": 17,
+     "endLine": 17,
+     "severity": "medium",
+     "category": "security",
+     "description": "Mixed-case request hostnames fail allowed-host lookup \u2014 Mixed-case request hostnames can fail to match because hostnames are case-insensitive. Normalize the parsed hostname before passing it to `where`."
+    }
+   ]
+  },
+  {
+   "caseId": "optimize-header-layout-performance-with-flexbox-mixins-discourse-cursor",
+   "findings": []
+  },
+  {
+   "caseId": "feature-automatically-downsize-large-images-discourse-cursor",
+   "findings": [
+    {
+     "path": "app/models/optimized_image.rb",
+     "startLine": 149,
+     "endLine": 150,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Downsize rejects the existing width/height call form \u2014 Emoji resize jobs fail with `ArgumentError` because `resize_emoji.rb` still uses the five-argument form. Preserve compatibility in `OptimizedImage.downsize` or update the caller to pass a dimensions string."
+    }
+   ]
+  },
+  {
+   "caseId": "fix-proper-handling-of-group-memberships-discourse-cursor",
+   "findings": [
+    {
+     "path": "spec/controllers/admin/groups_controller_spec.rb",
+     "startLine": 114,
+     "endLine": 116,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Automatic-group removal test uses the wrong HTTP method \u2014 The PUT request misses the DELETE route for `remove_member`, so this test may not exercise the automatic-group guard. Send DELETE and assert 422."
+    },
+    {
+     "path": "app/assets/javascripts/admin/controllers/admin-group.js.es6",
+     "startLine": 11,
+     "endLine": 14,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Exact multiples produce an extra member page \u2014 When `user_count` is an exact multiple of `limit`, the UI exposes a nonexistent page. Use `Math.ceil(user_count / limit)` to calculate the page count."
+    }
+   ]
+  },
+  {
+   "caseId": "feature-localization-fallbacks-server-side-discourse-cursor",
+   "findings": []
+  },
+  {
+   "caseId": "anonymous-add-configurable-device-limit-grafana-codex",
+   "findings": [
+    {
+     "path": "pkg/services/anonymous/anonimpl/anonstore/database.go",
+     "startLine": 109,
+     "endLine": 116,
+     "severity": "high",
+     "category": "bug",
+     "description": "Concurrent registrations can exceed the device limit \u2014 Concurrent calls can both pass `CountDevices` and insert distinct IDs, exceeding the configured cap. Make the capacity check and insertion atomic with a transaction and appropriate locking or a database constraint."
+    }
+   ]
+  },
+  {
+   "caseId": "frontend-asset-optimization-grafana-codex",
+   "findings": []
+  },
+  {
+   "caseId": "plugins-chore-renamed-instrumentation-middleware-to-metrics-middleware-grafana-codex",
+   "findings": []
+  },
+  {
+   "caseId": "dual-storage-architecture-grafana-codex",
+   "findings": [
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 50,
+     "endLine": 52,
+     "severity": "high",
+     "category": "bug",
+     "description": "Legacy create is canceled with the request context \u2014 Request cancellation can abort the legacy write after the unified-store write succeeds, leaving the stores inconsistent. Use `context.WithoutCancel` before adding the timeout."
+    },
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 50,
+     "endLine": 57,
+     "severity": "high",
+     "category": "bug",
+     "description": "Create returns before the legacy write completes \u2014 Callers can receive success before the legacy write completes or fails, breaking consumers that rely on the legacy representation. Preserve synchronous completion or provide an explicit completion guarantee and update consumers."
+    },
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 106,
+     "endLine": 106,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Successful delete metrics use the object name as the kind label \u2014 Successful deletes use a different metric label, fragmenting or misattributing measurements. Pass `options.Kind` to `recordStorageDuration`."
+    },
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3_test.go",
+     "startLine": 65,
+     "endLine": 76,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Success case does not verify the asynchronous legacy write \u2014 The test would pass even if `Legacy.Create` were omitted or broken. Synchronize with the asynchronous call and assert that it occurs."
+    },
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 166,
+     "endLine": 166,
+     "severity": "medium",
+     "category": "bug",
+     "description": "DeleteCollection records legacy duration as storage duration \u2014 Call `recordLegacyDuration` for `d.Legacy.DeleteCollection`."
+    },
+    {
+     "path": "pkg/apiserver/rest/dualwriter_mode3.go",
+     "startLine": 45,
+     "endLine": 45,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Storage create failures are recorded as legacy operations \u2014 This attributes a `Storage.Create` failure to the legacy backend. Call `recordStorageDuration` to record the operation against the backend that ran.\n\n**Also found in:**\n- `pkg/apiserver/rest/dualwriter_mode3.go:129-129`"
+    }
+   ]
+  },
+  {
+   "caseId": "unified-storage-performance-optimizations-grafana-codex",
+   "findings": []
+  },
+  {
+   "caseId": "notification-rule-processing-engine-grafana-codex",
+   "findings": []
+  },
+  {
+   "caseId": "implement-access-token-context-encoding-framework-keycloak",
+   "findings": [
+    {
+     "path": "testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/AssertEvents.java",
+     "startLine": 482,
+     "endLine": 483,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Access token ID matcher checks the wrong grant shortcut \u2014 Correct token IDs can be rejected, while IDs with a different grant can pass. Check `substring(4, 6)` and reject only when it differs from `expectedGrantShortcut`."
+    },
+    {
+     "path": "testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/AssertEvents.java",
+     "startLine": 482,
+     "endLine": 483,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Access token ID matcher checks the wrong grant shortcut \u2014 Correct token IDs are rejected because `substring(3, 5)` includes the token-type character and only one grant character. Check `substring(4, 6)` instead."
+    },
+    {
+     "path": "testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/AssertEvents.java",
+     "startLine": 483,
+     "endLine": 483,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Access token matcher rejects the expected grant shortcut \u2014 The matcher rejects tokens that contain `expectedGrantShortcut`. Negate the equality check so it rejects only a mismatch."
+    }
+   ]
+  },
+  {
+   "caseId": "fix-concurrent-group-access-to-prevent-nullpointerexception-keycloak",
+   "findings": [
+    {
+     "path": "tests/base/src/test/java/org/keycloak/tests/admin/group/GroupTest.java",
+     "startLine": 138,
+     "endLine": 149,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Reader thread may not run or finish before the test passes \u2014 The deletion loop can finish before the reader makes a request, so the test may miss concurrent-read regressions. Use a latch to confirm a read occurred and wait for the reader to finish before asserting."
+    }
+   ]
+  },
+  {
+   "caseId": "add-html-sanitizer-for-translated-message-resources-keycloak",
+   "findings": [
+    {
+     "path": "misc/theme-verifier/src/main/java/org/keycloak/themeverifier/VerifyMessageProperties.java",
+     "startLine": 74,
+     "endLine": 79,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Missing English bundle aborts theme verification \u2014 A missing English bundle throws an unchecked exception, so `verify()` aborts instead of reporting diagnostics. Add the read failure to `messages` and return, or route it through the verifier\u2019s normal error handling."
+    }
+   ]
+  },
+  {
+   "caseId": "add-client-resource-type-and-scopes-to-authorization-schema-keycloak",
+   "findings": [
+    {
+     "path": "services/src/main/java/org/keycloak/services/resources/admin/permissions/ClientPermissionsV2.java",
+     "startLine": 217,
+     "endLine": 219,
+     "severity": "high",
+     "category": "bug",
+     "description": "Missing Clients resource causes authorization check failure \u2014 A missing Clients resource can cause a runtime failure instead of denying access. Return false when `getResourceTypeResource` returns null, before calling `findByResource`."
+    },
+    {
+     "path": "tests/base/src/test/java/org/keycloak/tests/admin/authz/fgap/PermissionClientTest.java",
+     "startLine": 278,
+     "endLine": 280,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Client listing assertion does not verify all authorized clients are returned \u2014 A nonempty result still passes when authorized clients are omitted. Assert the expected client set or size, including the surviving fixture client."
+    }
+   ]
+  },
+  {
+   "caseId": "fixing-re-authentication-with-passkeys-keycloak",
+   "findings": []
+  },
+  {
+   "caseId": "add-caching-support-for-identityproviderstorageprovider-getforlogin-operations-keycloak",
+   "findings": []
+  },
+  {
+   "caseId": "replays-self-serve-bulk-delete-system-sentry",
+   "findings": [
+    {
+     "path": "static/app/views/dashboards/widgetCard/chart.tsx",
+     "startLine": 164,
+     "endLine": 173,
+     "severity": "high",
+     "category": "bug",
+     "description": "Feature-enabled tables render with no columns or data \u2014 Enabled organizations see a blank table because `TableWidgetVisualization` receives no columns or rows. Pass the current result\u2019s data and metadata, and use its columns."
+    },
+    {
+     "path": "src/sentry/replays/endpoints/project_replay_summarize_breadcrumbs.py",
+     "startLine": 110,
+     "endLine": 119,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Missing nodestore events misassociate error details \u2014 When `get_multi` omits missing nodes, zipping `error_ids` with `events.values()` can attach details to the wrong event. Iterate the returned mapping by key or look up each requested node ID directly."
+    },
+    {
+     "path": "src/sentry/issues/endpoints/browser_reporting_collector.py",
+     "startLine": 50,
+     "endLine": 59,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Zero-valued age and timestamp bypass mutual-exclusion validation \u2014 Reports with both fields set to zero bypass the mutual-exclusion check because `validate_timestamp` and `validate_age` use truthiness. Check whether each field is present in `self.initial_data` instead."
+    }
+   ]
+  },
+  {
+   "caseId": "span-buffer-multiprocess-enhancement-with-health-monitoring-sentry",
+   "findings": []
+  },
+  {
+   "caseId": "feat-ecosystem-implement-cross-system-issue-synchronization-sentry",
+   "findings": [
+    {
+     "path": "src/sentry/integrations/services/assignment_source.py",
+     "startLine": 27,
+     "endLine": 28,
+     "severity": "high",
+     "category": "bug",
+     "description": "Assignment source payload contains a non-serializable datetime \u2014 A raw `queued` datetime can make JSON serialization fail and prevent inbound assignment changes from being enqueued. Convert it to a supported representation in `to_dict()` or omit it."
+    }
+   ]
+  },
+  {
+   "caseId": "github-oauth-security-enhancement-sentry",
+   "findings": [
+    {
+     "path": "src/sentry/integrations/github/integration.py",
+     "startLine": 500,
+     "endLine": 504,
+     "severity": "high",
+     "category": "bug",
+     "description": "Missing sender metadata raises KeyError during installation setup \u2014 Guard the `integration.metadata` lookup and treat a missing sender or login as an invalid request."
+    },
+    {
+     "path": "src/sentry/integrations/github/integration.py",
+     "startLine": 494,
+     "endLine": 498,
+     "severity": "medium",
+     "category": "bug",
+     "description": "Inactive integrations return an invalid-installation error \u2014 Inactive installations are rejected instead of continuing through the existing flow. Handle their status before the active-only lookup or route them through the missing-installation path."
+    },
+    {
+     "path": "src/sentry/integrations/github/integration.py",
+     "startLine": 500,
+     "endLine": 504,
+     "severity": "medium",
+     "category": "security",
+     "description": "GitHub login comparison is case-sensitive \u2014 Different casing can reject the same GitHub account because usernames are case-insensitive. Normalize both values from `github_authenticated_user` and `integration.metadata` before comparing them."
+    }
+   ]
+  },
+  {
+   "caseId": "feat-workflow-engine-add-in-hook-for-producing-occurrences-from-the-stateful-det-sentry",
+   "findings": []
+  },
+  {
+   "caseId": "ref-crons-reorganize-incident-creation-issue-occurrence-logic-sentry",
+   "findings": []
+  }
+ ]
+}
