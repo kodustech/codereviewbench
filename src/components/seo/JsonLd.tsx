@@ -39,7 +39,7 @@ export default function JsonLd() {
         'static analysis evaluation',
       ],
       variableMeasured: [
-        { '@type': 'PropertyValue', name: 'recall', description: `Valid true positives found out of the ${meta.totalGoldens} in the gold set (gold v3), micro-averaged across all pull requests.` },
+        { '@type': 'PropertyValue', name: 'recall', description: `Valid true positives found out of the ${meta.totalGoldens} in the gold set, micro-averaged across all pull requests.` },
         { '@type': 'PropertyValue', name: 'precision', description: 'Published comments matching a valid true positive, out of all published comments; each true positive counts once.' },
         { '@type': 'PropertyValue', name: 'F1', description: 'Harmonic mean of recall and precision.' },
         { '@type': 'PropertyValue', name: 'F2', description: 'F-score with beta = 2, 5PR/(4P+R): recall weighs twice precision. Ranking metric.' },

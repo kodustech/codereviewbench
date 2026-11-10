@@ -334,7 +334,7 @@ export default function LeaderboardClient() {
         <span className="eyebrow block mb-3">Rankings</span>
         <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)] mb-3">AI Code Review Benchmark Leaderboard</h1>
         <p className="text-[15px] text-[color:var(--foreground-2)] max-w-2xl leading-relaxed mb-3">
-          {meta.totalCases} real pull requests, {meta.totalGoldens} confirmed bugs (gold v3), judged by {judgeLabel(meta.judges[0])}.
+          {meta.totalCases} real pull requests, {meta.totalGoldens} confirmed bugs, judged by {judgeLabel(meta.judges[0])}.
           Every model runs in two review modes inside the Kodus harness. Ranked by F2.
         </p>
         <p className="text-[13px] text-[color:var(--muted)] max-w-2xl leading-relaxed">
@@ -426,7 +426,7 @@ export default function LeaderboardClient() {
               <div>
                 <h3 className="text-sm font-semibold text-[color:var(--foreground)] mb-1">Metrics</h3>
                 <p className="text-sm text-[color:var(--muted)] mb-3">
-                  Micro-averaged over all {meta.totalCases} PRs. The gold set (gold v3) holds {meta.totalGoldens} valid true
+                  Micro-averaged over all {meta.totalCases} PRs. The gold set holds {meta.totalGoldens} valid true
                   positives, labelled by Kodus. The judge ({judgeLabel(meta.judges[0])}) matches each published comment to a gold
                   bug when it is the same problem at the same place.
                 </p>

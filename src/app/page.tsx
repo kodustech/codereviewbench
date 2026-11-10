@@ -127,7 +127,7 @@ export default function Home() {
         {
           step: '01',
           title: 'Real PRs, re-labelled bugs',
-          body: `${meta.totalCases} merged pull requests from ${meta.repos.length} production OSS repos. Kodus re-labelled the real problems in each PR (Opus plus a second reviewer, debated where they disagreed) into a gold set of ${meta.totalGoldens} valid true positives, gold v3.`,
+          body: `${meta.totalCases} merged pull requests from ${meta.repos.length} production OSS repos. Kodus re-labelled the real problems in each PR (Opus plus a second reviewer, debated where they disagreed) into a gold set of ${meta.totalGoldens} valid true positives.`,
         },
         {
           step: '02',

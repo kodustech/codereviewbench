@@ -45,14 +45,14 @@ Maintained by Kodus. Every submission and scorecard is versioned in the public r
 
 ## What is measured
 
-${meta.totalModels} models, ${meta.totalCases} merged pull requests, ${meta.totalGoldens} confirmed bugs (gold v3).
+${meta.totalModels} models, ${meta.totalCases} merged pull requests, ${meta.totalGoldens} confirmed bugs.
 Repositories: ${meta.repos.join(', ')}.
 Languages: ${meta.languages.join(', ')}.
 Review modes: balanced (${MODE_DESCRIPTIONS.balanced.toLowerCase()}) and heavy (${MODE_DESCRIPTIONS.heavy.toLowerCase()})
 Judge: ${meta.judges.map(judgeLabel).join(', ')}, validated against Claude Opus 5.5 (agreed on 249 of 252 comments).
 Runs: ${meta.firstRunAt?.slice(0, 10)} to ${meta.lastRunAt?.slice(0, 10)}. Data generated ${meta.generatedAt}.
 
-Gold v3: the same 30 PRs as the earlier version of this benchmark, with the real
+Gold set: the same 30 PRs as the earlier version of this benchmark, with the real
 problems re-labelled by Kodus (Claude Opus plus a second reviewer, debated where
 they disagreed): ${meta.totalGoldens} valid true positives.
 
@@ -84,7 +84,7 @@ Kodus runs the benchmark, built the harness and labelled the gold set.
 - [Machine-readable leaderboard data](${SITE_URL}/api/leaderboard.json): metrics per model and mode. Prefer this or a model page for numerical claims.
 - [Leaderboard](${SITE_URL}/leaderboard): balanced mode; [heavy mode](${SITE_URL}/leaderboard?mode=heavy).
 - [Compare two models](${SITE_URL}/compare): side by side within one mode.
-- [Blog and analysis](${SITE_URL}/blog): posts written on the earlier v1 benchmark (Aug–Sep 2026); their numbers predate gold v3.
+- [Blog and analysis](${SITE_URL}/blog): posts written on the earlier v1 benchmark (Aug–Sep 2026); their numbers predate the current gold set.
 - [XML sitemap](${SITE_URL}/sitemap.xml).
 - [Public repository](https://github.com/kodustech/codereviewbench): scorecards, submissions, pipeline.
 - [Full site content](${SITE_URL}/llms-full.txt).

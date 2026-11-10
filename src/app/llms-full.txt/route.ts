@@ -65,7 +65,7 @@ Not run yet.
 
 # ${name} — AI Code Review Benchmark Results
 
-${name} (${provider}) on CodeReviewBench: ${any.cases} merged pull requests, ${any.goldensTotal} confirmed bugs (gold v3), judge ${judgeLabel(any.judge)}, harness ${any.harness}, access ${any.accessPath}.
+${name} (${provider}) on CodeReviewBench: ${any.cases} merged pull requests, ${any.goldensTotal} confirmed bugs, judge ${judgeLabel(any.judge)}, harness ${any.harness}, access ${any.accessPath}.
 
 ${blocks}`;
 }
@@ -132,7 +132,7 @@ export function GET() {
 
 # CodeReviewBench Leaderboard
 
-> Ranked by F2 within each review mode. ${meta.totalModels} models on ${meta.totalCases} merged pull requests across ${meta.repos.join(', ')}, covering ${meta.languages.join(', ')}. ${meta.totalGoldens} confirmed bugs (gold v3) form the ground truth. Judge: ${meta.judges.map(judgeLabel).join(', ')}. Harness: ${meta.harnesses.join(', ')}. Data generated ${meta.generatedAt}.
+> Ranked by F2 within each review mode. ${meta.totalModels} models on ${meta.totalCases} merged pull requests across ${meta.repos.join(', ')}, covering ${meta.languages.join(', ')}. ${meta.totalGoldens} confirmed bugs form the ground truth. Judge: ${meta.judges.map(judgeLabel).join(', ')}. Harness: ${meta.harnesses.join(', ')}. Data generated ${meta.generatedAt}.
 
 F2 = 5·P·R / (4·P + R): recall weighs twice precision, because a missed bug costs more than a comment you dismiss. Cost is list price with prompt cache.
 ${notes}

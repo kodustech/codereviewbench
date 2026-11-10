@@ -37,7 +37,7 @@ export function GET() {
         generatedAt: meta.generatedAt ?? null,
         pricesCollectedAt: meta.pricesCollectedAt,
         metricDefinitions: {
-            recall: 'Valid true positives found / all valid true positives in gold v3, micro-averaged.',
+            recall: 'Valid true positives found / all valid true positives in the gold set, micro-averaged.',
             precision: 'Published comments matching a valid true positive / all published comments. Each true positive counts once.',
             f1: 'Harmonic mean of recall and precision.',
             f2: 'F-score with beta = 2: 5*P*R / (4*P + R). Recall weighs twice precision. Ranking metric within each mode.',
