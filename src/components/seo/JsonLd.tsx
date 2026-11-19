@@ -24,7 +24,7 @@ export default function JsonLd() {
     {
       '@type': 'Dataset',
       '@id': `${SITE_URL}/#dataset`,
-      name: 'CodeReviewBench — AI Code Review Benchmark',
+      name: 'CodeReviewBench: AI Code Review Benchmark',
       description: SITE_DESCRIPTION,
       url: `${SITE_URL}/leaderboard`,
       license: 'https://opensource.org/licenses/MIT',

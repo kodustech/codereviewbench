@@ -1,8 +1,8 @@
-/* Hallmark · genre: editorial · macrostructure: Marquee Hero (home) / Stat-Led (app pages)
- * theme: Portal (twilight serif editorial, light) · nav: N5 · footer: Ft5-extended
- * design-system: design.md · designed-as-app
- * EXPERIMENTO — branch design/portal. O tema anterior (Lumen / Night Foundry)
- * esta intacto em bench/scorecards-pipeline.
+/* Tema "Instrument" (2026-11-19) — ver design.md.
+ * Base Linear: fundo quase preto, paineis de 12px com borda translucida,
+ * Inter 510 nos titulos, texto em ardosia, pill clara como acao. Um sinal so:
+ * o laranja da Kodus (emprestado do Axiom), no 1o colocado e no estado ativo.
+ * Escolhido pelo Gabriel entre tres direcoes pesquisadas no Refero.
  */
 @import "tailwindcss";
 
@@ -11,48 +11,45 @@
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
   --color-accent-dim: var(--accent-dim);
-  --font-display: var(--font-display);
 
-  /* Portal manda raio generoso em tudo: cards 22-30px, botao pill 50px.
-     Redefinir a escala do Tailwind aqui e o que faz os `rounded-md`/`rounded-lg`
-     ja espalhados pelo TSX herdarem o novo sistema sem tocar em cada arquivo. */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 22px;
-  --radius-2xl: 26px;
-  --radius-3xl: 30px;
+  /* Painel 12px, controle 6px, acao pill. Redefinir a escala aqui faz os
+     `rounded-*` ja espalhados pelo TSX herdarem o sistema novo. */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
 }
 
 @layer base {
   :root {
-    /* ── Portal · tokens do spec (fonte de verdade) ──────────────────── */
-    --color-signal-blue: #007aff;
-    --color-ink-black: #000000;
-    --color-graphite: #3e3e3e;
-    --color-smoke: #636363;
-    --color-paper-white: #ffffff;
-    --color-ash-mist: #f7f7f7;
-    --gradient-dusk: linear-gradient(180deg, #4a7ff2 0%, #7b7ed8 30%, #c98ab5 65%, #e8a87c 100%);
+    /* ── Tokens (fonte de verdade) ─────────────────────────────────── */
+    --color-signal: #f0902a;        /* laranja Kodus: 1o colocado, estado ativo, link */
+    --color-heading: #f7f8f8;       /* titulo e numero */
+    --color-silver: #d0d6e0;        /* texto corrido de destaque */
+    --color-slate: #8a8f98;         /* texto corrido, navegacao */
+    --color-graphite: #7a7f87;      /* rotulo mono, cabecalho de coluna (4.8:1 no canvas) */
+    --color-action: #e5e5e6;        /* pill primaria */
+    --color-canvas: #08090a;
+    --color-panel: #0f1011;         /* painel elevado */
+    --color-frame: #101112;
+    --color-glass: rgba(255, 255, 255, 0.05);   /* trilho, hover, pill secundaria */
+    --color-edge: rgba(255, 255, 255, 0.08);    /* borda fina translucida */
+    --color-edge-strong: rgba(255, 255, 255, 0.14);
+    --color-rule: #23252a;          /* regua estrutural (rodape, secoes) */
 
-    --surface-page-canvas: var(--color-ash-mist);
-    --surface-card: var(--color-paper-white);
-    --surface-nav-pill: var(--color-paper-white);
+    /* Escala de tipo */
+    --text-micro: 11px;      --leading-micro: 1.4;
+    --text-caption: 12px;    --leading-caption: 1.45;
+    --text-body-sm: 14px;    --leading-body-sm: 1.5;
+    --text-body: 16px;       --leading-body: 1.55;
+    --text-heading-sm: 18px; --leading-heading-sm: 1.4;
+    --text-heading: 40px;    --leading-heading: 1.05;
+    --text-display: 60px;    --leading-display: 1;
+    --text-monument: 72px;
 
-    /* Escala de tipo do spec */
-    --text-micro: 10px;      --leading-micro: 1.2;      --tracking-micro: -0.2px;
-    --text-caption: 12px;    --leading-caption: 1.2;    --tracking-caption: -0.24px;
-    --text-body-sm: 14px;    --leading-body-sm: 1.3;    --tracking-body-sm: -0.28px;
-    --text-body: 16px;       --leading-body: 1.35;      --tracking-body: -0.32px;
-    --text-heading-sm: 18px; --leading-heading-sm: 1.35; --tracking-heading-sm: -0.36px;
-    --text-heading: 36px;    --leading-heading: 1;
-    --text-display: 48px;    --leading-display: 1;
-
-    --font-weight-regular: 400;
-    --font-weight-medium: 500;
-    --font-weight-semibold: 600;
-
-    /* Escala de espacamento do spec (px) */
+    /* Espacamento (nomes antigos mantidos: o TSX usa --spacing-*) */
     --spacing-4: 4px;    --spacing-5: 5px;    --spacing-6: 6px;    --spacing-8: 8px;
     --spacing-10: 10px;  --spacing-12: 12px;  --spacing-14: 14px;  --spacing-16: 16px;
     --spacing-20: 20px;  --spacing-24: 24px;  --spacing-36: 36px;  --spacing-40: 40px;
@@ -60,52 +57,47 @@
 
     /* Layout */
     --page-max-width: 1200px;
-    --reading-width: 680px;   /* dentro da faixa 640-720 do spec */
-    --section-gap: 100px;     /* dentro da faixa 80-120 do spec */
-    --card-padding: 20px;
+    --reading-width: 680px;
+    --section-gap: 112px;
+    --card-padding: 24px;
 
     /* Raios nomeados */
-    --radius-nav: 22px;
-    --radius-cards: 22px;
-    --radius-badges: 50px;
-    --radius-images: 30px;
-    --radius-buttons: 50px;
+    --radius-nav: 0px;
+    --radius-cards: 12px;
+    --radius-badges: 9999px;
+    --radius-images: 12px;
+    --radius-buttons: 9999px;
 
-    /* Os 6 shadows do spec */
-    --shadow-subtle: rgb(247, 247, 247) 0px 0px 0px 5px;
-    --shadow-subtle-2: rgba(255, 255, 255, 0.6) 0px 0.5px 0px 0.5px inset, rgba(255, 255, 255, 0.4) 0px 0px 30px 0px inset, rgba(255, 255, 255, 0.8) 0px 0px 12px 0px inset;
-    --shadow-subtle-3: rgba(255, 255, 255, 0.6) 0px 0.5px 0px 0.5px inset;
-    --shadow-subtle-4: rgb(247, 247, 247) 0px 0px 0px 1px;
-    --shadow-subtle-5: rgb(255, 255, 255) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.15) 0px 0px 0px 1px, rgba(0, 0, 0, 0.06) 0px 3px 2px 0px;
-    --shadow-subtle-6: rgb(140, 194, 255) 0px 1px 0px 1px inset;
+    --shadow-control: inset 0 0 0 1px var(--color-edge);
 
-    /* ── Aliases semanticos do site ──────────────────────────────────────
-       O TSX inteiro ja fala --foreground/--surface/--accent. Apontar esses
-       nomes pros tokens do Portal aplica o sistema sem reescrever cada
-       arquivo, e mantem um lugar so pra trocar de tema. */
-    --background: var(--surface-page-canvas);
-    --surface: var(--surface-card);
-    --surface-2: #f2f2f2;
-    --foreground: var(--color-ink-black);
-    --foreground-2: var(--color-graphite);
-    --muted: var(--color-smoke);
-    --muted-dim: #8e8e8e;
-    --accent: var(--color-signal-blue);
-    --accent-dim: rgba(0, 122, 255, 0.10);
-    --on-accent: var(--color-paper-white);
-    --focus: var(--color-signal-blue);
-    --border: rgba(0, 0, 0, 0.09);
-    --border-bright: rgba(0, 0, 0, 0.16);
-    --glow-ring: var(--color-ash-mist);
-    --dusk: var(--gradient-dusk);
+    /* ── Aliases semanticos ─────────────────────────────────────────
+       O TSX inteiro fala --foreground/--surface/--accent; apontar esses
+       nomes pros tokens novos aplica o tema sem reescrever cada arquivo. */
+    --background: var(--color-canvas);
+    --surface: var(--color-panel);
+    --surface-2: var(--color-glass);
+    --surface-card: var(--color-panel);
+    --foreground: var(--color-heading);
+    --foreground-2: var(--color-silver);
+    --muted: var(--color-slate);
+    --muted-dim: var(--color-graphite);
+    --accent: var(--color-signal);
+    --accent-dim: rgba(240, 144, 42, 0.12);
+    --on-accent: var(--color-canvas);
+    --focus: var(--color-signal);
+    --border: var(--color-edge);
+    --border-bright: var(--color-edge-strong);
 
-    /* Paleta SEMANTICA (dado, nao decoracao) — ver design.md. */
-    --success: #1a7f45;
-    --danger:  #c0362c;
-    --info:    var(--color-signal-blue);
-    --accent-2: #b06f1e;
+    /* Nomes antigos ainda citados no TSX */
+    --color-ink-black: var(--color-heading);
+    --color-smoke: var(--color-slate);
 
-    /* 4pt scale interna, mantida: o TSX usa --space-* em varios lugares. */
+    /* Paleta SEMANTICA (dado, nao decoracao), passo do escuro. */
+    --success: #3fb950;
+    --danger: #f85149;
+    --info: #58a6ff;
+    --accent-2: #d29922;
+
     --space-3xs: 0.125rem;
     --space-2xs: 0.25rem;
     --space-xs: 0.5rem;
@@ -116,115 +108,134 @@
     --space-2xl: 4rem;
     --space-3xl: 6rem;
 
-    /* motion */
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
-    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-std: cubic-bezier(0.4, 0, 0.2, 1);
     --dur-micro: 120ms;
-    --dur-short: 220ms;
+    --dur-short: 150ms;
     --dur-long: 420ms;
-    --dur-pulse: 4s;
   }
 }
 
 html {
   overflow-x: clip;
+  color-scheme: dark;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-variant-numeric: tabular-nums;
   overflow-x: clip;
-  /* Portal: Inter com tracking apertado em TODO texto de UI e corpo. E o que
-     da o "refined iOS-native feel" do spec; sem isso a Inter fica com o
-     espacamento default e a pagina le como bootstrap. */
-  letter-spacing: -0.02em;
-}
-/* Mono e tabela numerica nao levam o tracking da Inter — apertar mono quebra
-   o alinhamento de coluna, que e o unico motivo dela existir aqui. */
-code, pre, .font-mono, [class*="font-mono"], table {
-  letter-spacing: normal;
+  font-feature-settings: "cv01", "ss03";
 }
 
-/* Display type — Instrument Serif, roman only. Italic is retired. */
+/* Numero em coluna alinha; numero solto usa a figura proporcional da fonte. */
+table, .tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+/* Titulo: interface ampliada, nao display de anuncio. Inter 510 com
+   -0.022em; hierarquia vem de escala, nunca de 700. */
 .font-display {
-  font-family: var(--font-display), Georgia, serif;
-  font-style: normal;
-  /* Spec: display e heading a line-height 1.0, tracking normal. */
-  line-height: var(--leading-display);
-  letter-spacing: normal;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 510;
+  letter-spacing: -0.022em;
+  line-height: 1.02;
 }
 
-/* Landmark: exatamente uma palavra em accent por statement, nunca italico —
-   cor + um sublinhado de 1px que desenha uma vez no primeiro paint.
-   Era "verb-landmark" no Lumen, com a regra de ser sempre um VERBO. Nesta
-   branch a regra caiu: o H1 e sintagma nominal (sem verbo) e o statement do
-   rodape marca "run", que e substantivo. O que importa e destacar a palavra
-   de virada da frase, e ela nem sempre e um verbo. Registrado no design.md. */
-.landmark {
-  font-style: normal;
-  color: var(--accent);
-  position: relative;
-  white-space: nowrap;
-}
-.landmark::after {
-  content: '';
-  position: absolute;
-  left: 0.05em;
-  right: 0.05em;
-  bottom: 0.03em;
-  height: 1px;
-  background: var(--accent);
-  transform-origin: left;
-  animation: pivot-underline var(--dur-long) var(--ease-out) 700ms backwards;
-}
-@keyframes pivot-underline {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-/* Mono eyebrow — UPPERCASE technical label, capped at one per page. */
+/* Rotulo mono pequeno: marcacao funcional (secao, unidade, condicao), nao
+   subtitulo decorativo. No maximo um por bloco. */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.1em;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--foreground);
-  opacity: 0.55;
+  color: var(--muted-dim);
 }
 
-/* Card Portal — branco sobre canvas, raio generoso, sem drop-shadow.
-   O "inner emission" do Lumen era tecnica de tema escuro (wash quente no topo
-   de uma superficie preta); em canvas claro nao existe. A profundidade aqui e
-   hairline + o glow ring de 5px, que e a linguagem de elevacao do Portal. */
+.landmark {
+  color: var(--accent);
+}
+
+/* Painel elevado: charcoal sobre o canvas, borda translucida fina, 12px. */
 .card-hairline {
   position: relative;
   border: 1px solid var(--border);
-  border-radius: 22px;
+  border-radius: var(--radius-cards);
   background: var(--surface);
-  transition: box-shadow var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+  transition: border-color var(--dur-short) var(--ease-std);
 }
 .card-hairline:hover {
   border-color: var(--border-bright);
 }
 
-/* Elevacao: anel palido em vez de sombra. So vale sobre o gradiente ou sobre
-   branco — sobre o canvas #f7f7f7 o anel e da cor do fundo e some. */
+/* Sem glow: a profundidade vem de painel sobre canvas. Classe mantida pra nao quebrar markup. */
 .glow-ring {
-  box-shadow: 0 0 0 5px var(--glow-ring);
+  box-shadow: none;
 }
 
-/* Hero atmosphere — o unico momento cromatico do sistema. Gradiente dusk
-   full-bleed, com a silhueta de horizonte na base feita em CSS (sem imagem:
-   o Portal proibe stock/ilustracao, e um SVG de arvore aqui seria decoracao
-   inventada). A "silhueta" e a propria transicao pro canvas. */
-.hero-dusk {
-  background: var(--dusk);
+/* Acao: pill pequena. Primaria clara (nunca colorida), secundaria vidro. */
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: var(--radius-buttons);
+  font-size: 14px;
+  font-weight: 510;
+  white-space: nowrap;
+  transition: background-color var(--dur-short) var(--ease-std), color var(--dur-short) var(--ease-std), box-shadow var(--dur-short) var(--ease-std);
 }
-/* Custom scrollbar */
+.btn-primary {
+  background: var(--color-action);
+  color: var(--color-canvas);
+}
+.btn-primary:hover {
+  background: #ffffff;
+}
+.btn-secondary {
+  background: var(--color-glass);
+  color: var(--foreground);
+  box-shadow: var(--shadow-control);
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.btn-sm {
+  height: 32px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+/* Nome antigo do botao preenchido. */
+.btn-filled {
+  background: var(--color-action);
+  color: var(--color-canvas);
+  border-radius: var(--radius-buttons);
+}
+
+/* Instrumento: painel que some no canvas embaixo, como no hero do Linear. */
+.stage-fade {
+  position: relative;
+}
+.stage-fade::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, var(--background));
+  pointer-events: none;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
@@ -233,20 +244,11 @@ code, pre, .font-mono, [class*="font-mono"], table {
   background: var(--border-bright);
   border-radius: 3px;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
-}
 
-/* Page-load reveal — one orchestrated stagger, DOM-index driven, capped ~500ms */
+/* Entrada de pagina: um stagger curto, nada de bounce. */
 @keyframes reveal {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .reveal {
   opacity: 0;
@@ -262,203 +264,35 @@ code, pre, .font-mono, [class*="font-mono"], table {
   animation: fade-in var(--dur-long) var(--ease-out) both;
 }
 
-/* Painel que abre (metodologia, filtros, detalhe por PR, popover de embed).
-   So animacao de ENTRADA: esses paineis desmontam ao fechar (render
-   condicional), e manter tudo montado so pra ter saida custaria o texto dos
-   30 casos no DOM o tempo todo. Fechar instantaneo e honesto — o conteudo
-   sumiu de verdade. */
+/* Painel que abre: so animacao de entrada; fechar e instantaneo porque o
+   conteudo desmonta de verdade. */
 @keyframes panel-in {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .panel-in {
-  animation: panel-in var(--dur-short) var(--ease-out);
+  animation: panel-in 220ms var(--ease-out);
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 150ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 150ms !important;
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
   }
-  .reveal { animation-name: fade-in; }
-  .landmark::after { animation: none; transform: scaleX(1); }
 }
 
-/* Selection */
 ::selection {
-  background: var(--accent);
-  color: var(--on-accent);
+  background: rgba(240, 144, 42, 0.35);
+  color: var(--foreground);
 }
 
-/* Focus ring — instant, never transitioned */
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
-/* Scorecard como recibo — o rastro de auditoria E o visual do hero.
-   Referencia do spec do Lumen: "the receipt is the artwork". */
-.receipt {
-  margin: 0;
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  background: var(--surface);
-  overflow: hidden;
-  max-width: 27rem;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  position: relative;
-}
-.receipt__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  border-bottom: 1px solid var(--border);
-  position: relative;
-}
-.receipt__kind {
-  font-size: 10.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted-dim);
-}
-.receipt__subject {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  color: var(--foreground);
-}
-.receipt__rows {
-  margin: 0;
-  padding: var(--space-sm) var(--space-md);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  position: relative;
-}
-/* Os numeros medidos ficam em bloco separado, com regua tracejada em cima —
-   e a divisao de um recibo: configuracao acima, resultado abaixo. */
-.receipt__rows--measured {
-  border-top: 1px dashed var(--border-bright);
-}
-.receipt__row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-sm);
-}
-.receipt__row dt {
-  color: var(--muted);
-  letter-spacing: 0.04em;
-}
-/* Pontilhado ligando rotulo e valor, como linha de recibo. */
-.receipt__row::before {
-  content: '';
-  flex: 1;
-  order: 1;
-  border-bottom: 1px dotted var(--border-bright);
-  transform: translateY(-3px);
-  min-width: var(--space-sm);
-}
-.receipt__row dd {
-  order: 2;
-  margin: 0;
-  color: var(--foreground);
-  font-variant-numeric: tabular-nums;
-}
-.receipt__rows--measured dd {
-  color: var(--accent);
-}
-.receipt__foot {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-sm);
-  padding: var(--space-xs) var(--space-md) var(--space-sm);
-  border-top: 1px solid var(--border);
-  font-size: 10.5px;
-  position: relative;
-}
-.receipt__path {
-  color: var(--muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.receipt__note {
-  color: var(--muted-dim);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-/* Pilha de recibos. Empilha pra CIMA: o nome do modelo fica no topo do
-   recibo, entao recuar as de tras pra cima mantem os tres nomes legiveis.
-   As de tras nao recebem pointer-events — so a da frente e interativa. */
-.stack {
-  position: relative;
-  /* Reserva o alcance MAXIMO (estado hover): a carta do fundo sobe
-     2 x (peek + shift). Sem isso ela era cortada no topo — e so no hover,
-     que e pior: o corte aparecia no meio da animacao. */
-  padding-top: calc((var(--stack-peek) + var(--stack-shift-max)) * 2 + 8px);
-  --stack-shift-max: 10px;
-  /* O reveal tem que caber o HEADER INTEIRO do recibo (~55px), senao o nome do
-     modelo corta no meio do glifo e a pilha le como bug de render, nao como
-     pilha. O scale com origem embaixo come parte do deslocamento (altura da
-     carta x fator), entao peek e maior que o reveal real:
-       reveal = peek - (altura ~325px x 0.012) ~= 60 - 4 = 56px. */
-  --stack-peek: 60px;
-  --stack-shift: 0px;
-}
-.stack__item {
-  transform:
-    translateY(calc(var(--i) * (var(--stack-peek) + var(--stack-shift)) * -1))
-    scale(calc(1 - var(--i) * 0.012));
-  transform-origin: bottom center;
-  transition: transform var(--dur-long) var(--ease-out);
-  position: relative;
-  z-index: calc(10 - var(--i));
-}
-/* Carta da frente e a unica no fluxo; as de tras saem dele e se posicionam
-   por cima, senao a pilha ocuparia a altura das tres somadas. */
-.stack__item:not(:first-child) {
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  pointer-events: none;
-}
-/* As de tras recuam pro fundo. No tema escuro isso era `brightness` pra baixo;
-   em canvas claro escurecer um card branco deixa ele sujo.
-   Cuidado: `opacity` no .receipt inteiro deixa VAZAR a carta de baixo atraves
-   dela (a superficie fica translucida e o gradiente e o texto de tras
-   aparecem). O fade tem que ser no CONTEUDO, com a superficie opaca. */
-.stack__item:not(:first-child) .receipt {
-  background: var(--surface);
-}
-.stack__item:not(:first-child) .receipt > * {
-  opacity: calc(1 - var(--i) * 0.28);
-}
-.stack:hover {
-  --stack-shift: var(--stack-shift-max);
-}
-@media (prefers-reduced-motion: reduce) {
-  .stack__item { transition: none; }
-  .stack:hover { --stack-shift: 0px; }
-}
-
-/* Marca Kodus em tema claro. O asset tem o wordmark "kodus" em BRANCO (feito
-   pro tema escuro) e so o simbolo e cromatico — sobre a capsula branca do
-   Portal o wordmark simplesmente sumia. Recorta pro simbolo, que e a parte
-   que sobrevive em qualquer fundo. O nome ja esta escrito ao lado, que e o
-   lockup que o proprio Portal descreve (icone + wordmark em texto).
+/* Marca Kodus: recorta o asset pro simbolo (o nome ja vai escrito ao lado).
    34% e onde o pixel colorido termina no arquivo (244px de largura). */
 .brand-mark {
   display: block;
@@ -474,50 +308,34 @@ code, pre, .font-mono, [class*="font-mono"], table {
   object-position: left center;
 }
 
-/* Botao preenchido — elevacao do spec (inset highlight + hairline + sombra
-   curta). E a unica sombra "real" que o Portal permite, e so em botao. */
-.btn-filled {
-  background: var(--accent);
-  color: var(--on-accent);
-  border-radius: var(--radius-buttons);
-  box-shadow: var(--shadow-subtle-5);
-}
-
-/* Coluna editorial do Portal: 640-720px, texto corrido. */
+/* Coluna de leitura: texto corrido do blog e das secoes de metodo. */
 .editorial {
   max-width: var(--reading-width);
   margin-inline: auto;
 }
 .editorial h2 {
-  font-family: var(--font-display), Georgia, serif;
-  font-size: var(--text-heading);
-  line-height: var(--leading-heading);
-  letter-spacing: normal;
-  color: var(--color-ink-black);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 32px;
+  line-height: 1.1;
+  font-weight: 510;
+  letter-spacing: -0.022em;
+  color: var(--foreground);
 }
 .editorial h3 {
   font-size: var(--text-heading-sm);
   line-height: var(--leading-heading-sm);
-  letter-spacing: var(--tracking-heading-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-ink-black);
+  font-weight: 510;
+  letter-spacing: -0.012em;
+  color: var(--foreground);
 }
 .editorial p {
   font-size: var(--text-body);
-  line-height: var(--leading-body);
-  letter-spacing: var(--tracking-body);
-  color: var(--color-graphite);
+  line-height: 1.65;
+  color: var(--foreground-2);
 }
 .editorial p + p { margin-top: var(--spacing-20); }
 
-/* "Device Mockup Card" do spec: a carta da frente ganha o glow ring de 5px.
-   So a da frente — anel nas de tras viraria trilho branco duplicado. */
-.stack--ringed .stack__item:first-child .receipt {
-  box-shadow: var(--shadow-subtle);
-}
-
-/* View transition das linhas da leaderboard. Substitui o `layout` do
-   framer-motion (46kB gz) pelo FLIP nativo do browser. */
+/* View transition das linhas da leaderboard (FLIP nativo do browser). */
 ::view-transition-group(*) {
   animation-duration: 320ms;
   animation-timing-function: var(--ease-out);

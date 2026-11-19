@@ -97,7 +97,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             ) : null}
             <header className="mb-12 max-w-[var(--reading-width)]">
                 {m.draft ? (
-                    <span className="eyebrow block mb-4 text-[color:var(--accent)]">Draft — not published</span>
+                    <span className="eyebrow block mb-4 text-[color:var(--accent)]">Draft, not published</span>
                 ) : null}
                 <time
                     dateTime={m.date}

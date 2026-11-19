@@ -84,7 +84,6 @@ export default async function TracePage({ params }: { params: Promise<Params> })
       </div>
 
       <div className="mb-10 pb-8 border-b border-[var(--border)]">
-        <span className="eyebrow block mb-3">Trace</span>
         <div className="flex flex-wrap items-center gap-3 mb-3">
           <ProviderLogo provider={provider} className="size-5" />
           <h1 className="text-2xl sm:text-3xl font-display text-[color:var(--foreground)]">
@@ -105,7 +104,7 @@ export default async function TracePage({ params }: { params: Promise<Params> })
       <dl className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-12">
         {stats.map(([k, v]) => (
           <div key={k} className="card-hairline p-4">
-            <dt className="text-[10px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-2">{k}</dt>
+            <dt className="text-[10px] font-mono text-[color:var(--muted-dim)] uppercase font-normal mb-2">{k}</dt>
             <dd className="font-mono text-lg tabular-nums text-[color:var(--foreground)]">{v}</dd>
           </div>
         ))}
@@ -113,7 +112,7 @@ export default async function TracePage({ params }: { params: Promise<Params> })
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <section>
-          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal mb-4">
             Published comments ({s.findings.length})
           </h2>
           <div className="space-y-2">
@@ -138,7 +137,7 @@ export default async function TracePage({ params }: { params: Promise<Params> })
         </section>
 
         <section>
-          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal mb-4">
             Gold bugs found ({found.length})
           </h2>
           <div className="space-y-2 mb-8">
@@ -153,7 +152,7 @@ export default async function TracePage({ params }: { params: Promise<Params> })
             ))}
             {found.length === 0 && <p className="text-sm text-[color:var(--muted)]">None.</p>}
           </div>
-          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal mb-4">
             Gold bugs missed ({missed.length})
           </h2>
           <div className="space-y-2">

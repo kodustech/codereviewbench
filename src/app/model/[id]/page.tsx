@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     return e ? `${MODE_LABELS[m]}: F2 ${e.f2.toFixed(1)}, recall ${e.recall.toFixed(1)}%, precision ${e.precision.toFixed(1)}%` : null;
   }).filter(Boolean);
   return {
-    title: `${name} — AI Code Review Benchmark Results`,
+    title: `${name}: AI Code Review Benchmark Results`,
     description: `How well does ${name} review code? Measured on 30 real merged PRs. ${parts.join('. ')}.`,
     alternates: { canonical: `/model/${modelSlug(modelId)}` },
   };

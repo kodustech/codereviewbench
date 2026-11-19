@@ -2,132 +2,110 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, GitPullRequest } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
   { href: '/leaderboard', label: 'Leaderboard' },
-  // O active state usa startsWith, entao /compare/<a>-vs-<b> (as 45 paginas de
-  // par) e /blog/<slug> ja acendem o item pai sem precisar de entrada propria.
+  // O active state usa startsWith, entao /compare/<a>-vs-<b> e /blog/<slug>
+  // ja acendem o item pai sem precisar de entrada propria.
   { href: '/compare', label: 'Compare' },
   { href: '/blog', label: 'Blog' },
 ];
 
+const REPO_URL = 'https://github.com/kodustech/codereviewbench';
+const CONTRIBUTE_URL = 'https://github.com/kodustech/kodus-ai/blob/main/evals/scorer/README.md';
+
+function isActive(pathname: string, href: string) {
+  return pathname === href || (href !== '/' && pathname.startsWith(href));
+}
+
+/** Barra fixa de 64px sobre o canvas escuro: links pequenos em ardosia, uma
+ *  pill clara como unica acao (padrao Linear). */
 export default function Navbar() {
   const pathname = usePathname();
-  const isHome = pathname === '/';
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <>
-      {/* N5 · Floating pill — detached, content-sized, blur backdrop */}
-      <nav
-        aria-label="Primary"
-        className="hidden sm:inline-flex fixed top-5 left-1/2 -translate-x-1/2 z-20 items-center gap-6 pl-4 pr-2 py-2 rounded-[var(--radius-nav)] border border-[var(--border)] glow-ring"
-        /* Desvio do spec: ele pede #ffffff solido. A capsula tem quase a
-           mesma largura da coluna de leitura (615 vs 680px), entao TODO texto
-           da pagina passa exatamente por tras dela; solida, ela cortava a
-           frase no meio e lia como bug de render. Frosted resolve e e coerente
-           com a propria linguagem do Portal, que descreve o glow ring como
-           emprestado do visionOS/frosted glass. */
-        style={{ background: 'rgba(255, 255, 255, 0.82)', backdropFilter: 'blur(14px) saturate(140%)' }}
-      >
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <span className="brand-mark opacity-90 group-hover:opacity-100 transition-opacity" style={{ ['--brand-h' as string]: '20px' }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/kodus-logo.webp" alt="Kodus" />
-          </span>
-          <div className="w-px h-4 bg-[var(--border-bright)]" />
-          <span className="text-sm font-semibold tracking-tight text-[color:var(--foreground)]">
-            CodeReviewBench
-          </span>
-        </Link>
-
-        <div className="flex items-center gap-1">
-          {NAV_LINKS.map((link) => {
-            const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  'px-3 py-1.5 text-sm rounded-full transition-colors',
-                  isActive
-                    ? 'text-[color:var(--foreground)] bg-[var(--surface-2)]'
-                    : 'text-[color:var(--muted)] hover:text-[color:var(--foreground)]'
-                )}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </div>
-
-        <a
-          href="https://github.com/kodustech/kodus-ai/blob/main/evals/scorer/README.md"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-medium rounded-full bg-[var(--accent)] text-[color:var(--background)] hover:brightness-110 transition-[filter]"
-        >
-          <GitPullRequest className="size-3.5" />
-          Contribute
-        </a>
-      </nav>
-
-      {/* Mobile nav — same content, edge-aligned bar (the pill only fits ≥sm) */}
-      <nav aria-label="Primary" className="sm:hidden w-full border-b border-[var(--border)] bg-[var(--background)]/90 backdrop-blur-xl sticky top-0 z-20">
-        <div className="px-6 flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2.5">
+    <nav
+      aria-label="Primary"
+      className="sticky top-0 z-30 w-full border-b border-[var(--border)] bg-[var(--background)]/85 backdrop-blur-md"
+    >
+      <div className="max-w-[var(--page-max-width)] mx-auto h-16 px-6 sm:px-12 flex items-center justify-between gap-6">
+        <div className="flex items-center gap-8">
+          <Link href="/" className="flex items-center gap-2.5 group" onClick={() => setMobileOpen(false)}>
             <span className="brand-mark" style={{ ['--brand-h' as string]: '20px' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/kodus-logo.webp" alt="Kodus" />
             </span>
-            <span className="text-sm font-semibold tracking-tight text-[color:var(--foreground)]">CodeReviewBench</span>
+            <span className="text-[14px] font-semibold tracking-[-0.01em] text-[color:var(--foreground)]">CodeReviewBench</span>
           </Link>
-          <button className="text-[color:var(--muted)] p-2" onClick={() => setMobileOpen((v) => !v)} aria-label="Toggle menu">
-            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-          </button>
+
+          <div className="hidden md:flex items-center gap-1">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={isActive(pathname, link.href) ? 'page' : undefined}
+                className={cn(
+                  'px-3 py-1.5 text-[13px] rounded-md transition-colors',
+                  isActive(pathname, link.href)
+                    ? 'text-[color:var(--foreground)]'
+                    : 'text-[color:var(--muted)] hover:text-[color:var(--foreground)]',
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
-        {mobileOpen && (
-          <div className="border-t border-[var(--border)] px-6 pb-6 pt-4 flex flex-col gap-1">
-            {NAV_LINKS.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    'text-base font-medium py-2 px-3 rounded-md transition-colors',
-                    isActive ? 'text-[color:var(--foreground)] bg-[var(--surface)]' : 'text-[color:var(--muted)] hover:text-[color:var(--foreground)]'
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-            <a
-              href="https://github.com/kodustech/kodus-ai/blob/main/evals/scorer/README.md"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-base font-medium py-2 px-3 rounded-md text-[color:var(--accent)] hover:bg-[var(--surface)]"
+
+        <div className="hidden md:flex items-center gap-4">
+          <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="text-[13px] text-[color:var(--muted)] hover:text-[color:var(--foreground)] transition-colors">
+            GitHub
+          </a>
+          <a href={CONTRIBUTE_URL} target="_blank" rel="noopener noreferrer" className="btn-primary btn-sm">
+            Contribute
+          </a>
+        </div>
+
+        <button
+          className="md:hidden text-[color:var(--muted)] p-2 -mr-2"
+          onClick={() => setMobileOpen((v) => !v)}
+          aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
+        >
+          {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="md:hidden border-t border-[var(--border)] px-6 pb-6 pt-3 flex flex-col gap-1 bg-[var(--background)]">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                'text-base py-2 px-3 rounded-md transition-colors',
+                isActive(pathname, link.href)
+                  ? 'text-[color:var(--foreground)] font-medium bg-[var(--surface-2)]'
+                  : 'text-[color:var(--muted)] hover:text-[color:var(--foreground)]',
+              )}
             >
-              <GitPullRequest className="size-4" />
-              Contribute
+              {link.label}
+            </Link>
+          ))}
+          <div className="flex gap-2 pt-3">
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="btn-secondary btn-sm">GitHub</a>
+            <a href={CONTRIBUTE_URL} target="_blank" rel="noopener noreferrer" className="btn-primary btn-sm">
+                Contribute
             </a>
           </div>
-        )}
-      </nav>
-
-      {/* Espacador pra capsula fixa nao cobrir o conteudo — EXCETO na home.
-          O hero do Portal e full-bleed e a capsula flutua POR CIMA dele; com o
-          espacador a home ganhava uma faixa de canvas de 80px acima do
-          gradiente, que no tema escuro passava batido (escuro sobre escuro) e
-          no claro vira uma barra branca solta. Na home quem afasta o conteudo
-          da capsula e o padding do proprio hero. */}
-      {!isHome && <div className="hidden sm:block h-20" aria-hidden="true" />}
-    </>
+        </div>
+      )}
+    </nav>
   );
 }

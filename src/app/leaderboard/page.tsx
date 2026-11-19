@@ -16,8 +16,8 @@ export default function LeaderboardPage() {
   return (
     <Suspense fallback={
       <div className="max-w-[var(--page-max-width)] mx-auto w-full px-6 sm:px-12 py-12">
-        <div className="h-8 w-48 bg-zinc-900 rounded animate-pulse mb-8" />
-        <div className="h-[600px] bg-zinc-900/30 rounded-2xl animate-pulse" />
+        <div className="h-8 w-48 bg-[var(--surface-2)] rounded animate-pulse mb-8" />
+        <div className="h-[600px] bg-[var(--surface-2)] rounded-2xl animate-pulse" />
       </div>
     }>
       <LeaderboardClient />

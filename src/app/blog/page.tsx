@@ -38,7 +38,6 @@ export default function BlogIndex() {
         // esquerdas diferentes — lia como bug de layout, nao como ritmo.
         <div className="max-w-[var(--page-max-width)] mx-auto w-full px-6 sm:px-12 py-12">
             <header className="mb-14">
-                <span className="eyebrow block mb-4">Writing</span>
                 <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)] mb-3">
                     Research from the benchmark
                 </h1>
