@@ -1,0 +1,213 @@
+{
+  "_meta": {
+    "purpose": "Allowlist for /live. A model string configured by a team is normalized by scripts/fetch-live.js (vendor prefix, route prefix, snapshot date and :free suffix dropped) and kept only if the result is a key here. Anything else (routers, aliases like *-latest, custom names) is dropped, so a team's own label never reaches the page.",
+    "ids": "Use the benchmark model id when the model is on the leaderboard, so /live can link to it.",
+    "providers": "Same provider strings as DISPLAY_NAMES in src/lib/constants.ts, so ProviderLogo resolves."
+  },
+  "models": {
+    "deepseek-v4.1-flash": {
+      "name": "DeepSeek V4.1 Flash",
+      "provider": "DeepSeek"
+    },
+    "deepseek-v4-flash": {
+      "name": "DeepSeek V4 Flash",
+      "provider": "DeepSeek"
+    },
+    "deepseek-v4-pro": {
+      "name": "DeepSeek V4 Pro",
+      "provider": "DeepSeek"
+    },
+    "claude-opus-5.5": {
+      "name": "Claude Opus 5.5",
+      "provider": "Anthropic"
+    },
+    "claude-sonnet-5.5": {
+      "name": "Claude Sonnet 5.5",
+      "provider": "Anthropic"
+    },
+    "claude-haiku-5.5": {
+      "name": "Claude Haiku 5.5",
+      "provider": "Anthropic"
+    },
+    "claude-sonnet-4.6": {
+      "name": "Claude Sonnet 4.6",
+      "provider": "Anthropic"
+    },
+    "claude-haiku-4.5": {
+      "name": "Claude Haiku 4.5",
+      "provider": "Anthropic"
+    },
+    "glm-5.3": {
+      "name": "GLM-5.3",
+      "provider": "Zhipu"
+    },
+    "glm-5.3-flash": {
+      "name": "GLM-5.3 Flash",
+      "provider": "Zhipu"
+    },
+    "glm-4.7-flash": {
+      "name": "GLM-4.7 Flash",
+      "provider": "Zhipu"
+    },
+    "gpt-6.1-sol": {
+      "name": "GPT-6.1 Sol",
+      "provider": "OpenAI"
+    },
+    "gpt-6.1-terra": {
+      "name": "GPT-6.1 Terra",
+      "provider": "OpenAI"
+    },
+    "gpt-6-sol": {
+      "name": "GPT-6 Sol",
+      "provider": "OpenAI"
+    },
+    "gpt-6-luna": {
+      "name": "GPT-6 Luna",
+      "provider": "OpenAI"
+    },
+    "gpt-5.6-sol": {
+      "name": "GPT-5.6 Sol",
+      "provider": "OpenAI"
+    },
+    "gpt-5.6-terra": {
+      "name": "GPT-5.6 Terra",
+      "provider": "OpenAI"
+    },
+    "gpt-5.6-luna": {
+      "name": "GPT-5.6 Luna",
+      "provider": "OpenAI"
+    },
+    "gpt-5.5": {
+      "name": "GPT-5.5",
+      "provider": "OpenAI"
+    },
+    "gpt-5.4": {
+      "name": "GPT-5.4",
+      "provider": "OpenAI"
+    },
+    "gemini-3.8-flash": {
+      "name": "Gemini 3.8 Flash",
+      "provider": "Google"
+    },
+    "gemini-3.7-flash": {
+      "name": "Gemini 3.7 Flash",
+      "provider": "Google"
+    },
+    "gemini-3.1-pro": {
+      "name": "Gemini 3.1 Pro",
+      "provider": "Google"
+    },
+    "minimax-m3": {
+      "name": "MiniMax M3",
+      "provider": "MiniMax"
+    },
+    "minimax-m3.1-flash": {
+      "name": "MiniMax M3.1 Flash",
+      "provider": "MiniMax"
+    },
+    "kimi-k3.1-pro": {
+      "name": "Kimi K3.1 Pro",
+      "provider": "Moonshot"
+    },
+    "kimi-k2.7-code": {
+      "name": "Kimi K2.7 Code",
+      "provider": "Moonshot"
+    },
+    "kimi-k2.6": {
+      "name": "Kimi K2.6",
+      "provider": "Moonshot"
+    },
+    "qwen3.8-27b": {
+      "name": "Qwen3.8 27B",
+      "provider": "Alibaba"
+    },
+    "qwen3.7-flash": {
+      "name": "Qwen3.7 Flash",
+      "provider": "Alibaba"
+    },
+    "muse-spark-1.2": {
+      "name": "Muse Spark 1.2",
+      "provider": "Meta"
+    },
+    "claude-sonnet-5": {
+      "name": "Claude Sonnet 5",
+      "provider": "Anthropic"
+    },
+    "claude-sonnet-4.5": {
+      "name": "Claude Sonnet 4.5",
+      "provider": "Anthropic"
+    },
+    "claude-opus-4.6": {
+      "name": "Claude Opus 4.6",
+      "provider": "Anthropic"
+    },
+    "gpt-6.1-luna": {
+      "name": "GPT-6.1 Luna",
+      "provider": "OpenAI"
+    },
+    "gpt-5.4-mini": {
+      "name": "GPT-5.4 mini",
+      "provider": "OpenAI"
+    },
+    "gpt-5-mini": {
+      "name": "GPT-5 mini",
+      "provider": "OpenAI"
+    },
+    "gpt-4.1-mini": {
+      "name": "GPT-4.1 mini",
+      "provider": "OpenAI"
+    },
+    "gpt-4o-mini": {
+      "name": "GPT-4o mini",
+      "provider": "OpenAI"
+    },
+    "gemini-3.8-pro": {
+      "name": "Gemini 3.8 Pro",
+      "provider": "Google"
+    },
+    "gemini-3.5-flash": {
+      "name": "Gemini 3.5 Flash",
+      "provider": "Google"
+    },
+    "gemini-3.1-flash-lite": {
+      "name": "Gemini 3.1 Flash-Lite",
+      "provider": "Google"
+    },
+    "gemini-2.5-pro": {
+      "name": "Gemini 2.5 Pro",
+      "provider": "Google"
+    },
+    "kimi-k2.5": {
+      "name": "Kimi K2.5",
+      "provider": "Moonshot"
+    },
+    "kimi-k3": {
+      "name": "Kimi K3",
+      "provider": "Moonshot"
+    },
+    "minimax-m2.5": {
+      "name": "MiniMax M2.5",
+      "provider": "MiniMax"
+    },
+    "qwen3-coder-next": {
+      "name": "Qwen3 Coder Next",
+      "provider": "Alibaba"
+    },
+    "mimo-v2.6-flash": {
+      "name": "MiMo V2.6 Flash",
+      "provider": "Xiaomi"
+    },
+    "mimo-v2.5-pro": {
+      "name": "MiMo V2.5 Pro",
+      "provider": "Xiaomi"
+    },
+    "nemotron-3-ultra-550b-a55b": {
+      "name": "Nemotron 3 Ultra",
+      "provider": "NVIDIA"
+    },
+    "nemotron-3.5-super-vl-120b-a12b": {
+      "name": "Nemotron 3.5 Super VL",
+      "provider": "NVIDIA"
+    }
+  }
+}

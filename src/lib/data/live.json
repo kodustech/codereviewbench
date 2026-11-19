@@ -1,0 +1,260 @@
+{
+  "generatedAt": "2026-11-19T16:23:26.666Z",
+  "source": "Kodus Cloud",
+  "window": {
+    "weeks": 12,
+    "from": "2026-08-24",
+    "to": "2026-11-15"
+  },
+  "thresholds": {
+    "minOrganizations": 2,
+    "minPRs": 50,
+    "minPRsToRank": 500,
+    "minSuggestionsPerOrganization": 10
+  },
+  "models": [
+    {
+      "id": "claude-opus-5.5",
+      "name": "Claude Opus 5.5",
+      "provider": "Anthropic",
+      "ranked": true,
+      "applied": 57.1,
+      "suggestionsPerPR": 1.5,
+      "reviewsAtLeast": 2500
+    },
+    {
+      "id": "gpt-6.1-sol",
+      "name": "GPT-6.1 Sol",
+      "provider": "OpenAI",
+      "ranked": true,
+      "applied": 55.5,
+      "suggestionsPerPR": 1.15,
+      "reviewsAtLeast": 1000
+    },
+    {
+      "id": "glm-5.3-flash",
+      "name": "GLM-5.3 Flash",
+      "provider": "Zhipu",
+      "ranked": true,
+      "applied": 52.6,
+      "suggestionsPerPR": 1.43,
+      "reviewsAtLeast": 2500
+    },
+    {
+      "id": "gpt-5.6-sol",
+      "name": "GPT-5.6 Sol",
+      "provider": "OpenAI",
+      "ranked": true,
+      "applied": 50,
+      "suggestionsPerPR": 1.05,
+      "reviewsAtLeast": 500
+    },
+    {
+      "id": "gemini-3.8-flash",
+      "name": "Gemini 3.8 Flash",
+      "provider": "Google",
+      "ranked": true,
+      "applied": 49.9,
+      "suggestionsPerPR": 0.3,
+      "reviewsAtLeast": 1000
+    },
+    {
+      "id": "kimi-k2.7-code",
+      "name": "Kimi K2.7 Code",
+      "provider": "Moonshot",
+      "ranked": true,
+      "applied": 47.9,
+      "suggestionsPerPR": 2.08,
+      "reviewsAtLeast": 1000
+    },
+    {
+      "id": "claude-haiku-5.5",
+      "name": "Claude Haiku 5.5",
+      "provider": "Anthropic",
+      "ranked": true,
+      "applied": 47.2,
+      "suggestionsPerPR": 1.73,
+      "reviewsAtLeast": 500
+    },
+    {
+      "id": "gpt-6-luna",
+      "name": "GPT-6 Luna",
+      "provider": "OpenAI",
+      "ranked": true,
+      "applied": 47.1,
+      "suggestionsPerPR": 1.93,
+      "reviewsAtLeast": 1000
+    },
+    {
+      "id": "claude-sonnet-5.5",
+      "name": "Claude Sonnet 5.5",
+      "provider": "Anthropic",
+      "ranked": true,
+      "applied": 42.2,
+      "suggestionsPerPR": 1,
+      "reviewsAtLeast": 1000
+    },
+    {
+      "id": "deepseek-v4-flash",
+      "name": "DeepSeek V4 Flash",
+      "provider": "DeepSeek",
+      "ranked": true,
+      "applied": 42.2,
+      "suggestionsPerPR": 1.21,
+      "reviewsAtLeast": 500
+    },
+    {
+      "id": "glm-5.3",
+      "name": "GLM-5.3",
+      "provider": "Zhipu",
+      "ranked": true,
+      "applied": 41.7,
+      "suggestionsPerPR": 1.5,
+      "reviewsAtLeast": 500
+    },
+    {
+      "id": "deepseek-v4.1-flash",
+      "name": "DeepSeek V4.1 Flash",
+      "provider": "DeepSeek",
+      "ranked": true,
+      "applied": 37.3,
+      "suggestionsPerPR": 2.06,
+      "reviewsAtLeast": 5000
+    },
+    {
+      "id": "minimax-m3",
+      "name": "MiniMax M3",
+      "provider": "MiniMax",
+      "ranked": true,
+      "applied": 35.7,
+      "suggestionsPerPR": 3.02,
+      "reviewsAtLeast": 1000
+    },
+    {
+      "id": "glm-4.7-flash",
+      "name": "GLM-4.7 Flash",
+      "provider": "Zhipu",
+      "ranked": true,
+      "applied": 35.2,
+      "suggestionsPerPR": 1.21,
+      "reviewsAtLeast": 500
+    },
+    {
+      "id": "gemini-3.1-pro",
+      "name": "Gemini 3.1 Pro",
+      "provider": "Google",
+      "ranked": true,
+      "applied": 32.8,
+      "suggestionsPerPR": 2.81,
+      "reviewsAtLeast": 1000
+    },
+    {
+      "id": "gpt-5.4",
+      "name": "GPT-5.4",
+      "provider": "OpenAI",
+      "ranked": false,
+      "applied": 62.7,
+      "suggestionsPerPR": 1.18,
+      "reviewsAtLeast": 100
+    },
+    {
+      "id": "gpt-5.5",
+      "name": "GPT-5.5",
+      "provider": "OpenAI",
+      "ranked": false,
+      "applied": 62.1,
+      "suggestionsPerPR": 0.87,
+      "reviewsAtLeast": 100
+    },
+    {
+      "id": "gpt-6-sol",
+      "name": "GPT-6 Sol",
+      "provider": "OpenAI",
+      "ranked": false,
+      "applied": 52,
+      "suggestionsPerPR": 2.68,
+      "reviewsAtLeast": 250
+    },
+    {
+      "id": "gpt-5.4-mini",
+      "name": "GPT-5.4 mini",
+      "provider": "OpenAI",
+      "ranked": false,
+      "applied": 44.4,
+      "suggestionsPerPR": 0.76,
+      "reviewsAtLeast": 50
+    },
+    {
+      "id": "claude-sonnet-4.6",
+      "name": "Claude Sonnet 4.6",
+      "provider": "Anthropic",
+      "ranked": false,
+      "applied": 44,
+      "suggestionsPerPR": 1.31,
+      "reviewsAtLeast": 100
+    },
+    {
+      "id": "kimi-k2.6",
+      "name": "Kimi K2.6",
+      "provider": "Moonshot",
+      "ranked": false,
+      "applied": 43.9,
+      "suggestionsPerPR": 1.93,
+      "reviewsAtLeast": 100
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "name": "DeepSeek V4 Pro",
+      "provider": "DeepSeek",
+      "ranked": false,
+      "applied": 42.9,
+      "suggestionsPerPR": 2.47,
+      "reviewsAtLeast": 100
+    },
+    {
+      "id": "gpt-5.6-terra",
+      "name": "GPT-5.6 Terra",
+      "provider": "OpenAI",
+      "ranked": false,
+      "applied": 34.2,
+      "suggestionsPerPR": 3.62,
+      "reviewsAtLeast": 250
+    },
+    {
+      "id": "gpt-5.6-luna",
+      "name": "GPT-5.6 Luna",
+      "provider": "OpenAI",
+      "ranked": false,
+      "applied": 33.7,
+      "suggestionsPerPR": 2.75,
+      "reviewsAtLeast": 100
+    },
+    {
+      "id": "gpt-4.1-mini",
+      "name": "GPT-4.1 mini",
+      "provider": "OpenAI",
+      "ranked": false,
+      "applied": 26.8,
+      "suggestionsPerPR": 0.7,
+      "reviewsAtLeast": 100
+    },
+    {
+      "id": "gemini-3.7-flash",
+      "name": "Gemini 3.7 Flash",
+      "provider": "Google",
+      "ranked": false,
+      "applied": 24.7,
+      "suggestionsPerPR": 0.33,
+      "reviewsAtLeast": 100
+    },
+    {
+      "id": "gpt-4o-mini",
+      "name": "GPT-4o mini",
+      "provider": "OpenAI",
+      "ranked": false,
+      "applied": 9.9,
+      "suggestionsPerPR": 4.17,
+      "reviewsAtLeast": 50
+    }
+  ]
+}

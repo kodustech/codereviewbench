@@ -6,6 +6,7 @@ import { allPairsEveryMode, pairHref } from '@/lib/compare';
 import { lb, publishedModelIds } from '@/lib/entries';
 import { publishedPosts } from '@/lib/blog';
 import { SITE_URL } from '@/lib/site';
+import { live } from '@/lib/live';
 
 const meta = metaData as unknown as Meta;
 
@@ -31,6 +32,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // com precisao, e o Dataset schema agora aponta pra ele.
     { url: `${SITE_URL}/api/leaderboard.json`, priority: 0.5, changeFrequency: 'weekly' as const },
   ].map((r) => ({ ...r, lastModified: leaderboardLastModified }));
+
+  // O dado da aba Live tem relogio proprio: o fetch-live.js so regrava o JSON
+  // quando um numero muda, entao generatedAt e a data real da ultima mudanca.
+  // A aba em si e /leaderboard?board=live, que nao entra (query nao e URL
+  // canonica); o JSON entra.
+  const liveRoutes = [{ url: `${SITE_URL}/api/live.json`, priority: 0.5 }].map((r) => ({
+    ...r,
+    changeFrequency: 'daily' as const,
+    lastModified: new Date(live.generatedAt),
+  }));
 
   // Uma URL por modelo (a pagina mostra os dois modos); lastModified e o runAt
   // mais recente entre os modos daquele modelo.
@@ -69,5 +80,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: postRoutes[0]?.lastModified ?? leaderboardLastModified,
   };
 
-  return [...staticRoutes, blogIndexRoute, ...modelRoutes, ...pairRoutes, ...postRoutes];
+  return [...staticRoutes, ...liveRoutes, blogIndexRoute, ...modelRoutes, ...pairRoutes, ...postRoutes];
 }

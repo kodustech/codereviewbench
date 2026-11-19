@@ -4,6 +4,7 @@ import { displayNameOf, modelSlug, MODE_LABELS, MODE_DESCRIPTIONS, judgeLabel } 
 import { entriesOf, MODES } from '@/lib/entries';
 import { SITE_URL } from '@/lib/site';
 import { publishedPosts } from '@/lib/blog';
+import { live } from '@/lib/live';
 
 const meta = metaData as unknown as Meta;
 
@@ -33,6 +34,14 @@ export function GET() {
         .join('\n');
 
     const top = entriesOf('balanced')[0] ?? entriesOf('heavy')[0];
+
+    // Dado de producao (/live): so taxa por modelo, com a mesma ressalva da pagina.
+    const liveRows = live.models
+        .map(
+            (m) =>
+                `- ${m.name}: median ${m.applied}% of suggestions applied, ${m.suggestionsPerPR} suggestions per PR, ${m.reviewsAtLeast.toLocaleString('en-US')}+ PRs reviewed${m.ranked ? '' : '; small sample, unranked'}.`,
+        )
+        .join('\n');
 
     const body = `# CodeReviewBench
 
@@ -79,11 +88,26 @@ One run per model and mode. With ${meta.totalCases} PRs, small gaps between mode
 within sampling noise; each model page shows a 95% bootstrap interval on recall.
 Kodus runs the benchmark, built the harness and labelled the gold set.
 
+## Live leaderboard (Kodus Cloud)
+
+Next to the benchmark, the leaderboard has a live tab. Per model: precision as the
+share of suggestions that real teams applied on their own pull requests, as medians across Kodus Cloud organizations that review
+with their own model key, ${live.window.from} to ${live.window.to}. A model is listed
+with ${live.thresholds.minPRs}+ PRs reviewed and when at least ${live.thresholds.minOrganizations} organizations received
+${live.thresholds.minSuggestionsPerOrganization}+ of its suggestions. Self-hosted installs are not included.
+
+${liveRows}
+
+Teams choose their model and differ in codebase and rules, so these rows are not a
+controlled comparison, and the live tab has no recall yet. The applied check runs on each
+organization's own model.
+
 ## Canonical sources
 
 - [Machine-readable leaderboard data](${SITE_URL}/api/leaderboard.json): metrics per model and mode. Prefer this or a model page for numerical claims.
 - [Leaderboard](${SITE_URL}/leaderboard): balanced mode; [heavy mode](${SITE_URL}/leaderboard?mode=heavy).
 - [Compare two models](${SITE_URL}/compare): side by side within one mode.
+- [Live leaderboard](${SITE_URL}/leaderboard?board=live): share of each model's suggestions applied on real pull requests; [as JSON](${SITE_URL}/api/live.json).
 - [Blog and analysis](${SITE_URL}/blog): posts written on the earlier v1 benchmark (Aug–Sep 2026); their numbers predate the current gold set.
 - [XML sitemap](${SITE_URL}/sitemap.xml).
 - [Public repository](https://github.com/kodustech/codereviewbench): scorecards, submissions, pipeline.

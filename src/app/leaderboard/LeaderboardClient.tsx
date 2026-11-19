@@ -33,8 +33,10 @@ const CostFrontier = dynamic(() => import('@/components/charts/CostFrontier'), {
   loading: () => <div className="h-[560px] rounded-[22px] bg-[var(--surface-2)] animate-pulse" aria-hidden />,
 });
 import ViewSwitcher from '@/components/shared/ViewSwitcher';
+import BoardTabs, { type Board } from '@/components/shared/BoardTabs';
+import LiveBoard from '@/components/live/LiveBoard';
 import ProviderLogo from '@/components/shared/ProviderLogo';
-import { List, LineChart, ArrowUpDown, ChevronDown, Scale, SlidersHorizontal, RotateCcw } from 'lucide-react';
+import { List, LineChart, ArrowUpDown, ChevronDown, SlidersHorizontal, RotateCcw } from 'lucide-react';
 import type { LeaderboardData, LeaderboardEntry, CaseIndexRow, ReviewMode } from '@/lib/types';
 
 const data = leaderboardData as unknown as LeaderboardData;
@@ -145,7 +147,7 @@ function FilterGroup({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-[10px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">{label}</span>
+      <span className="text-[10px] font-mono text-[color:var(--muted-dim)] uppercase font-normal">{label}</span>
       <div className="flex flex-wrap gap-1.5">
         {options.map((opt) => {
           const active = selected.has(opt);
@@ -184,12 +186,21 @@ function subscribeMode(cb: () => void) {
   };
 }
 const readMode = () => new URLSearchParams(window.location.search).get('mode');
+// Mesma mecanica pra aba (?board=live): o servidor entrega o benchmark, e um
+// link pra aba Live troca logo depois da hidratacao.
+const readBoard = () => new URLSearchParams(window.location.search).get('board');
 
 export default function LeaderboardClient() {
   const modeParam = useSyncExternalStore(subscribeMode, readMode, () => null);
   const mode: ReviewMode = modeParam === 'heavy' ? 'heavy' : 'balanced';
   const setMode = (m: string) => {
     window.history.replaceState(null, '', m === 'heavy' ? '/leaderboard?mode=heavy' : '/leaderboard');
+    window.dispatchEvent(new Event(MODE_EVENT));
+  };
+  const boardParam = useSyncExternalStore(subscribeMode, readBoard, () => null);
+  const board: Board = boardParam === 'live' ? 'live' : 'bench';
+  const setBoard = (b: Board) => {
+    window.history.replaceState(null, '', b === 'live' ? '/leaderboard?board=live' : mode === 'heavy' ? '/leaderboard?mode=heavy' : '/leaderboard');
     window.dispatchEvent(new Event(MODE_EVENT));
   };
   const modeEntries = useMemo(() => data.entries.filter((e) => e.mode === mode), [mode]);
@@ -327,12 +338,31 @@ export default function LeaderboardClient() {
     ...[...new Set(data.entries.map((e) => e.modelId))].filter((id) => !modeEntries.some((e) => e.modelId === id)),
   ];
 
+  const header = (
+    <div className="mb-8">
+      <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)] mb-6">AI code review benchmark leaderboard</h1>
+      <BoardTabs
+        active={board}
+        onChange={setBoard}
+        benchHint={`${meta.totalCases} PRs, ${meta.totalGoldens} known bugs`}
+        liveHint="Real PRs on Kodus Cloud"
+      />
+    </div>
+  );
+
+  if (board === 'live') {
+    return (
+      <div className="max-w-[var(--page-max-width)] mx-auto w-full px-6 sm:px-12 py-12">
+        {header}
+        <LiveBoard />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-[var(--page-max-width)] mx-auto w-full px-6 sm:px-12 py-12">
-      {/* Header */}
+      {header}
       <div className="mb-10">
-        <span className="eyebrow block mb-3">Rankings</span>
-        <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)] mb-3">AI Code Review Benchmark Leaderboard</h1>
         <p className="text-[15px] text-[color:var(--foreground-2)] max-w-2xl leading-relaxed mb-3">
           {meta.totalCases} real pull requests, {meta.totalGoldens} confirmed bugs, judged by {judgeLabel(meta.judges[0])}.
           Every model runs in two review modes inside the Kodus harness. Ranked by F2.
@@ -348,7 +378,7 @@ export default function LeaderboardClient() {
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-4 pb-8 border-b border-[var(--border)]">
         <div className="flex flex-wrap gap-x-4 gap-y-3 items-center">
           <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">Review mode</span>
+            <span className="text-[10px] font-mono text-[color:var(--muted-dim)] uppercase font-normal">Review mode</span>
             <ViewSwitcher views={MODE_VIEWS} active={mode} onChange={setMode} />
           </div>
           <p className="text-xs text-[color:var(--muted)] max-w-xs self-end pb-2">{MODE_DESCRIPTIONS[mode]}</p>
@@ -359,10 +389,10 @@ export default function LeaderboardClient() {
             onClick={() => setFiltersOpen((v) => !v)}
             aria-expanded={filtersOpen}
             className={cn(
-              'inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-buttons)] text-[length:var(--text-body-sm)] font-semibold transition-colors',
+              'inline-flex items-center gap-2 h-9 px-4 rounded-[var(--radius-buttons)] text-[length:var(--text-body-sm)] font-medium transition-[box-shadow,background-color]',
               isFiltered
-                ? 'bg-[var(--accent)] text-[color:var(--on-accent)] border-[1.5px] border-[var(--accent)]'
-                : 'border-[1.5px] border-[var(--color-ink-black)] text-[color:var(--color-ink-black)] hover:bg-[var(--color-ink-black)] hover:text-white',
+                ? 'bg-[var(--accent)] text-[color:var(--on-accent)]'
+                : 'bg-[var(--surface)] text-[color:var(--foreground)] shadow-[var(--shadow-control)] hover:shadow-[0_0_0_1px_var(--border-bright)]',
             )}
           >
             <SlidersHorizontal className="size-3.5" />
@@ -408,15 +438,7 @@ export default function LeaderboardClient() {
           onClick={() => setMethodologyOpen((v) => !v)}
           className="relative w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--surface-2)] transition-colors"
         >
-          <div className="flex items-center gap-3">
-            <div className="size-8 rounded-lg bg-[var(--accent-dim)] flex items-center justify-center">
-              <Scale className="size-4 text-[color:var(--accent)]" />
-            </div>
-            <div className="text-left">
-              <span className="text-sm font-semibold text-[color:var(--foreground)]">How to read this table</span>
-              <span className="text-xs text-[color:var(--muted-dim)] block">What F2, recall, precision and cost mean here, and what this benchmark doesn&apos;t measure</span>
-            </div>
-          </div>
+          <span className="text-sm font-semibold text-[color:var(--foreground)]">How to read this table</span>
           <ChevronDown className={cn('size-4 text-[color:var(--muted)] transition-transform', methodologyOpen && 'rotate-180')} />
         </button>
 
@@ -469,13 +491,13 @@ export default function LeaderboardClient() {
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">#</th>
+                  <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal">#</th>
                   <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest min-w-[220px] font-bold">Model</th>
                   <SortHeader label="F2" sortKeyName="f2" activeKey={sortKey} onSort={toggleSort} />
                   <SortHeader label="F1" sortKeyName="f1" activeKey={sortKey} onSort={toggleSort} />
                   <SortHeader label="Precision" sortKeyName="precision" activeKey={sortKey} onSort={toggleSort} />
                   <SortHeader label="Recall" sortKeyName="recall" activeKey={sortKey} onSort={toggleSort} />
-                  <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">Recall 95% CI</th>
+                  <th className="px-5 py-3.5 text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal text-right">Recall 95% CI</th>
                   <SortHeader label="$/PR" sortKeyName="costPerPR" activeKey={sortKey} onSort={toggleSort} />
                   <SortHeader label="$/bug" sortKeyName="costPerBugFound" activeKey={sortKey} onSort={toggleSort} />
                 </tr>
@@ -588,7 +610,6 @@ export default function LeaderboardClient() {
 
       {missingHere.length > 0 && (
         <section className="mt-16 pt-10 border-t border-[var(--border)]">
-          <span className="eyebrow block mb-3">Next up</span>
           <h2 className="font-display text-[length:var(--text-heading)] text-[color:var(--color-ink-black)] mb-3">
             Not in the {MODE_LABELS[mode].toLowerCase()} table yet
           </h2>
