@@ -193,3 +193,30 @@ export interface CaseSample {
 
 /** Per-page slices of CaseSample, so the server-side cut is type-checked. */
 export type ModelDetailCase = Omit<CaseSample, 'findings' | 'usage'>;
+
+// ── Live (production data, scripts/fetch-live.js) ──
+/** One model as run by Kodus Cloud organizations on their own key. Rates and
+ *  ratios only: the public JSON carries no PR, suggestion or org counts. */
+export interface LiveModel {
+  /** Benchmark model id when the model is on the leaderboard. */
+  id: string;
+  name: string;
+  provider: string;
+  /** At least thresholds.minPRsToRank PRs reviewed; below that, shown unranked. */
+  ranked: boolean;
+  /** Median, across organizations, of the share of suggestions applied. */
+  applied: number;
+  /** Median, across organizations, of suggestions posted per reviewed PR. */
+  suggestionsPerPR: number;
+  /** Floor of the bucket the model's reviewed PRs fall in (1000 = "1,000+").
+   *  Never the exact count: summing exact counts would give company volume. */
+  reviewsAtLeast: number;
+}
+
+export interface LiveData {
+  generatedAt: string;
+  source: string;
+  window: { weeks: number; from: string; to: string };
+  thresholds: { minOrganizations: number; minPRs: number; minPRsToRank: number; minSuggestionsPerOrganization: number };
+  models: LiveModel[];
+}

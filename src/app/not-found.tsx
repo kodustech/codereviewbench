@@ -13,7 +13,6 @@ export const metadata = {
 export default function NotFound() {
     return (
         <div className="max-w-[var(--page-max-width)] mx-auto w-full px-6 sm:px-12 py-12">
-            <span className="eyebrow block mb-4">404</span>
             <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)] mb-3">
                 This page does not exist
             </h1>

@@ -7,7 +7,7 @@ import { SITE_URL } from '@/lib/site';
  * catch-all `*` — este e um benchmark publico, ser lido e citado por motor
  * generativo (GEO) e parte da estrategia de distribuicao do site.
  */
-const BODY = `# codereviewbench.com — crawl policy
+const BODY = `# codereviewbench.com crawl policy
 # We explicitly welcome AI/LLM crawlers: being read and cited by AI engines
 # (GEO) is part of this site's distribution strategy.
 

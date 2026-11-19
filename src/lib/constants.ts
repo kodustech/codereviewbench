@@ -71,33 +71,23 @@ export function providerOf(modelId: string): string {
   return DISPLAY_NAMES[modelId]?.provider || 'Unknown';
 }
 
-/** As 6 primeiras foram validadas com scripts/validate_palette.js (skill
- *  dataviz) nos modos claro e escuro: banda de luminância, piso de croma,
- *  separação CVD (ΔE ≥ 8 nos pares adjacentes) e contraste contra a
- *  superfície. Ordem fixa — nunca ciclar. xAI/Zhipu NÃO estão validadas
- *  (nenhum modelo desses fornecedores está publicado ainda) — rodar o
- *  validador com o conjunto completo antes de publicar algo que os use. */
+/** Tema escuro (2026-11-19): as 8 cores com hue sao os passos "dark" da paleta
+ *  de referencia da skill dataviz, na ordem dela, e passam todas as checagens
+ *  de scripts/validate_palette.js contra o painel #0f1011 (banda de
+ *  luminancia, croma, CVD >= 8 nos adjacentes, visao normal >= 15, contraste).
+ *  Zhipu e xAI sao a 9a/10a serie: cinza neutro, e a identidade vem do nome
+ *  sempre escrito ao lado (segunda codificacao), nunca da cor. */
 export const PROVIDER_COLORS: Record<string, string> = {
-  // Anthropic (2026-11-07): marca oficial e quase-preta; no tema claro ela le
-  //   bem e nao colide com nenhuma cor da paleta. NAO validada no script.
-  Anthropic: '#262626',
-  Alibaba: '#2b6cb0',
-  DeepSeek: '#dd6b20',
-  Moonshot: '#38a169',
-  Meta: '#805ad5',
-  OpenAI: '#c53030',
-  Google: '#0987a0',
-  // MiniMax (2026-08-20): escolhida rodando simulação de protanopia,
-  //   deuteranopia e tritanopia (Brettel/Viénot) contra as 8 cores já em uso.
-  //   Pior caso ΔE = 15,8 — a melhor separação da paleta inteira.
-  // ACHADO ao fazer isso: o "ΔE ≥ 8" prometido no comentário acima vale para
-  //   VISÃO NORMAL, não sob daltonismo. Sob CVD a paleta atual não cumpre o
-  //   próprio critério — Meta (#805ad5) e xAI (#71717a) ficam a ΔE 3,2 um do
-  //   outro, praticamente indistinguíveis. Vale revisar esses dois.
-  MiniMax: '#883848',
-  // não validadas:
-  xAI: '#71717a',
-  Zhipu: '#b45309',
+  Alibaba: '#3987e5',
+  Anthropic: '#d95926',
+  Google: '#199e70',
+  DeepSeek: '#c98500',
+  MiniMax: '#d55181',
+  Moonshot: '#008300',
+  Meta: '#9085e9',
+  OpenAI: '#e66767',
+  Zhipu: '#8b939c',
+  xAI: '#8b939c',
 };
 
 export const REPO_LABELS: Record<string, string> = {

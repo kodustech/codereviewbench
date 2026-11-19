@@ -63,7 +63,7 @@ Not run yet.
     const any = entryFor(modelId, 'balanced') ?? entryFor(modelId, 'heavy')!;
     return `<!-- source: ${SITE_URL}/model/${modelSlug(modelId)} -->
 
-# ${name} — AI Code Review Benchmark Results
+# ${name}: AI Code Review Benchmark Results
 
 ${name} (${provider}) on CodeReviewBench: ${any.cases} merged pull requests, ${any.goldensTotal} confirmed bugs, judge ${judgeLabel(any.judge)}, harness ${any.harness}, access ${any.accessPath}.
 
@@ -146,7 +146,7 @@ ${MODES.filter((m) => entriesOf(m).length).map(leaderboardTable).join('\n')}`;
     const posts = publishedPosts();
     const blogSections = posts.map((p) => blogSection(p.slug, p.title, p.description)).join('\n');
 
-    const body = `# codereviewbench.com — full content
+    const body = `# codereviewbench.com: full content
 
 > ${SITE_DESCRIPTION} Maintained by Kodus (https://kodus.io); every submission and scorecard is versioned in the public repo (https://github.com/kodustech/codereviewbench). Summary index: ${SITE_URL}/llms.txt.
 

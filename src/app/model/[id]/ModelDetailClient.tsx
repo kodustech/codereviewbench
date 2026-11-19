@@ -162,7 +162,7 @@ export default function ModelDetailClient({ modelId, entries, averages, modeTota
             <Badge variant="default">{provider}</Badge>
           </div>
           <p className="text-[color:var(--muted)] font-mono text-sm">
-            {modes.map((m) => `${MODE_LABELS[m]} #${entries[m]!.rank} of ${modeTotals[m]}`).join(' · ')} · {headline.cases} PRs
+            {modes.map((m) => `${MODE_LABELS[m]} #${entries[m]!.rank} of ${modeTotals[m]}`).join(' · ')}
           </p>
         </div>
         <div className="text-center">
@@ -175,16 +175,16 @@ export default function ModelDetailClient({ modelId, entries, averages, modeTota
 
       {/* Both modes side by side */}
       <div className="mb-4">
-        <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Balanced vs heavy</h2>
+        <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal mb-4">Balanced vs heavy</h2>
         <div className="card-hairline overflow-hidden">
           <div className="overflow-x-auto custom-scrollbar relative">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">Metric</th>
+                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal">Metric</th>
                   {MODES.map((m) => (
                     <th key={m} className="px-5 py-3 text-right">
-                      <span className="block text-xs font-mono text-[color:var(--foreground)] uppercase tracking-widest font-bold">{MODE_LABELS[m]}</span>
+                      <span className="block text-xs font-mono text-[color:var(--foreground)] uppercase font-normal">{MODE_LABELS[m]}</span>
                       <span className="block text-[11px] font-normal normal-case text-[color:var(--muted-dim)] whitespace-normal max-w-[16rem] ml-auto">{MODE_DESCRIPTIONS[m]}</span>
                     </th>
                   ))}
@@ -230,7 +230,7 @@ export default function ModelDetailClient({ modelId, entries, averages, modeTota
 
       {/* Run configuration */}
       <div className="card-hairline p-6 mb-12 mt-8">
-        <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4 relative">Run configuration</h2>
+        <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal mb-4 relative">Run configuration</h2>
         <div className="grid grid-cols-2 sm:grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm relative">
           <span className="text-[color:var(--muted)]">Harness</span>
           <span className="text-[color:var(--foreground)] font-mono">{headline.harness}</span>
@@ -256,14 +256,14 @@ export default function ModelDetailClient({ modelId, entries, averages, modeTota
       {/* Recall by gold severity + by repo */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
         <div>
-          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Recall by bug severity</h2>
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal mb-4">Recall by bug severity</h2>
           <div className="card-hairline overflow-hidden">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">Severity</th>
+                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal">Severity</th>
                   {MODES.map((m) => (
-                    <th key={m} className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">{MODE_LABELS[m]}</th>
+                    <th key={m} className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal text-right">{MODE_LABELS[m]}</th>
                   ))}
                 </tr>
               </thead>
@@ -286,14 +286,14 @@ export default function ModelDetailClient({ modelId, entries, averages, modeTota
           </div>
         </div>
         <div>
-          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Recall by repository</h2>
+          <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal mb-4">Recall by repository</h2>
           <div className="card-hairline overflow-hidden">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">Repo</th>
+                  <th className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal">Repo</th>
                   {MODES.map((m) => (
-                    <th key={m} className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold text-right">{MODE_LABELS[m]}</th>
+                    <th key={m} className="px-5 py-3 text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal text-right">{MODE_LABELS[m]}</th>
                   ))}
                 </tr>
               </thead>
@@ -319,7 +319,7 @@ export default function ModelDetailClient({ modelId, entries, averages, modeTota
 
       {/* Per-PR breakdown, both modes */}
       <div className="mb-8">
-        <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">
+        <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal mb-4">
           Per-PR breakdown ({cases.length})
         </h2>
         <div className="flex flex-col gap-2">
@@ -397,7 +397,7 @@ export default function ModelDetailClient({ modelId, entries, averages, modeTota
         {/* Links to the pair routes, so every /compare page has an internal link. */}
         {MODES.filter((m) => others[m].length && entries[m]).map((m) => (
           <div key={m} className="mt-12 pt-8 border-t border-[var(--border)]">
-            <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-5">
+            <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal mb-5">
               Compare {displayNameOf(modelId)} ({MODE_LABELS[m].toLowerCase()}) with
             </h2>
             <ul className="flex flex-wrap gap-2">

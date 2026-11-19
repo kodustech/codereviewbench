@@ -14,7 +14,7 @@ export default function StatsCard({ icon: Icon, label, value, delta, className }
   return (
     <div className={cn('card-hairline flex flex-col gap-3 p-5', className)}>
       <div className="flex items-center justify-between relative">
-        <span className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold">{label}</span>
+        <span className="text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal">{label}</span>
         {Icon && <Icon className="size-4 text-[color:var(--muted)]" />}
       </div>
       <div className="flex items-end gap-2 relative">

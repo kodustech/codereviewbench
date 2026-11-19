@@ -37,7 +37,7 @@ function ModelPicker({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full bg-[var(--surface-2)] border border-[var(--border-bright)] rounded-lg px-4 py-3 text-base font-semibold text-[color:var(--foreground)] appearance-none cursor-pointer"
+      className="w-full h-11 bg-[var(--surface)] shadow-[var(--shadow-control)] hover:shadow-[0_0_0_1px_var(--border-bright)] rounded-md px-4 text-[15px] font-medium text-[color:var(--foreground)] appearance-none cursor-pointer transition-shadow"
     >
       {entries.map((e) => (
         <option key={e.key} value={e.modelId} disabled={e.modelId === otherValue}>
@@ -93,10 +93,9 @@ export default function CompareClient({ mode, otherModeHref, entries, entryA, en
   return (
     <div className="max-w-[1200px] mx-auto w-full px-6 sm:px-12 py-12">
       <div className="mb-10">
-        <span className="text-xs font-mono text-[color:var(--accent)] uppercase tracking-widest font-bold block mb-3">Head to head</span>
         <h1 className="text-3xl sm:text-4xl font-display text-[color:var(--foreground)] mb-3">Compare two models</h1>
         <p className="text-[15px] text-[color:var(--muted)] max-w-2xl leading-relaxed mb-6">
-          Same {perCase.length} PRs, same gold bugs, same review mode. Which bugs did one find that the other missed?
+          Both models on the same {perCase.length} PRs and review mode, with the bugs each one found and missed.
         </p>
         <div className="flex flex-wrap items-center gap-4">
           <div className="inline-flex p-1 bg-[var(--surface)] rounded-lg border border-[var(--border)]" role="group" aria-label="Review mode">
@@ -176,7 +175,7 @@ export default function CompareClient({ mode, otherModeHref, entries, entryA, en
       </div>
       {/* Per-PR diff */}
       {/* h2, nao h3: a pagina saltava de h1 direto pra h3. */}
-      <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase tracking-widest font-bold mb-4">Per-PR diff ({perCase.length})</h2>
+      <h2 className="text-xs font-mono text-[color:var(--muted-dim)] uppercase font-normal mb-4">Per-PR diff ({perCase.length})</h2>
       <div className="flex flex-col gap-2">
         {perCase.map(({ caseId, repo, language, goldens }) => {
           const diffCount = goldens.filter((g) => g.foundA !== g.foundB).length;

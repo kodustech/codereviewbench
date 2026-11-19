@@ -1,0 +1,56 @@
+# Atualiza o dado da /live uma vez por dia. O script so regrava
+# src/lib/data/live.json quando algum numero mudou; nesse caso o commit vai
+# pra main e o deploy da Vercel sai sozinho.
+#
+# Precisa do secret SEO_COPILOT_MCP_TOKEN (token do MCP do seo-copilot com
+# acesso a runWarehouseQuery). Sem ele o job passa sem fazer nada, em vez de
+# falhar todo dia.
+name: Live data
+
+on:
+  schedule:
+    - cron: '30 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SEO_COPILOT_MCP_TOKEN: ${{ secrets.SEO_COPILOT_MCP_TOKEN }}
+    steps:
+      - name: Skip without token
+        if: env.SEO_COPILOT_MCP_TOKEN == ''
+        run: echo "SEO_COPILOT_MCP_TOKEN is not set; skipping the refresh."
+
+      - uses: actions/checkout@v4
+        if: env.SEO_COPILOT_MCP_TOKEN != ''
+
+      - uses: actions/setup-node@v4
+        if: env.SEO_COPILOT_MCP_TOKEN != ''
+        with:
+          node-version: 22
+
+      - name: Fetch production aggregates
+        if: env.SEO_COPILOT_MCP_TOKEN != ''
+        run: node scripts/fetch-live.js
+
+      - name: Commit if the numbers changed
+        if: env.SEO_COPILOT_MCP_TOKEN != ''
+        run: |
+          if git diff --quiet -- src/lib/data/live.json; then
+            echo "No change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/lib/data/live.json
+          git commit -m "data(live): refresh production numbers"
+          git push
